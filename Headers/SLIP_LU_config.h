@@ -2,10 +2,7 @@
 #define SLIP_config
 
 /*	This software package exactly solves a sparse system of linear equations using the SLIP LU 
-	factorization. This code accompanies the paper (submitted to ACM Transactions on Mathematical Software):
-	
-	"Algorithm XXX: SLIP LU: A Sparse Left-Looking Integer-Preserving LU Factorization for Exactly Solving
-	 Sparse Linear Systems"
+	factorization. 
 	
 	The theory associated with this software can be found in the paper (submitted to SIAM journal 
 	on matrix analysis and applications):
@@ -14,7 +11,7 @@
 	Roundoff-Error-Free LU Factorization"
 	
 	If you use this code, you must do the following:
-		1) Download and install Tim Davis' Suitesparse, particularly the COLAMD, AMD, and UMFPACK routines.
+		1) Download and install Tim Davis' Suitesparse, particularly the COLAMD and AMD routines
 		   This can be obtained at http://faculty.cse.tamu.edu/davis/suitesparse.html
 		2) Download and install the GMP and MPFR libraries. GMP and MPFR can be found at
 		   https://gmplib.org/
@@ -28,7 +25,7 @@
 ------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------
 
-		Christopher Lourenco, Jinhao Chen, Erick Moreno-Centeno, and Timothy Davis
+		Christopher Lourenco, Erick Moreno-Centeno, Adolfo Escobedo, and Timothy Davis
 
 ------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------
@@ -110,7 +107,6 @@
 # include "SuiteSparse_config.h"
 # include "colamd.h"    
 # include "amd.h"   
-# include "./UMF_Include/umfpack.h"
 
 /*----------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------
@@ -121,11 +117,8 @@
 /* Current version of the code */
 #define SLIP_LU_Version "0.4"
 
-/* Name of associated paper */
-#define PAPER "Algorithm XXX: SLIP LU: Sparse Left-looking Integer-Preserving LU Factorization"
-
 /* Primary author of code */
-#define Author "Christopher Lourenco, Jinhao Chen, Erick Moreno-Centeno, Timothy Davis"
+#define Author "Christopher Lourenco, Erick Moreno-Centeno, Adolfo Escobedo, Timothy Davis"
 
 /* Tolerance used in the pivoting schemes. This number can be anything in between 0 and 1.
    A value of 0 selects the diagonal element exclusively and a value of 1 selects the smallest or
