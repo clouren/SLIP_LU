@@ -1,4 +1,4 @@
-#include "../Headers/SLIP_LU_config.h"
+#include "./Headers/SLIP_LU_config.h"
 
 /* This example shows how to use SLIP LU with a given input matrix and a double output */
 int main () {
