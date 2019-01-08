@@ -316,43 +316,14 @@ int SLIP_create_rhs(int n, int numRHS, mpz_t** b_mpz, double **b_doub, int** b_i
 	return 1; 
 }
 
-/* Purpose: This function permutes the b vector & A matrix for the UMFPACK ordering.
-   This is necessary since we use UMFPACK to preorder A, thus we must properly maintain b as well.
-   Arguments:
-   b: input right hand sides
-   A: input matrix
-   p_umf: row permutation given by UMFPACK 
-   numRHS: number of RHS vectors */
-void SLIP_UMFPACK_permute (mpz_t** b, SLIP_mat* A, int* p_umf, int numRHS)
-{
-	int k, i, index, n = A->n;
-	int* pinv = new int [n];
-	mpz_t** b2 = SLIP_initialize_mpz_mat(n, numRHS);
-	for (k = 0; k < n; k++)
-	{
-		index = p_umf[k];
-		pinv[index] = k;
-	}
-	for (k = 0; k < A->nz; k++)
-		A->i[k] = pinv[A->i[k]];
-	for (i = 0; i < numRHS; i++)
-		for (k = 0; k < n; k++)
-			mpz_set(b2[pinv[k]][i], b[k][i]);
-	for (i = 0; i < numRHS; i++)
-		for (k = 0; k < n; k++)
-			mpz_set(b[k][i], b2[k][i]);
-	SLIP_delete_mpz_mat(b2,n,numRHS);
-	delete[] pinv;
-}
-
 /* Purpose: This function performs the symbolic ordering for SLIP LU. Currently, there 
-   are four options: user defined order, COLAMD, AMD, or UMFPACK. 
+   are four options: user defined order, COLAMD, AMD
    Arguments:
    A: Input matrix
    S: Structure which stores lnz, unz, and the column permutation
    option: Control parameters
-   b: right hand side vectors (UMFPACK only)
-   numRHS: Number of RHS vectors (UMFPACK only) */
+   b: right hand side vectors (can pass NULL)
+   numRHS: Number of RHS vectors */
 void SLIP_LU_Symbolic(SLIP_mat* A, SLIP_col* S, SLIP_LU_Options* option, mpz_t** b, int numRHS) 
 {
 	std::chrono::steady_clock::time_point t_begin = std::chrono::steady_clock::now();
@@ -380,37 +351,6 @@ void SLIP_LU_Symbolic(SLIP_mat* A, SLIP_col* S, SLIP_LU_Options* option, mpz_t**
 			amd_control(Control);
 			amd_info(Info);
 		}
-	}
-	/* UMFPACK */
-	else if (option->order == 3)
-	{
-		int status, sys, do_recip;
-		option->pivot = 1;								// Must override pivoting scheme when using UMFPACK 
-		int *p = new int [n];
-		int *q = new int [n];
-		double *Ax = new double [nz];					// Numeric values of Ax in double precision
-		for (i = 0; i < nz; i++)
-			Ax[i] = mpz_get_d(A->x[i]);
-		double Control[UMFPACK_CONTROL], Info[UMFPACK_INFO];
-		void* Symbolic, *Numeric;
-		/* Do UMFPACK */
-		umfpack_di_defaults(Control);														// Set defaults
-		Control[UMFPACK_STRATEGY] = UMFPACK_STRATEGY_UNSYMMETRIC;							// Unsymmetric ordering strategy
-		Control[UMFPACK_PIVOT_TOLERANCE] = 0.000001;										// Pivot tolerance of 10^-6
-		Control[UMFPACK_ORDERING] = UMFPACK_ORDERING_BEST;									// Evaluates AMD, COLAMD, Metis and Nested Dissection
-		status = umfpack_di_symbolic(n, n, A->p, A->i, Ax, &Symbolic, Control, Info);		// UMFPACK Symbolic
-		status = umfpack_di_numeric(A->p, A->i, Ax, Symbolic, &Numeric, Control, Info);		// UMFPACK Numeric
-		status = umfpack_di_get_numeric (NULL, NULL, NULL, NULL, NULL, NULL, p, q, NULL,
-		&do_recip, NULL, Numeric);															// Get P and Q of UMFPACK
-		umfpack_di_free_symbolic (&Symbolic) ;												// Free memory of symbolic
-		umfpack_di_free_numeric (&Numeric) ;												// Free memory of numeric
-	
-		for (k = 0; k < n; k++)																// Set S->q as UMFPACK q
-			S->q[k] = q[k];
-		S->lnz = 2 * Info[UMFPACK_LNZ];														// UMFPACK lnz < SLIP lnz usually
-		S->unz = 2 * Info[UMFPACK_UNZ];														// UMFPACK unz < SLIP unz usually
-		SLIP_UMFPACK_permute(b, A, p, numRHS);
-		delete[] Ax; delete[] p; delete[] q;
 	}
 	/* COLAMD */
 	else
