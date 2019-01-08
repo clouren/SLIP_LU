@@ -1,9 +1,8 @@
 This software package is used to solve a sparse systems of linear equations exactly using the SLIP LU factorization.
 
 
-This folder contains eight C++ files: SLIP_LU, SLIP_random, example, example2, example3, example4, example5
+This folder contains the C++ files: SLIP_LU, example, example2, example3, example4, example5
 This folder also contains header files (including Suitesparse headers). Do not modify these headers.
-This folder also contains MATLAB interface
 
 *********SLIP_LU*********
 Purpose: Exactly solve a sparse system of linear equations using a given input matrix and right hand side vector file. This code can 
@@ -46,23 +45,6 @@ USAGE: ./SLIP_LU.exe Followed by:
                                  
                                  
 ***********NOTE: If none of these are used, SLIP LU uses default parameters defined in SLIP_LU_config.h********
-
-*********SLIP_random*********
-Purpose: Compare SLIP_LU with REF_LU on dense, randomly generated matrices. There are a different set of command line arguments for this one.
-USAGE: ./SLIP_random.exe Followed by:
-	n:             dimension of matrix to generate
-	
-	b  or numRHS:  number of right hand side vectors to generate
-	
-	l  or lower:   lower bound of randomly generated numbers
-	
-	u  or upper:   upper bound of entries to generate
-	
-	s1 or seed1:   first random number seed used to generate entries
-	
-	s2 or seed2:   second random number seed used to generate entries
-	
-	d  or density: density of matrix generated
 
 
 *********example*********
