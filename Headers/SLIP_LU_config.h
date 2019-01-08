@@ -261,7 +261,6 @@ void SLIP_LU_Info()
 {
 	std::cout<<"\n****Software Information****";
 	std::cout<<"\n\nYou are using SLIP_LU Version: "<<SLIP_LU_Version;
-	std::cout<<"\nThis code accompanies the paper:\n\n\t"<<PAPER<<"\n";
 	std::cout<<"\nThis code is copyright by "<<Author <<"\n\n";
 }
 
