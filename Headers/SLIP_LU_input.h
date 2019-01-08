@@ -42,7 +42,7 @@ void SLIP_show_usage()
 	std::cout<<"\n\n\t\t****USAGE****";
 	std::cout<<"\n\t./SLIP_LU.exe followed by:";
 	std::cout<<"\n\tc: Indicates soln will be checked\n\tp or piv: indicate type of pivoting";
-	std::cout<<"\n\tcol or q: column order used: 0: colamd, 1: amd, 2: none, 3: UMFPACK";
+	std::cout<<"\n\tcol or q: column order used: 0: colamd, 1: amd, 2: none";
 	std::cout<<"\n\tt or tol: tolerance parameter \n\to2 or out2: output printed to screen";
 	std::cout<<"\n\tf or file: filenames. must be of format MATRIX_NAME RHS_NAME";
 	std::cout<<"\n\tof or outfile: output filename";
@@ -60,10 +60,8 @@ void SLIP_print_options(SLIP_LU_Options* option)
 		order = "the COLAMD";
 	else if (option->order == 1)
 		order = "the AMD";
-	else if (option->order == 2)
+	else 
 		order = "No";
-	else
-		order = "the UMFPACK";
 	if (option->pivot == 0)
 		piv = "smallest";
 	else if (option->pivot == 1)
@@ -120,11 +118,11 @@ int SLIP_LU_process_command_line(int argc, char* argv[], SLIP_LU_Options* option
 		{
 			if (!argv[++i])
 			{
-				std::cout<<"\n****ERROR! There must be an argument between 0-3 following q\n";
+				std::cout<<"\n****ERROR! There must be an argument between 0-2 following q\n";
 				return 0;
 			}
 			option->order = atoi(argv[i]);
-			if (option->order < 0 || option->order > 3)
+			if (option->order < 0 || option->order > 2)
 			{
 				std::cout<<"\n****ERROR! Invalid column ordering\nDefaulting to COLAMD\n\n";
 				option->order = 0;
