@@ -792,9 +792,5 @@ void print_sp_mat (SLIP_mat* A)
 #include "SLIP_LU_input.h"
 #include "SLIP_LU_Output.h"
 #include "SLIP_LU.h"
-#include "SLIP_random_mat.h"
-#ifdef MATLAB
-#include "SLIP_LU_mex.h"
-#endif
 
 #endif
