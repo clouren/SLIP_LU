@@ -1,7 +1,7 @@
 This software package is used to solve a sparse systems of linear equations exactly using the SLIP LU factorization.
 
 
-This folder contains the C++ files: SLIP_LU, example, example2, example3, example4, example5
+This folder contains the C++ file: SLIP_LU
 This folder also contains header files (including Suitesparse headers). Do not modify these headers.
 
 *********SLIP_LU*********
@@ -47,17 +47,3 @@ USAGE: ./SLIP_LU.exe Followed by:
 ***********NOTE: If none of these are used, SLIP LU uses default parameters defined in SLIP_LU_config.h********
 
 
-*********example*********
-Purpose: Demonstrate the use of SLIP LU for a user given input matrix
-
-*********example2*********
-Purpose: Demonstrate the use of SLIP LU for a matrix to be read in
-
-*********example3*********
-Purpose: Demonstrate the use of SLIP LU for a matrix stored in mpfr precision
-
-*********example4*********
-Purpose: Demonstrate the use of SLIP LU for multiple RHS vectors
-
-*********example5*********
-Purpose: Demonstrate the use of SLIP LU for multiple RHS vectors read in from file
