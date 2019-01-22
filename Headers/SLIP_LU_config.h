@@ -33,7 +33,7 @@
 ------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------
 
-	This software is licensed under the GNU General Public License
+	This software is copyright by Christopher Lourenco
 	See license.txt for license info.
 
 ------------------------------------------------------------------------------------------------------
@@ -61,7 +61,7 @@
 	the permutation matrices P and Q. The recommended default settings select Q using the COLAMD column
 	ordering and selects P via a partial pivoting scheme in which the smallest entry in 
 	column k is selected as the kth pivot. Alternative strategies allowed to select Q include the AMD
-	column ordering, no column permutation (Q=I), or using the UMFPACK P and Q. For pivots, there are a 
+	column ordering, no column permutation (Q=I). For pivots, there are a 
 	variety of potential schemes including traditional partial pivoting, diagonal pivoting, tolerance pivoting etc. 
 	This package does not allow pivoting based on sparsity criterion.
 	
@@ -115,7 +115,7 @@
 ----------------------------------------------------------------------------------------------------*/
 
 /* Current version of the code */
-#define SLIP_LU_Version "0.4"
+#define SLIP_LU_Version "0.1"
 
 /* Primary author of code */
 #define Author "Christopher Lourenco, Erick Moreno-Centeno, Adolfo Escobedo, Timothy Davis"
