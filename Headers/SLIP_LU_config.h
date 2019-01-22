@@ -118,7 +118,7 @@
 #define SLIP_LU_Version "0.1"
 
 /* Primary author of code */
-#define Author "Christopher Lourenco, Erick Moreno-Centeno, Adolfo Escobedo, Timothy Davis"
+#define Author "Christopher Lourenco, Erick Moreno-Centeno, Timothy Davis"
 
 /* Tolerance used in the pivoting schemes. This number can be anything in between 0 and 1.
    A value of 0 selects the diagonal element exclusively and a value of 1 selects the smallest or
