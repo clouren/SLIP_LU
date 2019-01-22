@@ -2,4 +2,5 @@ This is the code associated with the paper
 "Asymptotically Optimal Exact Solution of Sparse Linear Systems via Left-looking Roundoff-Error-Free LU Factorization"
 submitted to SIMAX.
 
-This is a preliminary version of the SLIP LU code, a full release is to come and this will be updated to document this.
+This is a version 0.1 of the SLIP LU code, a full release of SLIP LU
+is expected to come in Spring/Summer 2019.
