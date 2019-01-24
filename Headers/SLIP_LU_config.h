@@ -43,6 +43,8 @@
 ------------------------------------------------------------------------------------------------------
 
 ********** This software comes with no implied warranty, use it at your own risk *********************
+********** This software is SLIP LU v0.1. A full high quality release is expected ********************
+********** in spring/summer 2019                                                  ********************
 
 ------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------
@@ -117,7 +119,7 @@
 /* Current version of the code */
 #define SLIP_LU_Version "0.1"
 
-/* Primary author of code */
+/* Primary authors of code */
 #define Author "Christopher Lourenco, Erick Moreno-Centeno, Timothy Davis"
 
 /* Tolerance used in the pivoting schemes. This number can be anything in between 0 and 1.
@@ -149,23 +151,6 @@
 
 /* MPFR precision used (quad is default) */
 #define DEFAULT_PRECISION 128
-
-/* Needed for MATLAB mex files */
-#ifdef MATLAB
-	# define INT ptrdiff_t
-	# include "mex.h"
-#endif
-
-
-/* For random matrices to compare to REF LU */
-
-#define DEFAULT_N 100
-#define DEFAULT_NUMRHS 50
-#define DEFAULT_LB -99
-#define DEFAULT_UB 99
-#define DEFAULT_SEED1 11
-#define DEFAULT_SEED2 1400
-#define DEFAULT_DENSITY 1.0
 
 /*----------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------
@@ -651,7 +636,7 @@ void SLIP_mat_realloc2 ( SLIP_mat* A)
 
 /* Purpose: This function collapses a SLIP matrix. Essentially it shrinks the size of x and i 
    so that they only take up the number of elements in the matrix. 
-   For example if A->nzmax = 1000 but A->nz = 500, r and x are of size 1000 
+   For example if A->nzmax = 1000 but A->nz = 500, i and x are of size 1000 
    so this function shrinks them to size 500
    Arguments:
    A: matrix to be shrunk */
