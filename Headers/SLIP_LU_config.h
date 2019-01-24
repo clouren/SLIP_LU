@@ -179,7 +179,7 @@ typedef struct SLIP_LU_Options
 {
 	int check;				            // 1 If the solution to the linear system will be checked
 	int pivot;			                // Type of pivoting scheme used.
-	int order;			               	// 0: COLAMD, 1: AMD, 2: None, 3: UMFPACK >3 or < 0 defaults to COLAMD
+	int order;			               	// 0: COLAMD, 1: AMD, 2: None, >2 or < 0 defaults to COLAMD
 	int print;          				// 0: Nothing printed, 1: COLAMD/AMD and SLIP stats printed 
 	int print2;			            	// 0: output file not used, 1: output file used
 	int print3;         				// 0: timing stats not printed, 1: timing stats printed
