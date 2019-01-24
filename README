@@ -1,5 +1,6 @@
 This is the code associated with the paper 
-"Asymptotically Optimal Exact Solution of Sparse Linear Systems via Left-looking Roundoff-Error-Free LU Factorization"
+"Exact Solution of Sparse Linear Systems via Left-looking Roundoff-Error-Free LU Factorization in Time Proportional 
+ to Arithmetic Work"
 submitted to SIMAX.
 
 This is a version 0.1 of the SLIP LU code, a full release of SLIP LU
