@@ -7,8 +7,8 @@
 	The theory associated with this software can be found in the paper (submitted to SIAM journal 
 	on matrix analysis and applications):
 	
-	"Asymptotically Optimal Exact Solution of Sparse Linear Systems via Left-Looking 
-	Roundoff-Error-Free LU Factorization"
+	"Exact Solution of Sparse Linear Systems via Left-Looking Roundoff-Error-Free LU Factorization
+	 in Time Proportional to Arithmetic Work"
 	
 	If you use this code, you must do the following:
 		1) Download and install Tim Davis' Suitesparse, particularly the COLAMD and AMD routines
