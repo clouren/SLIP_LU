@@ -31,7 +31,7 @@ USAGE: ./SLIP_LU.exe Followed by:
                                  0: COLAMD: Default
                                  1: AMD
                                  2: None: Not recommended for sparse matrices
-                                 3: UMFPACK P and Q
+                                
     
     
     t or tol: tolerance param:   This is SLIP LU's tolerance. Only necessary if some sort of tolerance pivoting is used
