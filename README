@@ -1,7 +1,0 @@
-This is the code associated with the paper 
-"Exact Solution of Sparse Linear Systems via Left-looking Roundoff-Error-Free LU Factorization in Time Proportional 
- to Arithmetic Work"
- published in SIMAX.
-
-This is a version 0.1 of the SLIP LU code, a full release of SLIP LU
-is expected to come in fall 2019.

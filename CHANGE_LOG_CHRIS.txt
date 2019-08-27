@@ -1,0 +1,62 @@
+Changes made for 4/29/19
+
+Note: I wasn't able to test these since code not curently working, but if there are any issues, let me know 
+and I will fix
+
+1) SLIP_create_dense function in source and include (needs to be added to makefile)
+
+2) SLIP_delete_dense function in source and include (needs to be added to makefile)
+
+3) Put the SLIP_dense data structure into the following functions. Note that some
+   of the names have changed, that needs to be looked at in the renaming pass. Any 
+   function I edited I also renamed in source (but not necessarily in all functions
+   that use it). Also, those which have been renamed need to be modified in the makefile.
+        a) SLIP_check_solution (renamed from SLIP_LU_check)
+        b) SLIP_solve_double (renamed from SLIP_LU_double)
+        c) SLIP_solve_mpfr (renamed from SLIP_LU_mpfr)
+        d) SLIP_solve_mpq (renamed from SLIP_LU_mpq)
+        e) SLIP_LU_analyze (renamed from SLIP_LU_symbolic)
+        f) SLIP_permute_x (renamed from SLIP_Permute_x)
+        g) SLIP_read_rhs
+        h) SLIP_LU_solve (renamed from SLIP_Solve)
+        i) slip_UMFPACK_permute
+        
+4) Removed LU scale, b scale, and determinant from options, SLIP_create_option and SLIP_delete_option
+
+5) Added A->scale to SLIP_create_mat, SLIP_delete_mat, SLIP_create_dense, SLIP_delete_dense
+
+6) Fixed scale in:
+        a) slip_expand_double_array
+        b) slip_expand_double_mat
+        c) slip_expand_mpfr_array
+        d) slip_expand_mpfr_mat
+        e) slip_expand_mpq_array
+        f) slip_expand_mpq_mat
+    
+7) SLIP_build_mat_ccf has been broken into 5 versions:
+        a) SLIP_build_sparse_ccf_mpz
+        b) SLIP_build_sparse_ccf_doub
+        c) SLIP_build_sparse_ccf_int
+        d) SLIP_build_sparse_ccf_mpq
+        e) SLIP_build_sparse_ccf_mpfr
+        
+8) SLIP_build_mat_trip has been broken into 5 versions
+        a) SLIP_build_sparse_trip_mpz
+        b) SLIP_build_sparse_trip_doub
+        c) SLIP_build_sparse_trip_int
+        d) SLIP_build_sparse_trip_mpq
+        e) SLIP_build_sparse_trip_mpfr
+        
+9) SLIP_triplet destoryed in the code. The function SLIP_trip_to_mat was fixed. The following functions were removed:
+        a) SLIP_create_trip
+        b) SLIP_delete_trip
+        
+10) SLIP_read_matrix and SLIP_read_matrix_double had the SLIP_trip data type removed.
+
+11) SLIP_build_rhs has been transformed into 5 functions:
+        a) SLIP_build_dense_double
+        a) SLIP_build_dense_int
+        a) SLIP_build_dense_mpz
+        a) SLIP_build_dense_mpq
+        a) SLIP_build_dense_mpfr
+        

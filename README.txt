@@ -1,49 +1,92 @@
-This software package is used to solve a sparse systems of linear equations exactly using the SLIP LU factorization.
+This software package is used to solve a sparse systems of linear equations
+exactly using the SLIP LU factorization.
 
 
-This folder contains the C++ file: SLIP_LU
-This folder also contains header files (including Suitesparse headers). Do not modify these headers.
+*********SLIPLU*********
+Purpose: Exactly solve a sparse system of linear equations using a given input
+         matrix and right hand side vector file. This code can output the final
+         solution to a user specified output file in either double precision or
+         full precision rational numbers. If you intend to use SLIP LU within
+         another program, please refer to examples for help with this.
 
-*********SLIP_LU*********
-Purpose: Exactly solve a sparse system of linear equations using a given input matrix and right hand side vector file. This code can 
-         output the final solution to a user specified output file in either double precision or full precision rational numbers.
-         If you intend to use SLIP LU within another program, please refer to examples for help with this.
+SLIPLU Followed by the listed args:
 
-USAGE: ./SLIP_LU.exe Followed by:
-    f or file: Filename.         SLIP LU expects the format to be f MATRIX_NAME RHS_NAME. The matrix must be stored in matrix market format 
-                                 Please refer to http://math.nist.gov/MatrixMarket/formats.html for information on matrix market format. The 
-                                 right hand side vector must be stored as a dense vector.
-            
-    of or outfile: Outfile name: SLIP LU expects the formalt to be of OUTNAME. 
-                             
-    c or check: Check param:     This indicates that SLIP LU will check the solution of the problem. 
-                                 WARNING: This is slow and should only be used for verification
+help. e.g., SLIPLU help, which indicates SLIPLU to print to guideline
+for using this function.
 
-    p or piv: Pivot param:       This parameter tells SLIP LU what type of pivoting to use. The options are as follows:
-                                 0: Smallest pivot: Default and recommended
-                                 1: Diagonal pivoting
-                                 2: First nonzero per column chosen as pivot
-                                 3: Diagonal pivoting with tolerance for smallest pivot
-                                 4: Diagonal pivoting with tolerance for largest pivot
-                                 5: Largest pivot
-                                 
-    q or col: Column order param:This tells SLIP LU what column ordering to use. Options are:
-                                 0: COLAMD: Default
-                                 1: AMD
-                                 2: None: Not recommended for sparse matrices
-                                
-    
-    
-    t or tol: tolerance param:   This is SLIP LU's tolerance. Only necessary if some sort of tolerance pivoting is used
-    
-    out2 or o2: output param:    This indicates SLIP LU will output information about the ordering, SLIP LU
-    
-    out or o: output param:      This indicates SLIP LU will output the solution to a file. This should be followed by one of the following integers
-                                 1: The solution will be output in full precision rational arithmetic
-                                 2: The solution will be output in double precision 
-                                 3: The solution will be output in some user specified precision. This must be input as o2 3 USER_PRECISION. Precision must be an int
-                                 
-                                 
-***********NOTE: If none of these are used, SLIP LU uses default parameters defined in SLIP_LU_config.h********
+f (or file) Filename. e.g., SLIPLU f MATRIX_NAME RHS_NAME, which indicates
+SLIPLU will read matrix from MATRIX_NAME and right hand side from RHS_NAME.
+The matrix must be stored in Matrix Market format. Please refer to
+http://math.nist.gov/MatrixMarket/formats.html for information on
+Matrix Market format.
+The right hand side vector must be stored as a dense vector.
+
+c (or check). e.g., SLIPLU c, which indicates SLIPLU will check
+the correctness of the solution via A*x == b.
+WARNING: This is slow and should only be used for verification
+
+p (or piv) Pivot_param. e.g., SLIPLU p 0, which inidcates SLIPLU will use
+smallest pivot for pivot scheme. Other available options are listed
+as follows:
+       0: Smallest pivot: Default and recommended
+       1: Diagonal pivoting
+       2: First nonzero per column chosen as pivot
+       3: Diagonal pivoting with tolerance for smallest pivot
+       4: Diagonal pivoting with tolerance for largest pivot
+       5: Largest pivot
+
+q (or col) Column_order_param. e.g., SLIPLU q 0, which indicates SLIPLU
+will use COLAMD for column ordering. Other available options are:
+       0: None: Not recommended for sparse matrices
+       1: COLAMD: Default
+       2: AMD
+       3: UMFPACK P and Q
+
+t (or tol) tolerance_param. e.g., SLIPLU t 1e-10, which indicates SLIPLU
+will use 1e-10 as the tolerance for pivot scheme 3 and 4 mentioned above.
+Therefore, it is only necessary if pivot scheme 3 or 4 is used.
+
+o2 (or out2). e.g., SLIPLU o2 1, which indicates SLIPLU will output the
+errors and warnings during the process. Other available options are:
+       0: print nothing
+       1: just errors and warnings: Default
+       2: terse, with basic stats from COLAMD/AMD and SLIP and solution
+
+o (or out) output_param. e.g., SLIPLU o 1, which indicates SLIPLU will
+output the solution as full precision rational arithmetic stdout or file
+specified by the stdout redirection. It is noted that solution will be
+output only when o2 >= 2. Other available options are:
+       1: The solution will be output in full precision rational arithmetic
+       2: The solution will be output in double precision
+       3: The solution will be output in some user specified precision.
+          This must be input as o 3 USER_PRECISION. Precision must be
+          an integer, e.g., SLIPLU o 3 128.
+
+If none of the above args is given, they are set to the following default:
+
+  mat_name = "../ExampleMats/10teams_mat.txt"
+  rhs_name = "../ExampleMats/10teams_v.txt"
+  no solution checking
+  p = 0, i.e., using smallest pivot
+  q = 1, i.e., using COLAMD
+  t = 0.1, not being using since p != 3 or 4
+  o2 = 0, i.e., nothing will be printed
+  o = 1, not being using since o2 < 2
 
 
+
+*********example*********
+Purpose: Demonstrate the use of SLIP LU for a user given input matrix
+
+*********example2*********
+Purpose: Demonstrate the use of SLIP LU for a matrix to be read in
+
+*********example3*********
+Purpose: Demonstrate the use of SLIP LU for a matrix stored in mpfr precision
+
+*********example4*********
+Purpose: Demonstrate the use of SLIP LU for multiple RHS vectors
+
+*********example5*********
+Purpose: Demonstrate the use of SLIP LU for multiple RHS vectors
+         read in from file
