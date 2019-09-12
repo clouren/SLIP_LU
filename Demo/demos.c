@@ -123,7 +123,7 @@ SLIP_info SLIP_process_command_line //processes the command line
 		    " value following t\n");
                 return SLIP_INCORRECT_INPUT;
             }
-            else if (!atoi(argv[i]))
+            else if (!atof(argv[i]))
             {
                 printf("\n****ERROR! There must be a non negative tolerance"
 		    " value following t\n");
