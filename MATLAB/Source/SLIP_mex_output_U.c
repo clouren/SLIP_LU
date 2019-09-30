@@ -48,7 +48,7 @@ mxArray* SLIP_mex_output_U
     SLIP_delete_mpq_array(&xU, U->nz);
     SLIP_MPQ_CLEAR(temp);
 
-    // drop zeros from L and sort it
+    // drop zeros from U and sort it
     SLIP_dropzeros(Amatlab);
     SLIP_transpose(Amatlab);
     SLIP_transpose(Amatlab);
