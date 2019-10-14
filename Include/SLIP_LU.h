@@ -175,8 +175,7 @@ typedef enum
 {
     SLIP_NO_ORDERING = 0,           // None: Not recommended for sparse matrices
     SLIP_COLAMD = 1,                // COLAMD: Default
-    SLIP_AMD = 2,                   // AMD
-    SLIP_UMFPACK = 3                // UMFPACK P and Q
+    SLIP_AMD = 2                    // AMD
 }
 SLIP_col_order ;
 
@@ -907,7 +906,6 @@ SLIP_info SLIP_LU_analyze
 (
     SLIP_LU_analysis *S,  // symbolic analysis (column permutation and nnz L,U)
     SLIP_sparse *A,       // Input matrix
-    SLIP_dense *b,        // right hand side vectors
     SLIP_options *option  // Control parameters
 );
 
