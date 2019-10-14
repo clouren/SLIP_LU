@@ -49,7 +49,7 @@ CS =slip_array_div.o slip_array_mul.o slip_back_sub.o SLIP_build_dense.o \
     slip_reset_mpz_array.o SLIP_scale_x.o SLIP_solve_double.o \
     SLIP_solve_mpq.o slip_sort_xi.o slip_sparse_alloc2.o slip_sparse_alloc.o \
     slip_sparse_collapse.o slip_sparse_realloc.o SLIP_spok.o \
-    slip_trip_to_mat.o slip_UMFPACK_permute.o
+    slip_trip_to_mat.o 
 
 $(CS): ../Include/SLIP_LU.h ../Source/SLIP_gmp.h ../Source/SLIP_LU_internal.h  Makefile
 
