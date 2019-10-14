@@ -1,7 +1,7 @@
 CF = $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -O
 I = -I../Include -I../Source
 
-LDLIBS += -lm -lgmp -lmpfr -lcolamd -lamd -lumfpack
+LDLIBS += -lm -lgmp -lmpfr -lcolamd -lamd 
 CS = $(LDFLAGS) ../Lib/libslip.a $(LDLIBS)
 
 
