@@ -22,7 +22,6 @@
 # include "SuiteSparse_config.h"
 # include "colamd.h"
 # include "amd.h"
-# include "umfpack.h"
 
 // gmp libraries
 # include <gmp.h>
@@ -632,18 +631,6 @@ void slip_sort_xi
     int32_t n,          // size of problem
     int32_t* pinv,      // inverse row permutation
     int32_t* row_perm   // opposite of pinv. if pinv[j] = k then row_perm[k] = j
-);
-
-/*
- * Purpose: This function permutes the b vector & A matrix for the UMFPACK
- * ordering. This is necessary since we use UMFPACK to preorder A, thus we
- * must properly maintain b as well.
- */
-SLIP_info slip_UMFPACK_permute
-(
-    SLIP_dense *b,  // RHS vectors
-    SLIP_sparse* A, // input matrix
-    int32_t* p_umf  // row permutation given by UMFPACK
 );
 
 
