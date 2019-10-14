@@ -103,12 +103,12 @@ SLIP_info SLIP_process_command_line //processes the command line
         {
             if (!argv[++i])
             {
-                printf("\n****ERROR! There must be an argument between 0-3"
+                printf("\n****ERROR! There must be an argument between 0-2"
 		    "following q\n");
                 return SLIP_INCORRECT_INPUT;
             }
             option->order = atoi(argv[i]);
-            if (option->order < 0 || option->order > 3)
+            if (option->order < 0 || option->order > 2)
             {
                 printf("\n****ERROR! Invalid column ordering"
                     "\nDefaulting to COLAMD\n\n");
@@ -228,7 +228,7 @@ void SLIP_show_usage() //display the usage of the code
     "\n\t./SLIP_LU followed by:"
     "\n\tc: Indicates soln will be checked\
      \n\tp (or piv) 0~5 : indicate type of pivoting"
-    "\n\tcol or q: column order used: 0: none, 1: COLAMD, 2: AMD, 3: UMFPACK"
+    "\n\tcol or q: column order used: 0: none, 1: COLAMD, 2: AMD"
     "\n\tt or tol: tolerance parameter\
      \n\to2 or out2: output printed to screen"
     "\n\tf or file: filenames. must be of format MATRIX_NAME RHS_NAME"
