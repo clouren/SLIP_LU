@@ -107,7 +107,7 @@ int main (int argc, char **argv)
 
     clock_t start_sym = clock();
 
-    OK(SLIP_LU_analyze(S, A, b, option));     // Symbolic Analysis
+    OK(SLIP_LU_analyze(S, A, option));     // Symbolic Analysis
 
     clock_t end_sym = clock();
 
