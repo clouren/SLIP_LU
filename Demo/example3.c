@@ -96,7 +96,7 @@ int main (int argc, char **argv)
 
     clock_t start_sym = clock();
 
-    OK(SLIP_LU_analyze(S, A, b, option));
+    OK(SLIP_LU_analyze(S, A, option));
 
     clock_t end_sym = clock();
 
