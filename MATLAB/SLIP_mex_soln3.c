@@ -48,8 +48,6 @@ void mexFunction
     //--------------------------------------------------------------------------
     // Read in options
     SLIP_get_matlab_options(option, pargin[1]);
-    // disable UMFPACK column ordering here
-    if (option->order == 3) {option->order = 1;}
 
     // Read in A and b
     SLIP_mex_get_A_and_b(A, NULL, pargin, nargin);

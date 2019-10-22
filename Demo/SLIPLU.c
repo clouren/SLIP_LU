@@ -170,7 +170,7 @@ int main( int argc, char* argv[])
 
     clock_t start_col = clock();
 
-    // Column ordering using either AMD, COLAMD, UMFPACK or nothing
+    // Column ordering using either AMD, COLAMD or nothing
     OK(SLIP_LU_analyze(S, A, option));
     if (option->print_level > 0)
     {

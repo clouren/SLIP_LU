@@ -9,10 +9,8 @@ function x = SLIP_get_options()
 %        0: None: Not recommended for sparse matrices
 %        1: COLAMD: Default
 %        2: AMD
-%        3: UMFPACK P and Q
 %
-% option.pivot: Pivoting scheme used. Note that if UMFPACK is selected for
-% column, UMFPACK's pivot order is automatically used.
+% option.pivot: Pivoting scheme used.
 %        0: Smallest pivot: Default and recommended
 %        1: Diagonal pivoting
 %        2: First nonzero per column chosen as pivot

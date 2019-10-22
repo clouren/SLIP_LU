@@ -40,7 +40,6 @@ will use COLAMD for column ordering. Other available options are:
        0: None: Not recommended for sparse matrices
        1: COLAMD: Default
        2: AMD
-       3: UMFPACK P and Q
 
 t (or tol) tolerance_param. e.g., SLIPLU t 1e-10, which indicates SLIPLU
 will use 1e-10 as the tolerance for pivot scheme 3 and 4 mentioned above.

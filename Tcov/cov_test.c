@@ -341,7 +341,6 @@ int main( int argc, char* argv[])
 		TEST_CHECK(SLIP_build_sparse_ccf_mpz(A, Ap, Ai, Ax_mpz, n, nz));
                 TEST_CHECK (SLIP_spok (A, 0)) ;
 		TEST_CHECK(SLIP_build_dense_mpz(b, B_mpz, n, numRHS));
-		option->order = SLIP_UMFPACK; // column ordering using UMFPACK
 	    }
 	    else if (Ab_type==1) //double see example4.c
 	    {
@@ -590,8 +589,8 @@ int main( int argc, char* argv[])
 		}
 	    }
 
-	    // Column ordering using either AMD, COLAMD, UMFPACK or nothing
-	    TEST_CHECK(SLIP_LU_analyze(S, A, b, option));
+	    // Column ordering using either AMD, COLAMD or nothing
+	    TEST_CHECK(SLIP_LU_analyze(S, A, option));
 	    option->check = true;
             option->print_level = 3;
 

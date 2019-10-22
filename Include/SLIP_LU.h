@@ -88,8 +88,8 @@
 //    recommended default settings select Q using the COLAMD column ordering and
 //    selects P via a partial pivoting scheme in which the smallest entry in
 //    column k is selected as the kth pivot. Alternative strategies allowed to
-//    select Q include the AMD column ordering, no column permutation (Q=I), or
-//    using the UMFPACK P and Q. For pivots, there are a variety of potential
+//    select Q include the AMD column ordering, no column permutation (Q=I).
+//    For pivots, there are a variety of potential
 //    schemes including traditional partial pivoting, diagonal pivoting,
 //    tolerance pivoting etc. This package does not allow pivoting based on
 //    sparsity criterion.
@@ -900,7 +900,7 @@ SLIP_info SLIP_print_stats_mpfr
 
 /*
  * Purpose: This function performs the symbolic ordering for SLIP LU. Currently,
- * there are four options: user defined order, COLAMD, AMD, or UMFPACK.
+ * there are four options: user defined order, COLAMD, AMD.
  */
 SLIP_info SLIP_LU_analyze
 (

@@ -21,8 +21,7 @@ SLIP_info SLIP_LU_analyze
     {
         return SLIP_INCORRECT_INPUT;
     }
-    int32_t n = A->n, nz = A->nz, i, k;
-    SLIP_info ok;
+    int32_t n = A->n, nz = A->nz, i;
     // Print info if needed
     if (option->print_level > 0)
     {

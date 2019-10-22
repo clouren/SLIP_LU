@@ -108,7 +108,7 @@
 // 5: Largest pivot
 #define SLIP_DEFAULT_PIVOT SLIP_SMALLEST
 
-// Column ordering used. 0: no column ordering, 1: COLAMD, 2: AMD, 3: UMFPACK
+// Column ordering used. 0: no column ordering, 1: COLAMD, 2: AMD
 #define SLIP_DEFAULT_ORDER SLIP_COLAMD
 
 // Defines printing to be done
