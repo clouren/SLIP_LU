@@ -341,6 +341,7 @@ int main( int argc, char* argv[])
 		TEST_CHECK(SLIP_build_sparse_ccf_mpz(A, Ap, Ai, Ax_mpz, n, nz));
                 TEST_CHECK (SLIP_spok (A, 0)) ;
 		TEST_CHECK(SLIP_build_dense_mpz(b, B_mpz, n, numRHS));
+	        option->pivot = SLIP_DIAGONAL;
 	    }
 	    else if (Ab_type==1) //double see example4.c
 	    {

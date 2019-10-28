@@ -150,9 +150,9 @@ SLIP_info slip_mpz_set_si(mpz_t x, const int32_t y);
 #if 0
 /* This function is currently unused, but kept here for future reference. */
 SLIP_info slip_mpz_set_d(mpz_t x, const double y);
-#endif
 
 SLIP_info slip_mpz_get_d(double *x, const mpz_t y) ;
+#endif
 
 SLIP_info slip_mpz_set_q(mpz_t x, const mpq_t y) ;
 

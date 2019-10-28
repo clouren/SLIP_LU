@@ -534,7 +534,6 @@ SLIP_info slip_mpz_set_d
     SLIP_GMP_WRAPPER_FINISH;
     return SLIP_OK;
 }
-#endif
 
 /* Purpose: Safely set a double number = a mpz */
 SLIP_info slip_mpz_get_d
@@ -553,6 +552,7 @@ SLIP_info slip_mpz_get_d
     SLIP_GMP_WRAPPER_FINISH;
     return SLIP_OK;
 }
+#endif
 
 /* Purpose: Safely set an mpz number = mpq number */
 SLIP_info slip_mpz_set_q
