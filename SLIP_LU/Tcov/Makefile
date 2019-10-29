@@ -1,3 +1,8 @@
+
+default: run
+
+include ../../SuiteSparse_config/SuiteSparse_config.mk
+
 # To run with valgrind:
 V =
 V = valgrind -q
@@ -8,9 +13,10 @@ CFLAGS = -O -g -fprofile-arcs -ftest-coverage \
         -Wall -W -Wshadow -Wmissing-prototypes -Wstrict-prototypes \
         -Wredundant-decls -Wnested-externs -Wdisabled-optimization -std=c99 \
         -Wno-unused-parameter -I../Include -I../Source -I../Demo \
+        -I../../SuiteSparse_config -I../../COLAMD/Include -I../../AMD/Include \
         -DSLIP_GMP_LIST_INIT=2 -DSLIP_LU_TCOV
 
-LDLIBS += -lm -lgmp -lmpfr -lcolamd -lamd -lumfpack
+LDLIBS += -lm -lgmp -lmpfr -lcolamd -lamd
 
 #--------------------------------------------------------------------
 # Applications
@@ -65,10 +71,10 @@ demos.c:
 	- ln -s ../Demo/$@
 
 test: $(CS) cov_test.c
-	$(CC) cov_test.c $(CFLAGS) -o cov_test $(CS) $(LDLIBS)
+	$(CC) $(LDFLAGS) cov_test.c $(CFLAGS) -o cov_test $(CS) $(LDLIBS)
 
 SLIPLU: $(CS) SLIPLU.c demos.c
-	$(CC) SLIPLU.c demos.c $(CFLAGS) -o SLIPLU $(CS) $(LDLIBS)
+	$(CC) $(LDFLAGS) SLIPLU.c demos.c $(CFLAGS) -o SLIPLU $(CS) $(LDLIBS)
 
 runlu: all
 	- $(V) ./SLIPLU p 2 q 0

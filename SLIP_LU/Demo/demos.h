@@ -1,3 +1,5 @@
+// TODO: user code cannot include SLIP_LU_internal.h.  It's internal to
+// SLIP_LU, not user visible.
 #include "SLIP_LU_internal.h"
 
 

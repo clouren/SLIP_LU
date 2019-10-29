@@ -25,8 +25,9 @@ end
 flags = 'CFLAGS=''-std=c99 -fPIC''';
 
 % External libraries
-libs = '-lgmp -lmpfr -lamd -lcolamd -lumfpack';
+libs = '-lgmp -lmpfr -lamd -lcolamd';
 
+% TODO fixme; do not use /usr/include/suitesparse
 % My path to hearders and Suitesparse
 includes = '-ISource/ -I../Source/ -I../Include/ -I/usr/include/suitesparse/';
 % includes = '-I/usr/iclude/suitesparse/';
