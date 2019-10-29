@@ -14,7 +14,7 @@
 LIBRARY = libslip
 CF = $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -O
         
-I = -I../Include -I../Source
+I = -I../Include -I../Source -I../../SuiteSparse_config -I../../COLAMD/Include -I../../AMD/Include
 RANLIB = ranlib
 ARCHIVE = $(AR) $(ARFLAGS)
 CP = cp -f
