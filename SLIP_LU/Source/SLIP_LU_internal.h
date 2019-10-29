@@ -1,3 +1,16 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/SLIP_LU_internal: include file for internal use in SLIP_LU
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
+// This file is not intended to be #include'd in user applications.  Use
+// SLIP_LU.h instead.
+
 #ifndef SLIP_LU_internal
 #define SLIP_LU_internal
 
@@ -71,6 +84,12 @@
 // and must define SLIP_FREE_WORKSPACE as a macro that frees all workspace
 // if an error occurs. The method can be a scalar ok as well, so that
 // SLIP_CHECK(ok) works.
+
+// the default is to free nothing
+#ifndef SLIP_FREE_WORKSPACE
+#define SLIP_FREE_WORKSPACE
+#endif
+
 #define SLIP_CHECK(method)                                              \
 {                                                                       \
     ok = method ;                                                       \
@@ -672,6 +691,5 @@ SLIP_info slip_trip_to_mat
     int32_t n,          // Dimension of the matrix
     int32_t nz          // Number of nonzeros in the matrix
 );
-
 
 #endif

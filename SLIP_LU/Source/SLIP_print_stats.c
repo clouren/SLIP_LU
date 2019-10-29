@@ -1,3 +1,13 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/SLIP_print_stats: print statistics from SLIP LU
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 # include "SLIP_LU_internal.h"
 
 #define SLIP_PRINT(...)      \
@@ -11,6 +21,10 @@
         fprintf(out_file, __VA_ARGS__); \
     }                        \
 }
+
+//------------------------------------------------------------------------------
+// print_check: print correctness of solution
+//------------------------------------------------------------------------------
 
 // print the correctness of the solution if option->check enabled
 static inline SLIP_info print_check
@@ -47,9 +61,10 @@ static inline SLIP_info print_check
     return SLIP_OK;
 }
 
-/* ========================================================================== */
-/* This function prints statistics about the SLIP LU factorization            */
-/* ========================================================================== */
+//------------------------------------------------------------------------------
+// SLIP_print_stats_mpq: print statistics about (... TODO what??)
+//------------------------------------------------------------------------------
+
 SLIP_info SLIP_print_stats_mpq
 (
     FILE *out_file,         // file to print to
@@ -96,6 +111,9 @@ SLIP_info SLIP_print_stats_mpq
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_print_stats_double: TODO what does this do??
+//------------------------------------------------------------------------------
 
 SLIP_info SLIP_print_stats_double
 (
@@ -138,6 +156,9 @@ SLIP_info SLIP_print_stats_double
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_print_stats_mpfr: TODO what does this do??
+//------------------------------------------------------------------------------
 
 SLIP_info SLIP_print_stats_mpfr
 (
@@ -185,4 +206,4 @@ SLIP_info SLIP_print_stats_mpfr
     }
     return SLIP_OK;
 }
-#undef SLIP_PRINT
+

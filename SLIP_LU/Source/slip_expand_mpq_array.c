@@ -1,4 +1,12 @@
-# include "SLIP_LU_internal.h"
+//------------------------------------------------------------------------------
+// SLIP_LU/slip_expand_mpq_array: convert mpq array to mpz
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
 
 /* Purpose: This function converts a mpq array of size n into an appropriate mpz
  * array of size n. To do this, the lcm of the denominators is found as a
@@ -10,6 +18,7 @@
     SLIP_delete_mpq_array(&x4, n);  \
     SLIP_MPZ_CLEAR(temp);
 
+# include "SLIP_LU_internal.h"
 
 SLIP_info slip_expand_mpq_array
 (
@@ -60,4 +69,4 @@ SLIP_info slip_expand_mpq_array
     SLIP_FREE_WORKSPACE;
     return SLIP_OK;
 }
-#undef SLIP_FREE_WORKSPACE
+

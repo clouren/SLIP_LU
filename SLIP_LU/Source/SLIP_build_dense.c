@@ -1,6 +1,20 @@
-# include "SLIP_LU_internal.h"
+//------------------------------------------------------------------------------
+// SLIP_LU/SLIP_build_dense: build dense mpz, mpq, int, mprf, or double matrix
+//------------------------------------------------------------------------------
 
-#define SLIP_FREE_WORKSPACE
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
+#include "SLIP_LU_internal.h"
+
+// TODO split into 5 files?
+
+//------------------------------------------------------------------------------
+// SLIP_build_dense_mpz: Build a dense matrix from mpz input
+//------------------------------------------------------------------------------
 
 /* Purpose: Build a dense matrix from mpz input */
 SLIP_info SLIP_build_dense_mpz
@@ -29,6 +43,10 @@ SLIP_info SLIP_build_dense_mpz
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_build_dense_mpq: Build a dense matrix from mpq input
+//------------------------------------------------------------------------------
+
 /* Purpose: Build a dense matrix from mpq_t input */
 SLIP_info SLIP_build_dense_mpq
 (
@@ -48,6 +66,10 @@ SLIP_info SLIP_build_dense_mpq
     SLIP_CHECK(slip_expand_mpq_mat(A_output->x, b, A_output->scale, m, n));
     return SLIP_OK;
 }
+
+//------------------------------------------------------------------------------
+// SLIP_build_dense_int: Build a dense matrix from int input
+//------------------------------------------------------------------------------
 
 /* Purpose: Build a dense matrix from int input */
 SLIP_info SLIP_build_dense_int
@@ -76,6 +98,9 @@ SLIP_info SLIP_build_dense_int
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_build_dense_mpfr: Build a dense matrix from mpfr input
+//------------------------------------------------------------------------------
 
 /* Purpose: Build a dense matrix from mpfr_t input */
 SLIP_info SLIP_build_dense_mpfr
@@ -99,6 +124,9 @@ SLIP_info SLIP_build_dense_mpfr
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_build_dense_double: Build a dense matrix from double input
+//------------------------------------------------------------------------------
 
 /* Purpose: Build a dense matrix from double input */
 SLIP_info SLIP_build_dense_double
@@ -119,3 +147,4 @@ SLIP_info SLIP_build_dense_double
     SLIP_CHECK(slip_expand_double_mat(A_output->x, b, A_output->scale, m, n));
     return SLIP_OK;
 }
+

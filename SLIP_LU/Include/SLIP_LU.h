@@ -15,12 +15,8 @@
 //     Roundoff-Error-Free LU Factorization in Time Proportional to
 //     Arithmetic Work"
 
-//    If you use this code, you must do the following:
-//        1) Download and install Tim Davis' Suitesparse, particularly the
-//        COLAMD, AMD, and UMFPACK routines. This can be obtained at
-//              http://faculty.cse.tamu.edu/davis/suitesparse.html
-//        2) Download and install the GMP and MPFR libraries. GMP and MPFR can
-//              be found at
+//    If you use this code, you must first download and install the GMP and
+//    MPFR libraries. GMP and MPFR can be found at:
 //              https://gmplib.org/
 //              http://www.mpfr.org/
 

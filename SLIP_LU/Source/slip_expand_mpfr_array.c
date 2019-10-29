@@ -1,10 +1,18 @@
-# include "SLIP_LU_internal.h"
+//------------------------------------------------------------------------------
+// SLIP_LU/slip_expand_mpfr_array: convert mprf aray to mpz
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
 
 /* Purpose: This function converts a mpfr array of size n and precision prec to
  * an appropriate mpz array of size n. To do this, the number is multiplied by
  * the appropriate power of 10 then the gcd is found. This function allows mpfr
  * arrays to be used within SLIP LU 
- * NOTE: First element of input mpfr_t array must be nonzero
+ * NOTE: First element of input mpfr_t array must be nonzero (TODO why??)
  */
 
 #define SLIP_FREE_WORKSPACE              \
@@ -15,6 +23,7 @@
     SLIP_MPZ_CLEAR(one);            \
     SLIP_MPQ_CLEAR(temp);
 
+# include "SLIP_LU_internal.h"
 
 SLIP_info slip_expand_mpfr_array
 (
@@ -95,4 +104,4 @@ SLIP_info slip_expand_mpfr_array
     SLIP_FREE_WORKSPACE;
     return SLIP_OK;
 }
-#undef SLIP_FREE_WORKSPACE
+

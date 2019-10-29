@@ -1,5 +1,12 @@
-# include "SLIP_LU_internal.h"
+//------------------------------------------------------------------------------
+// SLIP_LU/slip_expand_mpfr_mat: convert mpfr matrix to mpz
+//------------------------------------------------------------------------------
 
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
 
 /* Purpose: This function converts a mpfr matrix of size m*n and precision prec
  * to an appropriate mpz matrix of size m*n. To do this, the number is
@@ -8,14 +15,15 @@
  * NOTE: First element of input mpfr_t matrix must be nonzero
  */
 
-
-#define SLIP_FREE_WORKSPACE               \
+#define SLIP_FREE_WORKSPACE          \
     SLIP_delete_mpfr_mat(&x3, m, n); \
     SLIP_MPFR_CLEAR(expon);          \
     SLIP_MPZ_CLEAR(temp_expon);      \
     SLIP_MPZ_CLEAR(gcd);             \
     SLIP_MPZ_CLEAR(one);             \
     SLIP_MPQ_CLEAR(temp);
+
+# include "SLIP_LU_internal.h"
 
 SLIP_info slip_expand_mpfr_mat
 (
@@ -108,4 +116,4 @@ SLIP_info slip_expand_mpfr_mat
     SLIP_FREE_WORKSPACE;
     return SLIP_OK;
 }
-#undef SLIP_FREE_WORKSPACE
+

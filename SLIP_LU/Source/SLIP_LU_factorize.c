@@ -1,5 +1,12 @@
-# include "SLIP_LU_internal.h"
+//------------------------------------------------------------------------------
+// SLIP_LU/SLIP_LU_factorize: exact sparse LU factorization
+//------------------------------------------------------------------------------
 
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
 
 /* Purpose: This function performs the SLIP LU factorization. This factorization
  * is done via n iterations of the sparse REF triangular solve function. The
@@ -24,6 +31,8 @@
     SLIP_FREE(row_perm);            \
     SLIP_MPFR_CLEAR(temp);          \
     SLIP_MPZ_CLEAR(sigma);
+
+# include "SLIP_LU_internal.h"
 
 SLIP_info SLIP_LU_factorize 
 (
@@ -340,4 +349,4 @@ SLIP_info SLIP_LU_factorize
 
     return ok;
 }
-#undef SLIP_FREE_WORKSPACE
+

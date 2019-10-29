@@ -1,3 +1,13 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/SLIP_create_int_mat: create dense int matrix
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 # include "SLIP_LU_internal.h"
 
 /* Purpose: This function creates an int matrix of size m*n. */
@@ -9,7 +19,6 @@ int32_t** SLIP_create_int_mat
 {
     // Check input
     if (m <= 0 || n <= 0) {return NULL;}
-    // Malloc space
     int32_t **x = (int32_t**) SLIP_calloc(m, sizeof(int32_t*));
     if (!x) {return NULL;}
     for (int32_t i = 0; i < m; i++)     
@@ -24,3 +33,4 @@ int32_t** SLIP_create_int_mat
     }
     return x;
 }
+

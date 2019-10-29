@@ -1,5 +1,12 @@
-# include "SLIP_LU_internal.h"
+//------------------------------------------------------------------------------
+// SLIP_LU/slip_forward_sub: sparse forward substitution (x = L\D\x)
+//------------------------------------------------------------------------------
 
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
 
 /* Purpose: This function performs sparse REF forward substitution This is
  * essentially the same as the sparse REF triangular solve applied to each
@@ -8,7 +15,7 @@
  * pattern is not computed and each nonzero in x is iterated across.
  * The system to solve is LDx = x
  *
- * Out output, the mpz_t** x structure is modified
+ * On output, the mpz_t** x structure is modified
  *
  */
 
@@ -16,13 +23,12 @@
 {                                      \
     for (i = 0; i < n; i++)            \
     {                                  \
-        /*only delete pointer that is allocated successfully*/\
-        if (!h[i])  {break;}           \
-	else        {SLIP_FREE(h[i]);} \
+	SLIP_FREE(h[i]);               \
     }                                  \
     SLIP_FREE(h);                      \
 }
 
+#include "SLIP_LU_internal.h"
 
 SLIP_info slip_forward_sub
 (
@@ -41,7 +47,8 @@ SLIP_info slip_forward_sub
     // Size of x vector
     n = L->n;
 
-    h = (int32_t**) SLIP_malloc(n* sizeof(int32_t*));
+    // calloc is used, so that h is initialized for SLIP_FREE_WORKSPACE
+    h = (int32_t**) SLIP_calloc(n, sizeof(int32_t*));
     if (!h)
     {
         return SLIP_OUT_OF_MEMORY;
@@ -59,9 +66,11 @@ SLIP_info slip_forward_sub
             h[i][j] = -1;
         }
     }
+
     //--------------------------------------------------------------------------
     // Iterate across each RHS vector
     //--------------------------------------------------------------------------
+
     for (k = 0; k < numRHS; k++)
     {
         //----------------------------------------------------------------------
@@ -157,4 +166,4 @@ SLIP_info slip_forward_sub
     SLIP_FREE_WORKSPACE;
     return SLIP_OK;
 }
-#undef SLIP_FREE_WORKSPACE
+

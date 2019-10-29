@@ -1,11 +1,26 @@
-#include "SLIP_LU_internal.h"
+//------------------------------------------------------------------------------
+// SLIP_LU/SLIP_mmread: read a sparse mpz matrix in Matrix Market format
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
+// TODO: this doesn't make any sense.  The file format here is NOT
+// Matrix Market (where is the header??).
+
+// TODO: move this to Demo folder and rename it?
 
 #define SLIP_FREE_WORKSPACE           \
     SLIP_FREE(i);                     \
     SLIP_FREE(j);                     \
     SLIP_delete_mpz_array(&x_mpz, nz);
 
-/* Purpose: This function reads in a matrix stored in matrix market format */
+#include "SLIP_LU_internal.h"
+
+/* Purpose: This function reads in a matrix stored in Matrix Market format */
 SLIP_info SLIP_mmread
 (
     SLIP_sparse* A,     // Matrix to be populated
@@ -24,6 +39,7 @@ SLIP_info SLIP_mmread
     ok = fscanf(file, "%d %d %d\n", &m, &n, &nz);
     if (feof(file) || ok < 3)
     {
+        // TODO: untested
         return SLIP_INCORRECT_INPUT;
     }
     int32_t *i = (int32_t*) SLIP_malloc(nz * sizeof(int32_t));
@@ -47,6 +63,8 @@ SLIP_info SLIP_mmread
 
     if (SLIP_MIN(i[0], j[0]) == 0)
     {
+        // TODO this is invalid, and fragile; Matrix Market is always
+        // one-based.  Where do you read in a file that is zero-based?
         decrement = 0;
     }
     else
@@ -75,4 +93,4 @@ SLIP_info SLIP_mmread
     SLIP_FREE_WORKSPACE;
     return ok;
 }
-#undef SLIP_FREE_WORKSPACE
+

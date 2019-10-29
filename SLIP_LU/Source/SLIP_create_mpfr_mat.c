@@ -1,3 +1,13 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/SLIP_create_mpfr_mat: create a dense mpfr matrix
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 # include "SLIP_LU_internal.h"
 
 /* Purpose: This function creates a mpfr_t matrix of size m*n with
@@ -12,7 +22,7 @@ mpfr_t** SLIP_create_mpfr_mat
 {
     // Check input
     if (m <= 0 || n <= 0) {return NULL;}
-    // Malloc memory
+
     mpfr_t **x = (mpfr_t**) SLIP_calloc(m, sizeof(mpfr_t*));
     if (!x) {return NULL;}
     for (int32_t i = 0; i < m; i++)
@@ -40,3 +50,4 @@ mpfr_t** SLIP_create_mpfr_mat
     }
     return x;
 }
+

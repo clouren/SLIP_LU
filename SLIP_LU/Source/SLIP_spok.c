@@ -1,7 +1,17 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/SLIP_spok: check if a sparse matrix is OK
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 #include "SLIP_LU_internal.h"
 
 /* check the validity of a SLIP_sparse sparse matrix in compressed-
-   sparse column form */
+   sparse column form.  Derived from SuiteSparse/MATLAB_TOOLS/spok. */
 
 // print_level:
 //      0: nothing

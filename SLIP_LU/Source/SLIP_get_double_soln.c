@@ -1,8 +1,18 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/SLIP_get_double_soln: convert mpq solution to double
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 #include "SLIP_LU_internal.h"
 
 /* Purpose: Convert the output mpq_t** solution vector obtained from
- * SLIP_Solve and SLIP_Permute_x from mpq_t** to double
- * x_doub has to be initialized before passed in
+ * SLIP_Solve and SLIP_Permute_x from mpq_t** to double.
+ * x_doub has to be initialized before passed in.
  */
 
 SLIP_info SLIP_get_double_soln

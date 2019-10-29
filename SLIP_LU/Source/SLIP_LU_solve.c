@@ -1,9 +1,20 @@
-# include "SLIP_LU_internal.h"
+//------------------------------------------------------------------------------
+// SLIP_LU/SLIP_LU_solve: exact solution of Ax=b
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
+/* Purpose: This function solves the linear system LD^(-1)U x = b.*/
 
 #define SLIP_FREE_WORKSPACE                        \
     SLIP_delete_mpz_mat(&b2, n, numRHS);
 
-/* Purpose: This function solves the linear system LD^(-1)U x = b.*/
+# include "SLIP_LU_internal.h"
+
 SLIP_info SLIP_LU_solve  //solves the linear system LD^(-1)U x = b
 (
     mpq_t **x,           // rational solution to the system
@@ -50,4 +61,4 @@ SLIP_info SLIP_LU_solve  //solves the linear system LD^(-1)U x = b
     SLIP_FREE_WORKSPACE;
     return SLIP_OK;
 }
-#undef SLIP_FREE_WORKSPACE
+

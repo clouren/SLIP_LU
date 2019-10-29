@@ -1,14 +1,24 @@
-# include "SLIP_LU_internal.h"
+//------------------------------------------------------------------------------
+// SLIP_LU/SLIP_LU_analyze: symbolic ordering and analysis for sparse LU
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
 
 /*
  * Purpose: This function performs the symbolic ordering for SLIP LU. Currently,
- * there are four options: user defined order, COLAMD, AMD, or UMFPACK.
+ * there are three options: user-defined order, COLAMD, or AMD.
  */
+
 #define SLIP_FREE_WORKSPACE   \
     SLIP_FREE(p);             \
     SLIP_FREE(q);             \
     SLIP_FREE(Ax);
 
+# include "SLIP_LU_internal.h"
 
 SLIP_info SLIP_LU_analyze
 (
@@ -113,4 +123,4 @@ SLIP_info SLIP_LU_analyze
 
     return SLIP_OK;
 }
-#undef SLIP_FREE_WORKSPACE
+

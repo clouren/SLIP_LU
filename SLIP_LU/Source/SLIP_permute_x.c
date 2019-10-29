@@ -1,11 +1,22 @@
-# include "SLIP_LU_internal.h"
+//------------------------------------------------------------------------------
+// SLIP_LU/SLIP_permute_x: permute x, as x = Q*x
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
 
 /* 
  * Purpose: This function permutes x to get it back in its original form. 
  * That is x = Q*x.
  */
+
 #define SLIP_FREE_WORKSPACE                 \
     SLIP_delete_mpq_mat(&x2,n,numRHS);
+
+# include "SLIP_LU_internal.h"
 
 SLIP_info SLIP_permute_x
 (
@@ -41,4 +52,4 @@ SLIP_info SLIP_permute_x
     SLIP_FREE_WORKSPACE;
     return SLIP_OK;
 }
-#undef SLIP_FREE_WORKSPACE
+

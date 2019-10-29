@@ -1,5 +1,12 @@
-# include "SLIP_LU_internal.h"
+//------------------------------------------------------------------------------
+// SLIP_LU/slip_back_sub: sparse REF backward substitution (x = U\x)
+//------------------------------------------------------------------------------
 
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
 
 /* Purpose: This function performs sparse REF backward substitution. In essense
  * it solves the sysem Ux = x. Note that prior to this, we expect x to be
@@ -8,7 +15,8 @@
  * The input argument x is modified on output
  *
  */
-#define SLIP_FREE_WORKSPACE
+
+#include "SLIP_LU_internal.h"
 
 SLIP_info slip_back_sub  // performs sparse REF backward substitution
 (
@@ -48,4 +56,4 @@ SLIP_info slip_back_sub  // performs sparse REF backward substitution
     }
     return SLIP_OK;
 }
-#undef SLIP_FREE_WORKSPACE
+

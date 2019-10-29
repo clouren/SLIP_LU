@@ -1,10 +1,20 @@
-# include "SLIP_LU_internal.h"
+//------------------------------------------------------------------------------
+// SLIP_LU/slip_mpz_populate_mat: construct a sparse mpz matrix
+//------------------------------------------------------------------------------
 
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
+# include "SLIP_LU_internal.h"
 
 /* 
  * Purpose: This function populates the SLIP_sparse A by the ccf stored vectors I,
  * p, and x
  */
+
 SLIP_info slip_mpz_populate_mat
 (
     SLIP_sparse* A,   // matrix to be populated

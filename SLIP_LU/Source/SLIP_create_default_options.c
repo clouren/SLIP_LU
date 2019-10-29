@@ -1,17 +1,18 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/SLIP_create_default_options: set defaults
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 # include "SLIP_LU_internal.h"
 
 /* Purpose: Create and return SLIP_options pointer with default parameters
  * upon successful allocation, which are defined in SLIP_LU_internal.h 
  */
-
-#define CHECK_RESULT(ok)                \
-{                                       \
-    if (ok != SLIP_OK)                  \
-    {                                   \
-        SLIP_delete_options(&option);   \
-        return NULL;                    \
-    }                                   \
-}
 
 SLIP_options* SLIP_create_default_options ( void )
 {
@@ -25,4 +26,4 @@ SLIP_options* SLIP_create_default_options ( void )
     option->tol      = SLIP_DEFAULT_TOL;
     return option;
 }
-#undef CHECK_RESULT
+

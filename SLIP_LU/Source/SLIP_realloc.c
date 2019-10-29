@@ -1,3 +1,13 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/SLIP_realloc: wrapper for realloc
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 #include "SLIP_LU_internal.h"
 
 // A wrapper for realloc
@@ -8,8 +18,6 @@
 // size is allocated.  On success, a pointer to the new object is returned, and
 // ok is returned as true.  If the allocation fails, ok is set to false and a
 // pointer to the old (unmodified) object is returned.
-
-
 
 void* SLIP_realloc 
 (
@@ -60,3 +68,4 @@ void* SLIP_realloc
         }
     #endif
 }
+

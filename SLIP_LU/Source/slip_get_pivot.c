@@ -1,5 +1,12 @@
-# include "SLIP_LU_internal.h"
+//------------------------------------------------------------------------------
+// SLIP_LU/slip_get_pivot: find a pivot entry in a column
+//------------------------------------------------------------------------------
 
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
 
 /* This function performs the pivoting for the SLIP LU factorization.
  * The optional Order is:
@@ -17,6 +24,8 @@
 #define SLIP_FREE_WORKSPACE         \
     SLIP_MPQ_CLEAR(tol);            \
     SLIP_MPQ_CLEAR(ratio);
+
+#include "SLIP_LU_internal.h"
 
 SLIP_info slip_get_pivot
 (
@@ -176,4 +185,4 @@ SLIP_info slip_get_pivot
     SLIP_FREE_WORKSPACE;
     return SLIP_OK;
 }
-#undef SLIP_FREE_WORKSPACE
+

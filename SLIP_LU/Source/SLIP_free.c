@@ -1,12 +1,17 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/SLIP_free: wrapper for free
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 #include "SLIP_LU_internal.h"
 
 /* Purpose: Free the memory associated with the pointer x
- * 
- * If we have defined MATLAB, then we use MATLAB's mxFree,
- * otherwise, we use default free.
- * 
  */
-
 
 void SLIP_free
 (
@@ -18,3 +23,4 @@ void SLIP_free
         SLIP_MEMORY_FREE (x) ;
     }
 }
+

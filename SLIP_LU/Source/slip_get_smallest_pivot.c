@@ -1,4 +1,12 @@
-# include "SLIP_LU_internal.h"
+//------------------------------------------------------------------------------
+// SLIP_LU/slip_get_smallest_pivot: find the smallest entry in a column
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
 
 /* Purpose: This function selects the pivot element as the smallest in the column 
  * This is activated by default or if the user sets
@@ -8,8 +16,11 @@
  * On output, the index of kth pivot is returned
  * 
  */
+
 #define SLIP_FREE_WORKSPACE        \
 	SLIP_MPZ_CLEAR(small);
+
+# include "SLIP_LU_internal.h"
 
 SLIP_info slip_get_smallest_pivot
 (
@@ -88,4 +99,4 @@ SLIP_info slip_get_smallest_pivot
         return SLIP_OK;
     }
 }
-#undef SLIP_FREE_WORKSPACE
+

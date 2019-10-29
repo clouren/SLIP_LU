@@ -1,9 +1,21 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/slip_sparse_alloc2: allocate an uninitialized sparse mpz matrix
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 # include "SLIP_LU_internal.h"
 
 /*
  * Purpose: This function allocates a SLIP LU matrix of size n*m with array size
  * nzmax. This version does not allocate individual the values in x. As a
  * result, it is more memory efficient, but also less user friendly.
+ *
+ * See also slip_sparse_alloc.
  */
 SLIP_info slip_sparse_alloc2
 (
@@ -12,7 +24,7 @@ SLIP_info slip_sparse_alloc2
     int32_t m,      // number of rows (recall m=n assumed)
     int32_t nzmax   // size of allocated i and x arrays
 )
-{   
+{
     // Check input
     if (n <= 0 || m <= 0 || nzmax <= 0 || !A) {return SLIP_INCORRECT_INPUT;}
     A->m = m;                                    // Rows of the matrix

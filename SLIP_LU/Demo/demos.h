@@ -1,7 +1,14 @@
-// TODO: user code cannot include SLIP_LU_internal.h.  It's internal to
-// SLIP_LU, not user visible.
-#include "SLIP_LU_internal.h"
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <gmp.h>
+#include <mpfr.h>
+#include "SLIP_LU.h"
 
 #define OK(method)                      \
 {                                       \

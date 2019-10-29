@@ -1,9 +1,20 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/slip_dfs: depth-first search
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 # include "SLIP_LU_internal.h"
 
 /* Purpose: This function performs a depth first search of the graph of the
  * matrix starting at node j. The output of this function is the set of nonzero
  * indices in the xi vector
  * 
+ * This function is modified from CSparse/cs_dfs.
  */
 void slip_dfs // performs a dfs of the graph of the matrix starting at node j
 (

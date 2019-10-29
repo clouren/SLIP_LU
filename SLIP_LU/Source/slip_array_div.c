@@ -1,15 +1,12 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/slip_array_div: divide a vector by the determinant
+// SLIP_LU/slip_array_div: divide a vector by a scalar
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
-// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See and
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
-
-# include "SLIP_LU_internal.h"
-
 
 /* Purpose: This function takes as input a mpz_t** array and divides it by a
  * mpz_t constant storing the solution in a mpq_t** array. This is used 
@@ -18,8 +15,11 @@
  * On output, the contents of the array x2 are modified
  * 
  */
+
 #define SLIP_FREE_WORKSPACE       \
     SLIP_MPQ_CLEAR(det2);
+
+# include "SLIP_LU_internal.h"
 
 SLIP_info slip_array_div // divides the x vector by the determinant
 (
@@ -57,4 +57,4 @@ SLIP_info slip_array_div // divides the x vector by the determinant
     SLIP_FREE_WORKSPACE;
     return SLIP_OK;
 }
-#undef SLIP_FREE_WORKSPACE
+

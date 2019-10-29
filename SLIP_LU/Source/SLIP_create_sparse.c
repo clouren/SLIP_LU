@@ -1,3 +1,13 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/SLIP_create_sparse: create an empty sparse mpq matrix
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 # include "SLIP_LU_internal.h"
 
 /* Purpose: This function return an created empty sparse matrix as
@@ -16,7 +26,7 @@
 SLIP_sparse *SLIP_create_sparse( void )
 {
     SLIP_sparse *A = (SLIP_sparse*) SLIP_malloc(sizeof(SLIP_sparse));
-    if (A == NULL) {return A;}
+    if (A == NULL) {return NULL;}
     A -> n     = 0;
     A -> m     = 0;
     A -> nzmax = 0;

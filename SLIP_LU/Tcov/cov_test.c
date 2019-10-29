@@ -27,14 +27,14 @@
  */
 // #define SLIP_TCOV_SHOW_LIST
 
-
-#include "SLIP_LU_internal.h"
-
 /* This program will exactly solve the sparse linear system Ax = b by performing
  * the SLIP LU factorization. Please refer to README.txt for information on how
  * to properly use this code
  */
 
+#include "SLIP_LU_internal.h"
+
+#undef  SLIP_FREE_WORKSPACE
 #define SLIP_FREE_WORKSPACE                      \
 {                                                \
     SLIP_delete_LU_analysis(&S);                 \
@@ -267,7 +267,7 @@ int main( int argc, char* argv[])
 		slip_gmp_ntrials=gmp_ntrial_list[k];
 		printf("initial slip_gmp_ntrials=%ld\n",slip_gmp_ntrials);
 		malloc_count=malloc_trials_list[kk];
-		printf("%d ouf of %d, initial malloc_count=%d\n", kk,
+		printf("%d out of %d, initial malloc_count=%d\n", kk,
 		    NUM_OF_MALLOC_T, malloc_count);
             }
 	    else
@@ -661,3 +661,4 @@ int main( int argc, char* argv[])
     }
     return 0;
 }
+

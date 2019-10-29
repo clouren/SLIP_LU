@@ -1,10 +1,20 @@
-# include "SLIP_LU_internal.h"
+//------------------------------------------------------------------------------
+// SLIP_LU/slip_expand_double_array: convert double vector to mpz
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
 
 /* Purpose: This function converts a double array of size n to an appropriate
  * mpz array of size n. To do this, the number is multiplied by 10^17 then, the
  * GCD is found. This function allows the use of matrices in double precision to
  * work with SLIP LU
- * NOTE: First element of input double array must be nonzero
+ * NOTE: First element of input double array must be nonzero  (TODO: why??)
+ *
+ * See also slip_expand_double_mat, which converts an m-by-n matrix.
  */
 
 #define SLIP_FREE_WORKSPACE              \
@@ -13,7 +23,7 @@
     SLIP_MPZ_CLEAR(one);            \
     SLIP_MPQ_CLEAR(temp);
 
-
+#include "SLIP_LU_internal.h"
 
 SLIP_info slip_expand_double_array
 (
@@ -69,6 +79,9 @@ SLIP_info slip_expand_double_array
     //--------------------------------------------------------------------------
     // Compute the GCD to reduce the size of scale
     //--------------------------------------------------------------------------
+
+    // TODO why require the first entry to be nonzero??
+
     // quit if x_out[0] == 0 (x is considered as incorrect input)
     SLIP_CHECK(slip_mpz_cmp_ui(&r, x_out[0], 0));
     if (r == 0)
@@ -100,4 +113,4 @@ SLIP_info slip_expand_double_array
     SLIP_FREE_WORKSPACE;
     return SLIP_OK;
 }
-#undef SLIP_FREE_WORKSPACE
+

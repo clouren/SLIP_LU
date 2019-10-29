@@ -1,4 +1,13 @@
-# include "SLIP_LU_internal.h"
+//------------------------------------------------------------------------------
+// SLIP_LU/SLIP_solve_mpfr: solve Ax=b, returning solution as mpfr matrix
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 
 /* This code utilizes the SLIP LU factorization. Soln is output as mpfr_t. */
 
@@ -9,6 +18,7 @@
     SLIP_delete_mpq_mat(&x_mpq, n, numRHS); \
     SLIP_delete_mpz_array(&rhos, n);
 
+# include "SLIP_LU_internal.h"
 
 SLIP_info SLIP_solve_mpfr
 (
@@ -77,4 +87,4 @@ SLIP_info SLIP_solve_mpfr
     SLIP_FREE_WORKSPACE;
     return ok;
 }
-#undef SLIP_FREE_WORKSPACE
+

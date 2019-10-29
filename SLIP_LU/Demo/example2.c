@@ -127,5 +127,7 @@ int main (int argc, char **argv)
     // Free memory
     //--------------------------------------------------------------------------
     FREE_WORKSPACE;
+
+    printf ("\n%s: all tests passed\n\n", __FILE__) ;
     return 0;
 }

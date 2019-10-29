@@ -1,4 +1,18 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/SLIP_build_sparse_ccf: build sparse matrix (mpz, double, ...)
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 # include "SLIP_LU_internal.h"
+
+//------------------------------------------------------------------------------
+// SLIP_build_sparse_ccf_mpz: build sparse matrix of mpz values
+//------------------------------------------------------------------------------
 
 /* Purpose: This function will allow the user to take a matrix of their defined
  * type (either double, mpfr_t, mpz_t, or mpq_t) and convert it from their
@@ -33,6 +47,11 @@ SLIP_info SLIP_build_sparse_ccf_mpz
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_build_sparse_ccf_double: build sparse matrix from double values
+//------------------------------------------------------------------------------
+
+#undef  SLIP_FREE_WORKSPACE
 #define SLIP_FREE_WORKSPACE                 \
     SLIP_delete_mpz_array(&x_new, nz);
 
@@ -66,6 +85,10 @@ SLIP_info SLIP_build_sparse_ccf_double
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_build_sparse_ccf_int: build sparse matrix from int values
+//------------------------------------------------------------------------------
+
 SLIP_info SLIP_build_sparse_ccf_int
 (
     SLIP_sparse *A_output,// It should be initialized but unused yet
@@ -97,6 +120,10 @@ SLIP_info SLIP_build_sparse_ccf_int
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_build_sparse_ccf_mpq: build sparse matrix from mpq values
+//------------------------------------------------------------------------------
+
 SLIP_info SLIP_build_sparse_ccf_mpq
 (
     SLIP_sparse *A_output,// It should be initialized but unused yet
@@ -124,6 +151,10 @@ SLIP_info SLIP_build_sparse_ccf_mpq
 
     return SLIP_OK;
 }
+
+//------------------------------------------------------------------------------
+// SLIP_build_sparse_ccf_mpfr: build sparse matrix from mpfr values
+//------------------------------------------------------------------------------
 
 SLIP_info SLIP_build_sparse_ccf_mpfr
 (
@@ -154,4 +185,3 @@ SLIP_info SLIP_build_sparse_ccf_mpfr
     return SLIP_OK;
 }
 
-#undef SLIP_FREE_WORKSPACE

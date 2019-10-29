@@ -247,5 +247,6 @@ int main( int argc, char* argv[])
     // Free Memory
     //--------------------------------------------------------------------------
     FREE_WORKSPACE;
+    printf ("\n%s: all tests passed\n\n", __FILE__) ;
     return 0;
 }

@@ -1,5 +1,12 @@
-#include "SLIP_LU_internal.h"
+//------------------------------------------------------------------------------
+// SLIP_LU/slip_REF_triangular_solve: sparse REF triangular solve
+//------------------------------------------------------------------------------
 
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
 
 /* 
  * Purpose: This function performs the sparse REF triangular solve. i.e., 
@@ -10,7 +17,8 @@
  * to reduce the overall cost of the operations and minimize operations as much
  * as possible.
  */
-#define SLIP_FREE_WORKSPACE
+
+#include "SLIP_LU_internal.h"
 
 SLIP_info slip_REF_triangular_solve // performs the sparse REF triangular solve
 (
@@ -195,4 +203,4 @@ SLIP_info slip_REF_triangular_solve // performs the sparse REF triangular solve
     *top_output = top;
     return SLIP_OK;
 }
-#undef SLIP_FREE_WORKSPACE
+

@@ -1,3 +1,13 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/SLIP_delete_LU_analysis: TODO what does this do??
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 # include "SLIP_LU_internal.h"
 
 /* Purpose: This function frees the memory of the SLIP_col struct
@@ -13,3 +23,4 @@ void SLIP_delete_LU_analysis
     SLIP_FREE((*S)->q);
     SLIP_FREE(*S);
 }
+

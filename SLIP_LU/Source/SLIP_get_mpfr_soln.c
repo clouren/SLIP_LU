@@ -1,8 +1,18 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/SLIP_get_mpfr_soln: convert mpq solution to mpfr
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 #include "SLIP_LU_internal.h"
 
 /* Purpose: Convert the output mpq_t** solution vector obtained from
  * SLIP_Solve and SLIP_Permute_x from mpq_t** to mpfr_t**.
- * x_mpfr has to be initialized before passed in
+ * x_mpfr has to be initialized before passed in.
  */
 
 SLIP_info SLIP_get_mpfr_soln
@@ -32,3 +42,4 @@ SLIP_info SLIP_get_mpfr_soln
     }
     return SLIP_OK;
 }
+

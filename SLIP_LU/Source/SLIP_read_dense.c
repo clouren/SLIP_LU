@@ -1,10 +1,24 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/SLIP_read_dense: read a dense matrix
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 #include "SLIP_LU_internal.h"
 
 /*
  * Purpose: This function reads in a RHS vector stored as a dense vector
  * This function requires the first line of the file as the number of row
  * and number of column, and the rest of the file lists each entry value.
+
+ TODO: the file input format is a bad choice.  Use Matrix Market instead.
+
  */
+
 SLIP_info SLIP_read_dense
 (
     SLIP_dense *b,
@@ -42,3 +56,4 @@ SLIP_info SLIP_read_dense
     }
     return SLIP_OK;
 }
+

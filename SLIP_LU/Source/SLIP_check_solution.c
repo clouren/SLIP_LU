@@ -1,8 +1,18 @@
-# include "SLIP_LU_internal.h"
+//------------------------------------------------------------------------------
+// SLIP_LU/SLIP_check_solution: check solution to Ax=b
+//------------------------------------------------------------------------------
 
-#define SLIP_FREE_WORKSPACE                      \
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
+#define SLIP_FREE_WORKSPACE                 \
     SLIP_MPQ_CLEAR(temp);                   \
     SLIP_delete_mpq_mat(&b2, n, numRHS);
+
+# include "SLIP_LU_internal.h"
 
 /* ========================================================================== */
 /* ============= Check the solution of the linear system===================== */
@@ -91,4 +101,4 @@ SLIP_info SLIP_check_solution
     SLIP_FREE_WORKSPACE;
     return SLIP_OK;
 }
-#undef SLIP_FREE_WORKSPACE
+

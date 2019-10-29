@@ -1,5 +1,22 @@
-#include "SLIP_LU_internal.h"
+//------------------------------------------------------------------------------
+// SLIP_LU/SLIP_mmread_double: read sparse double matrix in Matrix Market format
+//------------------------------------------------------------------------------
 
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
+// TODO this is broken.  It does not read a file in Matrix Market format.
+// Where is the Matrix Market header?
+
+// TODO: move this to Demo folder and rename it?
+
+/*
+ * Purpose: This function reads in a matrix stored in Matrix Market format
+ * in this case the matrix is stored as a collection of doubles
+ */
 
 #define SLIP_FREE_WORKSPACE             \
     SLIP_FREE(i);                       \
@@ -7,11 +24,8 @@
     SLIP_FREE(x_doub);                  \
     SLIP_delete_mpz_array(&x_mpz, nz);
 
+#include "SLIP_LU_internal.h"
 
-/*
- * Purpose: This function reads in a matrix stored in matrix market format
- * in this case the matrix is stored as a collection of doubles
- */
 SLIP_info SLIP_mmread_double
 (
     SLIP_sparse* A,        // Matrix to be populated
@@ -30,6 +44,7 @@ SLIP_info SLIP_mmread_double
     ok = fscanf(file, "%d %d %d\n", &m, &n, &nz);
     if (feof(file) || ok < 3)
     {
+        // TODO: untested
         return SLIP_INCORRECT_INPUT;
     }
     
@@ -54,6 +69,8 @@ SLIP_info SLIP_mmread_double
 
     if (SLIP_MIN(i[0], j[0]) == 0)
     {
+        // TODO Remove this!  Matrix Matrix is never zero-based,
+        // and this test is fragile anyway.  Delete this case.
         decrement = 0;
     }
     else
@@ -88,4 +105,3 @@ SLIP_info SLIP_mmread_double
     return ok;
 }
 
-#undef SLIP_FREE_WORKSPACE

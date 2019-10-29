@@ -21,8 +21,9 @@ void SLIP_print_options // display specified/default options to user
     }
     else
     {
-        order = "the UMFPACK";
+        order = "(undefined)";
     }
+
     if (option->pivot == SLIP_SMALLEST)
     {
         piv = "smallest";
@@ -47,7 +48,7 @@ void SLIP_print_options // display specified/default options to user
     {
         piv = "largest";
     }
-    
+
     printf("\n\n****COMMAND PARAMETERS****");
     printf("\nUsing %s ordering and selecting the %s pivot", order, piv);
     if (option->pivot == SLIP_TOL_SMALLEST ||
@@ -56,7 +57,6 @@ void SLIP_print_options // display specified/default options to user
         printf("\nTolerance used: %lf\n",option->tol);
     }
 }
-
 
 
 /* Purpose: This processes the command line for user specified options */

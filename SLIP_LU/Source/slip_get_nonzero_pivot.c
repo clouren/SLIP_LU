@@ -1,3 +1,13 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/slip_get_nonzero_pivot: find a nonzero pivot in a column
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 # include "SLIP_LU_internal.h"
 
 /* This function obtains the first eligible nonzero pivot

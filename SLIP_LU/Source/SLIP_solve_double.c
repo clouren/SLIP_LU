@@ -1,5 +1,12 @@
-# include "SLIP_LU_internal.h"
+//------------------------------------------------------------------------------
+// SLIP_LU/SLIP_solve_double: solve Ax=b, returning solution as double matrix
+//------------------------------------------------------------------------------
 
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
 
 /* This code utilizes the SLIP LU factorization. 
  * Soln is output as double matrix.
@@ -12,6 +19,7 @@
     SLIP_FREE(pinv);                        \
     SLIP_delete_mpz_array(&rhos, n);
 
+# include "SLIP_LU_internal.h"
 
 SLIP_info SLIP_solve_double 
 (   
@@ -80,4 +88,4 @@ SLIP_info SLIP_solve_double
     SLIP_FREE_WORKSPACE;
     return ok; 
 }
-#undef SLIP_FREE_WORKSPACE
+

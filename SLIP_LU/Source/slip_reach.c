@@ -1,8 +1,20 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/slip_reach: compute the set of nodes reachable from an input set
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 #include "SLIP_LU_internal.h"
 
 /* 
  * Purpose: This function computes the reach of column k of A on the graph of L
  * mathematically that is: xi = Reach(A(:,k))_G_L
+ *
+ * This function is derived from CSparse/cs_reach.c
  */
 void slip_reach    // compute the reach of column k of A on the graph of L
 (

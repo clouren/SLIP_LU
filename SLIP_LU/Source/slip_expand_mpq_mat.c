@@ -1,4 +1,12 @@
-#include "SLIP_LU_internal.h"
+//------------------------------------------------------------------------------
+// SLIP_LU/slip_expand_mpq_mat: convert mpq matrix to mpz
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
 
 /* Purpose: This function converts a mpq matrix of size m*n into an appropriate
  * mpz matrix of size m*n. To do this, the lcm of the denominators is found as a
@@ -12,6 +20,8 @@
     SLIP_delete_mpq_mat(&x4, m, n);  \
     SLIP_delete_mpz_mat(&x3, m, n);  \
     SLIP_MPZ_CLEAR(temp);
+
+#include "SLIP_LU_internal.h"
 
 SLIP_info slip_expand_mpq_mat
 (
@@ -83,4 +93,4 @@ SLIP_info slip_expand_mpq_mat
     SLIP_FREE_WORKSPACE;
     return SLIP_OK;
 }
-#undef SLIP_FREE_WORKSPACE
+

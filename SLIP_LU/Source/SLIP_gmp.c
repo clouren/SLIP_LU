@@ -1,4 +1,30 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/SLIP_gmp: interface to the gmp library
+//------------------------------------------------------------------------------
+
+// TODO why is this file called SLIP_gmp.c and not slip_gmp.c??
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
+// This file (SLIP_gmp.c) provides a wrapper for all functions in the GMP
+// library used by SLIP_LU.  The wrappers enable memory failures to be caught
+// and handled properly.  GMP, by default, aborts the user's application if any
+// internal malloc fails.  This is not acceptable in a robust end-user
+// application.  Fortunately, GMP allows the user package (SLIP_LU in this
+// case) to pass in function pointers for malloc, calloc, realloc, and free.
+// These functions are defined below.  If they fail, they do not return to GMP.
+// Instead, they use the ANSI C longjmp feature to trap the error, and return
+// the error condition to the caller.
+
 # include "SLIP_gmp.h"
+
+//------------------------------------------------------------------------------
+// global variables
+//------------------------------------------------------------------------------
 
 jmp_buf slip_gmp_environment ;  // for setjmp and longjmp
 int64_t slip_gmp_nmalloc = 0 ;  // number of malloc'd objects in slip_gmp_list
@@ -12,6 +38,9 @@ mpz_t  *slip_gmpz_archive  = NULL ;    // current mpz object
 mpq_t  *slip_gmpq_archive  = NULL ;    // current mpq object
 mpfr_t *slip_gmpfr_archive = NULL ;    // current mpfr object
 
+//------------------------------------------------------------------------------
+// slip_gmp_init: initialize gmp
+//------------------------------------------------------------------------------
 
 /* Purpose: Create the list of malloc'd objects. This should be called before
  * calling any GMP function. It is also called by slip_gmp_allocate when
@@ -26,6 +55,10 @@ bool slip_gmp_init ( )
     return (slip_gmp_list != NULL) ;
 }
 
+//------------------------------------------------------------------------------
+// slip_gmp_finalize: finalize gmp
+//------------------------------------------------------------------------------
+
 /* Purpose: Free the list. Must be called when all use of GMP is done */
 void slip_gmp_finalize ( )
 {
@@ -37,11 +70,16 @@ void slip_gmp_finalize ( )
     SLIP_FREE (slip_gmp_list) ;
 }
 
+//------------------------------------------------------------------------------
+// slip_gmp_allocate: malloc space for gmp
+//------------------------------------------------------------------------------
+
 /* Purpose: malloc space for gmp. A NULL pointer is never returned to the GMP
  * library. If the allocation fails, all memory allocated since the start of
  * the slip_gmp_wrapper is freed and an error is thrown to the GMP wrapper via
  * longjmp
  */
+
 void *slip_gmp_allocate
 (
     size_t size // Amount of memory to be allocated
@@ -133,6 +171,10 @@ void *slip_gmp_allocate
     return (p) ;
 }
 
+//------------------------------------------------------------------------------
+// slip_gmp_free: free space for gmp
+//------------------------------------------------------------------------------
+
 /* Purpose: Free space for GMP */
 void slip_gmp_free
 (
@@ -172,6 +214,10 @@ void slip_gmp_free
     SLIP_SAFE_FREE (p) ;
 }
 
+//------------------------------------------------------------------------------
+// slip_gmp_reallocate:  wrapper for realloc
+//------------------------------------------------------------------------------
+
 /* Purpose: Wrapper for GMP to call reallocation */
 void *slip_gmp_reallocate
 (
@@ -208,6 +254,10 @@ void *slip_gmp_reallocate
     }
 }
 
+//------------------------------------------------------------------------------
+// slip_gmp_dump: debug function
+//------------------------------------------------------------------------------
+
 /* Purpose: Dump the list of malloc'd objects */
 #ifdef SLIP_GMP_MEMORY_DEBUG
 void slip_gmp_dump ( )
@@ -224,6 +274,10 @@ void slip_gmp_dump ( )
     }
 }
 #endif
+
+//------------------------------------------------------------------------------
+// slip_gmp_failure: catch an error
+//------------------------------------------------------------------------------
 
 /* Purpose: Catch an error from longjmp */
 void slip_gmp_failure
@@ -1394,3 +1448,4 @@ SLIP_info slip_mpfr_free_cache(void)
     SLIP_GMP_WRAPPER_FINISH;
     return SLIP_OK;
 }
+

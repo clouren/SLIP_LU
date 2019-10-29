@@ -9,7 +9,7 @@ V = valgrind -q
 
 # Linux test coverage
 CC = gcc
-CFLAGS = -O -g -fprofile-arcs -ftest-coverage \
+CFLAGS = -g -fprofile-arcs -ftest-coverage \
         -Wall -W -Wshadow -Wmissing-prototypes -Wstrict-prototypes \
         -Wredundant-decls -Wnested-externs -Wdisabled-optimization -std=c99 \
         -Wno-unused-parameter -I../Include -I../Source -I../Demo \
