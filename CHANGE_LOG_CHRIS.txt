@@ -1,3 +1,5 @@
+TODO: delete this file before releasing the code
+
 Changes made for 4/29/19
 
 Note: I wasn't able to test these since code not curently working, but if there are any issues, let me know 
