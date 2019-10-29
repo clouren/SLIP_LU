@@ -2,8 +2,8 @@
 // SLIP_LU/slip_array_div: divide a vector by the determinant
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Erick Moreno-Centeno, Timothy A. Davis,
-// and Jinhao Chen, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See and
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
