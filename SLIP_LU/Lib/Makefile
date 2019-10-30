@@ -42,12 +42,11 @@ CS =slip_array_div.o slip_array_mul.o slip_back_sub.o SLIP_build_dense_mpz.o \
     slip_expand_mpq_array.o slip_expand_mpq_mat.o SLIP_finalize.o \
     slip_forward_sub.o SLIP_free.o slip_get_column.o SLIP_get_double_soln.o \
     slip_get_largest_pivot.o SLIP_get_mpfr_soln.o slip_get_nonzero_pivot.o \
-    slip_get_pivot.o slip_get_smallest_pivot.o SLIP_gmp.o SLIP_initialize.o \
+    slip_get_pivot.o slip_get_smallest_pivot.o slip_gmp.o SLIP_initialize.o \
     SLIP_LU_analyze.o SLIP_LU_factorize.o slip_lu_info.o \
     SLIP_LU_solve.o SLIP_malloc.o slip_mpz_populate_mat.o SLIP_permute_x.o \
-    slip_reach.o SLIP_read_dense.o SLIP_realloc.o  \
-    slip_REF_triangular_solve.o slip_reset_int_array2.o slip_reset_int_array.o \
-    slip_reset_mpz_array.o SLIP_scale_x.o SLIP_solve_double.o \
+    slip_reach.o SLIP_realloc.o   slip_REF_triangular_solve.o slip_reset_int_array2.o \
+    slip_reset_int_array.o slip_reset_mpz_array.o SLIP_scale_x.o SLIP_solve_double.o \
     SLIP_solve_mpq.o slip_sort_xi.o slip_sparse_alloc2.o slip_sparse_alloc.o \
     slip_sparse_collapse.o slip_sparse_realloc.o SLIP_spok.o \
     slip_trip_to_mat.o 
