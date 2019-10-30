@@ -87,7 +87,7 @@ int main (int argc, char **argv)
 	FREE_WORKSPACE;
         return 0;
     }
-    OK(SLIP_mmread(A, mat_file));
+    OK(SLIP_tripread(A, mat_file));
     fclose(mat_file);
 
     //--------------------------------------------------------------------------
@@ -108,7 +108,7 @@ int main (int argc, char **argv)
 
     clock_t start_f = clock();
 
-    OK(SLIP_solve_double(soln, A, S, b, option, stdout));
+    OK(SLIP_solve_double(soln, A, S, b, option));
 
     clock_t end_f = clock();
 

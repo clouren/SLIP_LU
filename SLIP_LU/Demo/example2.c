@@ -67,7 +67,7 @@ int main (int argc, char **argv)
 	FREE_WORKSPACE;
         return 0;
     }
-    OK(SLIP_mmread(A, mat_file));
+    OK(SLIP_tripread(A, mat_file));
     fclose(mat_file);
 
     // Read in right hand side
@@ -113,7 +113,7 @@ int main (int argc, char **argv)
 
     clock_t start_f = clock();
 
-    OK(SLIP_solve_mpq(x, A, S, b, option, stdout));       // Factorization
+    OK(SLIP_solve_mpq(x, A, S, b, option));       // Factorization
 
     clock_t end_f = clock();
 

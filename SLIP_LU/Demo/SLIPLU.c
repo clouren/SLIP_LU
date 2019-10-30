@@ -129,7 +129,7 @@ int main( int argc, char* argv[])
 	FREE_WORKSPACE;
         return 0;
     }
-    OK(SLIP_mmread(A, mat_file));
+    OK(SLIP_tripread(A, mat_file));
     fclose(mat_file);
 
     // Read in right hand side

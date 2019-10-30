@@ -102,7 +102,7 @@ int main (int argc, char **argv)
 
     clock_t start_f = clock();
 
-    OK(SLIP_solve_double(soln, A, S, b, option, stdout));
+    OK(SLIP_solve_double(soln, A, S, b, option));
 
     clock_t end_f = clock();
 
