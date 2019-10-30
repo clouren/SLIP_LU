@@ -12,7 +12,6 @@
  * mpz array of size m*n. To do this, the number is multiplied by 10^17 then,
  * the GCD is found. This function allows the use of matrices in double
  * precision to work with SLIP LU
- * NOTE: First element of input double mat must be nonzero  (TODO: why??)
  *
  * See also slip_expand_double_array, which converts length n vector.
  */
@@ -38,7 +37,7 @@ SLIP_info slip_expand_double_mat
     {
         return SLIP_INCORRECT_INPUT;
     }
-    int32_t i, j, r = 1;
+    int32_t i, j, k, p, r = 1;
     SLIP_info ok;
     mpfr_t **x3 = NULL;
     mpz_t gcd, one;
@@ -80,19 +79,34 @@ SLIP_info slip_expand_double_mat
     //--------------------------------------------------------------------------
     // Compute the gcd to reduce the size of scale
     //--------------------------------------------------------------------------
-    // quit if x_out[0][0] == 0 (x is considered as incorrect input)
-    SLIP_CHECK(slip_mpz_cmp_ui(&r, x_out[0][0], 0));
-    if (r == 0)
+    // Find an initial GCD 
+    for (i = 0; i < m; i++)
+    {
+        for (j = 0; j < n; j++)
+        {
+            SLIP_CHECK(slip_mpz_cmp_ui(&r, x_out[i][j], 0));
+            if (r != 0)
+            {
+                k = i;
+                p = j;
+                SLIP_CHECK(slip_mpz_set(gcd, x_out[i][j]));;
+                break;
+            }
+        }
+        if (r != 0)
+            break;
+    }
+            
+    if (r == 0) // Entire matrix is zeros
     {
         SLIP_FREE_WORKSPACE;
         return SLIP_INCORRECT_INPUT;
     }
-    SLIP_CHECK(slip_mpz_set(gcd, x_out[0][0]));;
     SLIP_CHECK(slip_mpz_set_ui(one, 1))
     // Compute the GCD of the numbers, stop if gcd == 1 (r == 0)
-    for (i = 0; i < m && r != 0; i++)
+    for (i = k; i < m && r != 0; i++)
     {
-        for (j = 0; j < n && r != 0; j++)
+        for (j = p; j < n && r != 0; j++)
         {
             SLIP_CHECK(slip_mpz_gcd(gcd, gcd, x_out[i][j]));
 	    SLIP_CHECK(slip_mpz_cmp(&r, gcd, one));

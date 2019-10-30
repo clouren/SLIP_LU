@@ -26,8 +26,7 @@ SLIP_info SLIP_solve_mpfr
     SLIP_sparse *A,         // Compressed column form full precision matrix A
     SLIP_LU_analysis *S,    // Column ordering 
     SLIP_dense *b,          // Right hand side vectrors
-    SLIP_options *option,   // Control parameters
-    FILE *file              // file to print to, NULL if not used
+    SLIP_options *option    // Control parameters
 )
 {
     //-------------------------------------------------------------------------
@@ -81,9 +80,7 @@ SLIP_info SLIP_solve_mpfr
     // Output and free memory
     //--------------------------------------------------------------------------
     SLIP_CHECK(SLIP_get_mpfr_soln(x_mpfr, x_mpq, n, numRHS));
-    
-    SLIP_CHECK(SLIP_print_stats_mpfr(file, x_mpfr, n, numRHS, check2, option));
-    
+   
     SLIP_FREE_WORKSPACE;
     return ok;
 }

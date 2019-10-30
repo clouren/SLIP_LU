@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/SLIP_create_LU_analysis: TODO what does this do??
+// SLIP_LU/SLIP_create_LU_analysis: Allocate memory for symbolic analysis
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -10,9 +10,7 @@
 
 # include "SLIP_LU_internal.h"
 
-/* Purpose: This function returns a pointer to an created SLIP_col type
- * with the length of S->q set as n (which needs to 1 + number of rows of input
- * matrix) upon successful malloc, otherwise, return NULL
+/* Purpose: This function allocates memory for the symbolic analysis struct
  */
 
 SLIP_LU_analysis *SLIP_create_LU_analysis

@@ -12,7 +12,6 @@
  * to an appropriate mpz matrix of size m*n. To do this, the number is
  * multiplied by the appropriate power of 10 then the gcd is found. This
  * function allows mpfr arrays to be used within SLIP LU 
- * NOTE: First element of input mpfr_t matrix must be nonzero
  */
 
 #define SLIP_FREE_WORKSPACE          \
@@ -39,7 +38,7 @@ SLIP_info slip_expand_mpfr_mat
     {
         return SLIP_INCORRECT_INPUT;
     }
-    int32_t i, j, r;
+    int32_t i, j, r, k, p;
     SLIP_info ok;
     mpfr_t expon, **x3 = NULL; SLIP_MPFR_SET_NULL(expon); 
     mpz_t temp_expon, gcd, one;
@@ -79,15 +78,30 @@ SLIP_info slip_expand_mpfr_mat
     //--------------------------------------------------------------------------
     // Find the gcd to reduce scale
     //--------------------------------------------------------------------------
-    // quit if x_out[0][0] == 0 (x is considered as incorrect input)
-    SLIP_CHECK(slip_mpz_cmp_ui(&r, x_out[0][0], 0));
-    if (r == 0)
+    // Find an initial GCD 
+    for (i = 0; i < m; i++)
+    {
+        for (j = 0; j < n; j++)
+        {
+            SLIP_CHECK(slip_mpz_cmp_ui(&r, x_out[i][j], 0));
+            if (r != 0)
+            {
+                k = i;
+                p = j;
+                SLIP_CHECK(slip_mpz_set(gcd, x_out[i][j]));;
+                break;
+            }
+        }
+        if (r != 0)
+            break;
+    }
+            
+    if (r == 0) // Entire matrix is zeros
     {
         SLIP_FREE_WORKSPACE;
         return SLIP_INCORRECT_INPUT;
     }
-    SLIP_CHECK(slip_mpz_set(gcd, x_out[0][0]));
-    SLIP_CHECK(slip_mpz_set_ui(one, 1));
+    SLIP_CHECK(slip_mpz_set_ui(one, 1))
     // Compute the GCD of the numbers
     for (i = 0; i < m && r != 0; i++)
     {

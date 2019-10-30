@@ -12,7 +12,6 @@
  * mpz array of size n. To do this, the number is multiplied by 10^17 then, the
  * GCD is found. This function allows the use of matrices in double precision to
  * work with SLIP LU
- * NOTE: First element of input double array must be nonzero  (TODO: why??)
  *
  * See also slip_expand_double_mat, which converts an m-by-n matrix.
  */
@@ -38,7 +37,7 @@ SLIP_info slip_expand_double_array
         return SLIP_INCORRECT_INPUT;
     }
     // int to store the comparison result
-    int32_t r;
+    int32_t r, i, j;
     SLIP_info ok;
     // Double precision accurate ~17 decimals
     double expon = pow(10, 17);
@@ -64,7 +63,7 @@ SLIP_info slip_expand_double_array
     }
 
     SLIP_CHECK(slip_mpq_set_d(scale, expon));           // scale = 10^17
-    for (int32_t i = 0; i < n; i++)
+    for (i = 0; i < n; i++)
     {
         // Set x3[i] = x[i]
         SLIP_CHECK(slip_mpfr_set_d(x3[i], x[i], MPFR_RNDN));
@@ -80,19 +79,30 @@ SLIP_info slip_expand_double_array
     // Compute the GCD to reduce the size of scale
     //--------------------------------------------------------------------------
 
-    // TODO why require the first entry to be nonzero??
-
-    // quit if x_out[0] == 0 (x is considered as incorrect input)
-    SLIP_CHECK(slip_mpz_cmp_ui(&r, x_out[0], 0));
-    if (r == 0)
+    // Find an initial GCD 
+    i = 0;
+    while (i >= 0 && i < n)
+    {
+        SLIP_CHECK(slip_mpz_cmp_ui(&r, x_out[i], 0));   // Check if x[i] == 0
+        if (r == 0)
+            i += 1;     // If x[i] == 0, continue until you find nonzero
+        else            // x[i] is nonzero. Set initial gcd
+        {
+            SLIP_CHECK(slip_mpz_set(gcd, x_out[i]));
+            j = i;
+            i = -1;
+        }
+    }
+    
+    if (i == n)     // Array is all zeros
     {
         SLIP_FREE_WORKSPACE;
         return SLIP_INCORRECT_INPUT;
     }
-    SLIP_CHECK(slip_mpz_set(gcd, x_out[0]));
+        
     SLIP_CHECK(slip_mpz_set_ui(one, 1));
     // Compute the GCD, stop if gcd == 1
-    for (int32_t i = 1; i < n && r != 0; i++)
+    for (i = j; i < n && r != 0; i++)
     {
         SLIP_CHECK(slip_mpz_gcd(gcd, gcd, x_out[i]));
         SLIP_CHECK(slip_mpz_cmp(&r, gcd, one));

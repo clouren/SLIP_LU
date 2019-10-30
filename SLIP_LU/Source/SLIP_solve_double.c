@@ -27,8 +27,7 @@ SLIP_info SLIP_solve_double
     SLIP_sparse *A,         // Compressed column form full precision matrix A
     SLIP_LU_analysis *S,    // Column ordering
     SLIP_dense *b,          // Right hand side vectrors
-    SLIP_options *option,   // Control parameters
-    FILE *file              // file to print to, NULL if not used
+    SLIP_options *option    // Control parameters
 )
 {
     //-------------------------------------------------------------------------
@@ -81,10 +80,7 @@ SLIP_info SLIP_solve_double
     // Output, free memory
     //--------------------------------------------------------------------------
     SLIP_CHECK(SLIP_get_double_soln(x_doub, x_mpq, n, numRHS));
-
-    SLIP_CHECK(SLIP_print_stats_double(file, x_doub, n, numRHS,
-        check2, option));
-    
+   
     SLIP_FREE_WORKSPACE;
     return ok; 
 }

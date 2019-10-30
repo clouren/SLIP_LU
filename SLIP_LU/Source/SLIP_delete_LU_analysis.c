@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/SLIP_delete_LU_analysis: TODO what does this do??
+// SLIP_LU/SLIP_delete_LU_analysis: Free memory from symbolic analysis struct
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -10,9 +10,9 @@
 
 # include "SLIP_LU_internal.h"
 
-/* Purpose: This function frees the memory of the SLIP_col struct
+/* Purpose: This function frees the memory of the SLIP_LU_analysis struct
  *
- * Input is the SLIP_col structure, it is destroyed on function termination.
+ * Input is the SLIP_LU_analysis structure, it is destroyed on function termination.
  */
 void SLIP_delete_LU_analysis
 (

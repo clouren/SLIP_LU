@@ -12,7 +12,6 @@
  * an appropriate mpz array of size n. To do this, the number is multiplied by
  * the appropriate power of 10 then the gcd is found. This function allows mpfr
  * arrays to be used within SLIP LU 
- * NOTE: First element of input mpfr_t array must be nonzero (TODO why??)
  */
 
 #define SLIP_FREE_WORKSPACE              \
@@ -36,7 +35,7 @@ SLIP_info slip_expand_mpfr_array
 {   
     // Check input
     if (!x || !x_out || !scale || n <= 0) {return SLIP_INCORRECT_INPUT;}
-    int32_t r;
+    int32_t r, i, j;
     SLIP_info ok;
     mpfr_t expon, *x3 = NULL; SLIP_MPFR_SET_NULL(expon);
     mpz_t temp_expon, gcd, one;
@@ -58,7 +57,7 @@ SLIP_info slip_expand_mpfr_array
 
     // expon = 10^prec (overestimate)
     SLIP_CHECK(slip_mpfr_ui_pow_ui(expon, 10, option->prec, MPFR_RNDN));
-    for (int32_t i = 0; i < n; i++)
+    for (i = 0; i < n; i++)
     {
         // x3[i] = x[i]*10^prec
         SLIP_CHECK(slip_mpfr_mul(x3[i], x[i], expon, MPFR_RNDN));
@@ -72,18 +71,30 @@ SLIP_info slip_expand_mpfr_array
     //--------------------------------------------------------------------------
     // Find the gcd to reduce scale 
     //--------------------------------------------------------------------------
-    // quit if x_out[0] == 0 (x is considered as uninitialized) 
-    SLIP_CHECK(slip_mpz_cmp_ui(&r, x_out[0], 0));
-    if (r == 0)
+    i = 0;
+    while (i >= 0 && i < n)
+    {
+        SLIP_CHECK(slip_mpz_cmp_ui(&r, x_out[i], 0));
+        if (r == 0) // If x[i] == 0, continue until you find nonzero
+            i+=1;
+        else
+        {
+            SLIP_CHECK(slip_mpz_set(gcd, x_out[i]));
+            j = i;
+            i = -1;
+        }
+    }
+    
+    if (i == n)     // Array is all zeros
     {
         SLIP_FREE_WORKSPACE;
         return SLIP_INCORRECT_INPUT;
     }
-    SLIP_CHECK(slip_mpz_set(gcd, x_out[0]));
+    
     SLIP_CHECK(slip_mpz_set_ui(one, 1));
     
     // Compute the GCD of the numbers, stop if gcd == 1
-    for (int32_t i = 1; i < n && r != 0; i++)
+    for (i = j; i < n && r != 0; i++)
     {
         SLIP_CHECK(slip_mpz_gcd(gcd, gcd, x_out[i]));
         SLIP_CHECK(slip_mpz_cmp(&r, gcd, one));
@@ -94,7 +105,7 @@ SLIP_info slip_expand_mpfr_array
     //--------------------------------------------------------------------------
     if (r != 0)  // If gcd == 1 stop
     {
-        for (int32_t i = 0; i < n; i++)
+        for (i = 0; i < n; i++)
         {
             SLIP_CHECK(slip_mpz_divexact(x_out[i],x_out[i],gcd));
         }
