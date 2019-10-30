@@ -23,10 +23,12 @@ AR_TARGET = $(LIBRARY).a
 
 all: install
 
-CS =slip_array_div.o slip_array_mul.o slip_back_sub.o SLIP_build_dense.o \
-    SLIP_build_sparse_trip.o SLIP_build_sparse_ccf.o SLIP_calloc.o \
-    SLIP_check_solution.o SLIP_create_LU_analysis.o SLIP_create_dense.o \
-    SLIP_create_double_mat.o SLIP_delete_int_mat.o \
+CS =slip_array_div.o slip_array_mul.o slip_back_sub.o SLIP_build_dense_mpz.o \
+    SLIP_build_dense_mpq.o SLIP_build_dense_mpfr.o SLIP_build_dense_int.o \
+    SLIP_build_dense_double.o SLIP_build_sparse_trip_mpz.o SLIP_build_sparse_trip_mpq.o \
+    SLIP_build_sparse_trip_mpfr.o SLIP_build_sparse_trip_int.o SLIP_build_sparse_trip_double.o \
+    SLIP_build_sparse_ccf.o SLIP_calloc.o SLIP_check_solution.o SLIP_create_LU_analysis.o  \
+    SLIP_create_dense.o SLIP_create_double_mat.o SLIP_delete_int_mat.o \
     SLIP_create_int_mat.o SLIP_create_mpfr_array.o SLIP_create_mpfr_mat.o \
     SLIP_create_mpq_array.o SLIP_create_mpq_mat.o slip_create_mpz_array2.o \
     SLIP_create_mpz_array.o SLIP_create_mpz_mat.o \
@@ -42,10 +44,9 @@ CS =slip_array_div.o slip_array_mul.o slip_back_sub.o SLIP_build_dense.o \
     slip_get_largest_pivot.o SLIP_get_mpfr_soln.o slip_get_nonzero_pivot.o \
     slip_get_pivot.o slip_get_smallest_pivot.o SLIP_gmp.o SLIP_initialize.o \
     SLIP_LU_analyze.o SLIP_LU_factorize.o slip_lu_info.o \
-    SLIP_LU_solve.o SLIP_malloc.o SLIP_mmread.o SLIP_mmread_double.o \
-    slip_mpz_populate_mat.o SLIP_permute_x.o SLIP_print_stats.o slip_reach.o \
-    SLIP_read_dense.o SLIP_realloc.o slip_REF_triangular_solve.o \
-    slip_reset_int_array2.o slip_reset_int_array.o \
+    SLIP_LU_solve.o SLIP_malloc.o slip_mpz_populate_mat.o SLIP_permute_x.o \
+    slip_reach.o SLIP_read_dense.o SLIP_realloc.o  \
+    slip_REF_triangular_solve.o slip_reset_int_array2.o slip_reset_int_array.o \
     slip_reset_mpz_array.o SLIP_scale_x.o SLIP_solve_double.o \
     SLIP_solve_mpq.o slip_sort_xi.o slip_sparse_alloc2.o slip_sparse_alloc.o \
     slip_sparse_collapse.o slip_sparse_realloc.o SLIP_spok.o \
