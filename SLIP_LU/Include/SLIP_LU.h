@@ -835,8 +835,7 @@ SLIP_info SLIP_solve_double
     SLIP_sparse *A,         // Compressed column form full precision matrix A
     SLIP_LU_analysis *S,    // Column ordering
     SLIP_dense *b,          // Right hand side vectrors
-    SLIP_options *option,   // Control parameters
-    FILE *file              // file to print to, NULL if not used
+    SLIP_options *option    // Control parameters
 );
 
 // Solves Ax=b, returning the solution x as an mpfr_t matrix
@@ -846,8 +845,7 @@ SLIP_info SLIP_solve_mpfr
     SLIP_sparse *A,         // Compressed column form full precision matrix A
     SLIP_LU_analysis *S,    // Column ordering
     SLIP_dense *b,          // Right hand side vectrors
-    SLIP_options *option,   // Control parameters
-    FILE *file              // file to print to, NULL if not used
+    SLIP_options *option    // Control parameters
 );
 
 // Solves Ax=b, returning the solution x as an mpq_t matrix
@@ -857,41 +855,7 @@ SLIP_info SLIP_solve_mpq
     SLIP_sparse *A,         // Compressed column form full precision matrix A
     SLIP_LU_analysis *S,    // Column ordering
     SLIP_dense *b,          // Right hand side vectrors
-    SLIP_options *option,   // Control parameters
-    FILE *file              // file to print to, NULL if not used
-);
-
-// This function prints statistics about the solution to Ax=b
-SLIP_info SLIP_print_stats_mpq
-(
-    FILE *out_file,         // file to print to, NULL if not used
-    mpq_t **x_mpq,          // solution vector in mpq, pass NULL if unused
-    int32_t n,              // dimension of A
-    int32_t numRHS,         // number of RHS vectors
-    SLIP_info check,        // whether the solution is correct or not
-    SLIP_options *option    // option struct telling how much info to print
-);
-
-
-SLIP_info SLIP_print_stats_double
-(
-    FILE *out_file,         // file to print to, NULL if not used
-    double **x_doub,        // solution vector in double, pass NULL if unused
-    int32_t n,              // dimension of A
-    int32_t numRHS,         // number of RHS vectors
-    SLIP_info check,        // whether the solution is correct or not
-    SLIP_options *option    // option struct telling how much info to print
-);
-
-
-SLIP_info SLIP_print_stats_mpfr
-(
-    FILE *out_file,         // file to print to, NULL if not used
-    mpfr_t **x_mpfr,        // solution vector in mpfr, pass NULL if unused
-    int32_t n,              // dimension of A
-    int32_t numRHS,         // number of RHS vectors
-    SLIP_info check,        // whether the solution is correct or not
-    SLIP_options *option    // option struct telling how much info to print
+    SLIP_options *option    // Control parameters
 );
 
 /*
@@ -917,33 +881,6 @@ SLIP_info SLIP_permute_x
     SLIP_LU_analysis *S   // symbolic analysis with the column ordering Q
 );
 
-/* Purpose: This function reads in a matrix stored in Matrix Market format */
-SLIP_info SLIP_mmread
-(
-    SLIP_sparse *A,       // Matrix to be populated
-    FILE *file
-);
-
-/*
- * Purpose: This function reads in a matrix stored in Matrix Market format
- * in this case the matrix is stored as a collection of doubles
- */
-SLIP_info SLIP_mmread_double
-(
-    SLIP_sparse *A,       // Matrix to be populated
-    FILE *file
-);
-
-/*
- * Purpose: This function reads in a RHS vector stored as a dense vector
- * This function requires the first line of the file as the number of row
- * and number of column, and the rest of the file lists each entry value.
- */
-SLIP_info SLIP_read_dense
-(
-    SLIP_dense *b,
-    FILE *file          // file containing b stored as a dense vector
-);
 
 /* Purpose: This function scales the x matrix if necessary */
 SLIP_info SLIP_scale_x
