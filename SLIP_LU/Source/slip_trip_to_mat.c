@@ -11,6 +11,8 @@
 /*
  * Purpose: This function converts triplet matrix into compressed column
  * matrix A
+ *
+ * The values of the triplet matrix must be stored as mpz_t values
  */
 
 #define SLIP_FREE_WORKSPACE              \
