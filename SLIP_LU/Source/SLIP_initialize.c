@@ -16,10 +16,9 @@
 void SLIP_initialize( void )
 {
     //--------------------------------------------------------------------------
-    // Set GMP memory functions 
+    // Set GMP memory functions as default SLIP gmp functions
     //--------------------------------------------------------------------------
 
-    mp_set_memory_functions(slip_gmp_allocate, slip_gmp_reallocate,
-            slip_gmp_free);
+    SLIP_initialize_expert(NULL, NULL, NULL);
 }
 
