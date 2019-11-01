@@ -104,5 +104,5 @@ void mexFunction
     SLIP_delete_sparse(&U);
     SLIP_delete_sparse(&L);
     SLIP_delete_sparse(&A);
-    //SLIP_finalize();
+    SLIP_finalize();
 }
