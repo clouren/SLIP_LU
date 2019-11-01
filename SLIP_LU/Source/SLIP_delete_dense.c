@@ -24,5 +24,4 @@ void SLIP_delete_dense
     // Delete A->scale
     SLIP_MPQ_CLEAR((*A)->scale);
     SLIP_FREE(*A);
-    A = NULL;
 }
