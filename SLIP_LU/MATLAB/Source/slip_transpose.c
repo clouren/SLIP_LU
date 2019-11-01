@@ -1,9 +1,20 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/MATLAB/slip_transpose: Transpose the matrix A
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 #include "SLIP_LU_mex.h"
 
 /* A = A' */
-/* This function is modified from CSparse/Source/cs_transpose*/
-
-SLIP_info SLIP_transpose (mxArray *A)
+SLIP_info SLIP_transpose 
+(
+    mxArray *A
+)
 {
     /* check inputs */
     if (!A || !mxIsSparse(A))
