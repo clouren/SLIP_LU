@@ -1,13 +1,26 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/MATLAB/slip_mex_output_L: Output the L matrix to matlab
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 #include "SLIP_LU_mex.h"
 
-/* Purpose: This function outputs the sparse matrix L*/
-mxArray* SLIP_mex_output_L
+/* Purpose: This function outputs the sparse matrix L
+ * Note that this is not the L matrix used within SLIP LU
+ * but is instead a Doolittle (unit lower triangular) version
+ */
+mxArray* slip_mex_output_L
 (
     SLIP_sparse *L,    // the sparse matrix to be output
     mpz_t *rhos        // sequence of pivots
 )
 {
-    if (!L)  { SLIP_mex_error (SLIP_INCORRECT_INPUT); }
+    if (!L)  { slip_mex_error (SLIP_INCORRECT_INPUT); }
     SLIP_info status;
     mpq_t temp; SLIP_MPQ_SET_NULL(temp);
     SLIP_MEX_OK(slip_mpq_init(temp));
@@ -22,8 +35,8 @@ mxArray* SLIP_mex_output_L
     xA = mxGetDoubles(Amatlab);
 
     // Populate L->p and L->i
-    SLIP_int32_to_mwIndex(pA, L->p, (L->n)+1);
-    SLIP_int32_to_mwIndex(iA, L->i, L->nz);
+    slip_int32_to_mwIndex(pA, L->p, (L->n)+1);
+    slip_int32_to_mwIndex(iA, L->i, L->nz);
 
     //--------------------------------------------------------------------------
     // As per Escobedo et. al. Column j of L is divided by rho[j]
@@ -48,8 +61,8 @@ mxArray* SLIP_mex_output_L
     SLIP_MPQ_CLEAR(temp);
 
     // drop zeros from L and sort it
-    SLIP_dropzeros(Amatlab);
-    SLIP_transpose(Amatlab);
-    SLIP_transpose(Amatlab);
+    slip_dropzeros(Amatlab);
+    slip_transpose(Amatlab);
+    slip_transpose(Amatlab);
     return Amatlab;
 }
