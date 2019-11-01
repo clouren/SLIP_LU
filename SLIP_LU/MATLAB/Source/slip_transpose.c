@@ -54,7 +54,7 @@ SLIP_info slip_transpose
     SLIP_FREE(Ax);
     mxSetDoubles(A, Cx);
 
-    SLIP_int32_to_mwIndex(Ap, Cp, n+1);
+    slip_int32_to_mwIndex(Ap, Cp, n+1);
     SLIP_FREE(Cp);
 
     SLIP_FREE(w);
