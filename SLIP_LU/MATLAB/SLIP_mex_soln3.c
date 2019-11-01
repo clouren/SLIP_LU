@@ -1,5 +1,5 @@
 #include "SLIP_LU_mex.h"
-/* This is one of the 4 cpp files defining the SLIP LU matlab intreface
+/* Purpose: One of the 3 c files defining the SLIP LU matlab intreface
  * This one defines [L U P Q] = SLIP_LU(A) where L and U are Doolittle and
  * L*U = P*A*Q
  */
