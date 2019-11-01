@@ -99,6 +99,7 @@ SLIP_info slip_expand_double_mat
             
     if (r == 0) // Entire matrix is zeros
     {
+    	// TODO Handle this properly
         SLIP_FREE_WORKSPACE;
         return SLIP_INCORRECT_INPUT;
     }
