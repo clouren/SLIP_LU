@@ -56,7 +56,7 @@ mxArray* slip_mex_output_L
         }
     }
 
-    SLIP_mpq_to_double(xA, xL, L->nz);
+    slip_mpq_to_double(xA, xL, L->nz);
     SLIP_delete_mpq_array(&xL, L->nz);
     SLIP_MPQ_CLEAR(temp);
 
