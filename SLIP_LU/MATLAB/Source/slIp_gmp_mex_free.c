@@ -4,7 +4,7 @@
  * MATLAB's mxFree instead of free */
 
 // A GMP realloc function
-void mxGMPFree 
+void slip_gmp_mex_free
 (
     void* x,    // void* to be freed
     size_t a    // Size
