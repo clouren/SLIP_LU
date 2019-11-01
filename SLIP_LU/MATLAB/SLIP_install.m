@@ -27,7 +27,7 @@ flags = 'CFLAGS=''-std=c99 -fPIC''';
 % External libraries
 libs = '-lgmp -lmpfr -lamd -lcolamd';
 
-% My path to hearders and Suitesparse
+% Path to headers
 includes = '-ISource/ -I../Source/ -I../Include/ ';
 
 % Generate the mex commands here
@@ -44,4 +44,4 @@ eval(m3);
 fprintf('\nMex files installed, now we test\n')
 
 % Efficient testing
-SLIP_test;%core dump and quit matlab...
+SLIP_test;
