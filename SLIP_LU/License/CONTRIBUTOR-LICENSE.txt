@@ -162,7 +162,6 @@ software project managed by Us.
 
 Us
 Christopher Lourenco, and all SLIP LU co-authors:
-
 Jinhao Chen
 Timothy A. Davis
 Erick Moreno-Centeno
