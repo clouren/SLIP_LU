@@ -5,6 +5,8 @@ https://github.com/clouren/SLIP_LU
 
 Contact Chris Lourenco, chrisjlourenco@gmail.com for a commercial license
 
+TODO: Since this will be part of SuiteSparse, should we add Tim's contact info as well?
+
 --------------------------------------------------------------------------------
 
 SLIP LU is free software; you can redistribute it and/or modify
