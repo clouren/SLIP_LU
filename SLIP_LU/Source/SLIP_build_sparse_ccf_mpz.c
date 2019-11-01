@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/SLIP_build_sparse_ccf_double: build sparse matrix from double
+// SLIP_LU/SLIP_build_sparse_ccf_mpz: build sparse matrix from mpz_t
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
