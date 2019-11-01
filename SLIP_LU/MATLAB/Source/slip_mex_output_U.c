@@ -1,14 +1,27 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/MATLAB/slip_mex_output_U: Output the U matrix to matlab
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 #include "SLIP_LU_mex.h"
 
-/* Purpose: This function outputs the sparse matrix U*/
-mxArray* SLIP_mex_output_U
+/* Purpose: This function outputs the sparse matrix U
+ * Note that this does not return the internal U but 
+ * instead the Doolittle U
+ */
+mxArray* slip_mex_output_U
 (
     SLIP_sparse *U,    // the sparse matrix to be output
     mpz_t *rhos,       // sequence of pivots
     mpq_t scale        // Scale factor of A matrix
 )
 {
-    if (!U)  { SLIP_mex_error (SLIP_INCORRECT_INPUT); }
+    if (!U)  { slip_mex_error (SLIP_INCORRECT_INPUT); }
     SLIP_info status;
     mpq_t temp; SLIP_MPQ_SET_NULL(temp);
     SLIP_MEX_OK(slip_mpq_init(temp));
@@ -23,8 +36,8 @@ mxArray* SLIP_mex_output_U
     xA = mxGetDoubles(Amatlab);
 
     // Populate U->p and U->i
-    SLIP_int32_to_mwIndex(pA, U->p, (U->n)+1);
-    SLIP_int32_to_mwIndex(iA, U->i, U->nz);
+    slip_int32_to_mwIndex(pA, U->p, (U->n)+1);
+    slip_int32_to_mwIndex(iA, U->i, U->nz);
 
     //--------------------------------------------------------------------------
     // As per Escobedo et. al., row j of U is divided by rho[j-1]
@@ -49,8 +62,8 @@ mxArray* SLIP_mex_output_U
     SLIP_MPQ_CLEAR(temp);
 
     // drop zeros from U and sort it
-    SLIP_dropzeros(Amatlab);
-    SLIP_transpose(Amatlab);
-    SLIP_transpose(Amatlab);
+    slip_dropzeros(Amatlab);
+    slip_transpose(Amatlab);
+    slip_transpose(Amatlab);
     return Amatlab;
 }
