@@ -96,6 +96,7 @@ SLIP_info slip_expand_double_array
     
     if (i == n)     // Array is all zeros
     {
+        // TODO: handle this properly
         SLIP_FREE_WORKSPACE;
         return SLIP_INCORRECT_INPUT;
     }
