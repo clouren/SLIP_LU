@@ -1,17 +1,27 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/MATLAB/slip_dropzeros: Drop zeros from a sparse matrix
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 #include "SLIP_LU_mex.h"
-/* This function is modified from CSparse/Source/cs_dropzeros*/
-static bool SLIP_nonzero (int32_t i, int32_t j, double aij)
+
+static bool slip_nonzero (int32_t i, int32_t j, double aij)
 {
     return (aij != 0) ;
 }
 
-mwIndex SLIP_dropzeros (mxArray *A)
+mwIndex slip_dropzeros (mxArray *A)
 {
-    return (SLIP_fkeep (A, &SLIP_nonzero)) ;    /* keep all nonzero entries */
+    return (slip_fkeep (A, &slip_nonzero)) ;    /* keep all nonzero entries */
 }
 
 /* drop entries for which fkeep(A(i,j)) is false; return nz if OK, else -1 */
-mwIndex SLIP_fkeep (mxArray *A, bool (*fkeep) (int32_t, int32_t, double))
+mwIndex slip_fkeep (mxArray *A, bool (*fkeep) (int32_t, int32_t, double))
 {
     if (!A || !mxIsSparse(A)|| !fkeep) return (-1) ;    /* check inputs */
 
