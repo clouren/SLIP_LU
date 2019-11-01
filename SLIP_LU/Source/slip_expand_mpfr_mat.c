@@ -98,9 +98,9 @@ SLIP_info slip_expand_mpfr_mat
             
     if (r == 0) // Entire matrix is zeros
     {
-        // TODO: Handle this properly
         SLIP_FREE_WORKSPACE;
-        return SLIP_INCORRECT_INPUT;
+        slip_mpq_set_z(scale, one);
+        return SLIP_OK;
     }
     SLIP_CHECK(slip_mpz_set_ui(one, 1))
     // Compute the GCD of the numbers

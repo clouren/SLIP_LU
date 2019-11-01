@@ -36,6 +36,8 @@ SLIP_info SLIP_scale_x
         {
             for (int32_t j = 0; j < numRHS; j++)
             {
+                SLIP_CHECK(slip_mpq_cmp_ui(&r, x[i][j], 0, 1));
+                if (r == 0) continue;
                 SLIP_CHECK(slip_mpq_mul(x[i][j], x[i][j], A->scale));
             }
         }
@@ -49,6 +51,8 @@ SLIP_info SLIP_scale_x
         {
             for (int32_t j = 0; j < numRHS; j++)
             {
+                SLIP_CHECK(slip_mpq_cmp_ui(&r, x[i][j], 0, 1));
+                if (r == 0) continue;
                 SLIP_CHECK(slip_mpq_div(x[i][j], x[i][j], b->scale));
             }
         }
