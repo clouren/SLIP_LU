@@ -27,5 +27,6 @@ void SLIP_delete_double_mat
         SLIP_FREE( (*A)[i]);
     }
     SLIP_FREE(*A);
+    A = NULL;
 }
 
