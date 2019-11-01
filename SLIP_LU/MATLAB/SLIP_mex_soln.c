@@ -1,3 +1,13 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/MATLAB/SLIP_mex_soln: Use SLIP LU within MATLAB
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 #include "SLIP_LU_mex.h"
 
 /* Purpose: one of the 3 .c files defining the SLIP LU matlab interfacee
@@ -17,9 +27,6 @@ void mexFunction
     // Initialize SLIP LU library environment
     //--------------------------------------------------------------------------
     SLIP_initialize_expert(mxMalloc, slip_gmp_mex_realloc, slip_gmp_mex_free);
-    //mp_set_memory_functions(mxMalloc, slip_gmp_mex_realloc, slip_gmp_mex_free);
-    
-    //SLIP_initialize();
     SLIP_info status;
 
     //--------------------------------------------------------------------------
