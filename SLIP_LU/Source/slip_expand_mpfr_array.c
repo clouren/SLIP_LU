@@ -56,16 +56,16 @@ SLIP_info slip_expand_mpfr_array
     }
 
     // expon = 10^prec (overestimate)
-    SLIP_CHECK(slip_mpfr_ui_pow_ui(expon, 10, option->prec, MPFR_RNDN));
+    SLIP_CHECK(slip_mpfr_ui_pow_ui(expon, 10, option->prec, SLIP_MPFR_ROUND));
     for (i = 0; i < n; i++)
     {
         // x3[i] = x[i]*10^prec
-        SLIP_CHECK(slip_mpfr_mul(x3[i], x[i], expon, MPFR_RNDN));
+        SLIP_CHECK(slip_mpfr_mul(x3[i], x[i], expon, SLIP_MPFR_ROUND));
         
         // x_out[i] = x3[i]
-        SLIP_CHECK(slip_mpfr_get_z(x_out[i], x3[i], MPFR_RNDN));
+        SLIP_CHECK(slip_mpfr_get_z(x_out[i], x3[i], SLIP_MPFR_ROUND));
     }
-    SLIP_CHECK(slip_mpfr_get_z(temp_expon, expon, MPFR_RNDN));
+    SLIP_CHECK(slip_mpfr_get_z(temp_expon, expon, SLIP_MPFR_ROUND));
     SLIP_CHECK(slip_mpq_set_z(scale, temp_expon));
     
     //--------------------------------------------------------------------------
