@@ -28,6 +28,7 @@ SLIP_info SLIP_scale_x
     n = A->m;
     numRHS = b->n;
 
+    // Determine if A's scaling factor is > 1
     SLIP_CHECK(slip_mpq_cmp_ui(&r, A->scale, 1, 1));
     if (r != 0)
     {
@@ -40,6 +41,7 @@ SLIP_info SLIP_scale_x
         }
     }
 
+    // Determine if b's scaling factor is > 1
     SLIP_CHECK(slip_mpq_cmp_ui(&r, b->scale, 1, 1));
     if (r != 0)
     {
