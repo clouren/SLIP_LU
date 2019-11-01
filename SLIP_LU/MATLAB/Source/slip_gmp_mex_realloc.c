@@ -5,7 +5,7 @@
  */
 
 // A GMP realloc function
-void* mxGMPRealloc 
+void* slip_gmp_mex_realloc 
 (
     void* x,    // void* to be reallocated 
     size_t a,   // Previous size
