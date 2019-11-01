@@ -56,7 +56,7 @@ void SLIP_get_matlab_options
     //--------------------------------------------------------------------------
     // Verify that the parameters are correct
     //--------------------------------------------------------------------------
-    if (order <= 3 && order >= 0) {option->order = (SLIP_col_order) order;}
+    if (order <= 2 && order >= 0) {option->order = (SLIP_col_order) order;}
     if (piv <= 5 && piv >= 0) {option->pivot = (SLIP_pivot) piv;}
     if ( checker > 0) {option->check = true;}
     if (option->tol > 1 || option->tol <= 0) {option->tol = 0.1;}

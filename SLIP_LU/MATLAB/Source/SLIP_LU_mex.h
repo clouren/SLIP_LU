@@ -11,16 +11,25 @@
     SLIP_mex_error(status);         \
 }
 
-/* This function gets the determinant of the input matrix
- * It is utilized within the SLIP LU matlab interface
- * 
- * on output the mpq_t deter contains the determinant
+
+/* Purpose: A GMP reallocation function 
+ * This allows GMP to use MATLAB's default realloc function 
  */
-void SLIP_get_determinant
+void* mxGMPRealloc 
 (
-    mpq_t deter,            // output is mpq_t determinant
-    mpz_t det,              // determinant of scaled A
-    SLIP_sparse *A          // sparse matrix A
+    void* x,    // void* to be reallocated 
+    size_t a,   // Previous size
+    size_t b    // New size
+);
+
+/* Purpose: A GMP free function. This allows GMP to use
+ * MATLAB's mxFree instead of free */
+
+// A GMP realloc function
+void mxGMPFree 
+(
+    void* x,    // void* to be freed
+    size_t a    // Size
 );
 
 /* Purpose: This function converts mpq array to double
@@ -64,12 +73,6 @@ void SLIP_mex_get_A_and_b
     int32_t nargin           // Number of input to the mexFunction
 );
 
-
-mxArray* SLIP_mex_output_determinant
-(
-    mpz_t scaled_det,       // determinant of scaled A
-    SLIP_sparse *A          // sparse matrix A
-);
 
 mxArray* SLIP_mex_output_soln(double** x, int32_t m, int32_t n) ;
 
