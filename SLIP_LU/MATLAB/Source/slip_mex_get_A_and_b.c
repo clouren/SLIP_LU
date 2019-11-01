@@ -1,8 +1,18 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/MATLAB/slip_mex_get_A_and_b: Obtain user's A and b matrices
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 #include "SLIP_LU_mex.h"
 
 
 /* Purpose: This function reads in the A matrix and right hand side vectors. */
-void SLIP_mex_get_A_and_b
+void slip_mex_get_A_and_b
 (
     SLIP_sparse *A,          // Internal SLIP Mat stored in ccf 
     SLIP_dense *b,           // mpz matrix used internally
@@ -12,7 +22,7 @@ void SLIP_mex_get_A_and_b
 {
     if (!A || !pargin)
     {
-        SLIP_mex_error (SLIP_INCORRECT_INPUT);
+        slip_mex_error (SLIP_INCORRECT_INPUT);
     }
     
     // Declare variables
@@ -31,7 +41,7 @@ void SLIP_mex_get_A_and_b
     Ax =  mxGetDoubles(pargin[0]);
     if (!Ai || !Ap || !Ax)
     {
-        SLIP_mex_error (SLIP_INCORRECT_INPUT);
+        slip_mex_error (SLIP_INCORRECT_INPUT);
     }
 
     // Get info about A
@@ -45,12 +55,12 @@ void SLIP_mex_get_A_and_b
 
     int32_t* Ai_int = (int32_t*) SLIP_malloc(Anz* sizeof(int32_t));
     int32_t* Ap_int = (int32_t*) SLIP_malloc((nA+1)* sizeof(int32_t));
-    if (!Ai_int || !Ap_int) {SLIP_mex_error(SLIP_OUT_OF_MEMORY);}
+    if (!Ai_int || !Ap_int) {slip_mex_error(SLIP_OUT_OF_MEMORY);}
 
     // Does x have inf?
-    SLIP_mex_check_for_inf(Ax, Anz);
-    SLIP_mwIndex_to_int32(Ai_int, Ai, Anz);
-    SLIP_mwIndex_to_int32(Ap_int, Ap, nA+1);
+    slip_mex_check_for_inf(Ax, Anz);
+    slip_mwIndex_to_int32(Ai_int, Ai, Anz);
+    slip_mwIndex_to_int32(Ap_int, Ap, nA+1);
 
     // Input is already integral
     tmp = mxGetField(pargin[nargin-1], 0, "int");
@@ -62,7 +72,7 @@ void SLIP_mex_get_A_and_b
     {
         // Declare memory
         int32_t* Ax_int = (int32_t*) SLIP_malloc(Anz* sizeof(int32_t));
-        if (!Ax_int) {SLIP_mex_error(SLIP_OUT_OF_MEMORY);}
+        if (!Ax_int) {slip_mex_error(SLIP_OUT_OF_MEMORY);}
         for (k = 0; k < Anz; k++)
         {
             Ax_int[k] = (int32_t) Ax[k];
@@ -94,7 +104,7 @@ void SLIP_mex_get_A_and_b
         bx =  mxGetDoubles(pargin[1]);
         if (!bx || !b)
         {
-            SLIP_mex_error (SLIP_INCORRECT_INPUT);
+            slip_mex_error (SLIP_INCORRECT_INPUT);
         }
         // Get info about RHS vector(s)
         nb = mxGetN(pargin[1]);
@@ -105,7 +115,7 @@ void SLIP_mex_get_A_and_b
         }
 
         // Does b have inf?
-        SLIP_mex_check_for_inf(bx, nb*mb);
+        slip_mex_check_for_inf(bx, nb*mb);
 
         // Is b integral?
         tmp = mxGetField(pargin[nargin-1], 0, "intb");
@@ -118,7 +128,7 @@ void SLIP_mex_get_A_and_b
         {
             // populate bx to a int mat
             int32_t** bx_int = SLIP_create_int_mat((int32_t) mb, (int32_t) nb);
-            if (!bx_int) {SLIP_mex_error(SLIP_OUT_OF_MEMORY);}
+            if (!bx_int) {slip_mex_error(SLIP_OUT_OF_MEMORY);}
             for (k = 0; k < nb; k++)
             {
                 for (j = 0; j < mb; j++)
@@ -138,7 +148,7 @@ void SLIP_mex_get_A_and_b
             // populate bx to a double mat
             double** bx_doub;
             bx_doub = SLIP_create_double_mat((int32_t) mb, (int32_t) nb);
-            if (!bx_doub) {SLIP_mex_error(SLIP_OUT_OF_MEMORY);}
+            if (!bx_doub) {slip_mex_error(SLIP_OUT_OF_MEMORY);}
 
             count = 0;
             for (k = 0; k < nb; k++)
