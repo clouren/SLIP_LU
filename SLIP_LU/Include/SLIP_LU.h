@@ -130,6 +130,24 @@
 #define SLIP_AUTHOR "Christopher Lourenco, Jinhao Chen, Erick Moreno-Centeno, Timothy Davis"
 
 //------------------------------------------------------------------------------
+// Type of MPFR rounding used. 
+//------------------------------------------------------------------------------
+
+// The MPFR library utilizes an internal rounding scheme. The options are
+//  MPFR_RNDN: round to nearest (roundTiesToEven in IEEE 754-2008),
+//  MPFR_RNDZ: round toward zero (roundTowardZero in IEEE 754-2008),
+//  MPFR_RNDU: round toward plus infinity (roundTowardPositive in IEEE 754-2008),
+//  MPFR_RNDD: round toward minus infinity (roundTowardNegative in IEEE 754-2008),
+//  MPFR_RNDA: round away from zero.
+//  MPFR_RNDF: faithful rounding. This is not stable
+
+// SLIP LU utilizes MPFR_RNDN. If the user wishes to change this, they can change 
+// the following parameter
+
+#define SLIP_MPFR_ROUND MPFR_RNDN
+
+
+//------------------------------------------------------------------------------
 // Error codes
 //------------------------------------------------------------------------------
 
