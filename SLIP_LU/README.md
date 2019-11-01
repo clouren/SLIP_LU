@@ -16,10 +16,8 @@ for using this function.
 
 f (or file) Filename. e.g., SLIPLU f MATRIX_NAME RHS_NAME, which indicates
 SLIPLU will read matrix from MATRIX_NAME and right hand side from RHS_NAME.
-The matrix must be stored in Matrix Market format. Please refer to
-http://math.nist.gov/MatrixMarket/formats.html for information on
-Matrix Market format.
-The right hand side vector must be stored as a dense vector.
+For this demo, the matrix is stored in a triplet format. Please refer to
+SLIP_LU/ExampleMats for some examples
 
 c (or check). e.g., SLIPLU c, which indicates SLIPLU will check
 the correctness of the solution via A*x == b.
