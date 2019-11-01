@@ -18,7 +18,7 @@
 #define SLIP_MEX_OK(method)         \
 {                                   \
     status = method;                \
-    SLIP_mex_error(status);         \
+    slip_mex_error(status);         \
 }
 
 
