@@ -62,10 +62,10 @@ $(AR_TARGET): $(CS)
 	$(ARCHIVE)  $@ $^
 	- $(RANLIB) $@
 
-# install CSparse in this directory
+# install SLIP LU in this directory
 install: $(AR_TARGET)
 
-# uninstall CSparse
+# uninstall SLIP LU
 uninstall: purge
 
 clean:
