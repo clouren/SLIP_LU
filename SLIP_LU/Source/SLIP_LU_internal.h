@@ -119,15 +119,18 @@
 #define SLIP_DEFAULT_CHECK false
 
 // Pivoting scheme used for SLIP LU.
-// 0: Smallest,
-// 1: Natural/Diagonal pivoting
-// 2: Choose first nonzero
-// 3: Diagonal with tolerance and smallest pivot
-// 4: Diagonal with tolerance and largest pivoting
-// 5: Largest pivot
-#define SLIP_DEFAULT_PIVOT SLIP_SMALLEST
+//  SLIP_SMALLEST = 0,              Smallest pivot: Default and recommended
+//  SLIP_DIAGONAL = 1,              Diagonal pivoting
+//  SLIP_FIRST_NONZERO = 2,         First nonzero per column chosen as pivot
+//  SLIP_TOL_SMALLEST = 3,          Diagonal pivoting with tolerance for small
+//  SLIP_TOL_LARGEST = 4,           Diagonal pivoting with tolerance for large
+//  SLIP_LARGEST = 5                Largest pivot
+#define SLIP_DEFAULT_PIVOT SLIP_TOL_SMALLEST
 
-// Column ordering used. 0: no column ordering, 1: COLAMD, 2: AMD
+// Column ordering used.
+//  SLIP_NO_ORDERING = 0,           None: Not recommended for sparse matrices
+//  SLIP_COLAMD = 1,                COLAMD: Default
+//  SLIP_AMD = 2                    AMD
 #define SLIP_DEFAULT_ORDER SLIP_COLAMD
 
 // Defines printing to be done
@@ -464,10 +467,10 @@ SLIP_info slip_get_column //extract k-th column from A, i.e., x=A(:,k)
 
 /* This function performs the pivoting for the SLIP LU factorization.
  * The optional Order is:
- *     0: Smallest pivot (default)
+ *     0: Smallest pivot 
  *     1: Natural/Diagonal pivoting
  *     2: Choose first nonzero
- *     3: Diagonal with tolerance and smallest pivot
+ *     3: Diagonal with tolerance and smallest pivot (default)
  *     4: Diagonal with tolerance and largest pivoting
  *     5: Largest pivot
  *
