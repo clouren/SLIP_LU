@@ -12,12 +12,6 @@ function varargout = SLIP_LU(A,b,option)
 % settings. The options settings can be obtained from option =
 % SLIP_get_options then changed from there
 %
-% [x d] = SLIP_LU(A,b) returns the solution to the system and the absolute
-% value of the determinant of A
-%
-% [x d] = SLIP_LU(A,b,options) returns the solution to the system and the
-% absolute value of the determinant of A using user defined options.
-%
 % [L U P Q x] = SLIP_LU(A,b) returns the solution to the system and lower
 % and upper triangular factors L and U such that L*U = P*A*Q using default
 % parameters.
@@ -64,8 +58,6 @@ end
 
 if (nargout == 1) % x = A\b
     varargout{1} = SLIP_mex_soln(A,b,option);
-elseif (nargout == 2) % x = A\b, d = det(A)
-   [varargout{1} varargout{2}] = SLIP_mex_soln(A,b,option);
 elseif (nargout == 5) % x = A\b, L U = PAQ
    option.pivot = 5;
    [varargout{1} varargout{2} varargout{3} varargout{4} ...

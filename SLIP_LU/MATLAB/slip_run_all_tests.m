@@ -18,12 +18,6 @@ err2a = normest(L*U-P*A*Q);
 [L U P Q] = SLIP_LU(A);
 err3 = normest(L*U-P*A*Q);
 
-% Test SLIP_mex_soln4.c
-d = SLIP_det(A);
-err4 = abs((abs(d) - abs( det (A)))/det(A));
-if (det(A) == Inf || det(A) == -Inf)
-    err4 = 0;
-end
 
 % fprintf('\nErrors are:\n');
 % err1
@@ -32,4 +26,4 @@ end
 % err3
 % err4
 
-maxerr = max ([err1 err2 err2a err3 err4]) ;
+maxerr = max ([err1 err2 err2a err3]) ;

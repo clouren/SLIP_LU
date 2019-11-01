@@ -16,14 +16,16 @@ void mexFunction
     //--------------------------------------------------------------------------
     // Initialize SLIP LU library environment
     //--------------------------------------------------------------------------
-    SLIP_initialize();
+    mp_set_memory_functions(mxMalloc, mxGMPRealloc, mxGMPFree);
+    
+    //SLIP_initialize();
     SLIP_info status;
 
     //--------------------------------------------------------------------------
     // Check inputs
     //--------------------------------------------------------------------------
     SLIP_check_input(pargin, nargin);
-    if (nargout > 2 || nargout <= 0 || nargin != 3)
+    if (nargout > 1 || nargout <= 0 || nargin != 3)
     {
         mexErrMsgTxt("Usage: x = SLIP_LU(A,b,option)");	
     }
@@ -66,7 +68,7 @@ void mexFunction
     //--------------------------------------------------------------------------
     // Symbolic analysis and factorization
     //--------------------------------------------------------------------------
-    SLIP_MEX_OK (SLIP_LU_analyze(S, A, b, option));// Symbolic Analysis
+    SLIP_MEX_OK (SLIP_LU_analyze(S, A, option));// Symbolic Analysis
 
     SLIP_MEX_OK(SLIP_LU_factorize(L, U, A, S, rhos, pinv, option));
 
@@ -84,10 +86,6 @@ void mexFunction
     // Set outputs, free memory
     //--------------------------------------------------------------------------
     pargout[0] =  SLIP_mex_output_soln(soln, b->m, b->n);
-    if (nargout == 2)	// Output the determinant
-    {
-        pargout[1] = SLIP_mex_output_determinant(rhos[(A->n)-1], A);
-    }
     SLIP_delete_mpq_mat(&soln_mpq, b->m, b->n);
     SLIP_delete_mpz_array(&rhos, A->n);
     SLIP_FREE(pinv);
@@ -98,5 +96,5 @@ void mexFunction
     SLIP_delete_sparse(&U);
     SLIP_delete_sparse(&L);
     SLIP_delete_sparse(&A);
-    SLIP_finalize();
+    //SLIP_finalize();
 }

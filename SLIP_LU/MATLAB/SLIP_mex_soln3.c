@@ -16,7 +16,8 @@ void mexFunction
     //--------------------------------------------------------------------------
     // Initialize SLIP LU library environment
     //--------------------------------------------------------------------------
-    SLIP_initialize();
+    mp_set_memory_functions(mxMalloc, mxGMPRealloc, mxGMPFree);
+    //SLIP_initialize();
     SLIP_info status;
 
     //--------------------------------------------------------------------------
@@ -64,13 +65,14 @@ void mexFunction
     // Symbolic analysis and factorization
     //--------------------------------------------------------------------------
     //Symbolic Analysis
-    SLIP_MEX_OK (SLIP_LU_analyze(S, A, NULL, option));
+    SLIP_MEX_OK (SLIP_LU_analyze(S, A, option));
     // SLIP LU Factorization
     SLIP_MEX_OK (SLIP_LU_factorize(L, U, A, S, rhos, pinv, option));
 
     //--------------------------------------------------------------------------
     // Output
     //--------------------------------------------------------------------------
+    
     pargout[0] = SLIP_mex_output_L(L, rhos);                       // out[0] = L
     pargout[1] = SLIP_mex_output_U(U, rhos, A->scale);             // out[1] = U
     pargout[2] = SLIP_mex_output_p(pinv, A->n);		           // out[2] = P
@@ -86,5 +88,5 @@ void mexFunction
     SLIP_delete_sparse(&U);
     SLIP_delete_sparse(&L);
     SLIP_delete_sparse(&A);
-    SLIP_finalize();
+    //SLIP_finalize();
 }
