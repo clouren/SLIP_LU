@@ -26,20 +26,6 @@ void SLIP_get_matlab_options
     }
     int32_t piv = (int32_t) mxGetScalar(tmp);
 
-    // Determine how much info is printed
-    tmp = mxGetField(input, 0, "print_level");
-    if (tmp == NULL)
-    {
-        mexErrMsgTxt("Error at getting printing parameter");
-    }
-    option->print_level = (int32_t) mxGetScalar(tmp);
-
-    // Determine if final solution vector will be checked for accuracy
-    tmp = mxGetField(input, 0, "check");
-    if (tmp == NULL)
-    {
-        mexErrMsgTxt("Error at getting the check parameter");
-    }
     double checker = mxGetScalar(tmp);
 
     // Tolerance if some form of tolerance partial pivoting is used
@@ -58,6 +44,5 @@ void SLIP_get_matlab_options
     //--------------------------------------------------------------------------
     if (order <= 2 && order >= 0) {option->order = (SLIP_col_order) order;}
     if (piv <= 5 && piv >= 0) {option->pivot = (SLIP_pivot) piv;}
-    if ( checker > 0) {option->check = true;}
     if (option->tol > 1 || option->tol <= 0) {option->tol = 0.1;}
 }
