@@ -1,7 +1,17 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/MATLAB/slip_mex_output_p: Output the row perm to MATLAB
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 #include "SLIP_LU_mex.h"
 
 /* Purpose: This function outputs the p matrix from pinv as a mxArray. */
-mxArray* SLIP_mex_output_p
+mxArray* slip_mex_output_p
 (
     int32_t* pinv,     // pinv
     int32_t n          // size of pinv 
