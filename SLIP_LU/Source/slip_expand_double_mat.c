@@ -67,13 +67,13 @@ SLIP_info slip_expand_double_mat
         for (j = 0; j < n; j++)
         {
             // x3[i][j] = x[i][j]
-            SLIP_CHECK(slip_mpfr_set_d(x3[i][j], x[i][j], MPFR_RNDN));
+            SLIP_CHECK(slip_mpfr_set_d(x3[i][j], x[i][j], SLIP_MPFR_ROUND));
             
             // x3[i][j] = x[i][j]*10^17
-            SLIP_CHECK(slip_mpfr_mul_d(x3[i][j], x3[i][j], expon, MPFR_RNDN));
+            SLIP_CHECK(slip_mpfr_mul_d(x3[i][j], x3[i][j], expon, SLIP_MPFR_ROUND));
             
             // x_out[i][j] = x3[i][j]
-            SLIP_CHECK(slip_mpfr_get_z(x_out[i][j], x3[i][j], MPFR_RNDN));
+            SLIP_CHECK(slip_mpfr_get_z(x_out[i][j], x3[i][j], SLIP_MPFR_ROUND));
         }
     }
     //--------------------------------------------------------------------------
