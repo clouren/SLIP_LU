@@ -13,7 +13,7 @@
 /* 
  * Purpose: This function collapses a SLIP matrix. Essentially it shrinks the
  * size of x and i. so that they only take up the number of elements in the
- * matrix. For example if A->nzmax = 1000 but A->nz = 500, r and x are of size
+ * matrix. For example if A->nzmax = 1000 but A->nz = 500, A->i and A->x are of size
  * 1000, so this function shrinks them to size 500
  */
 SLIP_info slip_sparse_collapse
