@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/slip_forward_sub: sparse forward substitution (x = L\D\x)
+// SLIP_LU/slip_forward_sub: sparse forward substitution (x = (LD)\x)
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -38,9 +38,10 @@ SLIP_info slip_forward_sub
     int32_t numRHS    // number of columns in x
 )
 {
+    //Check inputs
     if (!L || !x || !rhos || !(L->x) || !(L->p) || !(L->i))
     {
-	return SLIP_INCORRECT_INPUT;
+	    return SLIP_INCORRECT_INPUT;
     }
     SLIP_info ok;
     int32_t i, j, p, k, n, m, mnew, sgn, **h;
@@ -79,8 +80,8 @@ SLIP_info slip_forward_sub
         for (i = 0; i < n; i++)
         {
             p = h[i][k];
-            // Can skip these operations
-	    SLIP_CHECK(slip_mpz_sgn(&sgn, x[i][k]));
+            // If x[i][k] = 0, can skip operations and continue to next i
+	        SLIP_CHECK(slip_mpz_sgn(&sgn, x[i][k]));
             if (sgn == 0) {continue;}
 
             //------------------------------------------------------------------
@@ -105,8 +106,8 @@ SLIP_info slip_forward_sub
             {
                 // Location of Lmi
                 mnew = L->i[m];
-                // skip if Lx is zero
-		SLIP_CHECK(slip_mpz_sgn(&sgn, L->x[m]));
+                // skip if Lx[m] is zero
+		        SLIP_CHECK(slip_mpz_sgn(&sgn, L->x[m]));
                 if (sgn == 0) {continue;}
                 // m > i
                 if (mnew > i)
