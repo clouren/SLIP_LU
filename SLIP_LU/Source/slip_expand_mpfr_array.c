@@ -87,6 +87,7 @@ SLIP_info slip_expand_mpfr_array
     
     if (i == n)     // Array is all zeros
     {
+        //TODO: Handle this
         SLIP_FREE_WORKSPACE;
         return SLIP_INCORRECT_INPUT;
     }
