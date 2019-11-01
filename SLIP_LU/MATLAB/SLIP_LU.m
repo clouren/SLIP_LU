@@ -1,12 +1,12 @@
-//------------------------------------------------------------------------------
-// SLIP_LU/MATLAB/SLIP_LU.m: Interface to SLIP LU within MATLAB
-//------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+% SLIP_LU/MATLAB/SLIP_LU.m: Interface to SLIP LU within MATLAB
+%------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
-// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
-// SLIP_LU/License for the license.
+% SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+% Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+% SLIP_LU/License for the license.
 
-//------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
 
 function varargout = SLIP_LU(A,b,option)
 % Purpose: Solve exactly the sparse linear system Ax = b where A and b are stored as
