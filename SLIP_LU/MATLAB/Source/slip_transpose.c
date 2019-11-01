@@ -11,7 +11,7 @@
 #include "SLIP_LU_mex.h"
 
 /* A = A' */
-SLIP_info SLIP_transpose 
+SLIP_info slip_transpose 
 (
     mxArray *A
 )
