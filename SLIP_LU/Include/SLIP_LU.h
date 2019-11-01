@@ -52,6 +52,10 @@
 //    or both in parallel, as here.
 //
 //    See license.txt for license info.
+//
+// This software is copyright by Christopher Lourenco, Jinhao Chen, Erick Moreno-Centeno
+// and Timothy A. Davis. All Rights Reserved.
+//
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -122,7 +126,7 @@
 // Name of associated paper
 #define SLIP_PAPER "Algorithm XXX: SLIP LU: Sparse Left-looking Integer-Preserving LU Factorization"
 
-// Author of code
+// Authors of code
 #define SLIP_AUTHOR "Christopher Lourenco, Jinhao Chen, Erick Moreno-Centeno, Timothy Davis"
 
 //------------------------------------------------------------------------------
@@ -150,11 +154,11 @@ SLIP_info ;
 
 typedef enum
 {
-    SLIP_SMALLEST = 0,              // Smallest pivot: Default and recommended
+    SLIP_SMALLEST = 0,              // Smallest pivot
     SLIP_DIAGONAL = 1,              // Diagonal pivoting
     SLIP_FIRST_NONZERO = 2,         // First nonzero per column chosen as pivot
     SLIP_TOL_SMALLEST = 3,          // Diagonal pivoting with tolerance for
-                                    // smallest pivot
+                                    // smallest pivot. Default
     SLIP_TOL_LARGEST = 4,           // Diagonal pivoting with tolerance for
                                     // largest pivot
     SLIP_LARGEST = 5                // Largest pivot
@@ -308,7 +312,7 @@ void SLIP_delete_LU_analysis
 );
 
 //------------------------------------------------------------------------------
-// memory management
+// Memory management
 //------------------------------------------------------------------------------
 
 /*
@@ -517,7 +521,7 @@ SLIP_info SLIP_build_sparse_trip_mpfr
  * their form to mpz. The integrity of the user defined arrays are maintained
  * (therefore, one would need to delete these arrays).
  *
- * On output, the mpz_t** b contains the user's matrix
+ * On output, the SLIP_dense *A contains the user's matrix
  *
  */
 
@@ -597,7 +601,7 @@ void SLIP_delete_double_mat
 //------------------------------------------------------------------------------
 
 // Creates a 2D int32 matrix, where A[i][j] is the (i,j)th entry.
-// A[i] is a pointer to a row, of size n.
+// A[i] is a pointer to row i, of size n.
 
 /* Purpose: This function creates an int matrix of size m*n. */
 int32_t** SLIP_create_int_mat
@@ -623,7 +627,7 @@ void SLIP_delete_int_mat
 //------------------------------------------------------------------------------
 
 // Creates a 2D mpfr_t matrix, where A[i][j] is the (i,j)th entry.
-// A[i] is a pointer to a row, of size n.
+// A[i] is a pointer to a row i, of size n.
 
 /* Purpose: This function creates a mpfr_t matrix of size m*n with
  * precision prec
@@ -651,7 +655,7 @@ void SLIP_delete_mpfr_mat
 //------------------------------------------------------------------------------
 
 // Creates a 2D mpq_t matrix, where A[i][j] is the (i,j)th entry.
-// A[i] is a pointer to a row, of size n.
+// A[i] is a pointer to row i, of size n.
 
 /* Purpose: This function creates a mpq_t matrix of size m*n. */
 mpq_t** SLIP_create_mpq_mat
@@ -676,7 +680,7 @@ void SLIP_delete_mpq_mat
 //------------------------------------------------------------------------------
 
 // Creates a 2D mpz_t matrix, where A[i][j] is the (i,j)th entry.
-// A[i] is a pointer to a row, of size n.
+// A[i] is a pointer to row i, of size n.
 
 /* Purpose: This function creates a dense mpz_t matrix of size m*n to
  * default size
@@ -774,16 +778,44 @@ void SLIP_delete_mpz_array
 
 //------------------------------------------------------------------------------
 
+//------------------------------------------------------------------------------
+// SLIP LU memory environment routines
+//------------------------------------------------------------------------------
 
 /*
- * Check the solution of the linear system
- * Performs a very quick rational arithmetic A*x=b
+ * Purpose: This function initializes the working evironment for SLIP LU
+ * library.
  */
-SLIP_info SLIP_check_solution
+void SLIP_initialize (void);
+
+/* Purpose: Initialize SLIP LU with user defined memory functions 
+ */
+void SLIP_initialize_expert
 (
-    SLIP_sparse *A,           // input matrix
-    mpq_t **x,                // solution vector
-    SLIP_dense *b             // right hand side
+    void* (*MyMalloc) (size_t),                     // User defined malloc function
+    void* (*MyRealloc) (void *, size_t, size_t),    // User defined realloc function
+    void (*MyFree) (void*, size_t)                  // User defined free function
+);
+
+/*
+ * Purpose: This function finalizes the working evironment for SLIP LU library.
+ */
+void SLIP_finalize (void);
+
+
+//------------------------------------------------------------------------------
+// Primary factorization & solve routines
+//------------------------------------------------------------------------------
+
+/*
+ * Purpose: This function performs the symbolic ordering for SLIP LU. Currently,
+ * there are four options: user defined order, COLAMD, AMD.
+ */
+SLIP_info SLIP_LU_analyze
+(
+    SLIP_LU_analysis *S,  // symbolic analysis (column permutation and nnz L,U)
+    SLIP_sparse *A,       // Input matrix
+    SLIP_options *option  // Control parameters
 );
 
 /* Purpose: This function performs the SLIP LU factorization. This factorization
@@ -817,26 +849,6 @@ SLIP_info SLIP_determinant
     mpq_t determinant       // determinant of A
 ) ;
 
-/*
- * Purpose: This function finalizes the working evironment for SLIP LU library.
- */
-void SLIP_finalize (void);
-
-/*
- * Purpose: This function initializes the working evironment for SLIP LU
- * library.
- */
-void SLIP_initialize (void);
-
-/* Purpose: Initialize SLIP LU with user defined memory functions 
- */
-void SLIP_initialize_expert
-(
-    void* (*MyMalloc) (size_t),                     // User defined malloc function
-    void* (*MyRealloc) (void *, size_t, size_t),    // User defined realloc function
-    void (*MyFree) (void*, size_t)                  // User defined free function
-);
-
 // Solves Ax=b, returning the solution x as a double matrix
 SLIP_info SLIP_solve_double
 (
@@ -865,17 +877,6 @@ SLIP_info SLIP_solve_mpq
     SLIP_LU_analysis *S,    // Column ordering
     SLIP_dense *b,          // Right hand side vectrors
     SLIP_options *option    // Control parameters
-);
-
-/*
- * Purpose: This function performs the symbolic ordering for SLIP LU. Currently,
- * there are four options: user defined order, COLAMD, AMD.
- */
-SLIP_info SLIP_LU_analyze
-(
-    SLIP_LU_analysis *S,  // symbolic analysis (column permutation and nnz L,U)
-    SLIP_sparse *A,       // Input matrix
-    SLIP_options *option  // Control parameters
 );
 
 /*
@@ -940,6 +941,17 @@ SLIP_info SLIP_get_mpfr_soln
     mpq_t  **x_mpq,       // mpq solution of size n*numRHS to Ax = b.
     int32_t n,            // Dimension of A, number of rows of x
     int32_t numRHS        // Number of right hand side vectors
+);
+
+/*
+ * Check the solution of the linear system
+ * Performs a quick rational arithmetic A*x=b
+ */
+SLIP_info SLIP_check_solution
+(
+    SLIP_sparse *A,           // input matrix
+    mpq_t **x,                // solution vector
+    SLIP_dense *b             // right hand side
 );
 
 #endif
