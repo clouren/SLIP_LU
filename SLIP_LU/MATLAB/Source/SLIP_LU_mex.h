@@ -15,7 +15,7 @@
 /* Purpose: A GMP reallocation function 
  * This allows GMP to use MATLAB's default realloc function 
  */
-void* mxGMPRealloc 
+void* slip_gmp_mex_realloc 
 (
     void* x,    // void* to be reallocated 
     size_t a,   // Previous size
@@ -25,8 +25,8 @@ void* mxGMPRealloc
 /* Purpose: A GMP free function. This allows GMP to use
  * MATLAB's mxFree instead of free */
 
-// A GMP realloc function
-void mxGMPFree 
+// A GMP free function
+void slip_gmp_mex_free 
 (
     void* x,    // void* to be freed
     size_t a    // Size
