@@ -1,3 +1,13 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/MATLAB/SLIP_mex_soln2: Interface to SLIP LU via matlab
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 #include "SLIP_LU_mex.h"
 
 /* Purpose: One of the 3 c files which defines the SLIP LU matlab interface
@@ -17,9 +27,6 @@ void mexFunction
     // Initialize SLIP LU library environment
     //--------------------------------------------------------------------------
     SLIP_initialize_expert(mxMalloc, slip_gmp_mex_realloc, slip_gmp_mex_free);
-
-    //mp_set_memory_functions(mxMalloc, slip_gmp_mex_realloc, slip_gmp_mex_free);
-    //SLIP_initialize();
     SLIP_info status;
 
     //--------------------------------------------------------------------------
@@ -106,5 +113,5 @@ void mexFunction
     SLIP_delete_sparse(&U);
     SLIP_delete_sparse(&L);
     SLIP_delete_sparse(&A);
-    //SLIP_finalize();
+    SLIP_finalize();
 }
