@@ -18,10 +18,12 @@ SLIP_LU_analysis *SLIP_create_LU_analysis
     int32_t n     //length of S->q
 )
 {
+    // ALlocate memory for S
     SLIP_LU_analysis* S = NULL;
     S = (SLIP_LU_analysis*) SLIP_malloc(sizeof(SLIP_LU_analysis));
     if (S == NULL) {return S;}
     
+    // Allocate memory for column permutation
     S->q = (int32_t*) SLIP_malloc(n* sizeof(int32_t));
     if (S->q == NULL) 
     {
