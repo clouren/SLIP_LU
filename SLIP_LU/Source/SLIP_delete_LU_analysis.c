@@ -22,5 +22,6 @@ void SLIP_delete_LU_analysis
     if ((S == NULL) || (*S == NULL)) {return;}
     SLIP_FREE((*S)->q);
     SLIP_FREE(*S);
+    S = NULL;
 }
 
