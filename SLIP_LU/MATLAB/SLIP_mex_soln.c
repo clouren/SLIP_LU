@@ -32,7 +32,7 @@ void mexFunction
     //--------------------------------------------------------------------------
     // Check inputs
     //--------------------------------------------------------------------------
-    SLIP_check_input(pargin, nargin);
+    slip_check_input(pargin, nargin);
     if (nargout > 1 || nargout <= 0 || nargin != 3)
     {
         mexErrMsgTxt("Usage: x = SLIP_LU(A,b,option)");	
@@ -49,7 +49,7 @@ void mexFunction
     SLIP_options* option = SLIP_create_default_options();
     if (!A || !L || !U || !b || !option)
     {
-        SLIP_mex_error (SLIP_OUT_OF_MEMORY);
+        slip_mex_error (SLIP_OUT_OF_MEMORY);
     }
     SLIP_LU_analysis* S = NULL;
 
@@ -57,10 +57,10 @@ void mexFunction
     // Declare variables and process input
     //--------------------------------------------------------------------------
     // Read in options
-    SLIP_get_matlab_options(option, pargin[2]);
+    slip_get_matlab_options(option, pargin[2]);
 
     // Read in A and b
-    SLIP_mex_get_A_and_b(A, b, pargin, nargin);
+    slip_mex_get_A_and_b(A, b, pargin, nargin);
 
     // Create arrays based on the size of input matrix
     S = SLIP_create_LU_analysis((A->n)+1);
@@ -70,7 +70,7 @@ void mexFunction
     mpq_t** soln_mpq = SLIP_create_mpq_mat(b->m, b->n);
     if (!S || !soln || !pinv || !rhos || !soln_mpq)
     {
-        SLIP_mex_error (SLIP_OUT_OF_MEMORY);
+        slip_mex_error (SLIP_OUT_OF_MEMORY);
     }
 
     //--------------------------------------------------------------------------
@@ -93,7 +93,7 @@ void mexFunction
     //--------------------------------------------------------------------------
     // Set outputs, free memory
     //--------------------------------------------------------------------------
-    pargout[0] =  SLIP_mex_output_soln(soln, b->m, b->n);
+    pargout[0] =  slip_mex_output_soln(soln, b->m, b->n);
     SLIP_delete_mpq_mat(&soln_mpq, b->m, b->n);
     SLIP_delete_mpz_array(&rhos, A->n);
     SLIP_FREE(pinv);
