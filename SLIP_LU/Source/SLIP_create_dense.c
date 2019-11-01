@@ -13,7 +13,6 @@
 /* Purpose: Create an empty SLIP_dense matrix of size 0.
  * If there's no memory, instead returns NULL */
 
-//TODO: Can I remove this?
 #define CHECK_RESULT(method)    \
 {                               \
     if (method != SLIP_OK)      \
