@@ -25,6 +25,7 @@ SLIP_info slip_back_sub  // performs sparse REF backward substitution
     int32_t numRHS    // number of columns in bx
 )
 {
+	// Check inputs
     if (!U || !bx || !U->x || !U->i || !U->p)
     {
         return SLIP_INCORRECT_INPUT;
@@ -40,14 +41,14 @@ SLIP_info slip_back_sub  // performs sparse REF backward substitution
         for (int32_t j = U->n-1; j >= 0; j--)
         {
             // If bx[j] is zero skip this iteration
-	    SLIP_CHECK(slip_mpz_sgn(&sgn, bx[j][k]));
+	        SLIP_CHECK(slip_mpz_sgn(&sgn, bx[j][k]));
             if (sgn == 0) {continue;}
 
             // Obtain bx[j]
             SLIP_CHECK(slip_mpz_divexact(bx[j][k], bx[j][k],Ux[Up[j+1]-1]));
             for (int32_t i = Up[j]; i < Up[j+1]-1; i++)
             {
-		SLIP_CHECK(slip_mpz_sgn(&sgn, Ux[i]));
+		        SLIP_CHECK(slip_mpz_sgn(&sgn, Ux[i]));
                 if (sgn == 0) {continue;}
                 // bx[i] = bx[i] - Ux[i]*bx[j]
                 SLIP_CHECK(slip_mpz_submul(bx[Ui[i]][k], Ux[i], bx[j][k]));
