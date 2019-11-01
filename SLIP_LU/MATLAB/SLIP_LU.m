@@ -27,19 +27,25 @@ function varargout = SLIP_LU(A,b,option)
 % factors L and U such that L*U = P*A*Q using user specified parameters.
 
 if exist('option') == 0          % Did the user pass in options?
-    option = SLIP_get_options;  % Set defaults
+    option = SLIP_get_options;   % Set defaults
 end
 
-if (max(max(abs(A))) > 2000000000000) % Integer overflow
+% Check for int overflow. If the max value of A or b exceeds this value
+% the internal routines can not expect int input.
+if (max(max(abs(A))) > 2000000000000) 
     option.int = 0;
 end
 if (max(abs(A)) > 2000000000000)
     option.intb = 0;
 end
+
+% Check if the input matrix is stored as sparse. If not, SLIP LU expects
+% sparse input, so convert to sparse.
 if (issparse(A) == 0)
     A = sparse(A);
 end
 
+% If the user indicates that the input is integral, check if it is actually integral
 if (option.int > 0)
     A2 = floor(A);
     if (normest(A2-A) > 1e-12)
@@ -56,6 +62,7 @@ if (option.intb > 0)
     clear b2;
 end
 
+% Preprocessing complete. Now use SLIP LU
 if (nargout == 1) % x = A\b
     varargout{1} = SLIP_mex_soln(A,b,option);
 elseif (nargout == 5) % x = A\b, L U = PAQ
@@ -65,8 +72,8 @@ elseif (nargout == 5) % x = A\b, L U = PAQ
    % Get P and Q
    [m n] = size(varargout{1});
    varargout{3} = varargout{3}+1; varargout{4} = varargout{4}+1;
-   p2 = zeros(n,1);
    A2 = speye(n,n);
+   % Return P and Q as permutations of I
    varargout{3} = A2(varargout{3},:);
    varargout{4} = A2(:,varargout{4});
 elseif (nargout == 4) % LU = PAQ
@@ -84,7 +91,6 @@ elseif (nargout == 4) % LU = PAQ
    % Get P and Q
    [m n] = size(varargout{1});
    varargout{3} = varargout{3}+1; varargout{4} = varargout{4}+1;
-   p2 = zeros(n,1);
    A2 = speye(n,n);
    varargout{3} = A2(varargout{3},:);
    varargout{4} = A2(:,varargout{4});
