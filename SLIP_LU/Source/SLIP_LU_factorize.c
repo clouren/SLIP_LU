@@ -121,18 +121,18 @@ SLIP_info SLIP_LU_factorize
     }
     
     // temp = sigma
-    SLIP_CHECK(slip_mpfr_set_z(temp, sigma, MPFR_RNDN));
+    SLIP_CHECK(slip_mpfr_set_z(temp, sigma, SLIP_MPFR_ROUND));
 
     //--------------------------------------------------------------------------
     // Bound = gamma*log2(sigma sqrt(gamma))
     //--------------------------------------------------------------------------
     // temp = sigma*sqrt(gamma)
-    SLIP_CHECK(slip_mpfr_mul_d(temp, temp, (double) sqrt(gamma), MPFR_RNDN));
+    SLIP_CHECK(slip_mpfr_mul_d(temp, temp, (double) sqrt(gamma), SLIP_MPFR_ROUND));
     // temp = log2(temp)
-    SLIP_CHECK(slip_mpfr_log2(temp, temp, MPFR_RNDN));
+    SLIP_CHECK(slip_mpfr_log2(temp, temp, SLIP_MPFR_ROUND));
     // inner2 = temp
     double inner2;
-    SLIP_CHECK(slip_mpfr_get_d(&inner2, temp, MPFR_RNDN));
+    SLIP_CHECK(slip_mpfr_get_d(&inner2, temp, SLIP_MPFR_ROUND));
     // Free cache from log2. Even though mpfr_free_cache is called in
     // SLIP_LU_final(), it has to be called here to prevent memory leak in 
     // some rare situations.
