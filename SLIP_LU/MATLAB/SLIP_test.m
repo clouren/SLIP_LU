@@ -8,6 +8,7 @@ maxerr = 0 ;
 fprintf ('Testing SLIP_LU: ') ;
 
 % First, check if we can use a real life sparse matrix via ssget
+% TODO: Is there any reason why we do this instead of just use the sprand?
 if (exist ('ssget') ~= 0)
     fprintf ('.') ;
     % 159 is a square SPD matrix
