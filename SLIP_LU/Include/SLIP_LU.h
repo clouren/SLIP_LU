@@ -828,6 +828,15 @@ void SLIP_finalize (void);
  */
 void SLIP_initialize (void);
 
+/* Purpose: Initialize SLIP LU with user defined memory functions 
+ */
+void SLIP_initialize_expert
+(
+    void* (*MyMalloc) (size_t),                     // User defined malloc function
+    void* (*MyRealloc) (void *, size_t, size_t),    // User defined realloc function
+    void (*MyFree) (void*, size_t)                  // User defined free function
+);
+
 // Solves Ax=b, returning the solution x as a double matrix
 SLIP_info SLIP_solve_double
 (
