@@ -59,16 +59,16 @@ SLIP_info slip_expand_mpfr_mat
     }
      
     // expon = 10^prec (overestimate)
-    SLIP_CHECK(slip_mpfr_ui_pow_ui(expon, 10, option->prec, MPFR_RNDN));
+    SLIP_CHECK(slip_mpfr_ui_pow_ui(expon, 10, option->prec, SLIP_MPFR_ROUND));
     
     for (i = 0; i < m; i++)
     {
         for (j = 0; j < n; j++)
         {
             // x3[i][j] = x[i][j]*expon
-            SLIP_CHECK(slip_mpfr_mul(x3[i][j], x[i][j], expon, MPFR_RNDN));
+            SLIP_CHECK(slip_mpfr_mul(x3[i][j], x[i][j], expon, SLIP_MPFR_ROUND));
             // x_out[i][j] = x3[i][j]
-            SLIP_CHECK(slip_mpfr_get_z(x_out[i][j], x3[i][j], MPFR_RNDN));
+            SLIP_CHECK(slip_mpfr_get_z(x_out[i][j], x3[i][j], SLIP_MPFR_ROUND));
         }
     }
     
