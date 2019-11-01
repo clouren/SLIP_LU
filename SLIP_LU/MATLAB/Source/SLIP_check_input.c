@@ -32,9 +32,9 @@ void SLIP_check_input
     {
         mexErrMsgTxt ("Third argument must be the options struct") ;
     }
-    if (mxGetNumberOfFields(input[nargin-1]) != 7)
+    if (mxGetNumberOfFields(input[nargin-1]) != 5)
     {
-        mexErrMsgTxt("Error! The options struct must have 7 elements. Please "
+        mexErrMsgTxt("Error! The options struct must have 5 elements. Please "
             "reset it with option = SLIP_get_options;");
     }
 
