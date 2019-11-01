@@ -48,7 +48,7 @@ SLIP_info SLIP_LU_analyze
             S->q[i] = i;
         }
         // Guesses for number of L and U nonzeros
-        S->lnz = 10*nz; S->unz = S->lnz;
+        S->lnz = S->unz = 10*nz;
     }
 
     //--------------------------------------------------------------------------
@@ -60,7 +60,7 @@ SLIP_info SLIP_LU_analyze
         amd_defaults(Control);                  // Set AMD defaults
         double Info [AMD_INFO];
         amd_order(n, A->p, A->i, S->q, Control, Info); // Perform AMD
-        S->lnz = Info[AMD_LNZ]; S->unz = S->lnz;// Guess for unz and lnz
+        S->lnz = S->unz = Info[AMD_LNZ]; 	// Guess for unz and lnz
         if (option->print_level > 0)            // Output AMD info if desired
         {
             printf("\n****Column Ordering Information****\n");
@@ -91,7 +91,7 @@ SLIP_info SLIP_LU_analyze
         int32_t stats [COLAMD_STATS];
         colamd(n, n, Alen, A2, S->q, (double *) NULL, stats);
         // Guess for lnz and unz
-        S->lnz = 10*A->nz; S->unz = S->lnz;
+        S->lnz = S->unz = 10*A->nz;
 
         // Print stats if desired
         if (option->print_level > 0)
@@ -110,8 +110,9 @@ SLIP_info SLIP_LU_analyze
     if (S->lnz > (double) n*n)
     {
         int32_t nnz = ceil(0.5*n*n);
-        S->lnz = nnz; S->unz = nnz;
+        S->lnz = S->unz = nnz;
     }
+    // If < n, first column of triangular solve may fail
     if (S->lnz < n)
     {
         S->lnz = S->lnz + n;
