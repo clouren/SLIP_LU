@@ -1,7 +1,7 @@
 #include "SLIP_LU_mex.h"
 
-/* This is one of the 4 .c files which defines the SLIP LU matlab interface
- * This one defines: x = SLIP_LU(A, b, option)
+/* Purpose: one of the 3 .c files defining the SLIP LU matlab interfacee
+ * This function defines: x = SLIP_LU(A, b, option)
  */
 
 
