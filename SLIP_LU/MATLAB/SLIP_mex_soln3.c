@@ -35,7 +35,7 @@ void mexFunction
     //--------------------------------------------------------------------------
     // Input Check
     //--------------------------------------------------------------------------
-    SLIP_check_input(pargin, nargin);
+    slip_check_input(pargin, nargin);
     if (nargout != 4 || nargin != 2)
     {
         mexErrMsgTxt ("Usage: [L U P Q] = SLIP_LU(A,option)") ;
@@ -52,7 +52,7 @@ void mexFunction
     SLIP_options* option = SLIP_create_default_options();
     if (!A || !L || !U || !option)
     {
-        SLIP_mex_error (SLIP_OUT_OF_MEMORY);
+        slip_mex_error (SLIP_OUT_OF_MEMORY);
     }
     SLIP_LU_analysis* S = NULL;
 
@@ -60,17 +60,17 @@ void mexFunction
     // Declare variables and process input
     //--------------------------------------------------------------------------
     // Read in options
-    SLIP_get_matlab_options(option, pargin[1]);
+    slip_get_matlab_options(option, pargin[1]);
 
     // Read in A and b
-    SLIP_mex_get_A_and_b(A, NULL, pargin, nargin);
+    slip_mex_get_A_and_b(A, NULL, pargin, nargin);
 
     S = SLIP_create_LU_analysis((A->n)+1);
     int32_t* pinv = (int32_t*) SLIP_malloc((A->n)* sizeof(int32_t));
     mpz_t* rhos = SLIP_create_mpz_array(A->n);
     if (!S || !pinv || !rhos)
     {
-        SLIP_mex_error (SLIP_OUT_OF_MEMORY);
+        slip_mex_error (SLIP_OUT_OF_MEMORY);
     }
 
     //--------------------------------------------------------------------------
@@ -85,10 +85,10 @@ void mexFunction
     // Output
     //--------------------------------------------------------------------------
     
-    pargout[0] = SLIP_mex_output_L(L, rhos);                       // out[0] = L
-    pargout[1] = SLIP_mex_output_U(U, rhos, A->scale);             // out[1] = U
-    pargout[2] = SLIP_mex_output_p(pinv, A->n);		                // out[2] = P
-    pargout[3] = SLIP_mex_output_col_permut(S->q, A->n);           // out[3] = Q
+    pargout[0] = slip_mex_output_L(L, rhos);                       // out[0] = L
+    pargout[1] = slip_mex_output_U(U, rhos, A->scale);             // out[1] = U
+    pargout[2] = slip_mex_output_p(pinv, A->n);		                // out[2] = P
+    pargout[3] = slip_mex_output_col_permut(S->q, A->n);           // out[3] = Q
 
     //--------------------------------------------------------------------------
     // Free memory
