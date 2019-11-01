@@ -32,7 +32,7 @@ SLIP_info slip_sparse_alloc
     A->n = n;                                    // Columns of the matrix
     A->nz = 0;                                   // Currently 0 nonzeros
     A->nzmax = nzmax;                            // Size of the vectors
-    A->x = SLIP_create_mpz_array(nzmax);         // Create, but don't initialize A->x
+    A->x = SLIP_create_mpz_array(nzmax);         // Create and initialize A->x
     A->p = (int32_t*) SLIP_calloc(n+1, sizeof(int32_t));// Initialize p
     A->i = (int32_t*) SLIP_calloc(nzmax, sizeof(int32_t));// Initialize i
     if (!A->x || !A->p || !A->i) {return SLIP_OUT_OF_MEMORY;}
