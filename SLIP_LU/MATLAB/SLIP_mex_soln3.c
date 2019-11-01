@@ -1,3 +1,13 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/SLIP_mex_soln3: Interface to SLIP LU via matlab
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 #include "SLIP_LU_mex.h"
 /* Purpose: One of the 3 c files defining the SLIP LU matlab intreface
  * This one defines [L U P Q] = SLIP_LU(A) where L and U are Doolittle and
@@ -77,7 +87,7 @@ void mexFunction
     
     pargout[0] = SLIP_mex_output_L(L, rhos);                       // out[0] = L
     pargout[1] = SLIP_mex_output_U(U, rhos, A->scale);             // out[1] = U
-    pargout[2] = SLIP_mex_output_p(pinv, A->n);		           // out[2] = P
+    pargout[2] = SLIP_mex_output_p(pinv, A->n);		                // out[2] = P
     pargout[3] = SLIP_mex_output_col_permut(S->q, A->n);           // out[3] = Q
 
     //--------------------------------------------------------------------------
@@ -90,5 +100,5 @@ void mexFunction
     SLIP_delete_sparse(&U);
     SLIP_delete_sparse(&L);
     SLIP_delete_sparse(&A);
-    //SLIP_finalize();
+    SLIP_finalize();
 }
