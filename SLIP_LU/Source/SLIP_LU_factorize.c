@@ -88,9 +88,14 @@ SLIP_info SLIP_LU_factorize
     slip_reset_int_array(h,n);
 
     //--------------------------------------------------------------------------
-    // Get most dense column and max of A 
+    // Compute a bound for the size of each entry in the matrix. This bound is 
+    // used to allocate the size of each entry in the x vector in order to reduce
+    // the number of intermediate reallocations performed in the triangular solve.
+    //
+    // This bound is based on a relaxation of Hadamard's bound
+    //
     //--------------------------------------------------------------------------
-    // Initialize sigma
+    // Initialize sigma = largest entry in A
     
     SLIP_CHECK(slip_mpz_set(sigma, A->x[0]));
     
@@ -185,7 +190,6 @@ SLIP_info SLIP_LU_factorize
     for (j = top; j < n; j++)
     {
         jnew = xi[j];
-        // Is j in U or L?
         loc = pinv[jnew];
 
         //----------------------------------------------------------------------
@@ -302,9 +306,8 @@ SLIP_info SLIP_LU_factorize
     // Finalize L and U
     L->nz = lnz;
     U->nz = unz;
-    // Finalize L->p
+    // Finalize L->p, U->p
     L->p[n] = lnz;
-    // Finalize U->p
     U->p[n] = unz;
 
     //--------------------------------------------------------------------------
@@ -318,7 +321,6 @@ SLIP_info SLIP_LU_factorize
         slip_sparse_collapse(L); 
         // Collapse U
         slip_sparse_collapse(U);
-        // Success!
     }
 
     //--------------------------------------------------------------------------
