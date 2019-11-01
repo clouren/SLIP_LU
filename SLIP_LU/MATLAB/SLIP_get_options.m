@@ -1,14 +1,3 @@
-//------------------------------------------------------------------------------
-// SLIP_LU/MATLAB/SLIP_get_options.m: Inteface to SLIP LU control options from 
-                                      within MATLAB
-//------------------------------------------------------------------------------
-
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
-// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
-// SLIP_LU/License for the license.
-
-//------------------------------------------------------------------------------
-
 function x = SLIP_get_options()
 % This function defines various parameters for the SLIP LU factorization. It sets
 % each parameter to its default value.
