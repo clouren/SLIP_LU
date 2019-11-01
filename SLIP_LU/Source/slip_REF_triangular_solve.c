@@ -36,6 +36,7 @@ SLIP_info slip_REF_triangular_solve // performs the sparse REF triangular solve
     mpz_t* x                  // solution of system ==> kth column of L and U
 )
 {
+    // Validate input
     if (!L || !A || !xi || !rhos || !pinv || !row_perm || !col_loc || !h || !x
         || !A->p || !A->i || !A->x || !L->p || !L->i || !L->x)
     {
@@ -58,7 +59,7 @@ SLIP_info slip_REF_triangular_solve // performs the sparse REF triangular solve
     slip_sort_xi(xi, top, n, pinv, row_perm);
     // Reset x[i] = 0 for all i in nonzero pattern
     SLIP_CHECK(slip_reset_mpz_array(x, n, top, xi)); 
-    // x[col] may not be zeroed out properly!
+    // Set x[col] = 0
     SLIP_CHECK(slip_mpz_set_ui(x[col], 0));
     // Reset h[i] = -1 for all i in nonzero pattern
     SLIP_CHECK(slip_reset_int_array2(h, n, top, xi));
@@ -73,12 +74,15 @@ SLIP_info slip_REF_triangular_solve // performs the sparse REF triangular solve
         /* Finalize x[j] */
         j = xi[p];                         // First nonzero term
         jnew = pinv[j];                    // Location of nonzero term
-	SLIP_CHECK(slip_mpz_sgn(&sgn, x[j]));
-        if (sgn == 0) {continue;}          // If x[j] == 0 no work must be done
+        // Check if x[j] == 0, if so continue to next nonzero
+	    SLIP_CHECK(slip_mpz_sgn(&sgn, x[j]));
+        if (sgn == 0) {continue;}          // x[j] = 0 no work must be done
+        
+        // x[j] is nonzero
         if (jnew < k)                      // jnew < k implies entries in U
         {
             //------------------------------------------------------------------
-            // History update
+            // History update: Bring x[j] to its final value
             //------------------------------------------------------------------
             if (h[j] < jnew - 1)           // HU must be performed
             {
@@ -87,7 +91,7 @@ SLIP_info slip_REF_triangular_solve // performs the sparse REF triangular solve
 
                 if (h[j] > -1)
                 {
-		    // x[j] = x[j] / rho[h[j]]
+		            // x[j] = x[j] / rho[h[j]]
                     SLIP_CHECK(slip_mpz_divexact(x[j],x[j],rhos[h[j]]));
                 }
             }
@@ -105,15 +109,18 @@ SLIP_info slip_REF_triangular_solve // performs the sparse REF triangular solve
                 if (inew > jnew)
                 {
                     /*************** If lij==0 then no update******************/
-		    SLIP_CHECK(slip_mpz_sgn(&sgn, L->x[m]));
+		            SLIP_CHECK(slip_mpz_sgn(&sgn, L->x[m]));
                     if (sgn == 0) {continue;}
 
+                    // lij is nonzero. Check if x[i] is nonzero
+                    SLIP_CHECK(slip_mpz_sgn(&sgn, x[i]));
+                    
                     //----------------------------------------------------------
                     /************* lij is nonzero, x[i] is zero****************/
                     // x[i] = 0 then only perform IPGE update
                     // subtraction/division
                     //----------------------------------------------------------
-		    SLIP_CHECK(slip_mpz_sgn(&sgn, x[i]));
+		            
                     if (sgn == 0)
                     {
                         // No previous pivot
