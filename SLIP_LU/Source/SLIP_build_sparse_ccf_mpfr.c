@@ -6,6 +6,8 @@
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
+# include "SLIP_LU_internal.h"
+
 //------------------------------------------------------------------------------
 
 
