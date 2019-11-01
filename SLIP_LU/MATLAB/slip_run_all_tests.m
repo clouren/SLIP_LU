@@ -18,12 +18,4 @@ err2a = normest(L*U-P*A*Q);
 [L U P Q] = SLIP_LU(A);
 err3 = normest(L*U-P*A*Q);
 
-
-% fprintf('\nErrors are:\n');
-% err1
-% err2
-% err2a
-% err3
-% err4
-
 maxerr = max ([err1 err2 err2a err3]) ;
