@@ -1,6 +1,6 @@
 #include "SLIP_LU_mex.h"
 
-/* This is one of the 4 cpp files which defines the SLIP LU matlab interface
+/* Purpose: One of the 3 c files which defines the SLIP LU matlab interface
  * This one defines [L U P Q x] = SLIP_LU(A,b) where L and U are doolittle and
  * L*U = P*A*Q
  */
@@ -75,7 +75,6 @@ void mexFunction
     
     
     // FB Sub
-    
     SLIP_MEX_OK (SLIP_LU_solve(soln_mpq, b, rhos, L, U, pinv));
     
     SLIP_MEX_OK (SLIP_permute_x(soln_mpq, b->m, b->n, S));
@@ -88,7 +87,7 @@ void mexFunction
     //--------------------------------------------------------------------------
     pargout[0] = SLIP_mex_output_L(L, rhos);                     // out[0] = L
     pargout[1] = SLIP_mex_output_U(U, rhos, A->scale);           // out[1] = U
-    pargout[2] = SLIP_mex_output_p(pinv, A->n);			 // out[2] = P
+    pargout[2] = SLIP_mex_output_p(pinv, A->n);			         // out[2] = P
     pargout[3] = SLIP_mex_output_col_permut(S->q, A->n);         // out[3] = Q
     pargout[4] = SLIP_mex_output_soln(soln, b->m, b->n);         // out[4] = soln
 
