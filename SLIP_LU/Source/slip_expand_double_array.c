@@ -66,13 +66,13 @@ SLIP_info slip_expand_double_array
     for (i = 0; i < n; i++)
     {
         // Set x3[i] = x[i]
-        SLIP_CHECK(slip_mpfr_set_d(x3[i], x[i], MPFR_RNDN));
+        SLIP_CHECK(slip_mpfr_set_d(x3[i], x[i], SLIP_MPFR_ROUND));
 
         // x3[i] = x[i] * 10^17
-        SLIP_CHECK(slip_mpfr_mul_d(x3[i], x3[i], expon, MPFR_RNDN));
+        SLIP_CHECK(slip_mpfr_mul_d(x3[i], x3[i], expon, SLIP_MPFR_ROUND));
 
         // x_out[i] = x3[i]
-        SLIP_CHECK(slip_mpfr_get_z(x_out[i], x3[i], MPFR_RNDN));
+        SLIP_CHECK(slip_mpfr_get_z(x_out[i], x3[i], SLIP_MPFR_ROUND));
     }
 
     //--------------------------------------------------------------------------
