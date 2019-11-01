@@ -1,8 +1,18 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/MATLAB/slip_get_matlab_options: Set factorization options for SLIP LU
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 #include "SLIP_LU_mex.h"
 
 /* Purpose: This function reads in the necessary information from the options
    struct */
-void SLIP_get_matlab_options
+void slip_get_matlab_options
 (
     SLIP_options* option,  // Control parameters
     const mxArray* input   // The input options from MATLAB interface
@@ -25,8 +35,6 @@ void SLIP_get_matlab_options
         mexErrMsgTxt("Error at getting pivot");
     }
     int32_t piv = (int32_t) mxGetScalar(tmp);
-
-    double checker = mxGetScalar(tmp);
 
     // Tolerance if some form of tolerance partial pivoting is used
     if (piv == 3 || piv == 4)
