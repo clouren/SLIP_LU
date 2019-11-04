@@ -37,7 +37,8 @@ SLIP_info slip_expand_double_array
         return SLIP_INCORRECT_INPUT;
     }
     // int to store the comparison result
-    int32_t r, i, j;
+    int32_t i, k, r1, r2 = 1;
+    bool nz_found = false;
     SLIP_info ok;
     // Double precision accurate ~17 decimals
     double expon = pow(10, 17);
@@ -78,23 +79,33 @@ SLIP_info slip_expand_double_array
     //--------------------------------------------------------------------------
     // Compute the GCD to reduce the size of scale
     //--------------------------------------------------------------------------
-
+    SLIP_CHECK(slip_mpz_set_ui(one, 1));
     // Find an initial GCD 
-    i = 0;
-    while (i >= 0 && i < n)
+    for (i = 0; i < n; i++)
     {
-        SLIP_CHECK(slip_mpz_cmp_ui(&r, x_out[i], 0));   // Check if x[i] == 0
-        if (r == 0)
-            i += 1;     // If x[i] == 0, continue until you find nonzero
-        else            // x[i] is nonzero. Set initial gcd
+        if (!nz_found)
         {
-            SLIP_CHECK(slip_mpz_set(gcd, x_out[i]));
-            j = i;
-            i = -1;
+            SLIP_CHECK(slip_mpz_cmp_ui(&r1, x_out[i], 0)); // Check if x[i] == 0
+            if (r1 != 0)
+            {
+                nz_found = true;
+                k = i;
+                SLIP_CHECK(slip_mpz_set(gcd, x_out[i]));
+            }
+        }
+        else
+        {
+            // Compute the GCD, stop if gcd == 1
+            SLIP_CHECK(slip_mpz_gcd(gcd, gcd, x_out[i]));
+            SLIP_CHECK(slip_mpz_cmp(&r2, gcd, one));
+            if (r2 == 0)
+            {
+                break;
+            }
         }
     }
-    
-    if (i == n)     // Array is all zeros
+
+    if (!nz_found)     // Array is all zeros
     {
         SLIP_FREE_WORKSPACE;
         slip_mpq_set_z(scale, one);
@@ -102,20 +113,13 @@ SLIP_info slip_expand_double_array
         //return SLIP_INCORRECT_INPUT;
     }
         
-    SLIP_CHECK(slip_mpz_set_ui(one, 1));
-    // Compute the GCD, stop if gcd == 1
-    for (i = j; i < n && r != 0; i++)
-    {
-        SLIP_CHECK(slip_mpz_gcd(gcd, gcd, x_out[i]));
-        SLIP_CHECK(slip_mpz_cmp(&r, gcd, one));
-    }
 
     //--------------------------------------------------------------------------
     // Scale all entries to make as small as possible
     //--------------------------------------------------------------------------
-    if (r != 0 )             // If gcd == 1 then stop
+    if (r2 != 0)             // If gcd == 1 then stop
     {
-        for (int32_t i = 0; i < n; i++)
+        for (i = k; i < n; i++)
         {
             SLIP_CHECK(slip_mpz_divexact(x_out[i], x_out[i], gcd));
         }

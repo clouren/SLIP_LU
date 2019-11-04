@@ -37,7 +37,8 @@ SLIP_info slip_expand_double_mat
     {
         return SLIP_INCORRECT_INPUT;
     }
-    int32_t i, j, k, p, r = 1;
+    int32_t i, j, k, l, r1, r2 = 1;
+    bool nz_found = false;
     SLIP_info ok;
     mpfr_t **x3 = NULL;
     mpz_t gcd, one;
@@ -70,7 +71,8 @@ SLIP_info slip_expand_double_mat
             SLIP_CHECK(slip_mpfr_set_d(x3[i][j], x[i][j], SLIP_MPFR_ROUND));
             
             // x3[i][j] = x[i][j]*10^17
-            SLIP_CHECK(slip_mpfr_mul_d(x3[i][j], x3[i][j], expon, SLIP_MPFR_ROUND));
+            SLIP_CHECK(slip_mpfr_mul_d(x3[i][j], x3[i][j], expon,
+                SLIP_MPFR_ROUND));
             
             // x_out[i][j] = x3[i][j]
             SLIP_CHECK(slip_mpfr_get_z(x_out[i][j], x3[i][j], SLIP_MPFR_ROUND));
@@ -79,49 +81,57 @@ SLIP_info slip_expand_double_mat
     //--------------------------------------------------------------------------
     // Compute the gcd to reduce the size of scale
     //--------------------------------------------------------------------------
+    SLIP_CHECK(slip_mpz_set_ui(one, 1))
     // Find an initial GCD 
     for (i = 0; i < m; i++)
     {
         for (j = 0; j < n; j++)
         {
-            SLIP_CHECK(slip_mpz_cmp_ui(&r, x_out[i][j], 0));
-            if (r != 0)
+            if (!nz_found)
             {
-                k = i;
-                p = j;
-                SLIP_CHECK(slip_mpz_set(gcd, x_out[i][j]));;
-                break;
+                SLIP_CHECK(slip_mpz_cmp_ui(&r1, x_out[i][j], 0));
+                if (r1 != 0)
+                {
+                    nz_found = true;
+                    k = i;
+                    l = j;
+                    SLIP_CHECK(slip_mpz_set(gcd, x_out[i][j]));;
+                }
+            }
+            else
+            {
+                // Compute the GCD of the numbers, stop if gcd == 1 (r2 == 0)
+                SLIP_CHECK(slip_mpz_gcd(gcd, gcd, x_out[i][j]));
+                SLIP_CHECK(slip_mpz_cmp(&r2, gcd, one));
+                if (r2 == 0)
+                {
+                    break;
+                }
             }
         }
-        if (r != 0)
+        if (nz_found && r2 == 0)
+        {
             break;
+        }
     }
             
-    if (r == 0) // Entire matrix is zeros
+    if (!nz_found) // Entire matrix is zeros
     {
         SLIP_FREE_WORKSPACE;
         slip_mpq_set_z(scale, one);
         return SLIP_OK;
     }
-    SLIP_CHECK(slip_mpz_set_ui(one, 1))
-    // Compute the GCD of the numbers, stop if gcd == 1 (r == 0)
-    for (i = k; i < m && r != 0; i++)
-    {
-        for (j = p; j < n && r != 0; j++)
-        {
-            SLIP_CHECK(slip_mpz_gcd(gcd, gcd, x_out[i][j]));
-	    SLIP_CHECK(slip_mpz_cmp(&r, gcd, one));
-        }
-    }
 
     //--------------------------------------------------------------------------
     // Scale all entries to make as small as possible 
     //--------------------------------------------------------------------------
-    if (r != 0)                 // If gcd == 1 stop
+    if (r2 != 0)                 // If gcd == 1 stop
     {
-        for (i = 0; i < m; i++)
+        for (i = k; i < m; i++)
         {
-            for (j = 0; j < n; j++)    
+            if (i == k) {j = l;}
+            else        {j = 0;}
+            for (; j < n; j++)    
             {
                 SLIP_CHECK(slip_mpz_divexact(x_out[i][j], x_out[i][j], gcd));
             }
