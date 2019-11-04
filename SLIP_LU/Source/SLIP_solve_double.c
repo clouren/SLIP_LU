@@ -68,6 +68,7 @@ SLIP_info SLIP_solve_double
 
     //--------------------------------------------------------------------------
     // Check solution
+    // TODO: delete this? the check2 flag is not passed out nor printed
     //--------------------------------------------------------------------------
     if (option->check)
     {

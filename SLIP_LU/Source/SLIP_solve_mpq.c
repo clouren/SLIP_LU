@@ -67,6 +67,7 @@ SLIP_info SLIP_solve_mpq
     
     //--------------------------------------------------------------------------
     // Check solution
+    // TODO: delete this? the check2 flag is not passed out nor printed
     //--------------------------------------------------------------------------
     if (option->check)
     {

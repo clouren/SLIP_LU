@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/SLIP_gmp.h: include file for SLIP GMP wrapper
+// SLIP_LU/slip_gmp.h: include file for SLIP GMP wrapper
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -8,8 +8,8 @@
 
 //------------------------------------------------------------------------------
 
-#ifndef SLIP_gmp
-#define SLIP_gmp
+#ifndef SLIP_GMP
+#define SLIP_GMP
 
 #include <stdarg.h>
 #include "SLIP_LU_internal.h"

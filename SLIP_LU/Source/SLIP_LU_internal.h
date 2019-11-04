@@ -101,12 +101,12 @@
 }
 
 #ifdef SLIP_LU_TCOV
-    /* include this header to redefine SLIP_MEMORY_REALLOC (used in SLIP_gmp.c)
+    /* include this header to redefine SLIP_MEMORY_REALLOC (used in slip_gmp.c)
      * for memory test and to use macro GOTCHA */
     #include "../Tcov/tcov_malloc_test.h"
 #endif
 
-#include "SLIP_gmp.h"
+#include "slip_gmp.h"
 
 // Tolerance used in the pivoting schemes. This number can be anything in
 // between 0 and 1. A value of 0 selects the diagonal element exclusively and a

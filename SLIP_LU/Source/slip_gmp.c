@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/SLIP_gmp: interface to the gmp library
+// SLIP_LU/slip_gmp: interface to the gmp library
 //------------------------------------------------------------------------------
 
 
@@ -9,7 +9,7 @@
 
 //------------------------------------------------------------------------------
 
-// This file (SLIP_gmp.c) provides a wrapper for all functions in the GMP
+// This file (slip_gmp.c) provides a wrapper for all functions in the GMP
 // library used by SLIP_LU.  The wrappers enable memory failures to be caught
 // and handled properly.  GMP, by default, aborts the user's application if any
 // internal malloc fails.  This is not acceptable in a robust end-user
@@ -19,7 +19,7 @@
 // Instead, they use the ANSI C longjmp feature to trap the error, and return
 // the error condition to the caller.
 
-# include "SLIP_gmp.h"
+# include "slip_gmp.h"
 
 //------------------------------------------------------------------------------
 // global variables

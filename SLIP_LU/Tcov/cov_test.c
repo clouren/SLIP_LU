@@ -9,7 +9,7 @@
  *                                         5 for miscellaneous test
  * rat: type of solution: 1: full precision rational arithmetic,
  *                        2: double, 3:  user specified precision.
- * N and list1 specify the test list for slip_gmp_ntrials (in SLIP_gmp.h)
+ * N and list1 specify the test list for slip_gmp_ntrials (in slip_gmp.h)
  * M and list2 specify the test list for malloc_count (in tcov_malloc_test.h)
  * N, list1, M, list2 are optional, but N and list1 are required when M and
  * list2 is wanted
@@ -32,7 +32,7 @@
  * to properly use this code
  */
 
-#include "SLIP_LU_internal.h"
+#include "demos.h"
 
 #undef  SLIP_FREE_WORKSPACE
 #define SLIP_FREE_WORKSPACE                      \
@@ -456,7 +456,7 @@ int main( int argc, char* argv[])
                     SLIP_FREE_WORKSPACE;
                     continue;
                 }
-		TEST_CHECK_FAILURE(SLIP_mmread_double(M, mat_file));
+		TEST_CHECK_FAILURE(SLIP_tripread_double(M, mat_file));
                 CLEAR_SLIP_MAT_M;                //free the memory alloc'd in M
                 fclose (mat_file);
                 mat_file = NULL;
@@ -469,7 +469,7 @@ int main( int argc, char* argv[])
                     SLIP_FREE_WORKSPACE;
                     continue;
                 }
-		TEST_CHECK_FAILURE(SLIP_mmread_double(M, mat_file));
+		TEST_CHECK_FAILURE(SLIP_tripread_double(M, mat_file));
                 CLEAR_SLIP_MAT_M;                //free the memory alloc'd in M
                 fclose (mat_file);
                 mat_file = NULL;
@@ -483,14 +483,14 @@ int main( int argc, char* argv[])
                     SLIP_FREE_WORKSPACE;
                     continue;
                 }
-		TEST_CHECK(SLIP_mmread(M, mat_file));
+		TEST_CHECK(SLIP_tripread(M, mat_file));
                 if ( fseek(mat_file, 0L, SEEK_SET) != 0 )
                 {
                     SLIP_FREE_WORKSPACE;
                     continue;
                 }
                 CLEAR_SLIP_MAT_M;                //free the memory alloc'd in M
-		TEST_CHECK(SLIP_mmread_double(M, mat_file));
+		TEST_CHECK(SLIP_tripread_double(M, mat_file));
                 fclose (mat_file);
                 mat_file = NULL;
 
@@ -592,8 +592,8 @@ int main( int argc, char* argv[])
 
 	    // Column ordering using either AMD, COLAMD or nothing
 	    TEST_CHECK(SLIP_LU_analyze(S, A, option));
-	    option->check = true;
             option->print_level = 3;
+            int check2;
 
 	    //------------------------------------------------------------------
 	    // SLIP LU Factorization, Solve and verification
@@ -602,14 +602,17 @@ int main( int argc, char* argv[])
 	    {
 		sol_mpq = SLIP_create_mpq_mat(n, numRHS);
 		TEST_CHECK(SLIP_spok (A, 3));
-		ok=SLIP_solve_mpq(sol_mpq, A, S, b, option, stdout);
-		TEST_CHECK(ok);
+		TEST_CHECK(SLIP_solve_mpq(sol_mpq, A, S, b, option));
+                TEST_CHECK(SLIP_check_solution(A, sol_mpq, b));
+                check2 = ok;  // track the status of SLIP_check_solution
+                TEST_CHECK(SLIP_print_stats_mpq(stdout, sol_mpq, n, numRHS,
+                    check2,option));
 		TEST_CHECK(SLIP_spok (A, 3));
                 //SLIP_PRINT_OK(ok);
 		
 		//intentionally change b to fail SLIP_LU_Check()
 		TEST_CHECK(slip_mpz_set_ui (b->x[0][0], 1000));
-		int check2=SLIP_check_solution(A, sol_mpq, b);
+		check2=SLIP_check_solution(A, sol_mpq, b);
 		
                 // Print result using SLIP_print_stats, which should return
                 // SLIP_INCORRECT since check2 == SLIP_INCORRECT
@@ -625,14 +628,12 @@ int main( int argc, char* argv[])
 	    else if (rat==2)
 	    {
 		sol_doub = SLIP_create_double_mat(n, numRHS);
-		ok=SLIP_solve_double(sol_doub, A, S, b, option, stdout);
-		TEST_CHECK(ok);
+		TEST_CHECK(SLIP_solve_double(sol_doub, A, S, b, option));
 	    }
 	    else
 	    {
 		sol_mpfr = SLIP_create_mpfr_mat(n, numRHS, option);
-		ok=SLIP_solve_mpfr(sol_mpfr, A, S, b, option, stdout);
-		TEST_CHECK(ok);
+		TEST_CHECK(SLIP_solve_mpfr(sol_mpfr, A, S, b, option));
 	    }
 	    //------------------------------------------------------------------
 	    // Free Memory

@@ -53,9 +53,9 @@ CS =slip_array_div.o slip_array_mul.o slip_back_sub.o SLIP_build_dense_mpz.o \
     slip_sparse_collapse.o slip_sparse_realloc.o SLIP_spok.o \
     slip_trip_to_mat.o 
 
-$(CS): ../Include/SLIP_LU.h ../Source/SLIP_gmp.h ../Source/SLIP_LU_internal.h  Makefile
+$(CS): ../Include/SLIP_LU.h ../Source/slip_gmp.h ../Source/SLIP_LU_internal.h  Makefile
 
-%.o: ../Source/%.c ../Include/SLIP_LU.h ../Source/SLIP_gmp.h ../Source/SLIP_LU_internal.h
+%.o: ../Source/%.c ../Include/SLIP_LU.h ../Source/slip_gmp.h ../Source/SLIP_LU_internal.h
 	$(CC) $(CF) $(I) -c $<
 
 static: $(AR_TARGET)

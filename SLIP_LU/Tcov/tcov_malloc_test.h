@@ -10,7 +10,7 @@ void* slip_realloc_wrapper
     void* p,           // Pointer to be realloced
     size_t new_size    // Size to alloc
 );
-/* to be used in SLIP_gmp.c */
+/* to be used in slip_gmp.c */
 #define SLIP_MEMORY_REALLOC slip_realloc_wrapper
 
 extern int malloc_count;
