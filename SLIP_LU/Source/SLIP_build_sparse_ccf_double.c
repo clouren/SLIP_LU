@@ -14,7 +14,6 @@
 // SLIP_build_sparse_ccf_double: build sparse matrix from double values
 //------------------------------------------------------------------------------
 
-#undef  SLIP_FREE_WORKSPACE
 #define SLIP_FREE_WORKSPACE                 \
     SLIP_delete_mpz_array(&x_new, nz);
 

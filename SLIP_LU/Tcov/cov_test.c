@@ -34,7 +34,6 @@
 
 #include "demos.h"
 
-#undef  SLIP_FREE_WORKSPACE
 #define SLIP_FREE_WORKSPACE                      \
 {                                                \
     SLIP_delete_LU_analysis(&S);                 \
@@ -285,7 +284,7 @@ int main( int argc, char* argv[])
 	    //------------------------------------------------------------------
 	    // Allocate memory
 	    //------------------------------------------------------------------
-	    int n=4, numRHS=1, j, nz=11;
+	    int n=4, numRHS=1, i, j, nz=11;
             SLIP_info ok;
 	    SLIP_options* option = SLIP_create_default_options();
 	    if (!option) {continue;}
@@ -350,13 +349,31 @@ int main( int argc, char* argv[])
 		if (!B_doub || !Ax_doub) {SLIP_FREE_WORKSPACE; continue;}
 		
 		//failure due to uninitialized double mat/array
-		TEST_CHECK_FAILURE(SLIP_build_sparse_ccf_double(A, Ap, Ai,
+/*                TEST_CHECK(SLIP_build_sparse_ccf_double(A, Ap, Ai,
                     Ax_doub, n, nz));
+                GOTCHA;
+		TEST_CHECK(SLIP_spok (A, 3));
                 CLEAR_SLIP_MAT_A;                //free the memory alloc'd in A
-                TEST_CHECK_FAILURE(SLIP_build_dense_double(b, B_doub, n,
+                TEST_CHECK(SLIP_build_dense_double(b, B_doub, n,
                     numRHS));
+                GOTCHA;
+                for (i=0;i<b->m;i++)
+                {
+                    printf ("  row %d : ", i) ;
+                    for (j=0;j<b->n;j++)
+                    {
+                        SLIP_info status = slip_gmp_printf ( "%Zd " , b->x[i][j]) ;
+                        if (status < 0)
+                        {
+                            printf (" error: %d\n", status) ;
+                            return (status) ;
+                        }
+                    }
+                    printf ("\n") ;
+                }
+                GOTCHA;
                 CLEAR_SLIP_MAT_B;
-		
+*/		
 		for (j = 0; j < n; j++)                           // Get b
 		{
 		    B_doub[j][0] = bxnum[j];
@@ -417,13 +434,13 @@ int main( int argc, char* argv[])
 		if (!B_mpfr|| !Ax_mpfr) {SLIP_FREE_WORKSPACE; continue;}
 		
 		//failure due to uninitialized mpfr array/mat
-		TEST_CHECK_FAILURE(SLIP_build_sparse_ccf_mpfr(A, Ap, Ai,
+/*		TEST_CHECK_FAILURE(SLIP_build_sparse_ccf_mpfr(A, Ap, Ai,
                     Ax_mpfr, n, nz, option));
                 CLEAR_SLIP_MAT_A;                //free the memory alloc'd in A
 		TEST_CHECK_FAILURE(SLIP_build_dense_mpfr(b, B_mpfr, n, numRHS,
                     option));
                 CLEAR_SLIP_MAT_B;
-
+*/
 		for (j = 0; j < n; j++)                               // Get B
 		{
 		    TEST_CHECK(slip_mpfr_set_d(B_mpfr[j][0], bxnum[j],
@@ -579,7 +596,7 @@ int main( int argc, char* argv[])
 		{
 		    if (malloc_count > 0)
                     {
-                        rat_list[4] = kk;
+                        rat_list[5] = kk;
                         break;
                     }
 		    else {continue;}
@@ -592,6 +609,7 @@ int main( int argc, char* argv[])
 
 	    // Column ordering using either AMD, COLAMD or nothing
 	    TEST_CHECK(SLIP_LU_analyze(S, A, option));
+            option->check = true;
             option->print_level = 3;
             int check2;
 
@@ -603,6 +621,21 @@ int main( int argc, char* argv[])
 		sol_mpq = SLIP_create_mpq_mat(n, numRHS);
 		TEST_CHECK(SLIP_spok (A, 3));
 		TEST_CHECK(SLIP_solve_mpq(sol_mpq, A, S, b, option));
+                slip_gmp_printf("Ascale=%Qd bscale=%Qd\n",A->scale,b->scale);
+                for (i=0;i<n;i++)
+                {
+                    printf ("  row %d : ", i) ;
+                    for (j=0;j<numRHS;j++)
+                    {
+                        SLIP_info status = slip_gmp_printf ( "%Qd " , sol_mpq[i][j]) ;
+                        if (status < 0)
+                        {
+                            printf (" error: %d\n", status) ;
+                            return (status) ;
+                        }
+                    }
+                    printf ("\n") ;
+                }
                 TEST_CHECK(SLIP_check_solution(A, sol_mpq, b));
                 check2 = ok;  // track the status of SLIP_check_solution
                 TEST_CHECK(SLIP_print_stats_mpq(stdout, sol_mpq, n, numRHS,
@@ -634,6 +667,8 @@ int main( int argc, char* argv[])
 	    {
 		sol_mpfr = SLIP_create_mpfr_mat(n, numRHS, option);
 		TEST_CHECK(SLIP_solve_mpfr(sol_mpfr, A, S, b, option));
+                TEST_CHECK(SLIP_print_stats_mpfr(stdout, sol_mpfr, n, numRHS,
+                    SLIP_OK, option));
 	    }
 	    //------------------------------------------------------------------
 	    // Free Memory
@@ -657,8 +692,9 @@ int main( int argc, char* argv[])
     }
     else
     {
-        printf("malloc_count for rat = 1 ~ 5 are %d %d %d %d %d\n",
-            rat_list[0], rat_list[1], rat_list[2], rat_list[3], rat_list[4]);
+        printf("malloc_count for Ab_type = 0 ~ 5 are %d %d %d %d %d %d\n",
+            rat_list[0], rat_list[1], rat_list[2], rat_list[3], rat_list[4],
+            rat_list[5]);
     }
     return 0;
 }

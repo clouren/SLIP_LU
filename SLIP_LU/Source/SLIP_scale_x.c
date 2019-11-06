@@ -28,7 +28,7 @@ SLIP_info SLIP_scale_x
     n = A->m;
     numRHS = b->n;
 
-    // Determine if A's scaling factor is > 1
+    // Determine if A's scaling factor is 1
     SLIP_CHECK(slip_mpq_cmp_ui(&r, A->scale, 1, 1));
     if (r != 0)
     {
@@ -36,6 +36,7 @@ SLIP_info SLIP_scale_x
         {
             for (int32_t j = 0; j < numRHS; j++)
             {
+                // TODO: This is redundant. mpq_mul has special case for 0 mul
                 SLIP_CHECK(slip_mpq_cmp_ui(&r, x[i][j], 0, 1));
                 if (r == 0) continue;
                 SLIP_CHECK(slip_mpq_mul(x[i][j], x[i][j], A->scale));
@@ -43,7 +44,7 @@ SLIP_info SLIP_scale_x
         }
     }
 
-    // Determine if b's scaling factor is > 1
+    // Determine if b's scaling factor is 1
     SLIP_CHECK(slip_mpq_cmp_ui(&r, b->scale, 1, 1));
     if (r != 0)
     {
@@ -51,6 +52,7 @@ SLIP_info SLIP_scale_x
         {
             for (int32_t j = 0; j < numRHS; j++)
             {
+                // TODO: This is redundant. mpq_mul has special case for 0 mul
                 SLIP_CHECK(slip_mpq_cmp_ui(&r, x[i][j], 0, 1));
                 if (r == 0) continue;
                 SLIP_CHECK(slip_mpq_div(x[i][j], x[i][j], b->scale));

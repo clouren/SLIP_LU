@@ -42,7 +42,7 @@ SLIP_info SLIP_solve_double
     //--------------------------------------------------------------------------
     /* Declare memory */
     //--------------------------------------------------------------------------
-    int32_t check2 = SLIP_OK, *pinv, n = A->n, numRHS = b->n;
+    int32_t *pinv, n = A->n, numRHS = b->n;
     SLIP_info ok;
     mpq_t **x_mpq = SLIP_create_mpq_mat(n, numRHS);
     SLIP_sparse* L = SLIP_create_sparse();
@@ -68,13 +68,15 @@ SLIP_info SLIP_solve_double
 
     //--------------------------------------------------------------------------
     // Check solution
-    // TODO: delete this? the check2 flag is not passed out nor printed
     //--------------------------------------------------------------------------
+#if 0
+    SLIP_info check2 = SLIP_OK;
     if (option->check)
     {
         SLIP_CHECK(SLIP_check_solution(A, x_mpq, b));
 	check2 = ok;
     }
+#endif
     SLIP_CHECK(SLIP_scale_x(x_mpq, A, b));
     
     //--------------------------------------------------------------------------

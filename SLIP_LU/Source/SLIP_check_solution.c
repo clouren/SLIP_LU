@@ -83,6 +83,7 @@ SLIP_info SLIP_check_solution
         {
             // z = b[i] (correct b)
             SLIP_CHECK(slip_mpq_set_z(temp, bx[i][j]));
+            slip_gmp_printf("[%d][%d]=%Zd %Qd %Qd \n", i, j, bx[i][j], temp, b2[i][j]);
 
             // set check false if b!=b2
 	    SLIP_CHECK(slip_mpq_equal(&r, temp, b2[i][j]));
