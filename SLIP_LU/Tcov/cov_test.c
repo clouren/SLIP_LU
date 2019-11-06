@@ -619,43 +619,30 @@ int main( int argc, char* argv[])
 	    if (rat==1)
 	    {
 		sol_mpq = SLIP_create_mpq_mat(n, numRHS);
-		TEST_CHECK(SLIP_spok (A, 3));
 		TEST_CHECK(SLIP_solve_mpq(sol_mpq, A, S, b, option));
-                slip_gmp_printf("Ascale=%Qd bscale=%Qd\n",A->scale,b->scale);
-                for (i=0;i<n;i++)
+                if (Ab_type == 0)
                 {
-                    printf ("  row %d : ", i) ;
-                    for (j=0;j<numRHS;j++)
+                    TEST_CHECK(SLIP_check_solution(A, sol_mpq, b));
+                    check2 = ok;  // track the status of SLIP_check_solution
+                    TEST_CHECK(SLIP_print_stats_mpq(stdout, sol_mpq, n, numRHS,
+                        check2,option));
+                    TEST_CHECK(SLIP_spok (A, 3));
+                    //SLIP_PRINT_OK(ok);
+
+                    //intentionally change b to fail SLIP_LU_Check()
+                    TEST_CHECK(slip_mpz_set_ui (b->x[0][0], 1000));
+                    check2=SLIP_check_solution(A, sol_mpq, b);
+
+                    // Print result using SLIP_print_stats, which should return
+                    // SLIP_INCORRECT since check2 == SLIP_INCORRECT
+                    ok=SLIP_print_stats_mpq(stdout, sol_mpq, n, numRHS, check2,
+                        option);
+                    if (ok!=SLIP_INCORRECT)
                     {
-                        SLIP_info status = slip_gmp_printf ( "%Qd " , sol_mpq[i][j]) ;
-                        if (status < 0)
-                        {
-                            printf (" error: %d\n", status) ;
-                            return (status) ;
-                        }
+                        SLIP_PRINT_OK(ok);
+                        SLIP_FREE_WORKSPACE;
+                        continue;
                     }
-                    printf ("\n") ;
-                }
-                TEST_CHECK(SLIP_check_solution(A, sol_mpq, b));
-                check2 = ok;  // track the status of SLIP_check_solution
-                TEST_CHECK(SLIP_print_stats_mpq(stdout, sol_mpq, n, numRHS,
-                    check2,option));
-		TEST_CHECK(SLIP_spok (A, 3));
-                //SLIP_PRINT_OK(ok);
-		
-		//intentionally change b to fail SLIP_LU_Check()
-		TEST_CHECK(slip_mpz_set_ui (b->x[0][0], 1000));
-		check2=SLIP_check_solution(A, sol_mpq, b);
-		
-                // Print result using SLIP_print_stats, which should return
-                // SLIP_INCORRECT since check2 == SLIP_INCORRECT
-		ok=SLIP_print_stats_mpq(stdout, sol_mpq, n, numRHS, check2,
-                    option);
-                if (ok!=SLIP_INCORRECT)
-                {
-                    SLIP_PRINT_OK(ok);
-                    SLIP_FREE_WORKSPACE;
-                    continue;
                 }
 	    }
 	    else if (rat==2)
