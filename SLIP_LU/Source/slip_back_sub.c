@@ -25,11 +25,6 @@ SLIP_info slip_back_sub  // performs sparse REF backward substitution
     int32_t numRHS    // number of columns in bx
 )
 {
-	// Check inputs
-    if (!U || !bx || !U->x || !U->i || !U->p)
-    {
-        return SLIP_INCORRECT_INPUT;
-    }
     int32_t sgn;
     mpz_t *Ux = U->x;
     int32_t *Ui = U->i;
