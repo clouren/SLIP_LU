@@ -95,11 +95,7 @@ SLIP_info slip_expand_mpfr_mat
             else
             {
                 // Compute the GCD of the numbers
-                ok=slip_gmp_printf("%Zd ", gcd);
-                if (ok<0) SLIP_CHECK(ok);
                 SLIP_CHECK(slip_mpz_gcd(gcd, gcd, x_out[i][j]));
-                ok=slip_gmp_printf("%Zd %Zd\n\n", x_out[i][j], gcd);
-                if (ok<0) SLIP_CHECK(ok);
                 SLIP_CHECK(slip_mpz_cmp(&r2, gcd, one));
                 if (r2 == 0)
                 {
