@@ -18,6 +18,9 @@
  */
 
  #include "SLIP_LU_internal.h"
+
+#define SLIP_FREE_WORKSPACE                  \
+    SLIP_delete_mpz_array(&x_new, nz);
  
  SLIP_info SLIP_build_sparse_trip_int
 (
