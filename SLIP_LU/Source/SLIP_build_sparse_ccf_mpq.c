@@ -28,7 +28,7 @@ SLIP_info SLIP_build_sparse_ccf_mpq
 )
 {
     SLIP_info ok;
-    if (!p || !I || !x || !A_output)
+    if (!p || !I || !x || !A_output ||!A_output->scale)
     {
         return SLIP_INCORRECT_INPUT;
     }

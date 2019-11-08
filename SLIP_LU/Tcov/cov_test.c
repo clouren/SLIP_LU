@@ -363,20 +363,19 @@ int main( int argc, char* argv[])
                 // create empty A and b using uninitialized double mat/array
                 TEST_CHECK(SLIP_build_sparse_ccf_double(A, Ap, Ai,
                     Ax_doub, n, nz));
-                TEST_CHECK(SLIP_spok (A, 3));
                 CLEAR_SLIP_MAT_A;                //free the memory alloc'd in A
                 TEST_CHECK(SLIP_build_dense_double(b, B_doub, n,
                     numRHS));
                 CLEAR_SLIP_MAT_B;
 
                 // trigger gcd == 1
-/*                for (j = 0; j < n; j++)                           // Get b
+                for (j = 0; j < n; j++)                           // Get b
                 {
                     B_doub[j][0] = bxnum[j]/1e17;
                 }
                 TEST_CHECK(SLIP_build_dense_double(b, B_doub, n, numRHS));
                 CLEAR_SLIP_MAT_B;
-*/
+
                 // trigger gcd != 1
                 for (j = 0; j < n; j++)                           // Get b
                 {
@@ -391,6 +390,7 @@ int main( int argc, char* argv[])
                 TEST_CHECK(SLIP_build_sparse_ccf_double(A, Ap, Ai, Ax_doub, n,
                     nz));
                 TEST_CHECK (SLIP_spok (A, 0)) ;
+                option->pivot = SLIP_SMALLEST;
             }
             else if (Ab_type==2)//int
             {
@@ -456,34 +456,43 @@ int main( int argc, char* argv[])
                 // create empty A and b using uninitialized double mat/array
                 TEST_CHECK(SLIP_build_sparse_ccf_mpfr(A, Ap, Ai,
                     Ax_mpfr, n, nz, option));
-                TEST_CHECK(SLIP_spok (A, 3));
                 TEST_CHECK(SLIP_build_dense_mpfr(b, B_mpfr, n,
                     numRHS, option));
                 // to trigger SLIP_SINGULAR
                 TEST_CHECK(SLIP_LU_analyze(S, A, option));
                 sol_mpq = SLIP_create_mpq_mat(n, numRHS);
                 TEST_CHECK_FAILURE(SLIP_solve_mpq(sol_mpq, A, S, b, option));
+                option->pivot = SLIP_LARGEST;
+                TEST_CHECK_FAILURE(SLIP_solve_mpq(sol_mpq, A, S, b, option));
+                option->pivot = SLIP_FIRST_NONZERO;
+                TEST_CHECK_FAILURE(SLIP_solve_mpq(sol_mpq, A, S, b, option));
                 //free the memory alloc'd
                 SLIP_delete_mpq_mat(&sol_mpq, n, numRHS);
                 CLEAR_SLIP_MAT_A;
                 CLEAR_SLIP_MAT_B;
 
-                //failure due to uninitialized mpfr array/mat
-/*                TEST_CHECK_FAILURE(SLIP_build_sparse_ccf_mpfr(A, Ap, Ai,
-                    Ax_mpfr, n, nz, option));
-                CLEAR_SLIP_MAT_A;                //free the memory alloc'd in A
-                TEST_CHECK_FAILURE(SLIP_build_dense_mpfr(b, B_mpfr, n, numRHS,
-                    option));
-                CLEAR_SLIP_MAT_B;
-*/
                 // trigger gcd == 1
+                int prec = option->prec;
+                option->prec = 17;
                 for (j = 0; j < n; j++)                               // Get B
                 {
                     TEST_CHECK(slip_mpfr_set_d(B_mpfr[j][0], bxnum[j]/1e17,
                         MPFR_RNDN));
                 }
+                for (j = 0; j < nz; j++)                             // Get Ax
+                {
+                    TEST_CHECK(slip_mpfr_set_d(Ax_mpfr[j], Axnum[j]/1e17,
+                        MPFR_RNDN));
+                    TEST_CHECK(slip_mpfr_div_d(Ax_mpfr[j], Ax_mpfr[j], Axden[j],
+                        MPFR_RNDN));
+                }
                 TEST_CHECK(SLIP_build_dense_mpfr(b, B_mpfr, n, numRHS, option));
+                TEST_CHECK(SLIP_build_sparse_ccf_mpfr(A, Ap, Ai, Ax_mpfr,
+                    n, nz, option));
+                CLEAR_SLIP_MAT_A;
                 CLEAR_SLIP_MAT_B;
+                option->prec = prec;
+
                 // trigger gcd != 1
                 for (j = 0; j < n; j++)                               // Get B
                 {
@@ -583,7 +592,11 @@ int main( int argc, char* argv[])
 
                 // failure case: incorrect index array input
                 int I1[11]={0, -1, -2, 2, 3, 1, 2, 3, 0, 1, 2};
+                int P1[11]={0, 3, 5, 8, 11};
                 TEST_CHECK_FAILURE(SLIP_build_sparse_trip_mpz(A, I1, J, x_mpz,
+                    n, nz));
+                CLEAR_SLIP_MAT_A;                //free the memory alloc'd in A
+                TEST_CHECK_FAILURE(SLIP_build_sparse_ccf_mpz(A, P1, I1, x_mpz,
                     n, nz));
                 CLEAR_SLIP_MAT_A;                //free the memory alloc'd in A
 
@@ -645,6 +658,13 @@ int main( int argc, char* argv[])
                 TEST_CHECK(slip_gmp_realloc_test(&p_new, NULL , 0, 1));
                 TEST_CHECK(slip_gmp_realloc_test(&p_new, p_new, 1, 0));
 
+                // Incorrect calling with NULL pointer(s)
+                TEST_CHECK_FAILURE(SLIP_LU_analyze(NULL, NULL, NULL));
+                TEST_CHECK_FAILURE(SLIP_LU_factorize(NULL, NULL, NULL, NULL,
+                    NULL, NULL, NULL));
+                TEST_CHECK_FAILURE(SLIP_LU_solve(NULL, NULL, NULL, NULL, NULL,
+                    NULL));
+
                 SLIP_FREE_WORKSPACE;
 
                 // for miscellaneous test, continue to next loop directly
@@ -680,6 +700,10 @@ int main( int argc, char* argv[])
                 {
                     //failure case: NULL pointer input
                     TEST_CHECK_FAILURE(SLIP_check_solution(A, NULL, b));
+                    TEST_CHECK_FAILURE(SLIP_get_double_soln(NULL, sol_mpq, n,
+                        numRHS));
+                    TEST_CHECK_FAILURE(SLIP_get_mpfr_soln(NULL, sol_mpq, n,
+                        numRHS));
 
                     TEST_CHECK(SLIP_check_solution(A, sol_mpq, b));
                     check2 = ok;  // track the status of SLIP_check_solution

@@ -44,11 +44,7 @@ SLIP_info slip_get_pivot
     double tolerance// tolerance used if some tolerance based pivoting is used
 )
 {
-    // Check input
-    if (!x || !pivs || !xi || !rhos || !pinv || !row_perm)
-    {
-    	return SLIP_INCORRECT_INPUT;
-    }
+    // all input were checked in the only caller SLIP_LU_factorize.c
     int32_t sgn, r;
     SLIP_info ok;
     mpq_t tol, ratio;
@@ -97,7 +93,7 @@ SLIP_info slip_get_pivot
         //----------------------------------------------------------------------
         // Checking x[col] vs smallest pivot
         //----------------------------------------------------------------------
-	    SLIP_CHECK (slip_mpz_sgn(&sgn, x[col]));
+	SLIP_CHECK (slip_mpz_sgn(&sgn, x[col]));
         if (sgn != 0 && pivs[col] < 0)
         {
 

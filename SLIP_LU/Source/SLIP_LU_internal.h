@@ -125,6 +125,7 @@
 //  SLIP_TOL_SMALLEST = 3,          Diagonal pivoting with tolerance for small
 //  SLIP_TOL_LARGEST = 4,           Diagonal pivoting with tolerance for large
 //  SLIP_LARGEST = 5                Largest pivot
+// TODO: update description of default setting since this was SLIP_SMALLEST
 #define SLIP_DEFAULT_PIVOT SLIP_TOL_SMALLEST
 
 // Column ordering used.

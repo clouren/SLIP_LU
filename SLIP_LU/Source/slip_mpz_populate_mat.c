@@ -25,15 +25,9 @@ SLIP_info slip_mpz_populate_mat
     int32_t nz        // number of nonzeros in the matrix A
 )
 {
-    if (!I || !p || n <= 0 || nz < 0 || !x || !A ) 
-    {
-        return SLIP_INCORRECT_INPUT;
-    }
-    SLIP_info ok = slip_sparse_alloc(A, n, n, nz);// Allocate the matrix A
-    if (ok != SLIP_OK) 
-    {
-        return ok;
-    }
+    // inputs have been validated in SLIP_build_sparse_ccf_*.c
+    SLIP_info ok;
+    SLIP_CHECK(slip_sparse_alloc(A, n, n, nz));// Allocate the matrix A
     A->nz = nz;
     for (int32_t k = 0; k <= n; k++)              // Set A->p
     {
@@ -46,8 +40,7 @@ SLIP_info slip_mpz_populate_mat
         {
             return SLIP_INCORRECT_INPUT;
         }
-        ok = slip_mpz_set(A->x[k],x[k]);
-        if (ok != SLIP_OK) {return ok;}
+        SLIP_CHECK(slip_mpz_set(A->x[k],x[k]));
     }
     return ok;
 }

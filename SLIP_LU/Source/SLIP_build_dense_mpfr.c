@@ -24,7 +24,7 @@ SLIP_info SLIP_build_dense_mpfr
     SLIP_options *option  // command options containing the prec for mpfr
 )
 {
-    if (!b || !A_output)
+    if (!b || !A_output ||!A_output->scale || !option)
     {
         return SLIP_INCORRECT_INPUT;
     }

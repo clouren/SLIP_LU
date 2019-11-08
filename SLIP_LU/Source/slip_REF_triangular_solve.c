@@ -36,13 +36,7 @@ SLIP_info slip_REF_triangular_solve // performs the sparse REF triangular solve
     mpz_t* x                  // solution of system ==> kth column of L and U
 )
 {
-    // Validate input
-    if (!L || !A || !xi || !rhos || !pinv || !row_perm || !col_loc || !h || !x
-        || !A->p || !A->i || !A->x || !L->p || !L->i || !L->x)
-    {
-        return SLIP_INCORRECT_INPUT;
-    }
-
+    // inputs have been validated in SLIP_LU_factorize.c
     int32_t j, jnew, i, inew, p, m, n, col, sgn, top;
     SLIP_info ok;
 

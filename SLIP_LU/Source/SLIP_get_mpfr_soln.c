@@ -34,10 +34,7 @@ SLIP_info SLIP_get_mpfr_soln
         {
             SLIP_info ok = slip_mpfr_set_q(x_mpfr[i][j], x_mpq[i][j],
                 SLIP_MPFR_ROUND);
-            if (ok != SLIP_OK)
-            {
-                return ok;
-            }
+            if (ok != SLIP_OK)         {  return ok;  }
         }
     }
     return SLIP_OK;

@@ -32,11 +32,6 @@ SLIP_info slip_expand_mpq_mat
     int32_t n     // number of columns of x
 )
 {
-    if (!x || !x_out || m <= 0 || n <= 0)
-    {
-        return SLIP_INCORRECT_INPUT;
-    }
-
     int32_t i, j;
     SLIP_info ok;
     mpq_t **x4 = NULL;

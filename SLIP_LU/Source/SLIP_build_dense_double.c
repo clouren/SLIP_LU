@@ -23,7 +23,7 @@ SLIP_info SLIP_build_dense_double
     int32_t n             // number of columns
 )
 {
-    if (!b || !A_output)
+    if (!b || !A_output || !A_output->scale)
     {
         return SLIP_INCORRECT_INPUT;
     }

@@ -31,7 +31,8 @@
 )
 {
     SLIP_info ok;
-    if (!I || !J || !A_output || !x || n <= 0 || nz <= 0 || !A_output->scale)
+    if (!I || !J || !A_output || !x || n <= 0 || nz <= 0 || !A_output->scale
+        || !option)
     {
         return SLIP_INCORRECT_INPUT;
     }

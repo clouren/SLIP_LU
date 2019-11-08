@@ -38,11 +38,6 @@ SLIP_info slip_forward_sub
     int32_t numRHS    // number of columns in x
 )
 {
-    //Check inputs
-    if (!L || !x || !rhos || !(L->x) || !(L->p) || !(L->i))
-    {
-	    return SLIP_INCORRECT_INPUT;
-    }
     SLIP_info ok;
     int32_t i, j, p, k, n, m, mnew, sgn, **h;
     // Size of x vector

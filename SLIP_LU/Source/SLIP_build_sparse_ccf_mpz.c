@@ -9,11 +9,6 @@
 # include "SLIP_LU_internal.h"
 
 //------------------------------------------------------------------------------
-
-#define SLIP_FREE_WORKSPACE                 \
-    SLIP_delete_mpz_array(&x_new, nz);
-    
-//------------------------------------------------------------------------------
 // SLIP_build_sparse_ccf_mpz: build sparse matrix of mpz values
 //------------------------------------------------------------------------------
 
@@ -38,14 +33,12 @@ SLIP_info SLIP_build_sparse_ccf_mpz
 )
 {
     SLIP_info ok;
-    if (!p || !I || !x || !A_output)
+    if (!p || !I || !x || !A_output ||!A_output->scale)
     {
         return SLIP_INCORRECT_INPUT;
     }
 
-    ok = slip_mpz_populate_mat(A_output, I, p, x, n, nz);
-    if (ok != SLIP_OK) {return ok;}
-    ok = slip_mpq_set_ui(A_output->scale, 1, 1);
-    if (ok != SLIP_OK) {return ok;}
+    SLIP_CHECK(slip_mpz_populate_mat(A_output, I, p, x, n, nz));
+    SLIP_CHECK(slip_mpq_set_ui(A_output->scale, 1, 1));
     return SLIP_OK;
 }

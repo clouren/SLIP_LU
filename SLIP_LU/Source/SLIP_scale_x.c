@@ -19,10 +19,7 @@ SLIP_info SLIP_scale_x
     SLIP_dense *b           // right hand side
 )
 {
-    if (!x || !A || !b || !(A->scale) || !(b->scale)) 
-    {
-        return SLIP_INCORRECT_INPUT;
-    }
+    // inputs have been validated in SLIP_solve_*.c
     int32_t r, n, numRHS;
     SLIP_info ok;
     n = A->m;

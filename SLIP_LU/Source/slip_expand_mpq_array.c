@@ -28,11 +28,6 @@ SLIP_info slip_expand_mpq_array
     int32_t n     //size of x
 )
 {
-    // Check input
-    if (!x || !x_out || !scale || n <= 0)
-    {
-    	return SLIP_INCORRECT_INPUT;
-    }
     SLIP_info ok;
     mpz_t temp;
     SLIP_MPZ_SET_NULL(temp);
