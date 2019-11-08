@@ -8,14 +8,14 @@
 
 //------------------------------------------------------------------------------
 
+#define SLIP_FREE_WORKSPACE                 \
+    SLIP_delete_mpz_array(&x_new, nz);
+
 # include "SLIP_LU_internal.h"
 
 //------------------------------------------------------------------------------
 // SLIP_build_sparse_ccf_double: build sparse matrix from double values
 //------------------------------------------------------------------------------
-
-#define SLIP_FREE_WORKSPACE                 \
-    SLIP_delete_mpz_array(&x_new, nz);
 
 SLIP_info SLIP_build_sparse_ccf_double
 (

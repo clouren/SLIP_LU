@@ -74,15 +74,6 @@ SLIP_info SLIP_read_dense
     FILE* file          // file to read from (must already be open)
 );
 
-
-/* Purpose: Print whether the solution is correct or not */
-static inline SLIP_info print_check
-(
-    FILE *out_file,         // file to print to
-    SLIP_info check,        // whether the solution is correct or not
-    SLIP_options *option    // option struct telling how much info to print
-);
-
 /* Purpose: prints the solution vector(s) as a set of mpq_t entries */
 
 SLIP_info SLIP_print_stats_mpq

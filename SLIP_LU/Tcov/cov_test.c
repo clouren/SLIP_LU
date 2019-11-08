@@ -32,8 +32,6 @@
  * to properly use this code
  */
 
-#include "demos.h"
-
 #define SLIP_FREE_WORKSPACE                      \
 {                                                \
     SLIP_delete_LU_analysis(&S);                 \
@@ -61,6 +59,8 @@
     if (mat_file != NULL) {fclose(mat_file);}    \
     SLIP_finalize() ;                            \
 }
+
+#include "demos.h"
 
 #define TEST_CHECK(method)                       \
 {                                                \
@@ -284,7 +284,7 @@ int main( int argc, char* argv[])
             //------------------------------------------------------------------
             // Allocate memory
             //------------------------------------------------------------------
-            int n=4, numRHS=1, i, j, nz=11;
+            int n=4, numRHS=1, j, nz=11;
             SLIP_info ok;
             SLIP_options* option = SLIP_create_default_options();
             if (!option) {continue;}

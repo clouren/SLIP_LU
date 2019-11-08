@@ -6,14 +6,13 @@
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
-# include "SLIP_LU_internal.h"
-
 //------------------------------------------------------------------------------
-
 
 #define SLIP_FREE_WORKSPACE                 \
     SLIP_delete_mpz_array(&x_new, nz);
     
+# include "SLIP_LU_internal.h"
+
 //------------------------------------------------------------------------------
 // SLIP_build_sparse_ccf_int: build sparse matrix from int values
 //------------------------------------------------------------------------------
