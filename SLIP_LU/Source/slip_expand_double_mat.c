@@ -33,10 +33,6 @@ SLIP_info slip_expand_double_mat
     int32_t n     // number of columns of x
 )
 {
-    if (!x || !x_out || m <= 0 || n <= 0)
-    {
-        return SLIP_INCORRECT_INPUT;
-    }
     int32_t i, j, k, l, r1, r2 = 1;
     bool nz_found = false;
     SLIP_info ok;

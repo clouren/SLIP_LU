@@ -22,8 +22,7 @@ SLIP_info slip_dense_alloc
     int32_t n      // number of columns
 )
 {
-    // Check input
-    if (n <= 0 || m <= 0 || A == NULL)
+    if (n <= 0 || m <= 0)
     {
         return SLIP_INCORRECT_INPUT;
     }

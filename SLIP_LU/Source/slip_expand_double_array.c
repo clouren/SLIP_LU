@@ -32,10 +32,6 @@ SLIP_info slip_expand_double_array
     int32_t n   //size of x
 )
 {
-    if (!x || !x_out || !scale || n <= 0)
-    {
-        return SLIP_INCORRECT_INPUT;
-    }
     // int to store the comparison result
     int32_t i, k, r1, r2 = 1;
     bool nz_found = false;

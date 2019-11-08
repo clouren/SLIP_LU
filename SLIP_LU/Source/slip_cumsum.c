@@ -23,11 +23,6 @@ SLIP_info slip_cumsum
     int32_t n        // size of c
 )
 {
-    if (!p || !c || n <= 0) 
-    {
-        return SLIP_INCORRECT_INPUT;
-    }
-
     int32_t i, nz = 0 ;
     for (i = 0 ; i < n ; i++)
     {
