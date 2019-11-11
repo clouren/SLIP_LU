@@ -326,8 +326,8 @@ int32_t slip_gmp_fprintf(FILE *fp, const char *format, ... )
     // Finish the wrapper and return num_of_char if successful
     SLIP_GMP_WRAPPER_FINISH;
     // gmp_vfprintf returns -1 if an error occurred.
-    if (num_of_char == -1)    { return (int32_t) SLIP_INCORRECT_INPUT;  }
-    else                      { return num_of_char;    }
+    return ((num_of_char < 0) ?
+        ((int32_t) SLIP_INCORRECT_INPUT) : num_of_char) ;
 }
 
 /* Safely print to the standard output stdout. Return positive value (the number
@@ -348,8 +348,8 @@ int32_t slip_gmp_printf(const char *format, ... )
     // Finish the wrapper and return num_of_char if successful
     SLIP_GMP_WRAPPER_FINISH;
     // gmp_vprintf returns -1 if an error occurred.
-    if (num_of_char == -1)   { return (int32_t) SLIP_INCORRECT_INPUT;    }
-    else                     { return num_of_char;    }
+    return ((num_of_char < 0) ?
+        ((int32_t) SLIP_INCORRECT_INPUT) : num_of_char) ;
 }
 
 /* Safely scan the stream fp. Return positive value (the number of fields
@@ -372,8 +372,8 @@ int32_t slip_gmp_fscanf(FILE *fp, const char *format, ... )
     // If end of input (or a file error) is reached before a character
     // for a field or a literal, and if no previous non-suppressed fields have
     // matched, then the return value is EOF instead of 0
-    if (num_of_field == EOF)   { return (int32_t) SLIP_INCORRECT_INPUT;   }
-    else                       { return num_of_field;    }
+    return ((num_of_field == EOF ) ?
+        ((int32_t) SLIP_INCORRECT_INPUT) : num_of_field) ;
 }
 
 /* Safely write the output as a null terminated string in a block of memory,
@@ -446,8 +446,8 @@ int32_t slip_mpfr_fprintf(FILE *fp, const char *format, ... )
     // Finish the wrapper and return num_of_char if successful
     SLIP_GMP_WRAPPER_FINISH;
     // mpfr_vfprintf returns -1 if an error occurred.
-    if (num_of_char == -1)  { return (int32_t) SLIP_INCORRECT_INPUT; }
-    else                    { return num_of_char;    }
+    return ((num_of_char < 0) ?
+        ((int32_t) SLIP_INCORRECT_INPUT) : num_of_char) ;
 }
 
 //------------------------------------------------------------------------------
