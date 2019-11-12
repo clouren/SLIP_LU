@@ -22,7 +22,7 @@
 
  #include "SLIP_LU_internal.h"
  
- SLIP_info SLIP_build_sparse_trip_mpq
+SLIP_info SLIP_build_sparse_trip_mpq
 (
     SLIP_sparse *A_output,// It should be initialized but unused yet
     int32_t *I,         // set of row indices
