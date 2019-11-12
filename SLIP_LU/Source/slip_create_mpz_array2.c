@@ -28,13 +28,13 @@ mpz_t* slip_create_mpz_array2
     if (!x) {return NULL;}
     for (int32_t i = 0; i < n; i++)
     {
-    	// Allocate x[i] for bit-length size
+        // Allocate x[i] for bit-length size
         if (slip_mpz_init2(x[i],size) != SLIP_OK)
         {
             // Out of memory
-	    SLIP_MPZ_SET_NULL(x[i]);
+            SLIP_MPZ_SET_NULL(x[i]);
             SLIP_delete_mpz_array(&x, n);
-	    return NULL;
+            return NULL;
         }
     }
     return x;

@@ -85,7 +85,7 @@ SLIP_info SLIP_check_solution
             SLIP_CHECK(slip_mpq_set_z(temp, bx[i][j]));
 
             // set check false if b!=b2
-	    SLIP_CHECK(slip_mpq_equal(&r, temp, b2[i][j]));
+            SLIP_CHECK(slip_mpq_equal(&r, temp, b2[i][j]));
             if (r == 0)
             {
                 SLIP_FREE_WORKSPACE;

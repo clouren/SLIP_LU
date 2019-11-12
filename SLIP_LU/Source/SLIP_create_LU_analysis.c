@@ -27,8 +27,8 @@ SLIP_LU_analysis *SLIP_create_LU_analysis
     S->q = (int32_t*) SLIP_malloc(n* sizeof(int32_t));
     if (S->q == NULL) 
     {
-	SLIP_FREE(S);
-	return NULL;
+        SLIP_FREE(S);
+        return NULL;
     }
     
     S->lnz = 0;

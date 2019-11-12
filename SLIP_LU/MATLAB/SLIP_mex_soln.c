@@ -35,7 +35,7 @@ void mexFunction
     slip_check_input(pargin, nargin);
     if (nargout > 1 || nargout <= 0 || nargin != 3)
     {
-        mexErrMsgTxt("Usage: x = SLIP_LU(A,b,option)");	
+        mexErrMsgTxt("Usage: x = SLIP_LU(A,b,option)");
     }
     //--------------------------------------------------------------------------
     // Allocate memory

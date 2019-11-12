@@ -40,8 +40,8 @@ int32_t slip_get_nonzero_pivot // find the first eligible nonzero pivot
         // inew is the location of the ith nonzero
         inew = xi[i];
         // check if x[inew] is an eligible pivot
-	ok = slip_mpz_sgn(&sgn, x[inew]);
-	if (ok != SLIP_OK) {return ok;}
+        ok = slip_mpz_sgn(&sgn, x[inew]);
+        if (ok != SLIP_OK) {return ok;}
         if (sgn != 0 && pivs [inew] < 0)
         {
             *pivot = inew;

@@ -111,8 +111,8 @@ int main( int argc, char* argv[])
     if (!A || !L || !U || !b || !option)
     {
         fprintf (stderr, "Error! OUT of MEMORY!\n");
-	SLIP_finalize();
-	return 0;
+        SLIP_finalize();
+        return 0;
     }
     // Process the command line
     OK(SLIP_process_command_line(argc, argv, option,
@@ -126,7 +126,7 @@ int main( int argc, char* argv[])
     if( mat_file == NULL )
     {
         perror("Error while opening the file");
-	FREE_WORKSPACE;
+        FREE_WORKSPACE;
         return 0;
     }
     OK(SLIP_tripread(A, mat_file));
@@ -137,7 +137,7 @@ int main( int argc, char* argv[])
     if( rhs_file == NULL )
     {
         perror("Error while opening the file");
-	FREE_WORKSPACE;
+        FREE_WORKSPACE;
         return 0;
     }
     OK(SLIP_read_dense(b, rhs_file));
@@ -160,8 +160,8 @@ int main( int argc, char* argv[])
     if (!rhos || !pinv || !x || !S)
     {
         fprintf (stderr, "Error! OUT of MEMORY!\n");
-	FREE_WORKSPACE;
-	return 0;
+        FREE_WORKSPACE;
+        return 0;
     }
 
     //--------------------------------------------------------------------------
@@ -206,7 +206,7 @@ int main( int argc, char* argv[])
     if (option->check)
     {
         OK(SLIP_check_solution(A, x, b));
-	check = ok;       // ok is assigned as the status of SLIP_check_solution
+        check = ok;       // ok is assigned as the status of SLIP_check_solution
     }
     OK(SLIP_scale_x(x, A, b));
 

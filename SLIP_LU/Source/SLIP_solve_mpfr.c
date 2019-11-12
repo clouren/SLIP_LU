@@ -74,7 +74,7 @@ SLIP_info SLIP_solve_mpfr
     if (option->check)
     {
         SLIP_CHECK(SLIP_check_solution(A, x_mpq, b));
-	check2 = ok;
+        check2 = ok;
     }
 #endif
     SLIP_CHECK(SLIP_scale_x(x_mpq, A, b));

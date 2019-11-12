@@ -43,8 +43,8 @@ int main (int argc, char **argv)
     if (!A || !b || !S || !option)
     {
         fprintf (stderr, "Error! OUT of MEMORY!\n");
-	FREE_WORKSPACE;
-	return 0;
+        FREE_WORKSPACE;
+        return 0;
     }
     //--------------------------------------------------------------------------
     // Generate a random dense 50*50 matrix
@@ -57,8 +57,8 @@ int main (int argc, char **argv)
     if (!i || !j || !x || !b_doub || !soln)
     {
         fprintf (stderr, "Error! OUT of MEMORY!\n");
-	FREE_WORKSPACE;
-	return 0;
+        FREE_WORKSPACE;
+        return 0;
     }
 
     int seed = 10;

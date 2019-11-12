@@ -18,7 +18,7 @@
  */
 
 #define SLIP_FREE_WORKSPACE        \
-	SLIP_MPZ_CLEAR(small);
+    SLIP_MPZ_CLEAR(small);
 
 # include "SLIP_LU_internal.h"
 
@@ -52,7 +52,7 @@ SLIP_info slip_get_smallest_pivot
         inew = xi[flag];
         
         //check if inew can be pivotal
-	SLIP_CHECK(slip_mpz_sgn(&sgn, x[inew]));
+        SLIP_CHECK(slip_mpz_sgn(&sgn, x[inew]));
         if (pivs[inew] < 0 && sgn != 0)
         {
             // Current smallest pivot
@@ -75,10 +75,10 @@ SLIP_info slip_get_smallest_pivot
     {
         inew = xi[i];
         // check if inew can be pivotal
-	SLIP_CHECK(slip_mpz_cmpabs(&r, small, x[inew])); 
+        SLIP_CHECK(slip_mpz_cmpabs(&r, small, x[inew])); 
         if (pivs[inew] < 0 && r > 0)
         {
-	    SLIP_CHECK(slip_mpz_sgn(&sgn, x[inew]));
+            SLIP_CHECK(slip_mpz_sgn(&sgn, x[inew]));
             if (sgn != 0)
             {
                 // Current best pivot location

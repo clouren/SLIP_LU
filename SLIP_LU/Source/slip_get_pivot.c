@@ -64,7 +64,7 @@ SLIP_info slip_get_pivot
     else if (order == 1)
     {
         // Check if x[col] is eligible. take smallest pivot    if not
-	    SLIP_CHECK (slip_mpz_sgn(&sgn, x[col]));
+        SLIP_CHECK (slip_mpz_sgn(&sgn, x[col]));
         if (sgn != 0 && pivs[col] < 0)
         {
             *pivot = col;
@@ -93,7 +93,7 @@ SLIP_info slip_get_pivot
         //----------------------------------------------------------------------
         // Checking x[col] vs smallest pivot
         //----------------------------------------------------------------------
-	SLIP_CHECK (slip_mpz_sgn(&sgn, x[col]));
+        SLIP_CHECK (slip_mpz_sgn(&sgn, x[col]));
         if (sgn != 0 && pivs[col] < 0)
         {
 
@@ -109,7 +109,7 @@ SLIP_info slip_get_pivot
             SLIP_CHECK(slip_mpq_set_d(tol, tolerance));
 
             // Is ratio >= tol?
-	        SLIP_CHECK(slip_mpq_cmp(&r, ratio, tol));
+            SLIP_CHECK(slip_mpq_cmp(&r, ratio, tol));
             if (r >= 0)
             {
                 *pivot = col;
@@ -127,7 +127,7 @@ SLIP_info slip_get_pivot
         //----------------------------------------------------------------------
         // Check x[col] vs largest potential pivot
         //----------------------------------------------------------------------
-	    SLIP_CHECK (slip_mpz_sgn(&sgn, x[col]));
+        SLIP_CHECK (slip_mpz_sgn(&sgn, x[col]));
         if (sgn != 0 && pivs[col] < 0)
         {
             SLIP_CHECK(slip_mpq_init(tol));
@@ -141,7 +141,7 @@ SLIP_info slip_get_pivot
             SLIP_CHECK(slip_mpq_abs(ratio, ratio));
 
             // Is ratio >= tol?
-	        SLIP_CHECK(slip_mpq_cmp(&r, ratio, tol));
+            SLIP_CHECK(slip_mpq_cmp(&r, ratio, tol));
             if (r >= 0)
             {
                 *pivot = col;

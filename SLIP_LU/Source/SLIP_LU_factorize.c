@@ -47,7 +47,7 @@ SLIP_info SLIP_LU_factorize
 {
     // Input Check
     if (!A || !L || !U || !S || !rhos || !pinv || !option ||
-	!A->p || !A->x || !A->i)
+        !A->p || !A->x || !A->i)
     {
         return SLIP_INCORRECT_INPUT;
     }
@@ -59,7 +59,7 @@ SLIP_info SLIP_LU_factorize
     SLIP_info ok = SLIP_OK;
     int32_t n = A->n, k = 0, top, i, j, col, loc,
         lnz = 0, unz = 0, pivot, jnew, *xi = NULL, *h = NULL, *col_loc = NULL,
-	*pivs = NULL, *row_perm = NULL;
+        *pivs = NULL, *row_perm = NULL;
     uint64_t size;
     mpz_t sigma; SLIP_MPZ_SET_NULL(sigma);
     mpfr_t temp; SLIP_MPFR_SET_NULL(temp);
@@ -117,7 +117,7 @@ SLIP_info SLIP_LU_factorize
         if( gamma < A->p[i+1] - A->p[i])
         {
             gamma = A->p[i+1]-A->p[i];
-    	}
+        }
     }
     
     // temp = sigma
@@ -200,7 +200,7 @@ SLIP_info SLIP_LU_factorize
             // ith value of x[j]
             U->i[unz] = jnew;
             // Allocate memory for x[j]
-	    SLIP_CHECK(slip_mpz_sizeinbase(&size, x[jnew], 2));
+            SLIP_CHECK(slip_mpz_sizeinbase(&size, x[jnew], 2));
             // GMP manual: Allocated size should be size+2
             SLIP_CHECK(slip_mpz_init2(U->x[unz],size+2));
             // Set U[x]
@@ -274,7 +274,7 @@ SLIP_info SLIP_LU_factorize
             {
                 // Place the i location of the U->nz nonzero
                 U->i[unz] = jnew;
-		SLIP_CHECK(slip_mpz_sizeinbase(&size, x[jnew], 2));
+                SLIP_CHECK(slip_mpz_sizeinbase(&size, x[jnew], 2));
                 // GMP manual: Allocated size should be size+2
                 SLIP_CHECK(slip_mpz_init2(U->x[unz], size+2));
                 // Place the x value of the U->nz nonzero
@@ -290,7 +290,7 @@ SLIP_info SLIP_LU_factorize
             {
                 // Place the i location of the L->nz nonzero
                 L->i[lnz] = jnew;
-		SLIP_CHECK(slip_mpz_sizeinbase(&size, x[jnew], 2));
+                SLIP_CHECK(slip_mpz_sizeinbase(&size, x[jnew], 2));
                 // GMP manual: Allocated size should be size+2
                 SLIP_CHECK(slip_mpz_init2(L->x[lnz], size+2));
                 // Place the x value of the L->nz nonzero

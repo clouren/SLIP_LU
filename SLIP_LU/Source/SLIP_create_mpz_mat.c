@@ -38,7 +38,7 @@ mpz_t** SLIP_create_mpz_mat
             if (slip_mpz_init(x[i][j]) == SLIP_OUT_OF_MEMORY)
             {
                 // out of memory
-		SLIP_MPZ_SET_NULL(x[i][j]);
+                SLIP_MPZ_SET_NULL(x[i][j]);
                 SLIP_delete_mpz_mat (&x, m, n) ;
                 return (NULL) ;
             }

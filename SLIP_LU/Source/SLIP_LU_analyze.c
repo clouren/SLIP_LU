@@ -60,7 +60,7 @@ SLIP_info SLIP_LU_analyze
         amd_defaults(Control);                  // Set AMD defaults
         double Info [AMD_INFO];
         amd_order(n, A->p, A->i, S->q, Control, Info); // Perform AMD
-        S->lnz = S->unz = Info[AMD_LNZ]; 	// Guess for unz and lnz
+        S->lnz = S->unz = Info[AMD_LNZ];        // Guess for unz and lnz
         if (option->print_level > 0)            // Output AMD info if desired
         {
             printf("\n****Column Ordering Information****\n");
@@ -86,7 +86,7 @@ SLIP_info SLIP_LU_analyze
         // Initialize A2 per COLAMD documentation
         for (i = 0; i < nz; i++)
         {
-	    A2[i] = A->i[i];
+            A2[i] = A->i[i];
         }
         int32_t stats [COLAMD_STATS];
         colamd(n, n, Alen, A2, S->q, (double *) NULL, stats);

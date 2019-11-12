@@ -29,7 +29,7 @@ mpz_t* SLIP_create_mpz_array
         if (slip_mpz_init(x[i]) != SLIP_OK)
         {
             // Error, out of memory
-	    SLIP_MPZ_SET_NULL(x[i]);
+            SLIP_MPZ_SET_NULL(x[i]);
             SLIP_delete_mpz_array(&x,n);
             return NULL;
         }

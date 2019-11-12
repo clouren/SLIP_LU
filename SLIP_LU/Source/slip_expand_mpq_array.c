@@ -56,7 +56,7 @@ SLIP_info slip_expand_mpq_array
     for (int32_t i = 0; i < n; i++)    
     {
         // x4[i] = x[i]*temp
-	SLIP_CHECK(slip_mpq_mul(x4[i], x[i], scale));
+        SLIP_CHECK(slip_mpq_mul(x4[i], x[i], scale));
     
         // x_out[i] = x4[i]
         SLIP_CHECK(slip_mpz_set_q(x_out[i], x4[i]));

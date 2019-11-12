@@ -51,8 +51,8 @@ int main (int argc, char **argv)
     if (!A || !b ||  !S || !option)
     {
         fprintf (stderr, "Error! OUT of MEMORY!\n");
-	FREE_WORKSPACE;
-	return 0;
+        FREE_WORKSPACE;
+        return 0;
     }
 
     //--------------------------------------------------------------------------
@@ -66,8 +66,8 @@ int main (int argc, char **argv)
     if (!b_mpfr || !i || !p || !x_mpfr || !soln)
     {
         fprintf (stderr, "Error! OUT of MEMORY!\n");
-	FREE_WORKSPACE;
-	return 0;
+        FREE_WORKSPACE;
+        return 0;
     }
 
     for (j = 0; j < n; j++)                               // Get p & b_mpfr

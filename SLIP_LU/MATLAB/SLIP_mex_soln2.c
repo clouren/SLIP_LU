@@ -96,7 +96,7 @@ void mexFunction
     //--------------------------------------------------------------------------
     pargout[0] = slip_mex_output_L(L, rhos);                     // out[0] = L
     pargout[1] = slip_mex_output_U(U, rhos, A->scale);           // out[1] = U
-    pargout[2] = slip_mex_output_p(pinv, A->n);			         // out[2] = P
+    pargout[2] = slip_mex_output_p(pinv, A->n);                  // out[2] = P
     pargout[3] = slip_mex_output_col_permut(S->q, A->n);         // out[3] = Q
     pargout[4] = slip_mex_output_soln(soln, b->m, b->n);         // out[4] = soln
 

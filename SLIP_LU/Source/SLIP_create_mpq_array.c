@@ -28,7 +28,7 @@ mpq_t* SLIP_create_mpq_array
         if (slip_mpq_init(x[i]) != SLIP_OK)
         {
             // Out of memory
-	    SLIP_MPQ_SET_NULL(x[i]);
+            SLIP_MPQ_SET_NULL(x[i]);
             SLIP_delete_mpq_array(&x,n);
             return NULL;
         }

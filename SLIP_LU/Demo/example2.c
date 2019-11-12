@@ -52,8 +52,8 @@ int main (int argc, char **argv)
     if (!A || !b || !option)
     {
         fprintf (stderr, "Error! OUT of MEMORY!\n");
-	FREE_WORKSPACE;
-	return 0;
+        FREE_WORKSPACE;
+        return 0;
     }
 
     //--------------------------------------------------------------------------
@@ -64,7 +64,7 @@ int main (int argc, char **argv)
     if( mat_file == NULL )
     {
         perror("Error while opening the file");
-	FREE_WORKSPACE;
+        FREE_WORKSPACE;
         return 0;
     }
     OK(SLIP_tripread(A, mat_file));
@@ -75,7 +75,7 @@ int main (int argc, char **argv)
     if( rhs_file == NULL )
     {
         perror("Error while opening the file");
-	FREE_WORKSPACE;
+        FREE_WORKSPACE;
         return 0;
     }
     OK(SLIP_read_dense(b, rhs_file));
@@ -96,8 +96,8 @@ int main (int argc, char **argv)
     if (!S || !x)
     {
         fprintf (stderr, "Error! OUT of MEMORY!\n");
-	FREE_WORKSPACE;
-	return 0;
+        FREE_WORKSPACE;
+        return 0;
     }
 
     //--------------------------------------------------------------------------

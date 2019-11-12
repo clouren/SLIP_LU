@@ -46,7 +46,7 @@ SLIP_info slip_get_largest_pivot
         // Location of the ith nonzero
         inew = xi[i];
         // inew can be pivotal
-	SLIP_CHECK(slip_mpz_cmpabs(&r, big, x[inew]));
+        SLIP_CHECK(slip_mpz_cmpabs(&r, big, x[inew]));
         if (pivs[inew] < 0 && r < 0)
         {
             // Current largest pivot location

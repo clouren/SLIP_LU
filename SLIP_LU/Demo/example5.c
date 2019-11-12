@@ -52,8 +52,8 @@ int main (int argc, char **argv)
     if (!A || !b || !S || !option)
     {
         fprintf (stderr, "Error! OUT of MEMORY!\n");
-	FREE_WORKSPACE;
-	return 0;
+        FREE_WORKSPACE;
+        return 0;
     }
 
     //--------------------------------------------------------------------------
@@ -64,8 +64,8 @@ int main (int argc, char **argv)
     if (!b_doub || !soln)
     {
         fprintf (stderr, "Error! OUT of MEMORY!\n");
-	FREE_WORKSPACE;
-	return 0;
+        FREE_WORKSPACE;
+        return 0;
     }
     int seed = 12;      // Just an arbitrary random seed
     srand (seed);
@@ -84,7 +84,7 @@ int main (int argc, char **argv)
     if( mat_file == NULL )
     {
         perror("Error while opening the file");
-	FREE_WORKSPACE;
+        FREE_WORKSPACE;
         return 0;
     }
     OK(SLIP_tripread(A, mat_file));

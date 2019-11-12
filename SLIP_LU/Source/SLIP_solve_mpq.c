@@ -35,7 +35,7 @@ SLIP_info SLIP_solve_mpq
     if (!x_mpq || !A || !A->p || !A->i || !A->x || 
         !S || !S->q || !b || !b->x || !option)
     {
-	return SLIP_INCORRECT_INPUT;
+        return SLIP_INCORRECT_INPUT;
     }
 
     //--------------------------------------------------------------------------
@@ -73,7 +73,7 @@ SLIP_info SLIP_solve_mpq
     if (option->check)
     {
         SLIP_CHECK(SLIP_check_solution(A, x_mpq, b));
-	check2 = ok;
+        check2 = ok;
     }
 #endif
     SLIP_CHECK(SLIP_scale_x(x_mpq, A, b));

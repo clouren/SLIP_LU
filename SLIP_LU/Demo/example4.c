@@ -53,8 +53,8 @@ int main (int argc, char **argv)
     if (!A || !b || !S || !option)
     {
         fprintf (stderr, "Error! OUT of MEMORY!\n");
-	FREE_WORKSPACE;
-	return 0;
+        FREE_WORKSPACE;
+        return 0;
     }
     //--------------------------------------------------------------------------
     // Get matrix
@@ -67,8 +67,8 @@ int main (int argc, char **argv)
     if (!x || !b_doub || !i || !p || !soln)
     {
         fprintf (stderr, "Error! OUT of MEMORY!\n");
-	FREE_WORKSPACE;
-	return 0;
+        FREE_WORKSPACE;
+        return 0;
     }
     for (int j = 0; j < n; j++)                           // Get b & p
     {

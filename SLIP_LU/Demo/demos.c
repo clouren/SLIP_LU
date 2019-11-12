@@ -9,7 +9,7 @@ void SLIP_print_options // display specified/default options to user
     char *piv, *order;
     if (option->order == SLIP_COLAMD)
     {
-     	order = "the COLAMD";
+        order = "the COLAMD";
     }
     else if (option->order == SLIP_AMD)
     {
@@ -81,14 +81,14 @@ SLIP_info SLIP_process_command_line //processes the command line
         }
         else if ( strcmp(arg,"c") == 0 || strcmp(arg,"check") == 0)
         {
-     	    option->check = true;
+            option->check = true;
         }
         else if ( strcmp(arg,"p") == 0 || strcmp(arg,"piv") == 0)
         {
             if (!argv[++i])
             {
                 printf("\n****ERROR! There must be a pivot argument between"
-		    " 0-5 following p\n");
+                    " 0-5 following p\n");
                 return SLIP_INCORRECT_INPUT;
             }
             option->pivot = atoi(argv[i]);
@@ -104,7 +104,7 @@ SLIP_info SLIP_process_command_line //processes the command line
             if (!argv[++i])
             {
                 printf("\n****ERROR! There must be an argument between 0-2"
-		    "following q\n");
+                    "following q\n");
                 return SLIP_INCORRECT_INPUT;
             }
             option->order = atoi(argv[i]);
@@ -120,20 +120,20 @@ SLIP_info SLIP_process_command_line //processes the command line
             if (!argv[++i])
             {
                 printf("\n****ERROR! There must be a non negative tolerance"
-		    " value following t\n");
+                    " value following t\n");
                 return SLIP_INCORRECT_INPUT;
             }
             else if (!atof(argv[i]))
             {
                 printf("\n****ERROR! There must be a non negative tolerance"
-		    " value following t\n");
+                    " value following t\n");
                 return SLIP_INCORRECT_INPUT;
             }
             option->tol = atof(argv[i]);
             if (option->tol < 0)
             {
                 printf("\n****ERROR! Invalid Tolerance, tolerance must be"
-		    " non-negative\n");
+                    " non-negative\n");
                 return SLIP_INCORRECT_INPUT;
             }
         }
@@ -142,13 +142,13 @@ SLIP_info SLIP_process_command_line //processes the command line
             if (!argv[++i])
             {
                 printf("\n****ERROR! o2 or out2 must be followed by"
-		    " 0 (print nothing) 1 (print err) or 2 (terse) \n");
+                    " 0 (print nothing) 1 (print err) or 2 (terse) \n");
                 return SLIP_INCORRECT_INPUT;
             }
             else if (!atoi(argv[i]))
             {
                 printf("\n****ERROR! o2 or out2 must be followed by"
-		    " 0 (print nothing) 1 (print err) or 2 (terse) \n");
+                    " 0 (print nothing) 1 (print err) or 2 (terse) \n");
                 return SLIP_INCORRECT_INPUT;
             }
             option->print_level = atoi(argv[i]);
@@ -158,13 +158,13 @@ SLIP_info SLIP_process_command_line //processes the command line
             if (!argv[++i])
             {
                 printf("\n****ERROR! o or out must be followed by"
-		    " 1 (rational) 2 (double) or 3 (variable precision) \n");
+                    " 1 (rational) 2 (double) or 3 (variable precision) \n");
                 return SLIP_INCORRECT_INPUT;
             }
             else if (!atoi(argv[i]))
             {
                 printf("\n****ERROR! o or out must be followed by"
-		    " 1 (rational) 2 (double) or 3 (variable precision) \n");
+                    " 1 (rational) 2 (double) or 3 (variable precision) \n");
                 return SLIP_INCORRECT_INPUT;
             }
             *rat = atoi(argv[i]);
@@ -205,7 +205,7 @@ SLIP_info SLIP_process_command_line //processes the command line
             if (!argv[++i])
             {
                 printf("\n****ERROR! Right hand side vector name must"
-		    " be entered\n");
+                    " be entered\n");
                 return SLIP_INCORRECT_INPUT;
             }
             *rhs_name = argv[i];
@@ -302,13 +302,13 @@ SLIP_info SLIP_tripread
     for (int32_t p = 1; p < nz; p++)
     {
         ok = slip_gmp_fscanf(file, "%d %d %Zd\n", &i[p], &j[p], &x_mpz[p]);
-	if ((feof(file) && p != nz-1) || ok < 3)
-	{
-	    SLIP_FREE(i);
+        if ((feof(file) && p != nz-1) || ok < 3)
+        {
+            SLIP_FREE(i);
             SLIP_FREE(j);
             SLIP_delete_mpz_array(&x_mpz, nz);
-	    return SLIP_INCORRECT_INPUT;
-	}
+            return SLIP_INCORRECT_INPUT;
+        }
         // Conversion from 1 based to 0 based
         i[p] -= decrement;
         j[p] -= decrement;
@@ -390,14 +390,14 @@ SLIP_info SLIP_tripread_double
     for (int32_t k = 1; k < nz; k++)
     {
         ok = fscanf(file, "%d %d %lf\n", &(i[k]), &(j[k]), &(x_doub[k]));
-	if ((feof(file) && k != nz-1) || ok < 3)
-	{
-	    SLIP_FREE(i);                 
+        if ((feof(file) && k != nz-1) || ok < 3)
+        {
+            SLIP_FREE(i);                 
             SLIP_FREE(j);                     
             SLIP_FREE(x_doub);                
             SLIP_delete_mpz_array(&x_mpz, nz);
-	    return SLIP_INCORRECT_INPUT;
-	}
+            return SLIP_INCORRECT_INPUT;
+        }
         // Conversion from 1 based to 0 based
         i[k] -= decrement;
         j[k] -= decrement;
@@ -543,11 +543,11 @@ SLIP_info SLIP_print_stats_mpq
             for (int32_t j = 0; j < numRHS; j++)
             {
                 ok = slip_gmp_fprintf(out_file, "%Qd ", x_mpq[i][j]);
-		if (ok < 0)
-		{
-		    return ok;
-		}
-       	    }
+                if (ok < 0)
+                {
+                    return ok;
+                }
+            }
             fprintf(out_file, "\n");
         }
     }
@@ -586,15 +586,15 @@ SLIP_info SLIP_print_stats_double
             return SLIP_INCORRECT_INPUT;
         }
         fprintf(out_file, "\nSolution output in double precision\n");
-	for (int32_t i = 0; i < n; i++)
-	{
-	    for (int32_t j = 0; j < numRHS; j++)
-	    {
-		// Output the solution in double precision
-		fprintf(out_file, "%lf ", x_doub[i][j]);
-	    }
+        for (int32_t i = 0; i < n; i++)
+        {
+            for (int32_t j = 0; j < numRHS; j++)
+            {
+                // Output the solution in double precision
+                fprintf(out_file, "%lf ", x_doub[i][j]);
+            }
             fprintf(out_file,"\n");
-	}
+        }
     }
     return SLIP_OK;
 }
@@ -639,10 +639,10 @@ SLIP_info SLIP_print_stats_mpfr
             {
                 ok = slip_mpfr_fprintf(out_file, "%.*Rf",
                     option->prec, x_mpfr[i][j]);
-		if (ok < 0)
-		{
-		    return ok;
-		}
+                if (ok < 0)
+                {
+                    return ok;
+                }
             }
             fprintf(out_file, "\n");
         }

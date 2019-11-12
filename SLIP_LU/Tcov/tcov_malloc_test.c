@@ -39,13 +39,13 @@ void* slip_realloc_wrapper
 {
     if (--malloc_count < 0)
     {
-	/* pretend to fail */
-	printf("realloc pretend to fail\n");
-	return (NULL);
+        /* pretend to fail */
+        printf("realloc pretend to fail\n");
+        return (NULL);
     }
     else
     {
-	return (realloc(p, new_size));
+        return (realloc(p, new_size));
     }
 }
 
@@ -63,35 +63,35 @@ void* SLIP_realloc
     
     if (p == NULL)
     {
-	return SLIP_malloc(new_size);
+        return SLIP_malloc(new_size);
     }
     else if (new_size == old_size)
     {
-	return p;
+        return p;
     }
     else
     {
-	void* pnew = (void*) SLIP_MEMORY_REALLOC (p, new_size);
-	if (pnew == NULL)
-	{
-	    if (new_size <= old_size)
-	    {
-		// The attempt to reduce the size of the block failed,
-		// but the old block is unchanged. Pretend to succeed
-		return p;
-	    }
-	    else
-	    {
-		// Out of memory
-		SLIP_FREE(p);
-		return NULL;
-	    }
-	}
-	else
-	{
-	    p = pnew;
-	    return p;
-	}
+        void* pnew = (void*) SLIP_MEMORY_REALLOC (p, new_size);
+        if (pnew == NULL)
+        {
+            if (new_size <= old_size)
+            {
+                // The attempt to reduce the size of the block failed,
+                // but the old block is unchanged. Pretend to succeed
+                return p;
+            }
+            else
+            {
+                // Out of memory
+                SLIP_FREE(p);
+                return NULL;
+            }
+        }
+        else
+        {
+            p = pnew;
+            return p;
+        }
     }
 }
 
