@@ -20,8 +20,9 @@
 //              https://gmplib.org/
 //              http://www.mpfr.org/
 
-//    If you use it for a publication, please cite the associated paper
-// TODO: Caveat for it is a request
+//    If you use SLIP LU for a publication, we request that you please cite
+//    this paper.
+//     
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
