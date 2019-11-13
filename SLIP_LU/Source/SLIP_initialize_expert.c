@@ -24,16 +24,12 @@ void SLIP_initialize_expert
     // Set GMP memory functions 
     //--------------------------------------------------------------------------
 
-    //MyMalloc = slip_gmp_allocate;
-    //MyRealloc = slip_gmp_reallocate;
-    //MyFree = slip_gmp_free;
     
-    //TODO make this temporary/fix?
-    if (MyMalloc == 0)
+    if (MyMalloc == NULL)
         MyMalloc = slip_gmp_allocate;
-    if (MyRealloc == 0)
+    if (MyRealloc == NULL)
         MyRealloc = slip_gmp_reallocate;
-    if (MyFree == 0)
+    if (MyFree == NULL)
         MyFree = slip_gmp_free;
 
     mp_set_memory_functions((*MyMalloc), (*MyRealloc),
