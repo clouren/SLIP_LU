@@ -11,9 +11,9 @@
 # include "SLIP_LU_internal.h"
 
 /* 
- * Purpose: This function initializes the working evironment for SLIP_LU
- * if the user passes in their own malloc, realloc, and free functions, we use those
- * (as in the case we are using MATLAB's memory management). If the user passes in NULL,
+ * Purpose: This function initializes the working evironment for SLIP_LU with custom
+ * memory functions. If the user passes in their own malloc, realloc, or free function(s)
+ * we use those internally to process memory. If the user does not pass in a function,
  * we utilize SLIP LU's default internal memory routines.
  */
 void SLIP_initialize_expert
