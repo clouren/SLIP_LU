@@ -26,8 +26,6 @@ void SLIP_initialize_expert
     //--------------------------------------------------------------------------
     // Set GMP memory functions 
     //--------------------------------------------------------------------------
-
-    
     if (MyMalloc == NULL)
         MyMalloc = slip_gmp_allocate;
     if (MyRealloc == NULL)
