@@ -20,22 +20,20 @@ SLIP_info SLIP_scale_x
 )
 {
     // inputs have been validated in SLIP_solve_*.c
-    int32_t r, n, numRHS;
+    int32_t r, s, n, numRHS;
     SLIP_info ok;
     n = A->m;
     numRHS = b->n;
 
     // Determine if A's scaling factor is 1
     SLIP_CHECK(slip_mpq_cmp_ui(&r, A->scale, 1, 1));
-    if (r != 0)
+    SLIP_CHECK(slip_mpq_cmp_ui(&s, A->scale, 0, 1));
+    if (r != 0 && s != 0)
     {
         for (int32_t i = 0; i < n; i++)
         {
             for (int32_t j = 0; j < numRHS; j++)
             {
-                // TODO: This is redundant. mpq_mul has special case for 0 mul
-                SLIP_CHECK(slip_mpq_cmp_ui(&r, x[i][j], 0, 1));
-                if (r == 0) continue;
                 SLIP_CHECK(slip_mpq_mul(x[i][j], x[i][j], A->scale));
             }
         }
@@ -43,15 +41,13 @@ SLIP_info SLIP_scale_x
 
     // Determine if b's scaling factor is 1
     SLIP_CHECK(slip_mpq_cmp_ui(&r, b->scale, 1, 1));
-    if (r != 0)
+    SLIP_CHECK(slip_mpq_cmp_ui(&s, b->scale, 0, 1));
+    if (r != 0 && s != 0)
     {
         for (int32_t i = 0; i < n; i++)
         {
             for (int32_t j = 0; j < numRHS; j++)
             {
-                // TODO: This is redundant. mpq_mul has special case for 0 mul
-                SLIP_CHECK(slip_mpq_cmp_ui(&r, x[i][j], 0, 1));
-                if (r == 0) continue;
                 SLIP_CHECK(slip_mpq_div(x[i][j], x[i][j], b->scale));
             }
         }
