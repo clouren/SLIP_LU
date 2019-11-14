@@ -119,7 +119,7 @@
 #define SLIP_DEFAULT_CHECK false
 
 // Pivoting scheme used for SLIP LU.
-//  SLIP_SMALLEST = 0,              Smallest pivot: Default and recommended
+//  SLIP_SMALLEST = 0,              Smallest pivot
 //  SLIP_DIAGONAL = 1,              Diagonal pivoting
 //  SLIP_FIRST_NONZERO = 2,         First nonzero per column chosen as pivot
 //  SLIP_TOL_SMALLEST = 3,          Diagonal pivoting with tolerance for small
