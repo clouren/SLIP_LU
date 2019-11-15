@@ -1,9 +1,13 @@
 SLIP LU: a Sparse Left-looking Integer-Preserving LU Factorization
 
-Copyright (c) 2019, Christopher Lourenco.
+Copyright (c) 2019, Christopher Lourenco, JinHao Chen, Erick Moreno-
+Centeno, and Tim Davis
 https://github.com/clouren/SLIP_LU
+http://suitesparse.com
 
-Contact Chris Lourenco, chrisjlourenco@gmail.com for a commercial license
+Contact Chris Lourenco, chrisjlourenco@gmail.com, or Tim Davis
+(timdavis@aldenmath.com or DrTimothyAldenDavis@gmail.com) for a commercial
+license.
 
 --------------------------------------------------------------------------------
 
