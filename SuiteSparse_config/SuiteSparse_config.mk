@@ -7,7 +7,7 @@
 # and GraphBLAS.  The configuration settings for GraphBLAS are determined by
 # GraphBLAS/CMakeLists.txt
 
-SUITESPARSE_VERSION = 5.6.1
+SUITESPARSE_VERSION = 5.6.0
 
 #===============================================================================
 # Options you can change without editing this file:
@@ -26,22 +26,6 @@ SUITESPARSE_VERSION = 5.6.1
 #===============================================================================
 # Defaults for any system
 #===============================================================================
-
-    #---------------------------------------------------------------------------
-    # determine what system we are on
-    #---------------------------------------------------------------------------
-
-    # To disable these auto configurations, use 'make UNAME=custom'
-    ifndef UNAME
-        ifeq ($(OS),Windows_NT)
-            # Cygwin Make on Windows has an $(OS) variable, but not uname.
-            # Note that this option is untested.
-            UNAME = Windows
-        else
-            # Linux and Darwin (Mac OSX) have been tested.
-            UNAME := $(shell uname)
-        endif
-    endif
 
     #---------------------------------------------------------------------------
     # SuiteSparse root directory
@@ -80,7 +64,7 @@ SUITESPARSE_VERSION = 5.6.1
     #---------------------------------------------------------------------------
 
     # use 8 jobs by default
-    JOBS ?= 40
+    JOBS ?= 8
 
     CMAKE_OPTIONS ?= -DCMAKE_INSTALL_PREFIX=$(INSTALL)
 
@@ -88,8 +72,7 @@ SUITESPARSE_VERSION = 5.6.1
     # optimization level
     #---------------------------------------------------------------------------
 
-    # OPTIMIZATION ?= -O3       HACK
-    OPTIMIZATION ?= -g
+    OPTIMIZATION ?= -O3
 
     #---------------------------------------------------------------------------
     # statement coverage for */Tcov
@@ -223,10 +206,9 @@ SUITESPARSE_VERSION = 5.6.1
     # NVIDIA CUDA configuration for CHOLMOD and SPQR
     #---------------------------------------------------------------------------
 
-    # CUDA is detected automatically, and used if found:
+    # CUDA is detected automatically, and used if found.  To disable CUDA,
+    # use CUDA=no
     CUDA = auto
-    # To disable CUDA, use this instead:
-    # CUDA=no
 
     ifneq ($(CUDA),no)
         CUDA_PATH = $(shell which nvcc 2>/dev/null | sed "s/\/bin\/nvcc//")
@@ -238,60 +220,34 @@ SUITESPARSE_VERSION = 5.6.1
         GPU_BLAS_PATH =
         GPU_CONFIG    =
         CUDART_LIB    =
-        CUSOLVER_LIB  =
         CUBLAS_LIB    =
         CUDA_INC_PATH =
         CUDA_INC      =
-        MAGMA_PATH    =
-        MAGMA_INC     =
-        MAGMA_LIB     =
         NVCC          = echo
         NVCCFLAGS     =
-        GPU_DEVICE    =
-        CC_OR_CXX     = $(CC)
     else
         # with CUDA for CHOLMOD and SPQR
         GPU_BLAS_PATH = $(CUDA_PATH)
         # GPU_CONFIG must include -DGPU_BLAS to compile SuiteSparse for the
         # GPU.  You can add additional GPU-related flags to it as well.
         # with 4 cores (default):
-        # TODO delete GPU_BLAS; use SUITESPARSE_CUDA instead
-        GPU_CONFIG    = -DGPU_BLAS -DSUITESPARSE_CUDA
+        GPU_CONFIG    = -DGPU_BLAS
         # For example, to compile CHOLMOD for 10 CPU cores when using the GPU:
         # GPU_CONFIG  = -DGPU_BLAS -DCHOLMOD_OMP_NUM_THREADS=10
-        CUDART_LIB    = -lcudart    # $(CUDA_PATH)/lib64/libcudart.so
-        CUSOLVER_LIB  = -lcusolver -lnvToolsExt
-        CUBLAS_LIB    = -lcublas
+        CUDART_LIB    = $(CUDA_PATH)/lib64/libcudart.so
+        CUBLAS_LIB    = $(CUDA_PATH)/lib64/libcublas.so
         CUDA_INC_PATH = $(CUDA_PATH)/include/
         CUDA_INC      = -I$(CUDA_INC_PATH)
-        MAGMA_PATH    ?= /usr/local/magma
-        LDFLAGS       += -L$(CUDA_PATH)/lib64 -L$(MAGMA_PATH)/lib
-        MAGMA_INC     = -I$(MAGMA_PATH)/include/
-        MAGMA_LIB     = -lmagma
+                MAGMA_INC     = -I/opt/magma-2.4.0/include/
+                MAGMA_LIB     = -L/opt/magma-2.4.0/lib/ -lmagma
         NVCC          = $(CUDA_PATH)/bin/nvcc
-        # NVCCFLAGS     = -Xcompiler -fPIC -O3          HACK
-        NVCCFLAGS     = -Xcompiler -fPIC -g \
+        NVCCFLAGS     = -Xcompiler -fPIC -O3 \
                             -gencode=arch=compute_30,code=sm_30 \
                             -gencode=arch=compute_35,code=sm_35 \
                             -gencode=arch=compute_50,code=sm_50 \
                             -gencode=arch=compute_53,code=sm_53 \
                             -gencode=arch=compute_53,code=sm_53 \
-                            -gencode=arch=compute_60,code=sm_60 \
-                            -gencode=arch=compute_70,code=sm_70
-
-        # Manually edit this file to tell SPQR what kind of device you have.
-        # This setting selects the pre-built kernels in
-        # GPUQREngine/Kernel/Factorize/$(GPU_DEVICE).
-        # FUTURE: this could be detected automatically.
-        GPU_DEVICE =
-        # GPU_DEVICE = tegra
-        # GPU_DEVICE = TX1
-        # GPU_DEVICE = K40
-        # GPU_DEVICE = P100
-        GPU_DEVICE = V100
-
-        # the CHOLMOD library must be linked with g++, if cuda is used
-        CC_OR_CXX     = $(CXX)
+                            -gencode=arch=compute_60,code=compute_60
     endif
 
     #---------------------------------------------------------------------------
@@ -372,9 +328,29 @@ SUITESPARSE_VERSION = 5.6.1
     TBB ?=
     # TBB = -ltbb -DSPQR_CONFIG=-DHAVE_TBB
 
+    # TODO: this *mk file should auto-detect the presence of Intel's TBB,
+    # and set the compiler flags accordingly.
+
 #===============================================================================
 # System-dependent configurations
 #===============================================================================
+
+    #---------------------------------------------------------------------------
+    # determine what system we are on
+    #---------------------------------------------------------------------------
+
+    # To disable these auto configurations, use 'make UNAME=custom'
+
+    ifndef UNAME
+        ifeq ($(OS),Windows_NT)
+            # Cygwin Make on Windows has an $(OS) variable, but not uname.
+            # Note that this option is untested.
+            UNAME = Windows
+        else
+            # Linux and Darwin (Mac OSX) have been tested.
+            UNAME := $(shell uname)
+        endif
+    endif
 
     #---------------------------------------------------------------------------
     # Linux
@@ -382,8 +358,7 @@ SUITESPARSE_VERSION = 5.6.1
 
     ifeq ($(UNAME),Linux)
         # add the realtime library, librt, and SuiteSparse/lib
-        LDLIBS  += -lrt 
-        LDFLAGS += -Wl,-rpath=$(INSTALL_LIB)
+        LDLIBS += -lrt -Wl,-rpath=$(INSTALL_LIB)
     endif
 
     #---------------------------------------------------------------------------
@@ -516,6 +491,7 @@ endif
 # and MY_METIS_INC options passed to 'make'.  For example:
 #       make MY_METIS_LIB=-lmetis
 #       make MY_METIS_LIB=/home/myself/mylibraries/libmetis.so
+#       make MY_METIS_LIB='-L/home/myself/mylibraries -lmetis'
 # If you need to tell the compiler where to find the metis.h include file,
 # then add MY_METIS_INC=/home/myself/metis-5.1.0/include as well, which points
 # to the directory containing metis.h.  If metis.h is already installed in
@@ -631,8 +607,6 @@ config:
 	@echo 'SuiteSparseQR config:     SPQR_CONFIG=    ' '$(SPQR_CONFIG)'
 	@echo 'CUDA library:             CUDART_LIB=     ' '$(CUDART_LIB)'
 	@echo 'CUBLAS library:           CUBLAS_LIB=     ' '$(CUBLAS_LIB)'
-	@echo 'MAGMA path:               MAGMA_PATH=     ' '$(MAGMA_PATH)'
-	@echo 'GPU Device:               GPU_DEVICE=     ' '$(GPU_DEVICE)'
 	@echo 'METIS and CHOLMOD/Partition configuration:'
 	@echo 'Your METIS library:       MY_METIS_LIB=   ' '$(MY_METIS_LIB)'
 	@echo 'Your metis.h is in:       MY_METIS_INC=   ' '$(MY_METIS_INC)'
