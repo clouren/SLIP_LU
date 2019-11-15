@@ -5,15 +5,19 @@
 // using the SLIP LU factorization. This code accompanies the paper (submitted
 // to ACM Transactions on Mathematical Software):
 
-//    "Algorithm XXX: SLIP LU: A Sparse Left-Looking Integer-Preserving LU
-//    Factorization for Exactly Solving Sparse Linear Systems"
+//    "Algorithm 1xxx: SLIP LU: A Sparse Left-Looking Integer-Preserving LU
+//    Factorization for Exactly Solving Sparse Linear Systems",
+//    C. Lourenco, J. Chen, E. Moreno-Centeno, T. Davis, under submission,
+//    ACM Trans. Mathematical Software.
 
 //    The theory associated with this software can be found in the paper
 //    (published in SIAM journal on matrix analysis and applications):
 
 //    "Exact Solution of Sparse Linear Systems via Left-Looking
 //     Roundoff-Error-Free LU Factorization in Time Proportional to
-//     Arithmetic Work"
+//     Arithmetic Work", C. Lourenco, A. R. Escobedo, E. Moreno-Centeno,
+//     T. Davis, SIAM J. Matrix Analysis and Applications.  pp 609-638,
+//     vol 40, no 2, 2019.
 
 //    If you use this code, you must first download and install the GMP and
 //    MPFR libraries. GMP and MPFR can be found at:
@@ -21,8 +25,7 @@
 //              http://www.mpfr.org/
 
 //    If you use SLIP LU for a publication, we request that you please cite
-//    this paper.
-//     
+//    the above two papers.
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -55,8 +58,8 @@
 //
 //    See license.txt for license info.
 //
-// This software is copyright by Christopher Lourenco, Jinhao Chen, Erick Moreno-Centeno
-// and Timothy A. Davis. All Rights Reserved.
+// This software is copyright by Christopher Lourenco, Jinhao Chen, Erick
+// Moreno-Centeno and Timothy A. Davis. All Rights Reserved.
 //
 
 //------------------------------------------------------------------------------
@@ -87,31 +90,31 @@
 //    This package computes the factorization PAQ = LDU. Note that we store the
 //    "functional" form of the factorization by only storing L and U. The user
 //    is given some freedom to select the permutation matrices P and Q. The
-//    recommended default settings select Q using the COLAMD column ordering and
-//    selects P via a partial pivoting scheme in which the diagonal entry in
-//    column k is selected if it is the same magnitude as the smallest entry,
-//    otherwise the smallest entry is selected as the kth pivot. Alternative 
-//    strategies allowed to select Q include the AMD column ordering or no column permutation (Q=I).
-//    For pivots, there are a variety of potential
-//    schemes including traditional partial pivoting, diagonal pivoting,
-//    tolerance pivoting etc. This package does not allow pivoting based on
-//    sparsity criterion.
+//    recommended default settings select Q using the COLAMD column ordering
+//    and selects P via a partial pivoting scheme in which the diagonal entry
+//    in column k is selected if it is the same magnitude as the smallest
+//    entry, otherwise the smallest entry is selected as the kth pivot.
+//    Alternative strategies allowed to select Q include the AMD column
+//    ordering or no column permutation (Q=I).  For pivots, there are a variety
+//    of potential schemes including traditional partial pivoting, diagonal
+//    pivoting, tolerance pivoting etc. This package does not allow pivoting
+//    based on sparsity criterion.
 
 //    The factors L and U are computed via integer preserving operations via
-//    integer-preserving Gaussian elimination. The key part of this algorithm is
-//    a REF Sparse triangular solve function which exploits sparsity to reduce
-//    the number of operations that must be performed.
+//    integer-preserving Gaussian elimination. The key part of this algorithm
+//    is a REF Sparse triangular solve function which exploits sparsity to
+//    reduce the number of operations that must be performed.
 
-//    Once L and U are computed, a simplified version of the triangular solve is
-//    performed which assumes the vector b is dense. The final solution vector x
-//    is gauranteed to be exact. This vector can be output in one of three ways:
-//    1) full precision rational arithmetic (as a sequence of numerators
-//    and denominators) using the GMP mpq_t data type,
-//    2) double precision while not exact will produce a solution accurate to
-//    machine roundoff unless the size of the associated solution exceeds double
-//    precision (i.e., the solution is 10^500 or something),
-//    3) variable precision floating point using the GMP mpfr_t data type. The
-//    associated precision is user defined.
+//    Once L and U are computed, a simplified version of the triangular solve
+//    is performed which assumes the vector b is dense. The final solution
+//    vector x is gauranteed to be exact. This vector can be output in one of
+//    three ways: 1) full precision rational arithmetic (as a sequence of
+//    numerators and denominators) using the GMP mpq_t data type, 2) double
+//    precision while not exact will produce a solution accurate to machine
+//    roundoff unless the size of the associated solution exceeds double
+//    precision (i.e., the solution is 10^500 or something), 3) variable
+//    precision floating point using the GMP mpfr_t data type. The associated
+//    precision is user defined.
 
 
 //------------------------------------------------------------------------------
@@ -121,13 +124,13 @@
 //------------------------------------------------------------------------------
 
 // Current version of the code
-#define SLIP_LU_VERSION "0.0.1"
-#define SLIP_LU_VERSION_MAJOR 0
+#define SLIP_LU_VERSION "1.0.0"
+#define SLIP_LU_VERSION_MAJOR 1
 #define SLIP_LU_VERSION_MINOR 0
-#define SLIP_LU_VERSION_SUB   1
+#define SLIP_LU_VERSION_SUB   0
 
 // Name of associated paper
-#define SLIP_PAPER "Algorithm XXX: SLIP LU: Sparse Left-looking Integer-Preserving LU Factorization"
+#define SLIP_PAPER "Algorithm 1xxx: SLIP LU: Sparse Left-looking Integer-Preserving LU Factorization"
 
 // Authors of code
 #define SLIP_AUTHOR "Christopher Lourenco, Jinhao Chen, Erick Moreno-Centeno, Timothy Davis"
