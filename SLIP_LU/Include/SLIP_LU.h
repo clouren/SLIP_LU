@@ -91,7 +91,7 @@
 //    "functional" form of the factorization by only storing L and U. The user
 //    is given some freedom to select the permutation matrices P and Q. The
 //    recommended default settings select Q using the COLAMD column ordering
-//    and selects P via a partial pivoting scheme in which the diagonal entry
+//    and select P via a partial pivoting scheme in which the diagonal entry
 //    in column k is selected if it is the same magnitude as the smallest
 //    entry, otherwise the smallest entry is selected as the kth pivot.
 //    Alternative strategies allowed to select Q include the AMD column
