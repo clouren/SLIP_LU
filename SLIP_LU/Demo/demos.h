@@ -9,7 +9,7 @@
 #include <gmp.h>
 #include <mpfr.h>
 #include "SLIP_LU.h"
-#include "../Source/SLIP_LU_internal.h"
+#include "../Source/SLIP_LU_internal.h" //TODO: FIXME
 
 #define OK(method)                      \
 {                                       \
