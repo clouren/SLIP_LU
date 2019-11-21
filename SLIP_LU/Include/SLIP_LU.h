@@ -508,7 +508,7 @@ SLIP_info SLIP_build_sparse_trip_int
     SLIP_sparse *A_output,// It should be initialized but unused yet
     int32_t *I,         // set of row indices
     int32_t *J,         // set of column indices
-    int *x,             // Set of values in int
+    int32_t *x,             // Set of values in int
     int32_t n,          // dimension of the matrix
     int32_t nz          // number of nonzeros in A (size of x, I, and J vectors)
 );
