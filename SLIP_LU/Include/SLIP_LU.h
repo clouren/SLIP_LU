@@ -936,6 +936,7 @@ SLIP_info SLIP_LU_solve     //solves the linear system LD^(-1)U x = b
 );
 
 // check and print a SLIP_sparse matrix
+// TODO: use SLIP_options as input?
 SLIP_info SLIP_spok  // returns a SLIP_LU status code
 (
     SLIP_sparse *A,     // matrix to check
