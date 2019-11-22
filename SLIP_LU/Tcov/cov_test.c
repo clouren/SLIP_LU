@@ -514,11 +514,11 @@ int main( int argc, char* argv[])
             }
             else
             {
-                //test for never-used functions
+                /*
+                //test for SLIP_tripread and SLIP_tripread_double
                 M = SLIP_create_sparse();
 
                 // fail case
-                /*
                 char *bad_mat1 = "../ExampleMats/bad_mat1.txt";
                 mat_file = fopen(bad_mat1,"r");
                 if( mat_file == NULL )
@@ -555,6 +555,7 @@ int main( int argc, char* argv[])
                     continue;
                 }
                 TEST_CHECK(SLIP_tripread(M, mat_file));
+                // move cursor to the beginning of the file
                 if ( fseek(mat_file, 0L, SEEK_SET) != 0 )
                 {
                     SLIP_FREE_WORKSPACE;
@@ -564,7 +565,10 @@ int main( int argc, char* argv[])
                 TEST_CHECK(SLIP_tripread_double(M, mat_file));
                 fclose (mat_file);
                 mat_file = NULL;
-*/
+                */
+
+                // test for SLIP_build_sparse_trip*
+                // and failure of some functions
                 n = 4, nz = 11;
                 int I[11]={0, 1, 2, 2, 3, 1, 2, 3, 0, 1, 2};
                 int J[11]={0, 0, 0, 1, 1, 2, 2, 2, 3, 3, 3};
