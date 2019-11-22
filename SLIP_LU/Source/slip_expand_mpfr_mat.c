@@ -69,7 +69,7 @@ SLIP_info slip_expand_mpfr_mat
         }
     }
     
-    SLIP_CHECK(slip_mpfr_get_z(temp_expon, expon, MPFR_RNDN));
+    SLIP_CHECK(slip_mpfr_get_z(temp_expon, expon, SLIP_MPFR_ROUND));
     SLIP_CHECK(slip_mpq_set_z(scale, temp_expon));
     
     //--------------------------------------------------------------------------
