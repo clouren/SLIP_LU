@@ -518,6 +518,7 @@ int main( int argc, char* argv[])
                 M = SLIP_create_sparse();
 
                 // fail case
+                /*
                 char *bad_mat1 = "../ExampleMats/bad_mat1.txt";
                 mat_file = fopen(bad_mat1,"r");
                 if( mat_file == NULL )
@@ -563,7 +564,7 @@ int main( int argc, char* argv[])
                 TEST_CHECK(SLIP_tripread_double(M, mat_file));
                 fclose (mat_file);
                 mat_file = NULL;
-
+*/
                 n = 4, nz = 11;
                 int I[11]={0, 1, 2, 2, 3, 1, 2, 3, 0, 1, 2};
                 int J[11]={0, 0, 0, 1, 1, 2, 2, 2, 3, 3, 3};
