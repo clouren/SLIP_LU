@@ -210,14 +210,11 @@ SLIP_col_order ;
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-/* This struct defines the command line options for the factorization.
- * In addition, it stores the determinant of the matrix and
- * scaling parameter used on A and b. In essence it serves as a global struct to
- * define all options
- */
+// This struct serves as a global struct to define all options
 
 typedef struct SLIP_options
 {
+    // TODO: do we still need check flag here?
     bool check;         // TRUE if the solution will be checked
     SLIP_pivot pivot;   // Type of pivoting scheme used.
     SLIP_col_order order;// Type of column ordering scheme used
@@ -866,6 +863,7 @@ SLIP_info SLIP_LU_factorize
     SLIP_options *option    // command options
 );
 
+// TODO: Do we need this function? I don't see the function file though.
 SLIP_info SLIP_determinant
 (
     SLIP_sparse *A,         // matrix that was factorized by SLIP_LU_factorize
