@@ -10,7 +10,7 @@
 
 # include "SLIP_LU_internal.h"
 
-/* Purpose: This function return an created empty sparse matrix as
+/* Purpose: This function return a created empty sparse matrix as
  * SLIP_sparse pointer upon successful malloc
  */
 
