@@ -259,7 +259,7 @@ typedef struct
     mpq_t scale ; // scale factor for the matrix
 } SLIP_sparse ;
 
-/* Purpose: This function return an created empty sparse matrix as SLIP_sparse
+/* Purpose: This function return a created empty sparse matrix as SLIP_sparse
  * pointer upon successful malloc
  */
 SLIP_sparse *SLIP_create_sparse( void );
