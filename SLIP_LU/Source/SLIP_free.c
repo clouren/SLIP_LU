@@ -15,12 +15,12 @@
 
 void SLIP_free
 (
-    void* x         // Pointer to be free'd
+    void* p         // Pointer to be free'd
 )
 {
-    if (x)
+    if (p)
     {
-        SLIP_MEMORY_FREE (x) ;
+        SLIP_MEMORY_FREE (p) ;
     }
 }
 
