@@ -23,7 +23,7 @@ function x = SLIP_get_options()
 % option.tol: tolerance (0,1) which is used if some threshold pivoting is used
 
 x.column = 1;
-x.pivot = 0;
+x.pivot = 3;
 x.int = 0;
 x.intb = 0;
 x.tol = 0.1;
