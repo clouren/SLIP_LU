@@ -11,7 +11,7 @@
 #include "SLIP_LU_internal.h"
 
 /* Purpose: Convert the output mpq_t** solution vector obtained from
- * SLIP_Solve and SLIP_Permute_x from mpq_t** to mpfr_t**.
+ * SLIP_LU_solve and SLIP_permute_x from mpq_t** to mpfr_t**.
  * x_mpfr has to be initialized before passed in.
  */
 
