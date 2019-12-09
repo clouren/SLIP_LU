@@ -11,7 +11,7 @@
 # include "SLIP_LU_internal.h"
 
 /* 
- * Purpose: This function initializes the working evironment for SLIP_LU with
+ * Purpose: This function initializes the working environment for SLIP_LU with
  * custom memory functions that are used for GMP. If the user passes in their
  * own malloc, realloc, or free function(s) we use those internally to process
  * memory. If a NULL pointer is passed in for any function, then default
@@ -25,7 +25,7 @@
  *  void *MyRealloc (void *p, size_t oldsize, size_t newsize) ; // differs
  *  void MyFree (void *p, size_t size) ; // differs
  *
- * MyMalloc has the identical to the ANSI C mall.c  MyRealloc adds a parameter,
+ * MyMalloc has the identical to the ANSI C malloc  MyRealloc adds a parameter,
  * oldsize, which is the prior size of the block of memory to be reallocated.
  * MyFree takes a second argument, which is the size of the block that is being
  * freed.
