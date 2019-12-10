@@ -158,8 +158,9 @@
 // Error codes
 //------------------------------------------------------------------------------
 
-// ALL SLIP_LU functions return a code that indicates if it was successful
-// or not.
+// Most SLIP_LU functions return a code that indicates if it was successful
+// or not. Otherwise the code returns a pointer to the object that was created
+// or it returns void (in the case that an object was deleted)
 
 typedef enum
 {
