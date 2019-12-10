@@ -400,6 +400,7 @@ SLIP_info SLIP_tripread_double
     }
 
     // Convert x_doub from double to mpz_t
+    // TODO Change this to SLIP_build, Fix this
     ok = slip_expand_double_array(x_mpz, x_doub, A->scale, nz);
     // Convert from triplet form to ccf
     if (ok == SLIP_OK)
