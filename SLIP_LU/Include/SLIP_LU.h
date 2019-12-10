@@ -150,6 +150,7 @@
 // SLIP LU utilizes MPFR_RNDN. If the user wishes to change this, they can change 
 // the following parameter
 
+// TODO Make this an option
 #define SLIP_MPFR_ROUND MPFR_RNDN
 
 
