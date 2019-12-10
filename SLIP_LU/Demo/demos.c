@@ -1,5 +1,6 @@
 # include "demos.h"
 
+// TODO Fix this, replace read_triplet with SLIP_build* etc
 /* Purpose: This function prints out the user specified/default options*/
 void SLIP_print_options // display specified/default options to user
 (
@@ -400,7 +401,6 @@ SLIP_info SLIP_tripread_double
     }
 
     // Convert x_doub from double to mpz_t
-    // TODO Change this to SLIP_build, Fix this
     ok = slip_expand_double_array(x_mpz, x_doub, A->scale, nz);
     // Convert from triplet form to ccf
     if (ok == SLIP_OK)
