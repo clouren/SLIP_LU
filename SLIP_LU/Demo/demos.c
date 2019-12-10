@@ -1,6 +1,6 @@
 # include "demos.h"
 
-// TODO Fix this, replace read_triplet with SLIP_build* etc
+// TODO Fix this, replace read_triplet with SLIP_build* etc, slip_fscanf external
 /* Purpose: This function prints out the user specified/default options*/
 void SLIP_print_options // display specified/default options to user
 (
