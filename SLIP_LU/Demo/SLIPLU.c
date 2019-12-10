@@ -203,10 +203,17 @@ int main( int argc, char* argv[])
     //--------------------------------------------------------------------------
     // x = Q x
     OK(SLIP_permute_x(x, nrows, numRHS, S));
-    if (option->check)
+    OK(SLIP_check_solution(A, x, b));
+
+    // TODO
+    check = ok;       // ok is assigned as the status of SLIP_check_solution
+    if (ok)
     {
-        OK(SLIP_check_solution(A, x, b));
-        check = ok;       // ok is assigned as the status of SLIP_check_solution
+        printf ("Solution is verified to be exact.\n") ;
+    }
+    else
+    {
+        printf ("ERROR! Solution is wrong.\n") ;
     }
     OK(SLIP_scale_x(x, A, b));
 

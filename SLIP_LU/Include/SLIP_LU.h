@@ -214,8 +214,6 @@ SLIP_col_order ;
 
 typedef struct SLIP_options
 {
-    // TODO: do we still need check flag here?
-    bool check;         // TRUE if the solution will be checked
     SLIP_pivot pivot;   // Type of pivoting scheme used.
     SLIP_col_order order;// Type of column ordering scheme used
     double tol;         // User specified tolerance for SLIP_TOL_SMALLEST and
@@ -934,7 +932,7 @@ SLIP_info SLIP_LU_solve     //solves the linear system LD^(-1)U x = b
 );
 
 // check and print a SLIP_sparse matrix
-// TODO: use SLIP_options as input?
+// TODO: use SLIP_options as input? YES.
 SLIP_info SLIP_spok  // returns a SLIP_LU status code
 (
     SLIP_sparse *A,     // matrix to check

@@ -79,10 +79,6 @@ SLIP_info SLIP_process_command_line //processes the command line
             SLIP_show_usage();
             return SLIP_INCORRECT_INPUT;
         }
-        else if ( strcmp(arg,"c") == 0 || strcmp(arg,"check") == 0)
-        {
-            option->check = true;
-        }
         else if ( strcmp(arg,"p") == 0 || strcmp(arg,"piv") == 0)
         {
             if (!argv[++i])
@@ -470,40 +466,6 @@ SLIP_info SLIP_read_dense
     }                        \
 }
 
-// print the correctness of the solution if option->check enabled
-static inline SLIP_info print_check
-(
-    FILE *out_file,         // file to print to
-    SLIP_info check,        // whether the solution is correct or not
-    SLIP_options *option    // option struct telling how much info to print
-)
-{
-    // Was the solution checked?
-    if (option->check)
-    {
-        if (check == SLIP_OK)
-        {
-            if (option->print_level > 0)
-            {
-                SLIP_PRINT("\nSolution is correct!\n");
-            }
-        }
-
-        // Incorrect solution. This should not happen
-        else
-        {
-            if (option->print_level > 0)
-            {
-                SLIP_PRINT("\n****ERROR**** Solution incorrect!"
-                       "\n\nHave you modified the source code?"
-                       "\nReinstall \n\n");
-            }
-            return SLIP_INCORRECT;
-        }
-    }
-    return SLIP_OK;
-}
-
 //------------------------------------------------------------------------------
 // SLIP_print_stats_mpq: prints the solution vector(s) as a set of mpq_t entries
 //------------------------------------------------------------------------------
@@ -522,11 +484,6 @@ SLIP_info SLIP_print_stats_mpq
     if (option == NULL)
     {
         return SLIP_INCORRECT_INPUT;
-    }
-    // Is the solution correct?
-    if (print_check (out_file, check, option) != SLIP_OK)
-    {
-        return SLIP_INCORRECT;
     }
 
     // Info about output file
@@ -572,11 +529,6 @@ SLIP_info SLIP_print_stats_double
     {
         return SLIP_INCORRECT_INPUT;
     }
-    // Is the solution correct?
-    if (print_check (out_file, check, option) != SLIP_OK)
-    {
-        return SLIP_INCORRECT;
-    }
 
     // Info about output file
     if (option->print_level >= 2 && out_file != NULL)
@@ -617,11 +569,6 @@ SLIP_info SLIP_print_stats_mpfr
     if (option == NULL)
     {
         return SLIP_INCORRECT_INPUT;
-    }
-    // Is the solution correct?
-    if (print_check (out_file, check, option) != SLIP_OK)
-    {
-        return SLIP_INCORRECT;
     }
 
    // Info about output file

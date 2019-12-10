@@ -103,7 +103,6 @@ int main (int argc, char **argv)
     //--------------------------------------------------------------------------
     // Symbolic Ordering and Factorization
     //--------------------------------------------------------------------------
-    option->check = false; // make sure check flag is disabled
 
     clock_t start_sym = clock();
 

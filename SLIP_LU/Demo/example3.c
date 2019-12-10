@@ -92,7 +92,6 @@ int main (int argc, char **argv)
     //--------------------------------------------------------------------------
     // Factorize
     //--------------------------------------------------------------------------
-    option->check = true;     // We want to check the solution
 
     clock_t start_sym = clock();
 

@@ -34,7 +34,7 @@
 
 # include "SLIP_LU_internal.h"
 
-SLIP_info SLIP_LU_factorize 
+SLIP_info SLIP_LU_factorize
 (
     SLIP_sparse *L,         // lower triangular matrix
     SLIP_sparse *U,         // upper triangular matrix
@@ -53,7 +53,7 @@ SLIP_info SLIP_LU_factorize
     }
 
     //--------------------------------------------------------------------------
-    // Declare and initialize workspace 
+    // Declare and initialize workspace
     //--------------------------------------------------------------------------
     // Begin timing factorization
     SLIP_info ok = SLIP_OK;
@@ -65,8 +65,8 @@ SLIP_info SLIP_LU_factorize
     mpfr_t temp; SLIP_MPFR_SET_NULL(temp);
     mpz_t* x = NULL ;
 
-    SLIP_CHECK(slip_mpz_init(sigma)); 
-    SLIP_CHECK(slip_mpfr_init2(temp, 256)); 
+    SLIP_CHECK(slip_mpz_init(sigma));
+    SLIP_CHECK(slip_mpfr_init2(temp, 256));
     // Sequence of chosen pivots
     pivs = (int32_t*) SLIP_malloc(n* sizeof(int32_t));
     // Location of a column WRT the order
@@ -88,17 +88,18 @@ SLIP_info SLIP_LU_factorize
     slip_reset_int_array(h,n);
 
     //--------------------------------------------------------------------------
-    // Compute a bound for the size of each entry in the matrix. This bound is 
-    // used to allocate the size of each entry in the x vector in order to reduce
-    // the number of intermediate reallocations performed in the triangular solve.
+    // Compute a bound for the size of each entry in the matrix. This bound is
+    // used to allocate the size of each entry in the x vector in order to
+    // reduce the number of intermediate reallocations performed in the
+    // triangular solve.
     //
     // This bound is based on a relaxation of Hadamard's bound
     //
     //--------------------------------------------------------------------------
     // Initialize sigma = largest entry in A
-    
+
     SLIP_CHECK(slip_mpz_set(sigma, A->x[0]));
-    
+
     // Get sigma = max(A)
     for (i = 1; i < A->nz; i++)
     {
@@ -119,7 +120,7 @@ SLIP_info SLIP_LU_factorize
             gamma = A->p[i+1]-A->p[i];
         }
     }
-    
+
     // temp = sigma
     SLIP_CHECK(slip_mpfr_set_z(temp, sigma, SLIP_MPFR_ROUND));
 
@@ -134,35 +135,35 @@ SLIP_info SLIP_LU_factorize
     double inner2;
     SLIP_CHECK(slip_mpfr_get_d(&inner2, temp, SLIP_MPFR_ROUND));
     // Free cache from log2. Even though mpfr_free_cache is called in
-    // SLIP_LU_final(), it has to be called here to prevent memory leak in 
+    // SLIP_LU_final(), it has to be called here to prevent memory leak in
     // some rare situations.
     slip_mpfr_free_cache();
     // bound = gamma * inner2+1
     int32_t bound = ceil(gamma*(inner2+1));
     // Ensure bound is at least 64 bit
     if (bound < 64) {bound = 64;}
-    
+
 
     //--------------------------------------------------------------------------
-    // Declare memory for x, L, and U 
+    // Declare memory for x, L, and U
     //--------------------------------------------------------------------------
-    
+
     // Initialize x
     x = slip_create_mpz_array2(n,bound);
-    if (!x) 
+    if (!x)
     {
         SLIP_FREE_WORKSPACE;
         return SLIP_OUT_OF_MEMORY;
     }
     // Initialize location based vectors
-    for (i = 0; i < n; i++)    
+    for (i = 0; i < n; i++)
     {
         col_loc[S->q[i]] = i;
         pinv[i] = i;
         row_perm[i] = i;
     }
-    
-    // Allocate L and U. 
+
+    // Allocate L and U.
     SLIP_CHECK(slip_sparse_alloc2(L, n, n, S->lnz));
     SLIP_CHECK(slip_sparse_alloc2(U, n, n, S->unz));
 
@@ -339,15 +340,13 @@ SLIP_info SLIP_LU_factorize
     }
 
     //--------------------------------------------------------------------------
-    // check result
+    // check the LU factorization (debugging only)
     //--------------------------------------------------------------------------
 
-    if (option->check)
-    {
-        // check the LU factors
-        SLIP_CHECK (SLIP_spok (L, 0)) ;
-        SLIP_CHECK (SLIP_spok (U, 0)) ;
-    }
+    #if 0
+    SLIP_CHECK (SLIP_spok (L, 0)) ;
+    SLIP_CHECK (SLIP_spok (U, 0)) ;
+    #endif
 
     return ok;
 }

@@ -11,14 +11,13 @@
 # include "SLIP_LU_internal.h"
 
 /* Purpose: Create and return SLIP_options pointer with default parameters
- * upon successful allocation, which are defined in SLIP_LU_internal.h 
+ * upon successful allocation, which are defined in SLIP_LU_internal.h
  */
 
 SLIP_options* SLIP_create_default_options ( void )
 {
     SLIP_options* option = SLIP_malloc(sizeof(SLIP_options));
     if (!option) {return NULL;}
-    option->check    = SLIP_DEFAULT_CHECK;
     option->pivot    = SLIP_DEFAULT_PIVOT;
     option->order    = SLIP_DEFAULT_ORDER;
     option->print_level= SLIP_DEFAULT_PRINT_LEVEL;

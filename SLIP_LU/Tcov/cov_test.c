@@ -690,7 +690,6 @@ int main( int argc, char* argv[])
 
             // Column ordering using either AMD, COLAMD or nothing
             TEST_CHECK(SLIP_LU_analyze(S, A, option));
-            option->check = true;
             option->print_level = 3;
             int check2;
 
