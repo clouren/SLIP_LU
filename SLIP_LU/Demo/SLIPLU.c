@@ -207,7 +207,7 @@ int main( int argc, char* argv[])
 
     // TODO
     check = ok;       // ok is assigned as the status of SLIP_check_solution
-    if (ok)
+    if (ok == SLIP_OK)
     {
         printf ("Solution is verified to be exact.\n") ;
     }

@@ -37,7 +37,7 @@ SLIP_info slip_REF_triangular_solve // performs the sparse REF triangular solve
 )
 {
     // inputs have been validated in SLIP_LU_factorize.c
-    int32_t j, jnew, i, inew, p, m, n, col, sgn, top;
+    int32_t j, jnew, i, inew, p, m, n, col, sgn, top = *top_output;
     SLIP_info ok;
 
     //--------------------------------------------------------------------------
@@ -45,20 +45,20 @@ SLIP_info slip_REF_triangular_solve // performs the sparse REF triangular solve
     //--------------------------------------------------------------------------
     // Size of matrix and the dense vectors
     n = A->n;
+    // Reset x[i] = 0 for all i in nonzero pattern
+    SLIP_CHECK(slip_reset_mpz_array(x, n, top, xi)); 
+    // Set x[col] = 0
+    //SLIP_CHECK(slip_mpz_set_ui(x[col], 0));
+    // Reset h[i] = -1 for all i in nonzero pattern
+    SLIP_CHECK(slip_reset_int_array2(h, n, top, xi));
     // Column we are solving for
     col = q[k];
+    // Set x = A(:,k)
+    SLIP_CHECK(slip_get_column(x, A, col));
     // Obtain nonzero pattern in xi[top..n]
     slip_reach(&top, L, A, col, xi, pinv);
     // Sort xi wrt sequence of pivots
     slip_sort_xi(xi, top, n, pinv, row_perm);
-    // Reset x[i] = 0 for all i in nonzero pattern
-    SLIP_CHECK(slip_reset_mpz_array(x, n, top, xi)); 
-    // Set x[col] = 0
-    SLIP_CHECK(slip_mpz_set_ui(x[col], 0));
-    // Reset h[i] = -1 for all i in nonzero pattern
-    SLIP_CHECK(slip_reset_int_array2(h, n, top, xi));
-    // Set x = A(:,k)
-    SLIP_CHECK(slip_get_column(x, A, col));
 
     //--------------------------------------------------------------------------
     // Iterate accross nonzeros in x
