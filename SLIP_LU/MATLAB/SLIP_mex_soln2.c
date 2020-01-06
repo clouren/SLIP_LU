@@ -26,7 +26,7 @@ void mexFunction
     //--------------------------------------------------------------------------
     // Initialize SLIP LU library environment
     //--------------------------------------------------------------------------
-    SLIP_initialize_expert(mxMalloc, slip_gmp_mex_realloc, slip_gmp_mex_free);
+    SLIP_initialize_expert(mxMalloc, SLIP_gmp_mex_realloc, SLIP_gmp_mex_free);
     SLIP_info status;
 
     //--------------------------------------------------------------------------
