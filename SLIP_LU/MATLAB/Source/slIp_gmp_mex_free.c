@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/MATLAB/slip_gmp_mex_free: A gmp free function for Matlab mex files
+// SLIP_LU/MATLAB/SLIP_gmp_mex_free: A gmp free function for Matlab mex files
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -14,7 +14,7 @@
  * MATLAB's mxFree instead of free */
 
 // A GMP realloc function
-void slip_gmp_mex_free
+void SLIP_gmp_mex_free
 (
     void* x,    // void* to be freed
     size_t a    // Size

@@ -25,7 +25,7 @@
 /* Purpose: A GMP reallocation function 
  * This allows GMP to use MATLAB's default realloc function 
  */
-void* slip_gmp_mex_realloc 
+void* SLIP_gmp_mex_realloc 
 (
     void* x,    // void* to be reallocated 
     size_t a,   // Previous size
@@ -35,7 +35,7 @@ void* slip_gmp_mex_realloc
 /* Purpose: A GMP free function. This allows GMP to use
  * MATLAB's mxFree instead of free 
  */
-void slip_gmp_mex_free 
+void SLIP_gmp_mex_free 
 (
     void* x,    // void* to be freed
     size_t a    // Size
@@ -44,7 +44,7 @@ void slip_gmp_mex_free
 /* Purpose: This function converts mpq array to double
  * NOTE: This induces roundoff error via the final division
 */
-void slip_mpq_to_double
+void SLIP_mpq_to_double
 (
     double* x_doub,       // double array
     const mpq_t* x_mpq,   // mpq array

@@ -13,7 +13,7 @@
 /* Purpose: This function converts mpq array to double
  * NOTE: This induces roundoff error via the final division
 */
-void slip_mpq_to_double
+void SLIP_mpq_to_double
 (
     double* x_doub,       // double array
     const mpq_t* x_mpq,   // mpq array
@@ -23,6 +23,6 @@ void slip_mpq_to_double
     SLIP_info status;
     for (int32_t i = 0; i < n; i++)    
     {
-        SLIP_MEX_OK(slip_mpq_get_d(&(x_doub[i]), x_mpq[i]));
+        SLIP_MEX_OK(SLIP_mpq_get_d(&(x_doub[i]), x_mpq[i]));
     }
 }

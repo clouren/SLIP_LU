@@ -31,6 +31,7 @@ void slip_mex_get_A_and_b
     mwSize nA, mA, nb, mb, Anz, k, j;
     mwIndex *Ap, *Ai;
     double *Ax, *bx;
+    SLIP_options* option = SLIP_create_default_options();
     
     //--------------------------------------------------------------------------
     // Read in A
@@ -86,7 +87,7 @@ void slip_mex_get_A_and_b
     {
         // Create A with scaling
         status = SLIP_build_sparse_ccf_double(A, Ap_int, Ai_int, Ax,
-            (int32_t) nA, (int32_t) Anz);
+            (int32_t) nA, (int32_t) Anz, option);
     }
     if (status != SLIP_OK) 
     {
@@ -162,7 +163,7 @@ void slip_mex_get_A_and_b
 
             // Create b
             status = SLIP_build_dense_double(b, bx_doub, (int32_t) mb,
-                (int32_t) nb);
+                (int32_t) nb, option);
             SLIP_delete_double_mat(&bx_doub, (int32_t) mb, (int32_t) nb);
         }
         if (status != SLIP_OK) 
@@ -171,4 +172,5 @@ void slip_mex_get_A_and_b
                 "and try again");
         }
     }
+    SLIP_FREE(option);
 }

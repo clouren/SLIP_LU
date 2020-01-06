@@ -24,7 +24,7 @@ mxArray* slip_mex_output_U
     if (!U)  { slip_mex_error (SLIP_INCORRECT_INPUT); }
     SLIP_info status;
     mpq_t temp; SLIP_MPQ_SET_NULL(temp);
-    SLIP_MEX_OK(slip_mpq_init(temp));
+    SLIP_MEX_OK(SLIP_mpq_init(temp));
 
     // Create a m*n sparse matrix
     mxArray *Amatlab = mxCreateSparse((mwSize) U->m, (mwSize) U->n,
@@ -47,17 +47,17 @@ mxArray* slip_mex_output_U
 
     for (int32_t j = 0; j < U->nz; j++)
     {
-        SLIP_MEX_OK(slip_mpq_set_z(xU[j], U->x[j]));
+        SLIP_MEX_OK(SLIP_mpq_set_z(xU[j], U->x[j]));
         if (U->i[j] > 0)
         {
-            SLIP_MEX_OK(slip_mpq_set_z(temp, rhos[U->i[j]-1]));             
-            SLIP_MEX_OK(slip_mpq_div(xU[j], xU[j], temp));
+            SLIP_MEX_OK(SLIP_mpq_set_z(temp, rhos[U->i[j]-1]));             
+            SLIP_MEX_OK(SLIP_mpq_div(xU[j], xU[j], temp));
         }
         // Populate xU
-        SLIP_MEX_OK(slip_mpq_div(xU[j], xU[j], scale));
+        SLIP_MEX_OK(SLIP_mpq_div(xU[j], xU[j], scale));
     }
 
-    slip_mpq_to_double(xA, xU, U->nz);
+    SLIP_mpq_to_double(xA, xU, U->nz);
     SLIP_delete_mpq_array(&xU, U->nz);
     SLIP_MPQ_CLEAR(temp);
 

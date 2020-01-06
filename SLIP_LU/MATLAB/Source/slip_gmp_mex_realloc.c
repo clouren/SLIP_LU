@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/MATLAB/slip_gmp_mex_realloc: A gmp realloc function for matlab
+// SLIP_LU/MATLAB/SLIP_gmp_mex_realloc: A gmp realloc function for matlab
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -15,7 +15,7 @@
  */
 
 // A GMP realloc function
-void* slip_gmp_mex_realloc 
+void* SLIP_gmp_mex_realloc 
 (
     void* x,    // void* to be reallocated 
     size_t a,   // Previous size
