@@ -44,7 +44,7 @@ CS =slip_array_div.o slip_array_mul.o slip_back_sub.o SLIP_build_dense_mpz.o \
     slip_expand_mpq_array.o slip_expand_mpq_mat.o SLIP_finalize.o \
     slip_forward_sub.o SLIP_free.o slip_get_column.o SLIP_get_double_soln.o \
     slip_get_largest_pivot.o SLIP_get_mpfr_soln.o slip_get_nonzero_pivot.o \
-    slip_get_pivot.o slip_get_smallest_pivot.o slip_gmp.o SLIP_initialize.o \
+    slip_get_pivot.o slip_get_smallest_pivot.o SLIP_gmp.o SLIP_initialize.o \
     SLIP_initialize_expert.o SLIP_LU_analyze.o SLIP_LU_factorize.o slip_lu_info.o \
     SLIP_LU_solve.o SLIP_malloc.o slip_mpz_populate_mat.o SLIP_permute_x.o \
     slip_reach.o SLIP_realloc.o   slip_REF_triangular_solve.o slip_reset_int_array2.o \
@@ -53,9 +53,9 @@ CS =slip_array_div.o slip_array_mul.o slip_back_sub.o SLIP_build_dense_mpz.o \
     slip_sparse_collapse.o slip_sparse_realloc.o SLIP_spok.o \
     slip_trip_to_mat.o 
 
-$(CS): ../Include/SLIP_LU.h ../Source/slip_gmp.h ../Source/SLIP_LU_internal.h  Makefile
+$(CS): ../Include/SLIP_LU.h ../Source/SLIP_LU_internal.h  Makefile
 
-%.o: ../Source/%.c ../Include/SLIP_LU.h ../Source/slip_gmp.h ../Source/SLIP_LU_internal.h
+%.o: ../Source/%.c ../Include/SLIP_LU.h ../Source/SLIP_LU_internal.h
 	$(CC) $(CF) $(I) -c $<
 
 static: $(AR_TARGET)
