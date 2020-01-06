@@ -49,17 +49,17 @@ CS =slip_array_div.o slip_array_mul.o slip_back_sub.o SLIP_build_dense_mpz.o \
     slip_expand_mpq_array.o slip_expand_mpq_mat.o SLIP_finalize.o \
     slip_forward_sub.o slip_get_column.o SLIP_get_double_soln.o \
     slip_get_largest_pivot.o SLIP_get_mpfr_soln.o slip_get_nonzero_pivot.o \
-    slip_get_pivot.o slip_get_smallest_pivot.o slip_gmp.o SLIP_initialize.o \
+    slip_get_pivot.o slip_get_smallest_pivot.o SLIP_gmp.o SLIP_initialize.o \
     SLIP_LU_analyze.o SLIP_LU_factorize.o slip_lu_info.o \
     SLIP_LU_solve.o slip_REF_triangular_solve.o \
-    slip_mpz_populate_mat.o SLIP_permute_x.o slip_reach.o \
+    SLIP_mpz_populate_mat.o SLIP_permute_x.o slip_reach.o \
     slip_reset_int_array2.o slip_reset_int_array.o \
     slip_reset_mpz_array.o SLIP_scale_x.o SLIP_solve_double.o \
     SLIP_solve_mpq.o slip_sort_xi.o slip_sparse_alloc2.o slip_sparse_alloc.o \
     slip_sparse_collapse.o slip_sparse_realloc.o SLIP_spok.o \
     slip_trip_to_mat.o tcov_malloc_test.o SLIP_initialize_expert.o
 
-$(CS): ../Include/SLIP_LU.h ../Source/slip_gmp.h ../Source/SLIP_LU_internal.h tcov_malloc_test.h ../Demo/demos.h
+$(CS): ../Include/SLIP_LU.h ../Source/SLIP_gmp.h ../Source/SLIP_LU_internal.h tcov_malloc_test.h ../Demo/demos.h
 
 .PRECIOUS: SLIP_%.c slip_%.c SLIPLU.c demos.c
 
@@ -89,7 +89,7 @@ runlu: all
 
 runtest: all
 	- $(V) ./cov_test
-	- $(V) ./cov_test 0 1 1 1 # to trigger slip_gmp.c:72
+	- $(V) ./cov_test 0 1 1 1 # to trigger SLIP_gmp.c:72
 
 clean:
 	- $(RM) *.o *.bbg *.da *.gcov *.gcda *gcno

@@ -9,7 +9,7 @@
  *                                         5 for miscellaneous test
  * rat: type of solution: 1: full precision rational arithmetic,
  *                        2: double, 3:  user specified precision.
- * N and list1 specify the test list for slip_gmp_ntrials (in slip_gmp.h)
+ * N and list1 specify the test list for SLIP_gmp_ntrials (in SLIP_gmp.h)
  * M and list2 specify the test list for malloc_count (in tcov_malloc_test.h)
  * N, list1, M, list2 are optional, but N and list1 are required when M and
  * list2 is wanted
@@ -23,7 +23,7 @@
  */
 
 /* For simple test ONLY!!
- * uncomment to show the input lists for slip_gmp_ntrials and malloc_count
+ * uncomment to show the input lists for SLIP_gmp_ntrials and malloc_count
  */
 // #define SLIP_TCOV_SHOW_LIST
 
@@ -95,7 +95,7 @@
         SLIP_delete_mpz_array(&(A->x), A->nzmax);\
         SLIP_FREE (A->i);                        \
         SLIP_FREE (A->p);                        \
-        /*slip_mpq_set_ui(A->scale, 1, 1);*/     \
+        /*SLIP_mpq_set_ui(A->scale, 1, 1);*/     \
         A -> n     = 0;                          \
         A -> m     = 0;                          \
         A -> nzmax = 0;                          \
@@ -110,7 +110,7 @@
         SLIP_delete_mpz_array(&(M->x), M->nzmax);\
         SLIP_FREE (M->i);                        \
         SLIP_FREE (M->p);                        \
-        /*slip_mpq_set_ui(M->scale, 1, 1);*/     \
+        /*SLIP_mpq_set_ui(M->scale, 1, 1);*/     \
         M -> n     = 0;                          \
         M -> m     = 0;                          \
         M -> nzmax = 0;                          \
@@ -123,7 +123,7 @@
     if (b != NULL)                               \
     {                                            \
         SLIP_delete_mpz_mat(&(b->x), b->m, b->n);\
-        /*slip_mpq_set_ui(b->scale, 1, 1);*/     \
+        /*SLIP_mpq_set_ui(b->scale, 1, 1);*/     \
         b -> n     = 0;                          \
         b -> m     = 0;                          \
     }                                            \
@@ -233,7 +233,7 @@ int main( int argc, char* argv[])
         #endif /* SLIP_TCOV_SHOW_LIST */
     }
 
-    // For SIMPLE_TEST, outter loop iterates for slip_gmp_ntrials initialized
+    // For SIMPLE_TEST, outter loop iterates for SLIP_gmp_ntrials initialized
     // from list1 (input for cov_test) and inner loop interates for malloc_count
     // initialized from list2 (input for cov_test)
     //
@@ -263,8 +263,8 @@ int main( int argc, char* argv[])
         {
             if (IS_SIMPLE_TEST)
             {
-                slip_gmp_ntrials=gmp_ntrial_list[k];
-                printf("initial slip_gmp_ntrials=%ld\n",slip_gmp_ntrials);
+                SLIP_gmp_ntrials=gmp_ntrial_list[k];
+                printf("initial SLIP_gmp_ntrials=%ld\n",SLIP_gmp_ntrials);
                 malloc_count=malloc_trials_list[kk];
                 printf("%d out of %d, initial malloc_count=%d\n", kk,
                     NUM_OF_MALLOC_T, malloc_count);
@@ -330,11 +330,11 @@ int main( int argc, char* argv[])
 
                 for (j = 0; j < n; j++)                           // Get b
                 {
-                    TEST_CHECK(slip_mpz_set_ui(B_mpz[j][0],bxnum3[j]));
+                    TEST_CHECK(SLIP_mpz_set_ui(B_mpz[j][0],bxnum3[j]));
                 }
                 for (j = 0; j < nz; j++)                          // Get Ax
                 {
-                    TEST_CHECK(slip_mpz_set_ui(Ax_mpz[j],Axnum3[j]));
+                    TEST_CHECK(SLIP_mpz_set_ui(Ax_mpz[j],Axnum3[j]));
                 }
 
                 //failure due to invalid input
@@ -429,12 +429,12 @@ int main( int argc, char* argv[])
 
                 for (j = 0; j < n; j++)                           // Get b
                 {
-                    TEST_CHECK(slip_mpq_set_ui(B_mpq [j][0], bxnum3[j],
+                    TEST_CHECK(SLIP_mpq_set_ui(B_mpq [j][0], bxnum3[j],
                         bxden3[j]));
                 }
                 for (j = 0; j < nz; j++)                          // Get Ax
                 {
-                    TEST_CHECK(slip_mpq_set_ui(Ax_mpq [j],Axnum3[j],Axden3[j]));
+                    TEST_CHECK(SLIP_mpq_set_ui(Ax_mpq [j],Axnum3[j],Axden3[j]));
                 }
 
                 TEST_CHECK(SLIP_build_sparse_ccf_mpq(A, Ap, Ai, Ax_mpq, n, nz));
@@ -476,14 +476,14 @@ int main( int argc, char* argv[])
                 option->prec = 17;
                 for (j = 0; j < n; j++)                               // Get B
                 {
-                    TEST_CHECK(slip_mpfr_set_d(B_mpfr[j][0], bxnum[j]/1e17,
+                    TEST_CHECK(SLIP_mpfr_set_d(B_mpfr[j][0], bxnum[j]/1e17,
                         MPFR_RNDN));
                 }
                 for (j = 0; j < nz; j++)                             // Get Ax
                 {
-                    TEST_CHECK(slip_mpfr_set_d(Ax_mpfr[j], Axnum[j]/1e17,
+                    TEST_CHECK(SLIP_mpfr_set_d(Ax_mpfr[j], Axnum[j]/1e17,
                         MPFR_RNDN));
-                    TEST_CHECK(slip_mpfr_div_d(Ax_mpfr[j], Ax_mpfr[j], Axden[j],
+                    TEST_CHECK(SLIP_mpfr_div_d(Ax_mpfr[j], Ax_mpfr[j], Axden[j],
                         MPFR_RNDN));
                 }
                 TEST_CHECK(SLIP_build_dense_mpfr(b, B_mpfr, n, numRHS, option));
@@ -496,15 +496,15 @@ int main( int argc, char* argv[])
                 // trigger gcd != 1
                 for (j = 0; j < n; j++)                               // Get B
                 {
-                    TEST_CHECK(slip_mpfr_set_d(B_mpfr[j][0], bxnum[j],
+                    TEST_CHECK(SLIP_mpfr_set_d(B_mpfr[j][0], bxnum[j],
                         MPFR_RNDN));
-                    TEST_CHECK(slip_mpfr_div_d(B_mpfr[j][0], B_mpfr[j][0],
+                    TEST_CHECK(SLIP_mpfr_div_d(B_mpfr[j][0], B_mpfr[j][0],
                         bxden[j], MPFR_RNDN));
                 }
                 for (j = 0; j < nz; j++)                             // Get Ax
                 {
-                    TEST_CHECK(slip_mpfr_set_d(Ax_mpfr[j], Axnum[j],MPFR_RNDN));
-                    TEST_CHECK(slip_mpfr_div_d(Ax_mpfr[j], Ax_mpfr[j], Axden[j],
+                    TEST_CHECK(SLIP_mpfr_set_d(Ax_mpfr[j], Axnum[j],MPFR_RNDN));
+                    TEST_CHECK(SLIP_mpfr_div_d(Ax_mpfr[j], Ax_mpfr[j], Axden[j],
                         MPFR_RNDN));
                 }
                 TEST_CHECK(SLIP_build_sparse_ccf_mpfr(A, Ap, Ai, Ax_mpfr,
@@ -587,12 +587,12 @@ int main( int argc, char* argv[])
 
                 for (j = 0; j < nz; j++)
                 {
-                    TEST_CHECK(slip_mpq_set_ui(x_mpq[j],2*x_int[j],2));
-                    TEST_CHECK(slip_mpfr_set_d(x_mpfr[j],x_doub2[j],MPFR_RNDN));
-                    TEST_CHECK(slip_mpfr_div_d(x_mpfr[j], x_mpfr[j], 1,
+                    TEST_CHECK(SLIP_mpq_set_ui(x_mpq[j],2*x_int[j],2));
+                    TEST_CHECK(SLIP_mpfr_set_d(x_mpfr[j],x_doub2[j],MPFR_RNDN));
+                    TEST_CHECK(SLIP_mpfr_div_d(x_mpfr[j], x_mpfr[j], 1,
                         MPFR_RNDN));
                     x_doub[j] = x_doub2[j];
-                    TEST_CHECK(slip_mpz_set_si(x_mpz[j], x_int[j]));
+                    TEST_CHECK(SLIP_mpz_set_si(x_mpz[j], x_int[j]));
                 }
 
                 // failure case: incorrect index array input
@@ -624,18 +624,18 @@ int main( int argc, char* argv[])
                     nz));
                 CLEAR_SLIP_MAT_A;                //free the memory alloc'd in A
                 TEST_CHECK(SLIP_build_sparse_trip_int(A, I, J, x_int, n, nz));
-                ok = slip_gmp_printf("scale = %Qd\n",A->scale);
+                ok = SLIP_gmp_printf("scale = %Qd\n",A->scale);
                 if (ok < 0) {TEST_CHECK(ok);}
                 TEST_CHECK(SLIP_spok (A, 3));
                 CLEAR_SLIP_MAT_A;                //free the memory alloc'd in A
                 TEST_CHECK(SLIP_build_sparse_trip_mpq(A, I, J, x_mpq, n, nz));
-                ok = slip_gmp_printf("scale = %Qd\n",A->scale);
+                ok = SLIP_gmp_printf("scale = %Qd\n",A->scale);
                 if (ok < 0) {TEST_CHECK(ok);}
                 TEST_CHECK(SLIP_spok (A, 3));
                 CLEAR_SLIP_MAT_A;                //free the memory alloc'd in A
                 TEST_CHECK(SLIP_build_sparse_trip_mpfr(A, I, J, x_mpfr, n, nz,
                     option));
-                ok = slip_gmp_printf("scale = %Qd\n",A->scale);
+                ok = SLIP_gmp_printf("scale = %Qd\n",A->scale);
                 if (ok < 0) {TEST_CHECK(ok);}
                 TEST_CHECK(SLIP_spok (A, 3));
 
@@ -658,10 +658,10 @@ int main( int argc, char* argv[])
                 CLEAR_SLIP_MAT_A;                //free the memory alloc'd in A
 
 
-                //test coverage for slip_gmp_reallocate()
+                //test coverage for SLIP_gmp_reallocate()
                 void *p_new = NULL;
-                TEST_CHECK(slip_gmp_realloc_test(&p_new, NULL , 0, 1));
-                TEST_CHECK(slip_gmp_realloc_test(&p_new, p_new, 1, 0));
+                TEST_CHECK(SLIP_gmp_realloc_test(&p_new, NULL , 0, 1));
+                TEST_CHECK(SLIP_gmp_realloc_test(&p_new, p_new, 1, 0));
 
                 // Incorrect calling with NULL pointer(s)
                 TEST_CHECK_FAILURE(SLIP_LU_analyze(NULL, NULL, NULL));
@@ -717,7 +717,7 @@ int main( int argc, char* argv[])
                     //SLIP_PRINT_OK(ok);
 
                     //intentionally change b to fail SLIP_LU_Check()
-                    TEST_CHECK(slip_mpz_set_ui (b->x[0][0], 1000));
+                    TEST_CHECK(SLIP_mpz_set_ui (b->x[0][0], 1000));
                     check2=SLIP_check_solution(A, sol_mpq, b);
 
                     // Print result using SLIP_print_stats, which should return
