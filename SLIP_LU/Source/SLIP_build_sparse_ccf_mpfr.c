@@ -39,7 +39,7 @@ SLIP_info SLIP_build_sparse_ccf_mpfr
 
     SLIP_CHECK(slip_expand_mpfr_array(x_new, x, A_output->scale, nz, option));
 
-    SLIP_CHECK(slip_mpz_populate_mat(A_output, I, p, x_new, n, nz));
+    SLIP_CHECK(SLIP_mpz_populate_mat(A_output, I, p, x_new, n, nz));
 
     SLIP_FREE_WORKSPACE;
 

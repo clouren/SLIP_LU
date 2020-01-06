@@ -38,11 +38,11 @@ SLIP_info SLIP_build_sparse_ccf_int
 
     for (int32_t i = 0; i < nz; i++)
     {
-            SLIP_CHECK(slip_mpz_set_si(x_new[i], x[i]));
+            SLIP_CHECK(SLIP_mpz_set_si(x_new[i], x[i]));
     }
-    SLIP_CHECK(slip_mpq_set_ui(A_output->scale, 1, 1));
+    SLIP_CHECK(SLIP_mpq_set_ui(A_output->scale, 1, 1));
 
-    SLIP_CHECK(slip_mpz_populate_mat(A_output, I, p, x_new, n, nz));
+    SLIP_CHECK(SLIP_mpz_populate_mat(A_output, I, p, x_new, n, nz));
 
     SLIP_FREE_WORKSPACE;
     return SLIP_OK;

@@ -26,7 +26,7 @@ mpz_t* SLIP_create_mpz_array
     if (!x) {return NULL;}
     for (int32_t i = 0; i < n; i++)
     {
-        if (slip_mpz_init(x[i]) != SLIP_OK)
+        if (SLIP_mpz_init(x[i]) != SLIP_OK)
         {
             // Error, out of memory
             SLIP_MPZ_SET_NULL(x[i]);

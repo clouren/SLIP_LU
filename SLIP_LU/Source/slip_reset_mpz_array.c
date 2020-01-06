@@ -29,7 +29,7 @@ SLIP_info slip_reset_mpz_array
     SLIP_info ok;
     for (int32_t i = top; i < n; i++)
     {
-        SLIP_CHECK(slip_mpz_set_ui(x[xi[i]], 0));
+        SLIP_CHECK(SLIP_mpz_set_ui(x[xi[i]], 0));
     }
     return SLIP_OK;
 }

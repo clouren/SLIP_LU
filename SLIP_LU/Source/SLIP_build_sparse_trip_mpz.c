@@ -35,7 +35,7 @@ SLIP_info SLIP_build_sparse_trip_mpz
         return SLIP_INCORRECT_INPUT;
     }
 
-    SLIP_CHECK(slip_mpq_set_ui(A_output->scale, 1, 1));
+    SLIP_CHECK(SLIP_mpq_set_ui(A_output->scale, 1, 1));
 
     SLIP_CHECK(slip_trip_to_mat(A_output, I, J, x, n, nz));
 

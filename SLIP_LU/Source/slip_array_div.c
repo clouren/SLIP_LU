@@ -34,8 +34,8 @@ SLIP_info slip_array_div // divides the x vector by the determinant
     SLIP_info ok;
     // Set det2 = det
     mpq_t det2; SLIP_MPQ_SET_NULL(det2);
-    SLIP_CHECK(slip_mpq_init(det2)); 
-    SLIP_CHECK(slip_mpq_set_num(det2, det));
+    SLIP_CHECK(SLIP_mpq_init(det2)); 
+    SLIP_CHECK(SLIP_mpq_set_num(det2, det));
 
     //--------------------------------------------------------------------------
     // iterate each entry of x, copy to x2 and divide it by det
@@ -45,9 +45,9 @@ SLIP_info slip_array_div // divides the x vector by the determinant
         for (int32_t k = 0; k < numRHS; k++)
         {
             // Set x2[i] = x[i]
-            SLIP_CHECK(slip_mpq_set_num(x2[i][k], x[i][k]));
+            SLIP_CHECK(SLIP_mpq_set_num(x2[i][k], x[i][k]));
             // x2[i] = x2[i] / det2
-            SLIP_CHECK(slip_mpq_div(x2[i][k], x2[i][k], det2));
+            SLIP_CHECK(SLIP_mpq_div(x2[i][k], x2[i][k], det2));
         }
     }
 

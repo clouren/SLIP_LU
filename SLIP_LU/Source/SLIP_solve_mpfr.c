@@ -80,7 +80,7 @@ SLIP_info SLIP_solve_mpfr
     //--------------------------------------------------------------------------
     // Output and free memory
     //--------------------------------------------------------------------------
-    SLIP_CHECK(SLIP_get_mpfr_soln(x_mpfr, x_mpq, n, numRHS));
+    SLIP_CHECK(SLIP_get_mpfr_soln(x_mpfr, x_mpq, n, numRHS, option));
 
     SLIP_FREE_WORKSPACE;
     return ok;

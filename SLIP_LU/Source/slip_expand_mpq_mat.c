@@ -39,7 +39,7 @@ SLIP_info slip_expand_mpq_mat
     mpz_t temp; SLIP_MPZ_SET_NULL(temp);
     x4 = SLIP_create_mpq_mat(m, n);
     x3 = SLIP_create_mpz_mat(m, n);
-    ok = slip_mpz_init(temp);
+    ok = SLIP_mpz_init(temp);
     if (!x3 || !x4 || ok != SLIP_OK) 
     {
         // Out of memory
@@ -54,10 +54,10 @@ SLIP_info slip_expand_mpq_mat
     {
         for (j = 0; j < n; j++)
         {
-            SLIP_CHECK(slip_mpq_get_den(x3[i][j], x[i][j]));
+            SLIP_CHECK(SLIP_mpq_get_den(x3[i][j], x[i][j]));
         }
     }
-    SLIP_CHECK(slip_mpz_set(temp, x3[0][0]));
+    SLIP_CHECK(SLIP_mpz_set(temp, x3[0][0]));
     
     //--------------------------------------------------------------------------
     // Find LCM of denominators of x
@@ -66,10 +66,10 @@ SLIP_info slip_expand_mpq_mat
     {
         for (j = 0; j < n; j++)
         {
-            SLIP_CHECK(slip_mpz_lcm(temp, x3[i][j], temp));
+            SLIP_CHECK(SLIP_mpz_lcm(temp, x3[i][j], temp));
         }
     }
-    SLIP_CHECK(slip_mpq_set_z(scale, temp));
+    SLIP_CHECK(SLIP_mpq_set_z(scale, temp));
     
     //--------------------------------------------------------------------------
     // Make x integral
@@ -79,10 +79,10 @@ SLIP_info slip_expand_mpq_mat
         for (j = 0; j < n; j++)
         {
             //x4[i][j] = x[i][j]*temp
-            SLIP_CHECK(slip_mpq_mul(x4[i][j], x[i][j], scale));
+            SLIP_CHECK(SLIP_mpq_mul(x4[i][j], x[i][j], scale));
         
             // x_out[i][j] = x4[i][j]
-            SLIP_CHECK(slip_mpz_set_q(x_out[i][j], x4[i][j]));
+            SLIP_CHECK(SLIP_mpz_set_q(x_out[i][j], x4[i][j]));
         }
     }
     SLIP_FREE_WORKSPACE;

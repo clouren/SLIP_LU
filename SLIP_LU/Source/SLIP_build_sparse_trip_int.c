@@ -46,9 +46,9 @@
 
     for (int32_t k = 0; k < nz; k++)
     {
-        SLIP_CHECK(slip_mpz_set_si(x_new[k], x[k]));
+        SLIP_CHECK(SLIP_mpz_set_si(x_new[k], x[k]));
     }
-    SLIP_CHECK(slip_mpq_set_ui(A_output->scale, 1,1));
+    SLIP_CHECK(SLIP_mpq_set_ui(A_output->scale, 1,1));
 
     SLIP_CHECK(slip_trip_to_mat(A_output, I, J, x_new, n, nz));
 

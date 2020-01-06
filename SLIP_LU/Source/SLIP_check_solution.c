@@ -41,7 +41,7 @@ SLIP_info SLIP_check_solution
     SLIP_info ok;
     mpq_t** b2 = NULL;
     mpq_t temp; SLIP_MPQ_SET_NULL(temp);
-    SLIP_CHECK(slip_mpq_init(temp));
+    SLIP_CHECK(SLIP_mpq_init(temp));
     
     // b2 stores the solution of A*x
     b2 = SLIP_create_mpq_mat(n, numRHS);
@@ -62,13 +62,13 @@ SLIP_info SLIP_check_solution
             for (p = A->p[i]; p < A->p[i + 1]; p++)
             {
                 // temp = A[p][i]
-                SLIP_CHECK(slip_mpq_set_z(temp, A->x[p]));
+                SLIP_CHECK(SLIP_mpq_set_z(temp, A->x[p]));
 
                 // temp = temp*x[i]
-                SLIP_CHECK(slip_mpq_mul(temp, temp, x[i][j]));
+                SLIP_CHECK(SLIP_mpq_mul(temp, temp, x[i][j]));
 
                 // b2[p] = b2[p]-temp
-                SLIP_CHECK(slip_mpq_add(b2[A->i[p]][j], b2[A->i[p]][j],temp));
+                SLIP_CHECK(SLIP_mpq_add(b2[A->i[p]][j], b2[A->i[p]][j],temp));
             }
         }
     }
@@ -82,10 +82,10 @@ SLIP_info SLIP_check_solution
         for (i = 0; i < n; i++)
         {
             // z = b[i] (correct b)
-            SLIP_CHECK(slip_mpq_set_z(temp, bx[i][j]));
+            SLIP_CHECK(SLIP_mpq_set_z(temp, bx[i][j]));
 
             // set check false if b!=b2
-            SLIP_CHECK(slip_mpq_equal(&r, temp, b2[i][j]));
+            SLIP_CHECK(SLIP_mpq_equal(&r, temp, b2[i][j]));
             if (r == 0)
             {
                 SLIP_FREE_WORKSPACE;

@@ -23,7 +23,7 @@ mpfr_t* SLIP_create_mpfr_array
     if (!x) {return NULL;}
     for (int32_t i = 0; i < n; i++)        
     {
-        if (slip_mpfr_init2(x[i], option->prec) != SLIP_OK)
+        if (SLIP_mpfr_init2(x[i], option->prec) != SLIP_OK)
         {
             SLIP_MPFR_SET_NULL(x[i]);
             SLIP_delete_mpfr_array(&x, n);

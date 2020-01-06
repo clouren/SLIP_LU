@@ -34,9 +34,9 @@ SLIP_info SLIP_build_dense_int
     {
         for (int32_t j = 0; j < n; j++)
         {
-            SLIP_CHECK(slip_mpz_set_si( A_output->x[i][j], b[i][j]));
+            SLIP_CHECK(SLIP_mpz_set_si( A_output->x[i][j], b[i][j]));
         }
     }
-    SLIP_CHECK(slip_mpq_set_ui(A_output->scale, 1, 1));
+    SLIP_CHECK(SLIP_mpq_set_ui(A_output->scale, 1, 1));
     return SLIP_OK;
 }

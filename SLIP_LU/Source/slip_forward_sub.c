@@ -76,7 +76,7 @@ SLIP_info slip_forward_sub
         {
             p = h[i][k];
             // If x[i][k] = 0, can skip operations and continue to next i
-            SLIP_CHECK(slip_mpz_sgn(&sgn, x[i][k]));
+            SLIP_CHECK(SLIP_mpz_sgn(&sgn, x[i][k]));
             if (sgn == 0) {continue;}
 
             //------------------------------------------------------------------
@@ -85,11 +85,11 @@ SLIP_info slip_forward_sub
             if (p < i-1)
             {
                 // x[i] = x[i] * rhos[i-1]
-                SLIP_CHECK(slip_mpz_mul(x[i][k], x[i][k], rhos[i-1]));
+                SLIP_CHECK(SLIP_mpz_mul(x[i][k], x[i][k], rhos[i-1]));
                 // x[i] = x[i] / rhos[p]
                 if (p > -1)
                 {
-                    SLIP_CHECK(slip_mpz_divexact(x[i][k], x[i][k], rhos[p]));
+                    SLIP_CHECK(SLIP_mpz_divexact(x[i][k], x[i][k], rhos[p]));
                 }
             }
 
@@ -102,23 +102,23 @@ SLIP_info slip_forward_sub
                 // Location of Lmi
                 mnew = L->i[m];
                 // skip if Lx[m] is zero
-                SLIP_CHECK(slip_mpz_sgn(&sgn, L->x[m]));
+                SLIP_CHECK(SLIP_mpz_sgn(&sgn, L->x[m]));
                 if (sgn == 0) {continue;}
                 // m > i
                 if (mnew > i)
                 {
                     p = h[mnew][k];
                     // x[mnew] is zero
-                    SLIP_CHECK(slip_mpz_sgn(&sgn, x[mnew][k]));
+                    SLIP_CHECK(SLIP_mpz_sgn(&sgn, x[mnew][k]));
                     if (sgn == 0)
                     {
                         // x[m] = x[m] - lmi xi
-                        SLIP_CHECK(slip_mpz_submul(x[mnew][k], L->x[m],
+                        SLIP_CHECK(SLIP_mpz_submul(x[mnew][k], L->x[m],
                             x[i][k]));
                         // x[m] = x[m] / rhos[i-1]
                         if (i > 0)
                         {
-                            SLIP_CHECK(slip_mpz_divexact(x[mnew][k],
+                            SLIP_CHECK(SLIP_mpz_divexact(x[mnew][k],
                                 x[mnew][k], rhos[i - 1]));
                         }
                     }
@@ -128,25 +128,25 @@ SLIP_info slip_forward_sub
                         if (p < i-1)
                         {
                             // x[m] = x[m] * rhos[i-1]
-                            SLIP_CHECK(slip_mpz_mul(x[mnew][k], x[mnew][k],
+                            SLIP_CHECK(SLIP_mpz_mul(x[mnew][k], x[mnew][k],
                                     rhos[i - 1]));
                             // x[m] = x[m] / rhos[p]
                             if (p > -1)
                             {
-                                SLIP_CHECK(slip_mpz_divexact(x[mnew][k],
+                                SLIP_CHECK(SLIP_mpz_divexact(x[mnew][k],
                                     x[mnew][k], rhos[p]));
                             }
                         }
                         // x[m] = x[m] * rhos[i]
-                        SLIP_CHECK(slip_mpz_mul(x[mnew][k], x[mnew][k],
+                        SLIP_CHECK(SLIP_mpz_mul(x[mnew][k], x[mnew][k],
                             rhos[i]));
                         // x[m] = x[m] - lmi xi
-                        SLIP_CHECK(slip_mpz_submul(x[mnew][k], L->x[m],
+                        SLIP_CHECK(SLIP_mpz_submul(x[mnew][k], L->x[m],
                             x[i][k]));
                         // x[m] = x[m] / rhos[i-1]
                         if (i > 0)
                         {
-                            SLIP_CHECK(slip_mpz_divexact(x[mnew][k],
+                            SLIP_CHECK(SLIP_mpz_divexact(x[mnew][k],
                                 x[mnew][k], rhos[i - 1]));
                         }
                     }

@@ -37,7 +37,7 @@ SLIP_info SLIP_permute_x
     {
         for (int32_t j = 0; j < numRHS; j++)
         {
-            SLIP_CHECK(slip_mpq_set(x2[q[i]][j], x[i][j]));
+            SLIP_CHECK(SLIP_mpq_set(x2[q[i]][j], x[i][j]));
         }
     }
 
@@ -46,7 +46,7 @@ SLIP_info SLIP_permute_x
     {
         for (int32_t j = 0; j < numRHS; j++)
         {
-            SLIP_CHECK(slip_mpq_set(x[i][j], x2[i][j]));
+            SLIP_CHECK(SLIP_mpq_set(x[i][j], x2[i][j]));
         }
     }
     SLIP_FREE_WORKSPACE;

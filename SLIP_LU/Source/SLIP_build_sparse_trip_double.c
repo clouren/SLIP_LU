@@ -29,7 +29,8 @@
     int32_t *J,         // set of column indices
     double *x,          // Set of values in double
     int32_t n,          // dimension of the matrix
-    int32_t nz          // number of nonzeros in A (size of x, I, and J vectors)
+    int32_t nz,          // number of nonzeros in A (size of x, I, and J vectors)
+    SLIP_options* option
 )
 {
     SLIP_info ok;
@@ -44,7 +45,7 @@
         return SLIP_OUT_OF_MEMORY;
     }
 
-    SLIP_CHECK(slip_expand_double_array(x_new, x, A_output->scale, nz));
+    SLIP_CHECK(slip_expand_double_array(x_new, x, A_output->scale, nz, option));
 
     SLIP_CHECK(slip_trip_to_mat(A_output, I, J, x_new, n, nz));
 

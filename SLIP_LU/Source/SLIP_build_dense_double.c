@@ -20,7 +20,8 @@ SLIP_info SLIP_build_dense_double
     SLIP_dense *A_output, // Dense matrix, allocated but unused
     double **b,           // Set of values as doubles
     int32_t m,            // number of rows
-    int32_t n             // number of columns
+    int32_t n,             // number of columns
+    SLIP_options* option
 )
 {
     if (!b || !A_output || !A_output->scale)
@@ -30,6 +31,6 @@ SLIP_info SLIP_build_dense_double
 
     SLIP_info ok;
     SLIP_CHECK (slip_dense_alloc(A_output, m, n)) ;
-    SLIP_CHECK(slip_expand_double_mat(A_output->x, b, A_output->scale, m, n));
+    SLIP_CHECK(slip_expand_double_mat(A_output->x, b, A_output->scale, m, n, option));
     return SLIP_OK;
 }

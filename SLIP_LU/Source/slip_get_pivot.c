@@ -64,7 +64,7 @@ SLIP_info slip_get_pivot
     else if (order == 1)
     {
         // Check if x[col] is eligible. take smallest pivot    if not
-        SLIP_CHECK (slip_mpz_sgn(&sgn, x[col]));
+        SLIP_CHECK (SLIP_mpz_sgn(&sgn, x[col]));
         if (sgn != 0 && pivs[col] < 0)
         {
             *pivot = col;
@@ -93,23 +93,23 @@ SLIP_info slip_get_pivot
         //----------------------------------------------------------------------
         // Checking x[col] vs smallest pivot
         //----------------------------------------------------------------------
-        SLIP_CHECK (slip_mpz_sgn(&sgn, x[col]));
+        SLIP_CHECK (SLIP_mpz_sgn(&sgn, x[col]));
         if (sgn != 0 && pivs[col] < 0)
         {
 
             // Initialize tolerance and ratio
-            SLIP_CHECK(slip_mpq_init(tol));
-            SLIP_CHECK(slip_mpq_init(ratio));
+            SLIP_CHECK(SLIP_mpq_init(tol));
+            SLIP_CHECK(SLIP_mpq_init(ratio));
 
             // ratio = |smallest/diagonal|
-            SLIP_CHECK(slip_mpz_abs(MPQ_NUM(ratio), x[*pivot]));
-            SLIP_CHECK(slip_mpz_abs(MPQ_DEN(ratio), x[col]));
+            SLIP_CHECK(SLIP_mpz_abs(MPQ_NUM(ratio), x[*pivot]));
+            SLIP_CHECK(SLIP_mpz_abs(MPQ_DEN(ratio), x[col]));
 
             // Set user specified tolerance
-            SLIP_CHECK(slip_mpq_set_d(tol, tolerance));
+            SLIP_CHECK(SLIP_mpq_set_d(tol, tolerance));
 
             // Is ratio >= tol?
-            SLIP_CHECK(slip_mpq_cmp(&r, ratio, tol));
+            SLIP_CHECK(SLIP_mpq_cmp(&r, ratio, tol));
             if (r >= 0)
             {
                 *pivot = col;
@@ -127,21 +127,21 @@ SLIP_info slip_get_pivot
         //----------------------------------------------------------------------
         // Check x[col] vs largest potential pivot
         //----------------------------------------------------------------------
-        SLIP_CHECK (slip_mpz_sgn(&sgn, x[col]));
+        SLIP_CHECK (SLIP_mpz_sgn(&sgn, x[col]));
         if (sgn != 0 && pivs[col] < 0)
         {
-            SLIP_CHECK(slip_mpq_init(tol));
-            SLIP_CHECK(slip_mpq_init(ratio));
+            SLIP_CHECK(SLIP_mpq_init(tol));
+            SLIP_CHECK(SLIP_mpq_init(ratio));
             // tol = user specified tolerance
-            SLIP_CHECK(slip_mpq_set_d(tol, tolerance));
+            SLIP_CHECK(SLIP_mpq_set_d(tol, tolerance));
             // ratio = diagonal/largest
-            SLIP_CHECK(slip_mpq_set_num(ratio, x[col]));
-            SLIP_CHECK(slip_mpq_set_den(ratio, x[*pivot]));
+            SLIP_CHECK(SLIP_mpq_set_num(ratio, x[col]));
+            SLIP_CHECK(SLIP_mpq_set_den(ratio, x[*pivot]));
             // ratio = |ratio|
-            SLIP_CHECK(slip_mpq_abs(ratio, ratio));
+            SLIP_CHECK(SLIP_mpq_abs(ratio, ratio));
 
             // Is ratio >= tol?
-            SLIP_CHECK(slip_mpq_cmp(&r, ratio, tol));
+            SLIP_CHECK(SLIP_mpq_cmp(&r, ratio, tol));
             if (r >= 0)
             {
                 *pivot = col;
@@ -175,7 +175,7 @@ SLIP_info slip_get_pivot
     // Row pivot is now pivotal
     pivs[*pivot] = 1;
     // The kth pivot is x[pivot]
-    SLIP_CHECK (slip_mpz_set(rhos[k], x[*pivot]));
+    SLIP_CHECK (SLIP_mpz_set(rhos[k], x[*pivot]));
 
     // Free memory
     SLIP_FREE_WORKSPACE;

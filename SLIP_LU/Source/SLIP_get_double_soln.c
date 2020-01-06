@@ -31,7 +31,7 @@ SLIP_info SLIP_get_double_soln
     {
         for (int32_t j = 0; j < numRHS; j++)
         {
-            SLIP_info ok = slip_mpq_get_d(&(x_doub[i][j]), x_mpq[i][j]);
+            SLIP_info ok = SLIP_mpq_get_d(&(x_doub[i][j]), x_mpq[i][j]);
             if (ok != SLIP_OK)         {  return ok;  }
         }
     }

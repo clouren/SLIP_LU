@@ -30,6 +30,7 @@
 # include <stdint.h>
 # include <string.h>
 # include <time.h>
+#include <stdarg.h>
 
 // SuiteSparse headers
 # include "SuiteSparse_config.h"
@@ -101,12 +102,10 @@
 }
 
 #ifdef SLIP_LU_TCOV
-    /* include this header to redefine SLIP_MEMORY_REALLOC (used in slip_gmp.c)
+    /* include this header to redefine SLIP_MEMORY_REALLOC (used in SLIP_gmp.c)
      * for memory test and to use macro GOTCHA */
     #include "../Tcov/tcov_malloc_test.h"
 #endif
-
-#include "slip_gmp.h"
 
 // Tolerance used in the pivoting schemes. This number can be anything in
 // between 0 and 1. A value of 0 selects the diagonal element exclusively and a
@@ -139,6 +138,21 @@
 // MPFR precision used (quad is default)
 #define SLIP_DEFAULT_PRECISION 128
 
+//------------------------------------------------------------------------------
+// Type of MPFR rounding used. 
+//------------------------------------------------------------------------------
+
+// The MPFR library utilizes an internal rounding scheme. The options are
+//  MPFR_RNDN: round to nearest (roundTiesToEven in IEEE 754-2008),
+//  MPFR_RNDZ: round toward zero (roundTowardZero in IEEE 754-2008),
+//  MPFR_RNDU: round toward plus infinity (roundTowardPositive in IEEE 754-2008),
+//  MPFR_RNDD: round toward minus infinity (roundTowardNegative in IEEE 754-2008),
+//  MPFR_RNDA: round away from zero.
+//  MPFR_RNDF: faithful rounding. This is not stable
+
+// SLIP LU utilizes MPFR_RNDN by default. 
+
+#define SLIP_DEFAULT_MPFR_ROUND MPFR_RNDN;
 
 // Size of mpz_t, mpq_t and mpfr_t values
 #define SIZE_MPZ  sizeof(mpz_t)
@@ -375,7 +389,8 @@ SLIP_info slip_expand_double_array
     mpz_t *x_out,//integral final array
     double* x,  //double array that needs to be made integral
     mpq_t scale,//the scaling factor used (x_out = scale * x)
-    int32_t n   //size of x
+    int32_t n,   //size of x
+    SLIP_options* option
 );
 
 /* Purpose: This function converts a double matrix of size m*n to an appropriate
@@ -390,7 +405,8 @@ SLIP_info slip_expand_double_mat
     double** x,     // double matrix that needs to be made integral
     mpq_t scale,    // the scaling factor used (x_out = scale * x)
     int32_t m,      // row number of x
-    int32_t n       // column number of x
+    int32_t n,       // column number of x
+    SLIP_options* option
 );
 
 /* Purpose: This function converts a mpfr array of size n and precision prec to
@@ -613,7 +629,7 @@ SLIP_info slip_dense_alloc
  * Purpose: This function populates the SLIP_sparse A by the ccf
  * stored vectors i, p, and x
  */
-SLIP_info slip_mpz_populate_mat
+SLIP_info SLIP_mpz_populate_mat
 (
     SLIP_sparse* A,   // matrix to be populated
     int32_t* I,       // row indices

@@ -13,7 +13,7 @@
 /* check the validity of a SLIP_sparse sparse matrix in compressed-
    sparse column form.  Derived from SuiteSparse/MATLAB_TOOLS/spok. */
 
-// print_level:
+// option->print_level:
 //      0: nothing
 //      1: just errors
 //      2: errors and terse output
@@ -22,12 +22,13 @@
 SLIP_info SLIP_spok     // returns a SLIP_LU status code
 (
     SLIP_sparse *A,     // matrix to check
-    int32_t print_level // 0: print nothing, 1: just errors, 2: terse, 3: all
+    SLIP_options* option
 )
 {
 
     int32_t i, j, p, pend ;
 
+    int32_t print_level = option->print_level;
     //--------------------------------------------------------------------------
     // get the input matrix
     //--------------------------------------------------------------------------
@@ -127,7 +128,7 @@ SLIP_info SLIP_spok     // returns a SLIP_LU status code
             if (print_level >= 2)
             {
                 printf ("  row %d : ", i) ;
-                SLIP_info status = slip_gmp_printf ( "%Zd " , Ax [p]) ;
+                SLIP_info status = SLIP_gmp_printf ( "%Zd " , Ax [p]) ;
                 if (status < 0)
                 {
                     SLIP_FREE (mark) ;

@@ -46,7 +46,7 @@ SLIP_info SLIP_LU_solve  //solves the linear system LD^(-1)U x = b
     {
         for (i = 0; i < n; i++)
         {
-            SLIP_CHECK(slip_mpz_set(b2[pinv[i]][k], bx[i][k]));
+            SLIP_CHECK(SLIP_mpz_set(b2[pinv[i]][k], bx[i][k]));
         }
     }
     // L*b2 = b2

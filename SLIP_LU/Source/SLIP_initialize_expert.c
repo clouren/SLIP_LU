@@ -36,13 +36,13 @@
  *      MyRealloc   slip_gmp_reallocate
  *      MyFree      slip_gmp_free
  *
- * The slip_gmp_* memory management functions are unique to SLIP_LU.  They
+ * The SLIP_gmp_* memory management functions are unique to SLIP_LU.  They
  * provide an elegant workaround for how GMP manages its memory.  By default,
  * if GMP attempts to allocate memory, but it fails, then it simply terminates
  * the user application.  This behavoir is not suitable for many applications
  * (MATLAB in particular).  Fortunately, GMP allows the user application
  * (SLIP_LU in this case) to pass in alternative memroy manager functions, via
- * mp_set_memory_functions.  The slip_gmp_* functions do not return to GMP if
+ * mp_set_memory_functions.  The SLIP_gmp_* functions do not return to GMP if
  * the allocation fails, but instead use the longjmp feature of ANSI C to
  * implement a try/catch mechanism.  The memory failure can then be safely
  * handled by SLIP_LU, without memory leaks and without terminating the user
@@ -51,8 +51,8 @@
  * When SLIP_LU is used via MATLAB, the following functions are used instead:
  *
  *      MyMalloc    mxMalloc
- *      MyRealloc   slip_gmp_mex_realloc (a wrapper for mxRealloc)
- *      MyFree      slip_gmp_mex_free (a wrapper for mxFree)
+ *      MyRealloc   SLIP_gmp_mex_realloc (a wrapper for mxRealloc)
+ *      MyFree      SLIP_gmp_mex_free (a wrapper for mxFree)
  *
  * Note that these functions are not used by SLIP_LU itself, but only inside
  * GMP.  The functions used by SLIP_LU itself are SLIP_malloc, SLIP_calloc,

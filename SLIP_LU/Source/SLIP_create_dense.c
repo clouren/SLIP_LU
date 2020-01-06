@@ -33,10 +33,10 @@ SLIP_dense *SLIP_create_dense( void )
     A->n = 0;
     A->x = NULL;
     SLIP_MPQ_SET_NULL(A->scale);
-    CHECK_RESULT (slip_mpq_init(A->scale));
+    CHECK_RESULT (SLIP_mpq_init(A->scale));
     
     // Initial scale is 1
-    CHECK_RESULT (slip_mpq_set_ui(A->scale, 1, 1));
+    CHECK_RESULT (SLIP_mpq_set_ui(A->scale, 1, 1));
     
     return A;
 }

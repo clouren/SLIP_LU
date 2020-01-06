@@ -44,11 +44,11 @@ SLIP_info slip_expand_mpfr_array
     SLIP_MPZ_SET_NULL(gcd);
     SLIP_MPZ_SET_NULL(one);
     mpq_t temp; SLIP_MPQ_SET_NULL(temp);
-    SLIP_CHECK(slip_mpq_init(temp));
-    SLIP_CHECK(slip_mpfr_init2(expon, option->prec));
-    SLIP_CHECK(slip_mpz_init(temp_expon));
-    SLIP_CHECK(slip_mpz_init(gcd));
-    SLIP_CHECK(slip_mpz_init(one));
+    SLIP_CHECK(SLIP_mpq_init(temp));
+    SLIP_CHECK(SLIP_mpfr_init2(expon, option->prec));
+    SLIP_CHECK(SLIP_mpz_init(temp_expon));
+    SLIP_CHECK(SLIP_mpz_init(gcd));
+    SLIP_CHECK(SLIP_mpz_init(one));
     x3 = SLIP_create_mpfr_array(n, option);// Create the new x array
     if (!x3)
     {
@@ -57,40 +57,40 @@ SLIP_info slip_expand_mpfr_array
     }
 
     // expon = 10^prec (overestimate)
-    SLIP_CHECK(slip_mpfr_ui_pow_ui(expon, 10, option->prec, SLIP_MPFR_ROUND));
+    SLIP_CHECK(SLIP_mpfr_ui_pow_ui(expon, 10, option->prec, option->SLIP_MPFR_ROUND));
     for (i = 0; i < n; i++)
     {
         // x3[i] = x[i]*10^prec
-        SLIP_CHECK(slip_mpfr_mul(x3[i], x[i], expon, SLIP_MPFR_ROUND));
+        SLIP_CHECK(SLIP_mpfr_mul(x3[i], x[i], expon, option->SLIP_MPFR_ROUND));
         
         // x_out[i] = x3[i]
-        SLIP_CHECK(slip_mpfr_get_z(x_out[i], x3[i], SLIP_MPFR_ROUND));
+        SLIP_CHECK(SLIP_mpfr_get_z(x_out[i], x3[i], option->SLIP_MPFR_ROUND));
     }
-    SLIP_CHECK(slip_mpfr_get_z(temp_expon, expon, SLIP_MPFR_ROUND));
-    SLIP_CHECK(slip_mpq_set_z(scale, temp_expon));
+    SLIP_CHECK(SLIP_mpfr_get_z(temp_expon, expon, option->SLIP_MPFR_ROUND));
+    SLIP_CHECK(SLIP_mpq_set_z(scale, temp_expon));
     
     //--------------------------------------------------------------------------
     // Find the gcd to reduce scale 
     //--------------------------------------------------------------------------
-    SLIP_CHECK(slip_mpz_set_ui(one, 1));
+    SLIP_CHECK(SLIP_mpz_set_ui(one, 1));
     // Find an initial GCD
     for (i = 0; i < n; i++)
     {
         if (!nz_found)
         {
-            SLIP_CHECK(slip_mpz_cmp_ui(&r1, x_out[i], 0));
+            SLIP_CHECK(SLIP_mpz_cmp_ui(&r1, x_out[i], 0));
             if (r1 != 0)
             {
                 nz_found = true;
                 k = i;
-                SLIP_CHECK(slip_mpz_set(gcd, x_out[i]));
+                SLIP_CHECK(SLIP_mpz_set(gcd, x_out[i]));
             }
         }
         else
         {
             // Compute the GCD of the numbers, stop if gcd == 1
-            SLIP_CHECK(slip_mpz_gcd(gcd, gcd, x_out[i]));
-            SLIP_CHECK(slip_mpz_cmp(&r2, gcd, one));
+            SLIP_CHECK(SLIP_mpz_gcd(gcd, gcd, x_out[i]));
+            SLIP_CHECK(SLIP_mpz_cmp(&r2, gcd, one));
             if (r2 == 0)
             {
                 break;
@@ -101,7 +101,7 @@ SLIP_info slip_expand_mpfr_array
     if (!nz_found)     // Array is all zeros
     {
         SLIP_FREE_WORKSPACE;
-        slip_mpq_set_z(scale, one);
+        SLIP_mpq_set_z(scale, one);
         return SLIP_OK;
     }
     
@@ -112,10 +112,10 @@ SLIP_info slip_expand_mpfr_array
     {
         for (i = k; i < n; i++)
         {
-            SLIP_CHECK(slip_mpz_divexact(x_out[i],x_out[i],gcd));
+            SLIP_CHECK(SLIP_mpz_divexact(x_out[i],x_out[i],gcd));
         }
-        SLIP_CHECK(slip_mpq_set_z(temp,gcd));
-        SLIP_CHECK(slip_mpq_div(scale,scale,temp));
+        SLIP_CHECK(SLIP_mpq_set_z(temp,gcd));
+        SLIP_CHECK(SLIP_mpq_div(scale,scale,temp));
     }
     SLIP_FREE_WORKSPACE;
     return SLIP_OK;

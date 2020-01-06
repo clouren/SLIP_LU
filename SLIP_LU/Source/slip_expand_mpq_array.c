@@ -31,7 +31,7 @@ SLIP_info slip_expand_mpq_array
     SLIP_info ok;
     mpz_t temp;
     SLIP_MPZ_SET_NULL(temp);
-    ok = slip_mpz_init(temp);
+    ok = SLIP_mpz_init(temp);
     mpz_t* x3 = SLIP_create_mpz_array(n);    // Initialize arrays
     mpq_t* x4 = SLIP_create_mpq_array(n);
     if (!x3 || !x4 || ok != SLIP_OK) 
@@ -42,24 +42,24 @@ SLIP_info slip_expand_mpq_array
     
     for (int32_t i = 0; i < n; i++)                  // x3 = denominators of x
     {
-        SLIP_CHECK(slip_mpq_get_den(x3[i], x[i]));
+        SLIP_CHECK(SLIP_mpq_get_den(x3[i], x[i]));
     }
-    SLIP_CHECK(slip_mpz_set(temp,x3[0]));
+    SLIP_CHECK(SLIP_mpz_set(temp,x3[0]));
     
     // Find LCM of denominators of x
     for (int32_t i = 1; i < n; i++)
     {
-        SLIP_CHECK(slip_mpz_lcm(temp, x3[i], temp));
+        SLIP_CHECK(SLIP_mpz_lcm(temp, x3[i], temp));
     }
-    SLIP_CHECK(slip_mpq_set_z(scale,temp));
+    SLIP_CHECK(SLIP_mpq_set_z(scale,temp));
     
     for (int32_t i = 0; i < n; i++)    
     {
         // x4[i] = x[i]*temp
-        SLIP_CHECK(slip_mpq_mul(x4[i], x[i], scale));
+        SLIP_CHECK(SLIP_mpq_mul(x4[i], x[i], scale));
     
         // x_out[i] = x4[i]
-        SLIP_CHECK(slip_mpz_set_q(x_out[i], x4[i]));
+        SLIP_CHECK(SLIP_mpz_set_q(x_out[i], x4[i]));
     }
     SLIP_FREE_WORKSPACE;
     return SLIP_OK;

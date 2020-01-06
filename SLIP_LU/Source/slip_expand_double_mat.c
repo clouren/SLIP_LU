@@ -30,7 +30,8 @@ SLIP_info slip_expand_double_mat
     double** x,   // double matrix that needs to be made integral
     mpq_t scale,  // scaling factor. x_out = scale*x
     int32_t m,    // number of rows of x
-    int32_t n     // number of columns of x
+    int32_t n,    // number of columns of x
+    SLIP_options* option  // Options struct
 )
 {
     int32_t i, j, k, l, r1, r2 = 1;
@@ -40,17 +41,11 @@ SLIP_info slip_expand_double_mat
     mpz_t gcd, one;
     SLIP_MPZ_SET_NULL(gcd); SLIP_MPZ_SET_NULL(one);
     mpq_t temp; SLIP_MPQ_SET_NULL(temp);
-    SLIP_CHECK(slip_mpq_init(temp));
-    SLIP_CHECK(slip_mpz_init(gcd));
-    SLIP_CHECK(slip_mpz_init(one));
-    SLIP_options *option = SLIP_create_default_options();
-    if (!option)
-    {
-        SLIP_FREE_WORKSPACE;
-        return SLIP_OUT_OF_MEMORY;
-    }
+    SLIP_CHECK(SLIP_mpq_init(temp));
+    SLIP_CHECK(SLIP_mpz_init(gcd));
+    SLIP_CHECK(SLIP_mpz_init(one));
+
     x3 = SLIP_create_mpfr_mat(m, n, option);
-    SLIP_FREE(option);
 
     if (!x3)
     {
@@ -58,26 +53,26 @@ SLIP_info slip_expand_double_mat
         return SLIP_OUT_OF_MEMORY;
     }
     double expon = pow(10,17);                          // expon = 10^17
-    SLIP_CHECK(slip_mpq_set_d(scale, expon));
+    SLIP_CHECK(SLIP_mpq_set_d(scale, expon));
     for (i = 0; i < m; i++)
     {
         for (j = 0; j < n; j++)
         {
             // x3[i][j] = x[i][j]
-            SLIP_CHECK(slip_mpfr_set_d(x3[i][j], x[i][j], SLIP_MPFR_ROUND));
+            SLIP_CHECK(SLIP_mpfr_set_d(x3[i][j], x[i][j], option->SLIP_MPFR_ROUND));
             
             // x3[i][j] = x[i][j]*10^17
-            SLIP_CHECK(slip_mpfr_mul_d(x3[i][j], x3[i][j], expon,
-                SLIP_MPFR_ROUND));
+            SLIP_CHECK(SLIP_mpfr_mul_d(x3[i][j], x3[i][j], expon,
+                option->SLIP_MPFR_ROUND));
             
             // x_out[i][j] = x3[i][j]
-            SLIP_CHECK(slip_mpfr_get_z(x_out[i][j], x3[i][j], SLIP_MPFR_ROUND));
+            SLIP_CHECK(SLIP_mpfr_get_z(x_out[i][j], x3[i][j], option->SLIP_MPFR_ROUND));
         }
     }
     //--------------------------------------------------------------------------
     // Compute the gcd to reduce the size of scale
     //--------------------------------------------------------------------------
-    SLIP_CHECK(slip_mpz_set_ui(one, 1))
+    SLIP_CHECK(SLIP_mpz_set_ui(one, 1))
     // Find an initial GCD 
     for (i = 0; i < m; i++)
     {
@@ -85,20 +80,20 @@ SLIP_info slip_expand_double_mat
         {
             if (!nz_found)
             {
-                SLIP_CHECK(slip_mpz_cmp_ui(&r1, x_out[i][j], 0));
+                SLIP_CHECK(SLIP_mpz_cmp_ui(&r1, x_out[i][j], 0));
                 if (r1 != 0)
                 {
                     nz_found = true;
                     k = i;
                     l = j;
-                    SLIP_CHECK(slip_mpz_set(gcd, x_out[i][j]));;
+                    SLIP_CHECK(SLIP_mpz_set(gcd, x_out[i][j]));;
                 }
             }
             else
             {
                 // Compute the GCD of the numbers, stop if gcd == 1 (r2 == 0)
-                SLIP_CHECK(slip_mpz_gcd(gcd, gcd, x_out[i][j]));
-                SLIP_CHECK(slip_mpz_cmp(&r2, gcd, one));
+                SLIP_CHECK(SLIP_mpz_gcd(gcd, gcd, x_out[i][j]));
+                SLIP_CHECK(SLIP_mpz_cmp(&r2, gcd, one));
                 if (r2 == 0)
                 {
                     break;
@@ -114,7 +109,7 @@ SLIP_info slip_expand_double_mat
     if (!nz_found) // Entire matrix is zeros
     {
         SLIP_FREE_WORKSPACE;
-        slip_mpq_set_z(scale, one);
+        SLIP_mpq_set_z(scale, one);
         return SLIP_OK;
     }
 
@@ -129,11 +124,11 @@ SLIP_info slip_expand_double_mat
             else        {j = 0;}
             for (; j < n; j++)    
             {
-                SLIP_CHECK(slip_mpz_divexact(x_out[i][j], x_out[i][j], gcd));
+                SLIP_CHECK(SLIP_mpz_divexact(x_out[i][j], x_out[i][j], gcd));
             }
         }
-        SLIP_CHECK(slip_mpq_set_z(temp, gcd));
-        SLIP_CHECK(slip_mpq_div(scale, scale, temp));
+        SLIP_CHECK(SLIP_mpq_set_z(temp, gcd));
+        SLIP_CHECK(SLIP_mpq_div(scale, scale, temp));
     }
     SLIP_FREE_WORKSPACE;
     return SLIP_OK;

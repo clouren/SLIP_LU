@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/slip_mpz_populate_mat: construct a sparse mpz matrix
+// SLIP_LU/SLIP_mpz_populate_mat: construct a sparse mpz matrix
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -15,7 +15,7 @@
  * p, and x
  */
 
-SLIP_info slip_mpz_populate_mat
+SLIP_info SLIP_mpz_populate_mat
 (
     SLIP_sparse* A,   // matrix to be populated
     int32_t* I,       // row indices
@@ -40,7 +40,7 @@ SLIP_info slip_mpz_populate_mat
         {
             return SLIP_INCORRECT_INPUT;
         }
-        SLIP_CHECK(slip_mpz_set(A->x[k],x[k]));
+        SLIP_CHECK(SLIP_mpz_set(A->x[k],x[k]));
     }
     return ok;
 }

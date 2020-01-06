@@ -24,7 +24,8 @@ SLIP_info SLIP_build_sparse_ccf_double
     int32_t *I,           // set of row indices
     double *x,            // Set of values as doubles
     int32_t n,            // dimension of the matrix
-    int32_t nz            // number of nonzeros in A (size of x and I vectors)
+    int32_t nz,            // number of nonzeros in A (size of x and I vectors)
+    SLIP_options* option
 )
 {
     SLIP_info ok;
@@ -36,10 +37,10 @@ SLIP_info SLIP_build_sparse_ccf_double
     mpz_t* x_new = SLIP_create_mpz_array(nz);
     if (!x_new) {return SLIP_OUT_OF_MEMORY;}
 
-    SLIP_CHECK(slip_expand_double_array(x_new, x, A_output->scale, nz));
+    SLIP_CHECK(slip_expand_double_array(x_new, x, A_output->scale, nz, option));
 
     // Create our matrix
-    SLIP_CHECK(slip_mpz_populate_mat(A_output, I, p, x_new, n, nz));
+    SLIP_CHECK(SLIP_mpz_populate_mat(A_output, I, p, x_new, n, nz));
 
     // Free memory
     SLIP_FREE_WORKSPACE;

@@ -36,7 +36,7 @@ SLIP_info slip_get_largest_pivot
     SLIP_info ok;
     *pivot = -1;
     mpz_t big; SLIP_MPZ_SET_NULL(big);
-    SLIP_CHECK(slip_mpz_init(big));
+    SLIP_CHECK(SLIP_mpz_init(big));
 
     //--------------------------------------------------------------------------
     // Iterate accross the nonzeros in x
@@ -46,13 +46,13 @@ SLIP_info slip_get_largest_pivot
         // Location of the ith nonzero
         inew = xi[i];
         // inew can be pivotal
-        SLIP_CHECK(slip_mpz_cmpabs(&r, big, x[inew]));
+        SLIP_CHECK(SLIP_mpz_cmpabs(&r, big, x[inew]));
         if (pivs[inew] < 0 && r < 0)
         {
             // Current largest pivot location
             *pivot = inew;
             // Current largest pivot value
-            SLIP_CHECK(slip_mpz_set(big, x[inew]));
+            SLIP_CHECK(SLIP_mpz_set(big, x[inew]));
         }
     }
 

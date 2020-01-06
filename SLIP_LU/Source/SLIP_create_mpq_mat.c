@@ -33,7 +33,7 @@ mpq_t** SLIP_create_mpq_mat
         }
         for (int32_t j = 0; j < n; j++)
         {
-            if (slip_mpq_init(x[i][j]) != SLIP_OK)
+            if (SLIP_mpq_init(x[i][j]) != SLIP_OK)
             {
                 // Out of memory
                 SLIP_MPQ_SET_NULL(x[i][j]);

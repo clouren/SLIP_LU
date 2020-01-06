@@ -40,7 +40,7 @@ mpfr_t** SLIP_create_mpfr_mat
         }
         for (int32_t j = 0; j < n; j++)
         {
-            if (slip_mpfr_init2(x[i][j], option->prec) != SLIP_OK)
+            if (SLIP_mpfr_init2(x[i][j], option->prec) != SLIP_OK)
             {
                 SLIP_MPFR_SET_NULL(x[i][j]);
                 SLIP_delete_mpfr_mat(&x, m, n);

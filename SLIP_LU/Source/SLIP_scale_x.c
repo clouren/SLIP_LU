@@ -26,29 +26,29 @@ SLIP_info SLIP_scale_x
     numRHS = b->n;
 
     // Determine if A's scaling factor is 1
-    SLIP_CHECK(slip_mpq_cmp_ui(&r, A->scale, 1, 1));
-    SLIP_CHECK(slip_mpq_cmp_ui(&s, A->scale, 0, 1));
+    SLIP_CHECK(SLIP_mpq_cmp_ui(&r, A->scale, 1, 1));
+    SLIP_CHECK(SLIP_mpq_cmp_ui(&s, A->scale, 0, 1));
     if (r != 0 && s != 0)
     {
         for (int32_t i = 0; i < n; i++)
         {
             for (int32_t j = 0; j < numRHS; j++)
             {
-                SLIP_CHECK(slip_mpq_mul(x[i][j], x[i][j], A->scale));
+                SLIP_CHECK(SLIP_mpq_mul(x[i][j], x[i][j], A->scale));
             }
         }
     }
 
     // Determine if b's scaling factor is 1
-    SLIP_CHECK(slip_mpq_cmp_ui(&r, b->scale, 1, 1));
-    SLIP_CHECK(slip_mpq_cmp_ui(&s, b->scale, 0, 1));
+    SLIP_CHECK(SLIP_mpq_cmp_ui(&r, b->scale, 1, 1));
+    SLIP_CHECK(SLIP_mpq_cmp_ui(&s, b->scale, 0, 1));
     if (r != 0 && s != 0)
     {
         for (int32_t i = 0; i < n; i++)
         {
             for (int32_t j = 0; j < numRHS; j++)
             {
-                SLIP_CHECK(slip_mpq_div(x[i][j], x[i][j], b->scale));
+                SLIP_CHECK(SLIP_mpq_div(x[i][j], x[i][j], b->scale));
             }
         }
     }

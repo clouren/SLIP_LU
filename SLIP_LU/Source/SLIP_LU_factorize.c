@@ -65,8 +65,8 @@ SLIP_info SLIP_LU_factorize
     mpfr_t temp; SLIP_MPFR_SET_NULL(temp);
     mpz_t* x = NULL ;
 
-    SLIP_CHECK(slip_mpz_init(sigma));
-    SLIP_CHECK(slip_mpfr_init2(temp, 256));
+    SLIP_CHECK(SLIP_mpz_init(sigma));
+    SLIP_CHECK(SLIP_mpfr_init2(temp, 256));
     // Sequence of chosen pivots
     pivs = (int32_t*) SLIP_malloc(n* sizeof(int32_t));
     // Location of a column WRT the order
@@ -98,18 +98,18 @@ SLIP_info SLIP_LU_factorize
     //--------------------------------------------------------------------------
     // Initialize sigma = largest entry in A
 
-    SLIP_CHECK(slip_mpz_set(sigma, A->x[0]));
+    SLIP_CHECK(SLIP_mpz_set(sigma, A->x[0]));
 
     // Get sigma = max(A)
     for (i = 1; i < A->nz; i++)
     {
         if(mpz_cmpabs(sigma,A->x[i]) < 0)
         {
-            SLIP_CHECK(slip_mpz_set(sigma,A->x[i]));
+            SLIP_CHECK(SLIP_mpz_set(sigma,A->x[i]));
         }
     }
     // sigma = |sigma|
-    SLIP_CHECK(slip_mpz_abs(sigma,sigma));
+    SLIP_CHECK(SLIP_mpz_abs(sigma,sigma));
 
     int32_t gamma = A->p[1];
     // get gamma as most dense column
@@ -122,22 +122,22 @@ SLIP_info SLIP_LU_factorize
     }
 
     // temp = sigma
-    SLIP_CHECK(slip_mpfr_set_z(temp, sigma, SLIP_MPFR_ROUND));
+    SLIP_CHECK(SLIP_mpfr_set_z(temp, sigma, option->SLIP_MPFR_ROUND));
 
     //--------------------------------------------------------------------------
     // Bound = gamma*log2(sigma sqrt(gamma))
     //--------------------------------------------------------------------------
     // temp = sigma*sqrt(gamma)
-    SLIP_CHECK(slip_mpfr_mul_d(temp, temp, (double) sqrt(gamma), SLIP_MPFR_ROUND));
+    SLIP_CHECK(SLIP_mpfr_mul_d(temp, temp, (double) sqrt(gamma), option->SLIP_MPFR_ROUND));
     // temp = log2(temp)
-    SLIP_CHECK(slip_mpfr_log2(temp, temp, SLIP_MPFR_ROUND));
+    SLIP_CHECK(SLIP_mpfr_log2(temp, temp, option->SLIP_MPFR_ROUND));
     // inner2 = temp
     double inner2;
-    SLIP_CHECK(slip_mpfr_get_d(&inner2, temp, SLIP_MPFR_ROUND));
+    SLIP_CHECK(SLIP_mpfr_get_d(&inner2, temp, option->SLIP_MPFR_ROUND));
     // Free cache from log2. Even though mpfr_free_cache is called in
     // SLIP_LU_final(), it has to be called here to prevent memory leak in
     // some rare situations.
-    slip_mpfr_free_cache();
+    SLIP_mpfr_free_cache();
     // bound = gamma * inner2+1
     int32_t bound = ceil(gamma*(inner2+1));
     // Ensure bound is at least 64 bit
@@ -201,11 +201,11 @@ SLIP_info SLIP_LU_factorize
             // ith value of x[j]
             U->i[unz] = jnew;
             // Allocate memory for x[j]
-            SLIP_CHECK(slip_mpz_sizeinbase(&size, x[jnew], 2));
+            SLIP_CHECK(SLIP_mpz_sizeinbase(&size, x[jnew], 2));
             // GMP manual: Allocated size should be size+2
-            SLIP_CHECK(slip_mpz_init2(U->x[unz],size+2));
+            SLIP_CHECK(SLIP_mpz_init2(U->x[unz],size+2));
             // Set U[x]
-            SLIP_CHECK(slip_mpz_set(U->x[unz],x[jnew]));
+            SLIP_CHECK(SLIP_mpz_set(U->x[unz],x[jnew]));
             // Increment nnz of U
             unz++;
         }
@@ -217,11 +217,11 @@ SLIP_info SLIP_LU_factorize
         {
             // ith value of x[j]
             L->i[lnz] = jnew;
-            SLIP_CHECK(slip_mpz_sizeinbase(&size, x[jnew], 2));
+            SLIP_CHECK(SLIP_mpz_sizeinbase(&size, x[jnew], 2));
             // GMP manual: Allocated size should be size+2
-            SLIP_CHECK(slip_mpz_init2(L->x[lnz], size+2));
+            SLIP_CHECK(SLIP_mpz_init2(L->x[lnz], size+2));
             // Set L[x]
-            SLIP_CHECK(slip_mpz_set(L->x[lnz], x[jnew]));
+            SLIP_CHECK(SLIP_mpz_set(L->x[lnz], x[jnew]));
             lnz++;
         }
     }
@@ -275,11 +275,11 @@ SLIP_info SLIP_LU_factorize
             {
                 // Place the i location of the U->nz nonzero
                 U->i[unz] = jnew;
-                SLIP_CHECK(slip_mpz_sizeinbase(&size, x[jnew], 2));
+                SLIP_CHECK(SLIP_mpz_sizeinbase(&size, x[jnew], 2));
                 // GMP manual: Allocated size should be size+2
-                SLIP_CHECK(slip_mpz_init2(U->x[unz], size+2));
+                SLIP_CHECK(SLIP_mpz_init2(U->x[unz], size+2));
                 // Place the x value of the U->nz nonzero
-                SLIP_CHECK(slip_mpz_set(U->x[unz], x[jnew]));
+                SLIP_CHECK(SLIP_mpz_set(U->x[unz], x[jnew]));
                 // Increment U->nz
                 unz++;
             }
@@ -291,11 +291,11 @@ SLIP_info SLIP_LU_factorize
             {
                 // Place the i location of the L->nz nonzero
                 L->i[lnz] = jnew;
-                SLIP_CHECK(slip_mpz_sizeinbase(&size, x[jnew], 2));
+                SLIP_CHECK(SLIP_mpz_sizeinbase(&size, x[jnew], 2));
                 // GMP manual: Allocated size should be size+2
-                SLIP_CHECK(slip_mpz_init2(L->x[lnz], size+2));
+                SLIP_CHECK(SLIP_mpz_init2(L->x[lnz], size+2));
                 // Place the x value of the L->nz nonzero
-                SLIP_CHECK(slip_mpz_set(L->x[lnz], x[jnew]));
+                SLIP_CHECK(SLIP_mpz_set(L->x[lnz], x[jnew]));
                 // Increment L->nz
                 lnz++;
             }
@@ -344,8 +344,8 @@ SLIP_info SLIP_LU_factorize
     //--------------------------------------------------------------------------
 
     #if 0
-    SLIP_CHECK (SLIP_spok (L, 0)) ;
-    SLIP_CHECK (SLIP_spok (U, 0)) ;
+    SLIP_CHECK (SLIP_spok (L, option)) ;
+    SLIP_CHECK (SLIP_spok (U, option)) ;
     #endif
 
     return ok;

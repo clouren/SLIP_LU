@@ -43,11 +43,11 @@ SLIP_info slip_expand_mpfr_mat
     SLIP_MPZ_SET_NULL(gcd);
     SLIP_MPZ_SET_NULL(one);
     mpq_t temp; SLIP_MPQ_SET_NULL(temp);
-    SLIP_CHECK(slip_mpq_init(temp));
-    SLIP_CHECK(slip_mpfr_init2(expon, option->prec));
-    SLIP_CHECK(slip_mpz_init(temp_expon));
-    SLIP_CHECK(slip_mpz_init(gcd));
-    SLIP_CHECK(slip_mpz_init(one)); 
+    SLIP_CHECK(SLIP_mpq_init(temp));
+    SLIP_CHECK(SLIP_mpfr_init2(expon, option->prec));
+    SLIP_CHECK(SLIP_mpz_init(temp_expon));
+    SLIP_CHECK(SLIP_mpz_init(gcd));
+    SLIP_CHECK(SLIP_mpz_init(one)); 
     x3 = SLIP_create_mpfr_mat(m, n, option);
     if (!x3)
     {
@@ -56,26 +56,26 @@ SLIP_info slip_expand_mpfr_mat
     }
      
     // expon = 10^prec (overestimate)
-    SLIP_CHECK(slip_mpfr_ui_pow_ui(expon, 10, option->prec, SLIP_MPFR_ROUND));
+    SLIP_CHECK(SLIP_mpfr_ui_pow_ui(expon, 10, option->prec, option->SLIP_MPFR_ROUND));
     
     for (i = 0; i < m; i++)
     {
         for (j = 0; j < n; j++)
         {
             // x3[i][j] = x[i][j]*expon
-            SLIP_CHECK(slip_mpfr_mul(x3[i][j], x[i][j], expon, SLIP_MPFR_ROUND));
+            SLIP_CHECK(SLIP_mpfr_mul(x3[i][j], x[i][j], expon, option->SLIP_MPFR_ROUND));
             // x_out[i][j] = x3[i][j]
-            SLIP_CHECK(slip_mpfr_get_z(x_out[i][j], x3[i][j], SLIP_MPFR_ROUND));
+            SLIP_CHECK(SLIP_mpfr_get_z(x_out[i][j], x3[i][j], option->SLIP_MPFR_ROUND));
         }
     }
     
-    SLIP_CHECK(slip_mpfr_get_z(temp_expon, expon, SLIP_MPFR_ROUND));
-    SLIP_CHECK(slip_mpq_set_z(scale, temp_expon));
+    SLIP_CHECK(SLIP_mpfr_get_z(temp_expon, expon, option->SLIP_MPFR_ROUND));
+    SLIP_CHECK(SLIP_mpq_set_z(scale, temp_expon));
     
     //--------------------------------------------------------------------------
     // Find the gcd to reduce scale
     //--------------------------------------------------------------------------
-    SLIP_CHECK(slip_mpz_set_ui(one, 1))
+    SLIP_CHECK(SLIP_mpz_set_ui(one, 1))
     // Find an initial GCD 
     for (i = 0; i < m; i++)
     {
@@ -83,20 +83,20 @@ SLIP_info slip_expand_mpfr_mat
         {
             if (!nz_found)
             {
-                SLIP_CHECK(slip_mpz_cmp_ui(&r1, x_out[i][j], 0));
+                SLIP_CHECK(SLIP_mpz_cmp_ui(&r1, x_out[i][j], 0));
                 if (r1 != 0)
                 {
                     nz_found = true;
                     k = i;
                     l = j;
-                    SLIP_CHECK(slip_mpz_set(gcd, x_out[i][j]));;
+                    SLIP_CHECK(SLIP_mpz_set(gcd, x_out[i][j]));;
                 }
             }
             else
             {
                 // Compute the GCD of the numbers
-                SLIP_CHECK(slip_mpz_gcd(gcd, gcd, x_out[i][j]));
-                SLIP_CHECK(slip_mpz_cmp(&r2, gcd, one));
+                SLIP_CHECK(SLIP_mpz_gcd(gcd, gcd, x_out[i][j]));
+                SLIP_CHECK(SLIP_mpz_cmp(&r2, gcd, one));
                 if (r2 == 0)
                 {
                     break;
@@ -112,7 +112,7 @@ SLIP_info slip_expand_mpfr_mat
     if (!nz_found) // Entire matrix is zeros
     {
         SLIP_FREE_WORKSPACE;
-        slip_mpq_set_z(scale, one);
+        SLIP_mpq_set_z(scale, one);
         return SLIP_OK;
     }
 
@@ -128,11 +128,11 @@ SLIP_info slip_expand_mpfr_mat
             else        {j = 0;}
             for (; j < n; j++)
             {
-                SLIP_CHECK(slip_mpz_divexact(x_out[i][j], x_out[i][j], gcd));
+                SLIP_CHECK(SLIP_mpz_divexact(x_out[i][j], x_out[i][j], gcd));
             }
         }
-        SLIP_CHECK(slip_mpq_set_z(temp, gcd));
-        SLIP_CHECK(slip_mpq_div(scale, scale, temp));
+        SLIP_CHECK(SLIP_mpq_set_z(temp, gcd));
+        SLIP_CHECK(SLIP_mpq_div(scale, scale, temp));
     }
     SLIP_FREE_WORKSPACE;
     return SLIP_OK;

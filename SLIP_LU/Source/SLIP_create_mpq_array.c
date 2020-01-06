@@ -25,7 +25,7 @@ mpq_t* SLIP_create_mpq_array
     if (!x) {return NULL;}
     for (int32_t i = 0; i < n; i++)
     {
-        if (slip_mpq_init(x[i]) != SLIP_OK)
+        if (SLIP_mpq_init(x[i]) != SLIP_OK)
         {
             // Out of memory
             SLIP_MPQ_SET_NULL(x[i]);

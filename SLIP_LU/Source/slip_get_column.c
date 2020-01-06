@@ -32,7 +32,7 @@ SLIP_info slip_get_column //extract k-th column from A, i.e., x=A(:,k)
     for (int32_t i = A->p[k]; i < A->p[k + 1]; i++)
     {
         // Value of the ith nonzero
-        SLIP_CHECK(slip_mpz_set(x[A->i[i]], A->x[i]));
+        SLIP_CHECK(SLIP_mpz_set(x[A->i[i]], A->x[i]));
     }
     return SLIP_OK;
 }

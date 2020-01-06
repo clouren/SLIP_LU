@@ -60,7 +60,7 @@ SLIP_info slip_trip_to_mat
             SLIP_FREE_WORKSPACE;
             return SLIP_INCORRECT_INPUT;
         }
-        SLIP_CHECK(slip_mpz_set(A->x[p], x[k]));
+        SLIP_CHECK(SLIP_mpz_set(A->x[p], x[k]));
     }
     // Number of nonzeros in A
     A->nz = A->nzmax;

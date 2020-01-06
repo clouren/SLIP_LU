@@ -41,7 +41,7 @@ SLIP_info slip_get_smallest_pivot
     j = n;
     flag = top;
     mpz_t small; SLIP_MPZ_SET_NULL(small);
-    SLIP_CHECK(slip_mpz_init(small));
+    SLIP_CHECK(SLIP_mpz_init(small));
 
     //--------------------------------------------------------------------------
     // Find an initial pivot. Fails if all terms are 0 in array x
@@ -52,11 +52,11 @@ SLIP_info slip_get_smallest_pivot
         inew = xi[flag];
         
         //check if inew can be pivotal
-        SLIP_CHECK(slip_mpz_sgn(&sgn, x[inew]));
+        SLIP_CHECK(SLIP_mpz_sgn(&sgn, x[inew]));
         if (pivs[inew] < 0 && sgn != 0)
         {
             // Current smallest pivot
-            SLIP_CHECK(slip_mpz_set(small, x[inew]));
+            SLIP_CHECK(SLIP_mpz_set(small, x[inew]));
             // Current smallest pivot location
             *pivot = inew;
             // Where to start the search for rest of nonzeros
@@ -75,16 +75,16 @@ SLIP_info slip_get_smallest_pivot
     {
         inew = xi[i];
         // check if inew can be pivotal
-        SLIP_CHECK(slip_mpz_cmpabs(&r, small, x[inew])); 
+        SLIP_CHECK(SLIP_mpz_cmpabs(&r, small, x[inew])); 
         if (pivs[inew] < 0 && r > 0)
         {
-            SLIP_CHECK(slip_mpz_sgn(&sgn, x[inew]));
+            SLIP_CHECK(SLIP_mpz_sgn(&sgn, x[inew]));
             if (sgn != 0)
             {
                 // Current best pivot location
                 *pivot = inew;
                 // Current best pivot value
-                SLIP_CHECK(slip_mpz_set(small, x[inew]));
+                SLIP_CHECK(SLIP_mpz_set(small, x[inew]));
             }
         }
     }
