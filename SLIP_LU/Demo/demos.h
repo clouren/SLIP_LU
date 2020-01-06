@@ -1,16 +1,4 @@
-// TODO Put these in SLIP_LU.h
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <gmp.h>
-#include <mpfr.h>
 #include "SLIP_LU.h"
-#include "../Source/SLIP_LU_internal.h" //TODO: FIXME
 
 #define OK(method)                      \
 {                                       \
@@ -21,6 +9,8 @@
         return 0 ;                      \
     }                                   \
 }
+
+#define SLIP_MIN(a,b) (((a) < (b)) ? (a) : (b))
 
 /* Purpose: This processes the command line for user specified options */ 
 SLIP_info SLIP_process_command_line //processes the command line 
@@ -64,7 +54,8 @@ SLIP_info SLIP_tripread
 SLIP_info SLIP_tripread_double
 (
     SLIP_sparse* A,        // Matrix to be populated
-    FILE* file          // file to read from (must already be open)
+    FILE* file,          // file to read from (must already be open)
+    SLIP_options* option
 );
 
 /* Purpose: Read a dense matrix. This is for demo purposes only */

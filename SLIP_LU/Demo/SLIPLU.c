@@ -178,7 +178,7 @@ int main( int argc, char* argv[])
     }
 
     clock_t end_col = clock();
-
+    
     //--------------------------------------------------------------------------
     // SLIP LU Factorization
     //--------------------------------------------------------------------------
@@ -207,7 +207,7 @@ int main( int argc, char* argv[])
 
     // TODO
     check = ok;       // ok is assigned as the status of SLIP_check_solution
-    if (ok == SLIP_OK)
+    if (check == SLIP_OK)
     {
         printf ("Solution is verified to be exact.\n") ;
     }
@@ -236,7 +236,7 @@ int main( int argc, char* argv[])
     {
         x_mpfr = SLIP_create_mpfr_mat(nrows, numRHS, option);
         if (x_mpfr == NULL) {OK(SLIP_OUT_OF_MEMORY);}
-        OK(SLIP_get_mpfr_soln(x_mpfr, x, nrows, numRHS));
+        OK(SLIP_get_mpfr_soln(x_mpfr, x, nrows, numRHS, option));
         OK(SLIP_print_stats_mpfr(stdout, x_mpfr, nrows, numRHS, check, option));
     }
 

@@ -1,6 +1,6 @@
 # include "demos.h"
 
-// TODO Fix this, replace read_triplet with SLIP_build* etc, slip_fscanf external
+//TODO Extensively comment here
 /* Purpose: This function prints out the user specified/default options*/
 void SLIP_print_options // display specified/default options to user
 (
@@ -261,11 +261,13 @@ SLIP_info SLIP_tripread
     {
         return SLIP_INCORRECT_INPUT;
     }
+    // Initialize i and j vectors 
     int32_t *i = (int32_t*) SLIP_malloc(nz * sizeof(int32_t));
     int32_t *j = (int32_t*) SLIP_malloc(nz * sizeof(int32_t));
 
     // Create an initialized input mpz vector
     mpz_t* x_mpz = SLIP_create_mpz_array(nz);
+    
     if (!i || !j || !x_mpz)
     {
         SLIP_FREE(i);
@@ -275,7 +277,7 @@ SLIP_info SLIP_tripread
     }
 
     int32_t decrement;
-    ok = slip_gmp_fscanf(file, "%d %d %Zd\n", &i[0], &j[0], &x_mpz[0]);
+    ok = SLIP_gmp_fscanf(file, "%d %d %Zd\n", &i[0], &j[0], &x_mpz[0]);
     if (feof(file) || ok < 3)
     {
         SLIP_FREE(i);
@@ -298,7 +300,7 @@ SLIP_info SLIP_tripread
     // Read in the values from file
     for (int32_t p = 1; p < nz; p++)
     {
-        ok = slip_gmp_fscanf(file, "%d %d %Zd\n", &i[p], &j[p], &x_mpz[p]);
+        ok = SLIP_gmp_fscanf(file, "%d %d %Zd\n", &i[p], &j[p], &x_mpz[p]); 
         if ((feof(file) && p != nz-1) || ok < 3)
         {
             SLIP_FREE(i);
@@ -306,13 +308,21 @@ SLIP_info SLIP_tripread
             SLIP_delete_mpz_array(&x_mpz, nz);
             return SLIP_INCORRECT_INPUT;
         }
-        // Conversion from 1 based to 0 based
+        // Conversion from 1 based to 0 based if necessary
         i[p] -= decrement;
         j[p] -= decrement;
     }
 
-    // Convert from triplet form to ccf
-    ok = slip_trip_to_mat(A, i, j, x_mpz, n, nz);
+    //------------------------------------------------------------------
+    // At this point, we have read in i, j, and x arrays and have 
+    // allocated memory for the A matrix. The i & j are stored as 
+    // int32_t and x is stored as a mpz_array. We conclude by using the 
+    // appropriate SLIP_build_* to construct our input matrix A
+    //------------------------------------------------------------------
+    ok = SLIP_build_sparse_trip_mpz(A, i, j, x_mpz, n, nz);
+    
+    // A now contains our input matrix. Free memory for i, j, and x
+    
     SLIP_FREE(i);
     SLIP_FREE(j);
     SLIP_delete_mpz_array(&x_mpz, nz);
@@ -329,7 +339,8 @@ SLIP_info SLIP_tripread
 SLIP_info SLIP_tripread_double
 (
     SLIP_sparse* A,        // Matrix to be populated
-    FILE* file          // file to read from (must already be open)
+    FILE* file,          // file to read from (must already be open)
+    SLIP_options* option
 )
 {
     SLIP_info ok;
@@ -350,14 +361,12 @@ SLIP_info SLIP_tripread_double
     int32_t *i = (int32_t*) SLIP_malloc(nz* sizeof(int32_t));
     int32_t *j = (int32_t*) SLIP_malloc(nz* sizeof(int32_t));
     double *x_doub = (double*) SLIP_malloc(nz* sizeof(double));
-    mpz_t *x_mpz = SLIP_create_mpz_array(nz);
 
-    if (!i || !j || !x_doub || !x_mpz)
+    if (!i || !j || !x_doub )
     {
         SLIP_FREE(i);                 
         SLIP_FREE(j);                     
         SLIP_FREE(x_doub);                
-        SLIP_delete_mpz_array(&x_mpz, nz);
         return SLIP_OUT_OF_MEMORY;
     }
 
@@ -368,7 +377,6 @@ SLIP_info SLIP_tripread_double
         SLIP_FREE(i);                 
         SLIP_FREE(j);                     
         SLIP_FREE(x_doub);                
-        SLIP_delete_mpz_array(&x_mpz, nz);
         return SLIP_INCORRECT_INPUT;
     }
 
@@ -392,7 +400,6 @@ SLIP_info SLIP_tripread_double
             SLIP_FREE(i);                 
             SLIP_FREE(j);                     
             SLIP_FREE(x_doub);                
-            SLIP_delete_mpz_array(&x_mpz, nz);
             return SLIP_INCORRECT_INPUT;
         }
         // Conversion from 1 based to 0 based
@@ -400,17 +407,18 @@ SLIP_info SLIP_tripread_double
         j[k] -= decrement;
     }
 
-    // Convert x_doub from double to mpz_t
-    ok = slip_expand_double_array(x_mpz, x_doub, A->scale, nz);
-    // Convert from triplet form to ccf
-    if (ok == SLIP_OK)
-    {
-        ok = slip_trip_to_mat(A, i, j, x_mpz, n, nz);
-    }
+    //------------------------------------------------------------------
+    // At this point, we have read in i, j, and x arrays and have 
+    // allocated memory for the A matrix. The i & j are stored as 
+    // int32_t and x is stored as a double array. We conclude by using the
+    // appropriate SLIP_build_* to construct our input matrix A
+    //------------------------------------------------------------------
+    
+    ok = SLIP_build_sparse_trip_double(A, i, j, x_doub, n, nz, option);
+    // Now, A contains the input matrix
     SLIP_FREE(i);                 
     SLIP_FREE(j);                     
     SLIP_FREE(x_doub);                
-    SLIP_delete_mpz_array(&x_mpz, nz);
     return ok;
 }
 
@@ -423,6 +431,14 @@ SLIP_info SLIP_read_dense
     FILE* file          // file to read from (must already be open)
 )
 {
+    
+    //------------------------------------------------------------------
+    // We read in a dense matrix and then utilize the appropriate
+    // SLIP_build_dense_*. Here, we assume that the input is read in
+    // as a dense mpz_t** matrix. The main component of this code is 
+    // reading in said matrix.
+    //------------------------------------------------------------------
+    
     if (b == NULL || file == NULL)
     {
         return SLIP_INCORRECT_INPUT;
@@ -430,28 +446,43 @@ SLIP_info SLIP_read_dense
     int32_t nrows, ncols;
     SLIP_info ok;
 
-    // Read in size of matrix & number of nonzeros
+    // First, we obtain the dimension of the matrix
     ok = fscanf(file, "%d %d", &nrows, &ncols);
     if (feof(file) || ok < 2)
     {
         return SLIP_INCORRECT_INPUT;
     }
-    if (slip_dense_alloc(b, nrows, ncols) != SLIP_OK)
+    
+    // Now, we create our dense mpz_t matrix
+    mpz_t** b_orig = SLIP_create_mpz_mat(nrows, ncols);
+    if (b_orig == NULL)
     {
         return SLIP_OUT_OF_MEMORY;
     }
-
+    
+    // We now populate the matrix b.
     for (int32_t i = 0; i < nrows; i++)
     {
         for (int32_t j = 0; j < ncols; j++)
         {
-            ok = slip_gmp_fscanf(file, "%Zd", &(b->x[i][j]));
-            if (ok < 1)
+            ok = SLIP_gmp_fscanf(file, "%Zd", &(b_orig[i][j])); 
+            if (ok < 0) // return from this function can be a nonzero
             {
+                        printf("\n\nhere at i = %d and j = %d", i, j);
+
                 return SLIP_INCORRECT_INPUT;
             }
         }
     }
+    
+    //------------------------------------------------------------------
+    // At this point, b_orig contains our original matrix stored in
+    // mpz_t** format. We now utilize the appropriate SLIP_build function
+    // to form our internal SLIP_dense structure.
+    //------------------------------------------------------------------
+    
+    ok = SLIP_build_dense_mpz(b, b_orig, nrows, ncols);
+    
     return SLIP_OK;
 }
 
@@ -500,7 +531,7 @@ SLIP_info SLIP_print_stats_mpq
         {
             for (int32_t j = 0; j < numRHS; j++)
             {
-                ok = slip_gmp_fprintf(out_file, "%Qd ", x_mpq[i][j]);
+                ok = SLIP_gmp_fprintf(out_file, "%Qd ", x_mpq[i][j]); 
                 if (ok < 0)
                 {
                     return ok;
@@ -585,8 +616,8 @@ SLIP_info SLIP_print_stats_mpfr
         {
             for (int32_t j = 0; j < numRHS; j++)
             {
-                ok = slip_mpfr_fprintf(out_file, "%.*Rf",
-                    option->prec, x_mpfr[i][j]);
+                ok = SLIP_mpfr_fprintf(out_file, "%.*Rf",
+                    option->prec, x_mpfr[i][j]); 
                 if (ok < 0)
                 {
                     return ok;

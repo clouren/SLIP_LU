@@ -78,8 +78,8 @@ int main (int argc, char **argv)
     //--------------------------------------------------------------------------
     // Build A and b
     //--------------------------------------------------------------------------
-    OK(SLIP_build_sparse_trip_double(A, i, j, x, n, nz));
-    OK(SLIP_build_dense_double(b, b_doub, n, 1));
+    OK(SLIP_build_sparse_trip_double(A, i, j, x, n, nz, option));
+    OK(SLIP_build_dense_double(b, b_doub, n, 1, option));
 
     //--------------------------------------------------------------------------
     // Factorize
