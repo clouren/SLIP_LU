@@ -30,7 +30,7 @@
 # include <stdint.h>
 # include <string.h>
 # include <time.h>
-#include <stdarg.h>
+# include <stdarg.h>
 
 // SuiteSparse headers
 # include "SuiteSparse_config.h"
@@ -149,7 +149,7 @@
 //  MPFR_RNDD: round toward minus infinity (roundTowardNegative in IEEE 754-2008),
 //  MPFR_RNDA: round away from zero.
 //  MPFR_RNDF: faithful rounding. This is not stable
-
+// 
 // SLIP LU utilizes MPFR_RNDN by default. 
 
 #define SLIP_DEFAULT_MPFR_ROUND MPFR_RNDN;
