@@ -21,7 +21,7 @@ SLIP_info SLIP_build_dense_mpfr
     mpfr_t **b,           // Set of values as mpfr_t
     int32_t m,            // number of rows
     int32_t n,            // number of columns
-    SLIP_options *option  // command options containing the prec for mpfr
+    SLIP_options *option  // command options containing the precision for mpfr
 )
 {
     if (!b || !A_output ||!A_output->scale || !option)
