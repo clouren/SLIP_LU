@@ -15,7 +15,7 @@
 
 SLIP_LU_analysis *SLIP_create_LU_analysis
 (
-    int32_t n     //length of S->q
+    int32_t n     // Dimension of the column permutation
 )
 {
     // ALlocate memory for S
