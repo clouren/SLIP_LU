@@ -23,7 +23,8 @@
 int main (int argc, char **argv)
 {
     //--------------------------------------------------------------------------
-    // Initialize SLIP LU library environment
+    // Prior to using SLIP LU, its environment must be initialized. This is done
+    // by calling the SLIP_initialize() function. 
     //--------------------------------------------------------------------------
     SLIP_initialize();
     SLIP_info ok;
@@ -106,13 +107,16 @@ int main (int argc, char **argv)
 
     clock_t start_sym = clock();
 
-    OK(SLIP_LU_analyze(S, A, option));     // Symbolic Analysis
+    // Symbolic analysis to obtain column permutation
+    OK(SLIP_LU_analyze(S, A, option));
 
     clock_t end_sym = clock();
 
     clock_t start_f = clock();
 
-    OK(SLIP_solve_mpq(x, A, S, b, option));       // Factorization
+    // Solve the linear system using SLIP LU. The keyword mpq below indicates
+    // that the final solution vector x will be given as a mpq_t**
+    OK(SLIP_solve_mpq(x, A, S, b, option));
 
     clock_t end_f = clock();
 

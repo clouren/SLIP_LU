@@ -32,7 +32,8 @@ double bxden2[4] = {15, 3, 6, 7};                         // Denominator of b2
 int main (int argc, char **argv)
 {
     //--------------------------------------------------------------------------
-    // Initialize SLIP LU library environment
+    // Prior to using SLIP LU, its environment must be initialized. This is done
+    // by calling the SLIP_initialize() function. 
     //--------------------------------------------------------------------------
     SLIP_initialize();
 
@@ -94,12 +95,15 @@ int main (int argc, char **argv)
 
     clock_t start_sym = clock();
 
+    // Symbolic analysis to obtain the column ordering
     OK(SLIP_LU_analyze(S, A, option));
 
     clock_t end_sym = clock();
 
     clock_t start_f = clock();
 
+    // Solve the linear system using SLIP LU. The keyword double below indicates
+    // that the solution will be given as a double**
     OK(SLIP_solve_double(soln, A, S, b, option));
 
     clock_t end_f = clock();

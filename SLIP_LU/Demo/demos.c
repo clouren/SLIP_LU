@@ -1,7 +1,8 @@
 # include "demos.h"
 
-//TODO Extensively comment here
-/* Purpose: This function prints out the user specified/default options*/
+/* Purpose: This function prints out the user specified/default options
+ * this is primarily intended for debugging
+ */
 void SLIP_print_options // display specified/default options to user
 (
     SLIP_options* option // struct containing all of the options

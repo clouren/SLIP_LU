@@ -22,7 +22,8 @@
 int main (int argc, char **argv)
 {
     //--------------------------------------------------------------------------
-    // Initialize SLIP LU library environment
+    // Prior to using SLIP LU, its environment must be initialized. This is done
+    // by calling the SLIP_initialize() function. 
     //--------------------------------------------------------------------------
     SLIP_initialize();
 
@@ -82,17 +83,20 @@ int main (int argc, char **argv)
     OK(SLIP_build_dense_double(b, b_doub, n, 1, option));
 
     //--------------------------------------------------------------------------
-    // Factorize
+    // Factorize & solve
     //--------------------------------------------------------------------------
 
     clock_t start_sym = clock();
 
+    // Column permutation of A
     OK(SLIP_LU_analyze(S, A, option));
 
     clock_t end_sym = clock();
 
     clock_t start_f = clock();
 
+    // Solve the linear system. The keyword double below indicates that the final 
+    // solution vector will be output as a double**
     OK(SLIP_solve_double(soln, A, S, b, option));
 
     clock_t end_f = clock();
