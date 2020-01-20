@@ -8,6 +8,8 @@
 
 //------------------------------------------------------------------------------
 
+// This function is no longer used, but kept for potential usage in a future update
+
 #include "SLIP_LU_mex.h"
 
 /* Purpose: This function outputs the sparse matrix L
