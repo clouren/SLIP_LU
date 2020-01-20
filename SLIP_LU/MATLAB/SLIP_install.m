@@ -33,13 +33,9 @@ includes = '-ISource/ -I../Source/ -I../Include/ ';
 % Generate the mex commands here
 % having -R2018a here for function mxGetDoubles
 m1 = ['mex -R2018a ', includes, ' SLIP_mex_soln.c ' , src, ' ', flags, ' ', libs];
-m2 = ['mex -R2018a ', includes, ' SLIP_mex_soln2.c ', src, ' ', flags, ' ', libs];
-m3 = ['mex -R2018a ', includes, ' SLIP_mex_soln3.c ', src, ' ', flags, ' ', libs];
 
 % Now, we evaluate each one
 eval(m1);
-eval(m2);
-eval(m3);
 
 fprintf('\nMex files installed, now we test\n')
 
