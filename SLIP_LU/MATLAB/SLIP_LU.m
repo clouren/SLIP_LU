@@ -22,19 +22,6 @@ function varargout = SLIP_LU(A,b,option)
 % settings. The options settings can be obtained from option =
 % SLIP_get_options then changed from there
 %
-% [L U P Q x] = SLIP_LU(A,b) returns the solution to the system and lower
-% and upper triangular factors L and U such that L*U = P*A*Q using default
-% parameters.
-%
-% [L U P Q x] = SLIP_LU(A,b,options) returns the solution to the system and lower
-% and upper triangular factors L and U such that L*U = P*A*Q using user specified
-% parameters.
-%
-% [L U P Q] = SLIP_LU(A) returns lower and upper triangular factors L and 
-% U such that L*U = P*A*Q using default parameters.
-%
-% [L U P Q] = SLIP_LU(A, options) returns lower and upper triangular 
-% factors L and U such that L*U = P*A*Q using user specified parameters.
 
 if exist('option') == 0          % Did the user pass in options?
     option = SLIP_get_options;   % Set defaults
@@ -75,35 +62,6 @@ end
 % Preprocessing complete. Now use SLIP LU
 if (nargout == 1) % x = A\b
     varargout{1} = SLIP_mex_soln(A,b,option);
-elseif (nargout == 5) % x = A\b, L U = PAQ
-   option.pivot = 5;
-   [varargout{1} varargout{2} varargout{3} varargout{4} ...
-       varargout{5}] = SLIP_mex_soln2(A,b,option);
-   % Get P and Q
-   [m n] = size(varargout{1});
-   varargout{3} = varargout{3}+1; varargout{4} = varargout{4}+1;
-   A2 = speye(n,n);
-   % Return P and Q as permutations of I
-   varargout{3} = A2(varargout{3},:);
-   varargout{4} = A2(:,varargout{4});
-elseif (nargout == 4) % LU = PAQ
-    if (nargin > 2)
-        error('Incorrect number of input arguments for [L U P Q]. Please type help SLIP_LU')
-    end
-    if (exist('b') ~= 0)
-            if (isstruct(b) == 1)
-                option = b;
-            end
-    end
-    option.pivot = 5;
-    [varargout{1} varargout{2} varargout{3} varargout{4}] ...
-      = SLIP_mex_soln3(A, option);
-   % Get P and Q
-   [m n] = size(varargout{1});
-   varargout{3} = varargout{3}+1; varargout{4} = varargout{4}+1;
-   A2 = speye(n,n);
-   varargout{3} = A2(varargout{3},:);
-   varargout{4} = A2(:,varargout{4});
 else
 fprintf('Incorrect number of output arguments. Please type help SLIP_LU\n')
 end
