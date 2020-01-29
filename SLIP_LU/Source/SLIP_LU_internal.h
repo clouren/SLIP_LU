@@ -111,7 +111,7 @@
 // between 0 and 1. A value of 0 selects the diagonal element exclusively and a
 // value of 1 selects the smallest or largest pivot exclusively only in a
 // tolerance pivoting based method
-#define SLIP_DEFAULT_TOL 0.1
+#define SLIP_DEFAULT_TOL 1
 
 // Check parameter. If this = 1 then the solution to the system is checked
 // for accuracy
