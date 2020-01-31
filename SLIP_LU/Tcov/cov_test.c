@@ -319,7 +319,7 @@ int main( int argc, char* argv[])
             SLIP_dense *b = SLIP_create_dense();
             // for Column ordering
             SLIP_LU_analysis* S = SLIP_create_LU_analysis(n+1);
-	    option->print_level = 0;
+            option->print_level = 0;
 
             if (!A || !b || !S) {SLIP_FREE_WORKSPACE; continue;}
 
@@ -346,7 +346,7 @@ int main( int argc, char* argv[])
 
                 // successful case
                 TEST_CHECK(SLIP_build_sparse_ccf_mpz(A, Ap, Ai, Ax_mpz, n, nz));
-		TEST_CHECK (SLIP_spok (A, option)) ;
+        TEST_CHECK (SLIP_spok (A, option)) ;
                 TEST_CHECK(SLIP_build_dense_mpz(b, B_mpz, n, numRHS));
                 option->pivot = SLIP_DIAGONAL;
             }
@@ -354,7 +354,7 @@ int main( int argc, char* argv[])
             {
                 //failure due to NULL input
                 TEST_CHECK_FAILURE(SLIP_build_dense_double(b, NULL, n, numRHS,
-		    option));
+            option));
                 TEST_CHECK_FAILURE(SLIP_build_sparse_ccf_double(A, Ap, Ai, NULL,
                     n, nz, option));
 
@@ -376,7 +376,7 @@ int main( int argc, char* argv[])
                     B_doub[j][0] = bxnum[j]/1e17;
                 }
                 TEST_CHECK(SLIP_build_dense_double(b, B_doub, n, numRHS,
-		    option));
+            option));
                 CLEAR_SLIP_MAT_B;
 
                 // trigger gcd != 1
@@ -385,7 +385,7 @@ int main( int argc, char* argv[])
                     B_doub[j][0] = bxnum[j];
                 }
                 TEST_CHECK(SLIP_build_dense_double(b, B_doub, n, numRHS,
-		    option));
+            option));
                 //B_doub[0][0] = 0;
                 for (j = 0; j < nz; j++)                          // Get Ax
                 {
@@ -721,7 +721,7 @@ int main( int argc, char* argv[])
                     check2 = ok;  // track the status of SLIP_check_solution
                     TEST_CHECK(SLIP_print_stats_mpq(stdout, sol_mpq, n, numRHS,
                         check2,option));
-		    option->print_level = 3;
+                    option->print_level = 3;
                     TEST_CHECK(SLIP_spok (A, option));
                     //SLIP_PRINT_OK(ok);
 
