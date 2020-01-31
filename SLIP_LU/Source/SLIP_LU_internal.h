@@ -91,6 +91,41 @@
 
 #include "SLIP_LU.h"
 
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//-------------------------functions for GMP wrapper----------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// uncomment this to print memory debugging info
+// #define SLIP_GMP_MEMORY_DEBUG
+
+#ifdef SLIP_GMP_MEMORY_DEBUG
+void slip_gmp_dump ( void ) ;
+#endif
+
+extern int64_t slip_gmp_ntrials ;
+
+#ifndef SLIP_GMP_LIST_INIT
+// A size of 32 ensures that the list never needs to be increased in size.
+// The test coverage suite in SLIP_LU/Tcov reduces this initial size to
+// exercise the code, in SLIP_LU/Tcov/Makefile.
+#define SLIP_GMP_LIST_INIT 32
+#endif
+
+
+bool slip_gmp_init (void) ;
+
+void slip_gmp_finalize (void) ;
+ 
+void *slip_gmp_allocate (size_t size) ;
+
+void slip_gmp_free (void *p, size_t size) ;
+
+void *slip_gmp_reallocate (void *p_old, size_t old_size, size_t new_size );
+
+void slip_gmp_failure (int32_t status) ;
+
+
 // Tolerance used in the pivoting schemes. This number can be anything in
 // between 0 and 1. A value of 0 selects the diagonal element exclusively and a
 // value of 1 selects the smallest or largest pivot exclusively only in a
@@ -609,12 +644,11 @@ SLIP_info slip_dense_alloc
     int32_t n      // number of columns
 );
 
-// TODO why use SLIP_ instead of slip_
 /*
  * Purpose: This function populates the SLIP_sparse A by the ccf
  * stored vectors i, p, and x
  */
-SLIP_info SLIP_mpz_populate_mat
+SLIP_info slip_mpz_populate_mat
 (
     SLIP_sparse* A,   // matrix to be populated
     int32_t* I,       // row indices

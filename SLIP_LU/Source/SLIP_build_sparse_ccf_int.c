@@ -42,7 +42,7 @@ SLIP_info SLIP_build_sparse_ccf_int
     }
     SLIP_CHECK(SLIP_mpq_set_ui(A_output->scale, 1, 1));
 
-    SLIP_CHECK(SLIP_mpz_populate_mat(A_output, I, p, x_new, n, nz));
+    SLIP_CHECK(slip_mpz_populate_mat(A_output, I, p, x_new, n, nz));
 
     SLIP_FREE_WORKSPACE;
     return SLIP_OK;

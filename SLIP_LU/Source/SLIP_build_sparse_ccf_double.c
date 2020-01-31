@@ -40,7 +40,7 @@ SLIP_info SLIP_build_sparse_ccf_double
     SLIP_CHECK(slip_expand_double_array(x_new, x, A_output->scale, nz, option));
 
     // Create our matrix
-    SLIP_CHECK(SLIP_mpz_populate_mat(A_output, I, p, x_new, n, nz));
+    SLIP_CHECK(slip_mpz_populate_mat(A_output, I, p, x_new, n, nz));
 
     // Free memory
     SLIP_FREE_WORKSPACE;

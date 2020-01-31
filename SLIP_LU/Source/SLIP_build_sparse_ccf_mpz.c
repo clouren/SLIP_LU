@@ -38,7 +38,7 @@ SLIP_info SLIP_build_sparse_ccf_mpz
         return SLIP_INCORRECT_INPUT;
     }
 
-    SLIP_CHECK(SLIP_mpz_populate_mat(A_output, I, p, x, n, nz));
+    SLIP_CHECK(slip_mpz_populate_mat(A_output, I, p, x, n, nz));
     SLIP_CHECK(SLIP_mpq_set_ui(A_output->scale, 1, 1));
     return SLIP_OK;
 }

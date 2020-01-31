@@ -977,6 +977,8 @@ SLIP_info SLIP_check_solution
  *
  */
 
+//TODO should these variables prefixed with slip_ be renamed?
+
 // The GMP library does not handle out-of-memory failures.  However, it does
 // provide a mechanism for passing function pointers that replace GMP's use of
 // malloc, realloc, and free.  This mechanism is used to provide a try/catch
@@ -992,20 +994,6 @@ SLIP_info SLIP_check_solution
     /* include this header to redefine SLIP_MEMORY_REALLOC (used in SLIP_gmp.c)
      * for memory test and to use macro GOTCHA */
     #include "../Tcov/tcov_malloc_test.h"
-#endif
-
-#ifndef SLIP_GMP_LIST_INIT
-// A size of 32 ensures that the list never needs to be increased in size.
-// The test coverage suite in SLIP_LU/Tcov reduces this initial size to
-// exercise the code, in SLIP_LU/Tcov/Makefile.
-#define SLIP_GMP_LIST_INIT 32
-#endif
-
-// uncomment this to print memory debugging info
-// #define SLIP_GMP_MEMORY_DEBUG
-
-#ifdef SLIP_GMP_MEMORY_DEBUG
-void slip_gmp_dump ( void ) ;
 #endif
 
 
@@ -1086,7 +1074,6 @@ void slip_gmp_dump ( void ) ;
     SLIP_FREE (p) ;                                                     \
 }
 
-extern int64_t slip_gmp_ntrials ;
 
 SLIP_info SLIP_gmp_fprintf(FILE *fp, const char *format, ... );
 
@@ -1096,24 +1083,12 @@ SLIP_info SLIP_gmp_fscanf(FILE *fp, const char *format, ... );
 
 #if 0
 /* This function is currently unused, but kept here for future reference. */
-SLIP_info slip_mpfr_asprintf (char **str, const char *template, ... );
+SLIP_info SLIP_mpfr_asprintf (char **str, const char *template, ... );
 
-SLIP_info slip_mpfr_free_str (char *str);
+SLIP_info SLIP_mpfr_free_str (char *str);
 #endif
 
 SLIP_info SLIP_mpfr_fprintf(FILE *fp, const char *format, ... );
-
-bool slip_gmp_init (void) ;
-
-void slip_gmp_finalize (void) ;
- 
-void *slip_gmp_allocate (size_t size) ;
-
-void slip_gmp_free (void *p, size_t size) ;
-
-void *slip_gmp_reallocate (void *p_old, size_t old_size, size_t new_size );
-
-void slip_gmp_failure (int32_t status) ;
 
 SLIP_info SLIP_mpz_init(mpz_t x) ;
 
