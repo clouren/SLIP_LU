@@ -15,7 +15,7 @@ void* slip_realloc_wrapper
 
 extern int malloc_count;
 #define GOTCHA \
-    printf ("%s, line %d, SLIP_gmp_ntrials = %ld, malloc_count = %d\n", __FILE__, __LINE__, SLIP_gmp_ntrials, malloc_count);
+    printf ("%s, line %d, slip_gmp_ntrials = %ld, malloc_count = %d\n", __FILE__, __LINE__, slip_gmp_ntrials, malloc_count);
 
 #define SLIP_PRINT_OK(ok)                                                \
 {                                                                        \

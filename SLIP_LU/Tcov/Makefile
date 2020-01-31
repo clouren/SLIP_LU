@@ -5,7 +5,7 @@ include ../../SuiteSparse_config/SuiteSparse_config.mk
 
 # To run with valgrind:
 V =
-V = valgrind #-q
+#V = valgrind #-q
 
 # Linux test coverage
 CC = gcc

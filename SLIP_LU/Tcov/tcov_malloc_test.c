@@ -95,9 +95,9 @@ void* SLIP_realloc
     }
 }
 
-jmp_buf SLIP_gmp_environment ;  // for setjmp and longjmp
+jmp_buf slip_gmp_environment ;  // for setjmp and longjmp
 
-int slip_gmp_realloc_test
+SLIP_info slip_gmp_realloc_test
 (
     void **p_new,
     void * p_old,
@@ -105,8 +105,8 @@ int slip_gmp_realloc_test
     size_t new_size
 )
 {
-    int SLIP_gmp_status = setjmp (SLIP_gmp_environment);
-    if (SLIP_gmp_status != 0)
+    int slip_gmp_status = setjmp (slip_gmp_environment);
+    if (slip_gmp_status != 0)
     {
         return SLIP_OUT_OF_MEMORY;
     }

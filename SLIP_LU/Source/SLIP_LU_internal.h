@@ -22,24 +22,14 @@
 
 // Standard C libraries
 # include <setjmp.h>
-# include <stdbool.h>
 # include <assert.h>
-# include <stdlib.h>
 # include <math.h>
-# include <stdio.h>
-# include <stdint.h>
-# include <string.h>
-# include <time.h>
 # include <stdarg.h>
 
 // SuiteSparse headers
 # include "SuiteSparse_config.h"
 # include "colamd.h"
 # include "amd.h"
-
-// gmp libraries
-# include <gmp.h>
-# include <mpfr.h>
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------

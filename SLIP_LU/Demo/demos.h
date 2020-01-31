@@ -1,4 +1,5 @@
 #include "SLIP_LU.h"
+#include <time.h>
 
 #define OK(method)                      \
 {                                       \

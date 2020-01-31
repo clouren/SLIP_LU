@@ -667,7 +667,9 @@ int main( int argc, char* argv[])
                 //test coverage for slip_gmp_reallocate()
                 void *p_new = NULL;
                 TEST_CHECK(slip_gmp_realloc_test(&p_new, NULL , 0, 1));
+                GOTCHA;
                 TEST_CHECK(slip_gmp_realloc_test(&p_new, p_new, 1, 0));
+                printf("test\n");
 
                 // Incorrect calling with NULL pointer(s)
                 TEST_CHECK_FAILURE(SLIP_LU_analyze(NULL, NULL, NULL));
