@@ -97,7 +97,7 @@ void* SLIP_realloc
 
 jmp_buf SLIP_gmp_environment ;  // for setjmp and longjmp
 
-int SLIP_gmp_realloc_test
+int slip_gmp_realloc_test
 (
     void **p_new,
     void * p_old,
@@ -110,6 +110,6 @@ int SLIP_gmp_realloc_test
     {
         return SLIP_OUT_OF_MEMORY;
     }
-    *p_new = SLIP_gmp_reallocate(p_old, old_size, new_size);
+    *p_new = slip_gmp_reallocate(p_old, old_size, new_size);
     return SLIP_OK;
 }

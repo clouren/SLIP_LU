@@ -9,7 +9,7 @@
  *                                         5 for miscellaneous test
  * rat: type of solution: 1: full precision rational arithmetic,
  *                        2: double, 3:  user specified precision.
- * N and list1 specify the test list for SLIP_gmp_ntrials (in SLIP_gmp.h)
+ * N and list1 specify the test list for slip_gmp_ntrials (in SLIP_gmp.h)
  * M and list2 specify the test list for malloc_count (in tcov_malloc_test.h)
  * N, list1, M, list2 are optional, but N and list1 are required when M and
  * list2 is wanted
@@ -23,7 +23,7 @@
  */
 
 /* For simple test ONLY!!
- * uncomment to show the input lists for SLIP_gmp_ntrials and malloc_count
+ * uncomment to show the input lists for slip_gmp_ntrials and malloc_count
  */
 // #define SLIP_TCOV_SHOW_LIST
 
@@ -233,7 +233,7 @@ int main( int argc, char* argv[])
         #endif /* SLIP_TCOV_SHOW_LIST */
     }
 
-    // For SIMPLE_TEST, outter loop iterates for SLIP_gmp_ntrials initialized
+    // For SIMPLE_TEST, outter loop iterates for slip_gmp_ntrials initialized
     // from list1 (input for cov_test) and inner loop interates for malloc_count
     // initialized from list2 (input for cov_test)
     //
@@ -263,8 +263,8 @@ int main( int argc, char* argv[])
         {
             if (IS_SIMPLE_TEST)
             {
-                SLIP_gmp_ntrials=gmp_ntrial_list[k];
-                printf("initial SLIP_gmp_ntrials=%ld\n",SLIP_gmp_ntrials);
+                slip_gmp_ntrials=gmp_ntrial_list[k];
+                printf("initial slip_gmp_ntrials=%ld\n",slip_gmp_ntrials);
                 malloc_count=malloc_trials_list[kk];
                 printf("%d out of %d, initial malloc_count=%d\n", kk,
                     NUM_OF_MALLOC_T, malloc_count);
@@ -319,6 +319,7 @@ int main( int argc, char* argv[])
             SLIP_dense *b = SLIP_create_dense();
             // for Column ordering
             SLIP_LU_analysis* S = SLIP_create_LU_analysis(n+1);
+	    option->print_level = 0;
 
             if (!A || !b || !S) {SLIP_FREE_WORKSPACE; continue;}
 
@@ -345,16 +346,17 @@ int main( int argc, char* argv[])
 
                 // successful case
                 TEST_CHECK(SLIP_build_sparse_ccf_mpz(A, Ap, Ai, Ax_mpz, n, nz));
-                TEST_CHECK (SLIP_spok (A, 0)) ;
+		TEST_CHECK (SLIP_spok (A, option)) ;
                 TEST_CHECK(SLIP_build_dense_mpz(b, B_mpz, n, numRHS));
                 option->pivot = SLIP_DIAGONAL;
             }
             else if (Ab_type==1) //double see example4.c
             {
                 //failure due to NULL input
-                TEST_CHECK_FAILURE(SLIP_build_dense_double(b, NULL, n, numRHS));
+                TEST_CHECK_FAILURE(SLIP_build_dense_double(b, NULL, n, numRHS,
+		    option));
                 TEST_CHECK_FAILURE(SLIP_build_sparse_ccf_double(A, Ap, Ai, NULL,
-                    n, nz));
+                    n, nz, option));
 
                 Ax_doub = (double*) SLIP_calloc(nz, sizeof(double));
                 B_doub = SLIP_create_double_mat(n, numRHS);
@@ -362,10 +364,10 @@ int main( int argc, char* argv[])
 
                 // create empty A and b using uninitialized double mat/array
                 TEST_CHECK(SLIP_build_sparse_ccf_double(A, Ap, Ai,
-                    Ax_doub, n, nz));
+                    Ax_doub, n, nz, option));
                 CLEAR_SLIP_MAT_A;                //free the memory alloc'd in A
                 TEST_CHECK(SLIP_build_dense_double(b, B_doub, n,
-                    numRHS));
+                    numRHS, option));
                 CLEAR_SLIP_MAT_B;
 
                 // trigger gcd == 1
@@ -373,7 +375,8 @@ int main( int argc, char* argv[])
                 {
                     B_doub[j][0] = bxnum[j]/1e17;
                 }
-                TEST_CHECK(SLIP_build_dense_double(b, B_doub, n, numRHS));
+                TEST_CHECK(SLIP_build_dense_double(b, B_doub, n, numRHS,
+		    option));
                 CLEAR_SLIP_MAT_B;
 
                 // trigger gcd != 1
@@ -381,15 +384,16 @@ int main( int argc, char* argv[])
                 {
                     B_doub[j][0] = bxnum[j];
                 }
-                TEST_CHECK(SLIP_build_dense_double(b, B_doub, n, numRHS));
+                TEST_CHECK(SLIP_build_dense_double(b, B_doub, n, numRHS,
+		    option));
                 //B_doub[0][0] = 0;
                 for (j = 0; j < nz; j++)                          // Get Ax
                 {
                     Ax_doub[j] = Axnum[j]/Axden[j];
                 }
                 TEST_CHECK(SLIP_build_sparse_ccf_double(A, Ap, Ai, Ax_doub, n,
-                    nz));
-                TEST_CHECK (SLIP_spok (A, 0)) ;
+                    nz, option));
+                TEST_CHECK (SLIP_spok (A, option)) ;
                 option->pivot = SLIP_SMALLEST;
             }
             else if (Ab_type==2)//int
@@ -413,7 +417,7 @@ int main( int argc, char* argv[])
                 }
 
                 TEST_CHECK(SLIP_build_sparse_ccf_int(A, Ap, Ai, Ax_int, n, nz));
-                TEST_CHECK (SLIP_spok (A, 0)) ;
+                TEST_CHECK (SLIP_spok (A, option)) ;
                 TEST_CHECK(SLIP_build_dense_int(b, B_int, n, numRHS));
             }
             else if (Ab_type==3)//mpq
@@ -438,7 +442,7 @@ int main( int argc, char* argv[])
                 }
 
                 TEST_CHECK(SLIP_build_sparse_ccf_mpq(A, Ap, Ai, Ax_mpq, n, nz));
-                TEST_CHECK (SLIP_spok (A, 0)) ;
+                TEST_CHECK (SLIP_spok (A, option)) ;
                 TEST_CHECK(SLIP_build_dense_mpq(b, B_mpq, n, numRHS));
             }
             else if (Ab_type==4)//mpfr see example3.c
@@ -509,7 +513,7 @@ int main( int argc, char* argv[])
                 }
                 TEST_CHECK(SLIP_build_sparse_ccf_mpfr(A, Ap, Ai, Ax_mpfr,
                     n, nz, option));
-                TEST_CHECK (SLIP_spok (A, 0)) ;
+                TEST_CHECK (SLIP_spok (A, option)) ;
                 TEST_CHECK(SLIP_build_dense_mpfr(b, B_mpfr, n, numRHS, option));
             }
             else
@@ -609,7 +613,7 @@ int main( int argc, char* argv[])
                 TEST_CHECK_FAILURE(SLIP_build_sparse_trip_mpz   (A, I, J, NULL,
                     n, nz));
                 TEST_CHECK_FAILURE(SLIP_build_sparse_trip_double(A, I, J, NULL,
-                    n, nz));
+                    n, nz, option));
                 TEST_CHECK_FAILURE(SLIP_build_sparse_trip_int   (A, I, J, NULL,
                     n, nz));
                 TEST_CHECK_FAILURE(SLIP_build_sparse_trip_mpq   (A, I, J, NULL,
@@ -621,47 +625,49 @@ int main( int argc, char* argv[])
                 TEST_CHECK(SLIP_build_sparse_trip_mpz(A, I, J, x_mpz, n, nz));
                 CLEAR_SLIP_MAT_A;                //free the memory alloc'd in A
                 TEST_CHECK(SLIP_build_sparse_trip_double(A, I, J, x_doub, n,
-                    nz));
+                    nz, option));
                 CLEAR_SLIP_MAT_A;                //free the memory alloc'd in A
                 TEST_CHECK(SLIP_build_sparse_trip_int(A, I, J, x_int, n, nz));
                 ok = SLIP_gmp_printf("scale = %Qd\n",A->scale);
                 if (ok < 0) {TEST_CHECK(ok);}
-                TEST_CHECK(SLIP_spok (A, 3));
+                option->print_level = 3;
+                TEST_CHECK(SLIP_spok (A, option));
                 CLEAR_SLIP_MAT_A;                //free the memory alloc'd in A
                 TEST_CHECK(SLIP_build_sparse_trip_mpq(A, I, J, x_mpq, n, nz));
                 ok = SLIP_gmp_printf("scale = %Qd\n",A->scale);
                 if (ok < 0) {TEST_CHECK(ok);}
-                TEST_CHECK(SLIP_spok (A, 3));
+                TEST_CHECK(SLIP_spok (A, option));
                 CLEAR_SLIP_MAT_A;                //free the memory alloc'd in A
                 TEST_CHECK(SLIP_build_sparse_trip_mpfr(A, I, J, x_mpfr, n, nz,
                     option));
                 ok = SLIP_gmp_printf("scale = %Qd\n",A->scale);
                 if (ok < 0) {TEST_CHECK(ok);}
-                TEST_CHECK(SLIP_spok (A, 3));
+                TEST_CHECK(SLIP_spok (A, option));
 
                 //test coverage for SLIP_spok()
                 A->i[0] = -1;
-                TEST_CHECK_FAILURE(SLIP_spok(A, 1));
+                option->print_level = 1;
+                TEST_CHECK_FAILURE(SLIP_spok(A, option));
                 SLIP_delete_mpz_array(&(A->x), A->nzmax);
-                TEST_CHECK_FAILURE(SLIP_spok(A, 1));
+                TEST_CHECK_FAILURE(SLIP_spok(A, option));
                 A->p[1] = 2;
                 A->p[2] = 1;
-                TEST_CHECK_FAILURE(SLIP_spok(A, 1));
+                TEST_CHECK_FAILURE(SLIP_spok(A, option));
                 A->p[0] = 1;
-                TEST_CHECK_FAILURE(SLIP_spok(A, 1));
+                TEST_CHECK_FAILURE(SLIP_spok(A, option));
                 A->nzmax = -1;
-                TEST_CHECK_FAILURE(SLIP_spok(A, 1));
+                TEST_CHECK_FAILURE(SLIP_spok(A, option));
                 A->n = -1;
-                TEST_CHECK_FAILURE(SLIP_spok(A, 1));
+                TEST_CHECK_FAILURE(SLIP_spok(A, option));
                 A->m = -1;
-                TEST_CHECK_FAILURE(SLIP_spok(A, 1));
+                TEST_CHECK_FAILURE(SLIP_spok(A, option));
                 CLEAR_SLIP_MAT_A;                //free the memory alloc'd in A
 
 
-                //test coverage for SLIP_gmp_reallocate()
+                //test coverage for slip_gmp_reallocate()
                 void *p_new = NULL;
-                TEST_CHECK(SLIP_gmp_realloc_test(&p_new, NULL , 0, 1));
-                TEST_CHECK(SLIP_gmp_realloc_test(&p_new, p_new, 1, 0));
+                TEST_CHECK(slip_gmp_realloc_test(&p_new, NULL , 0, 1));
+                TEST_CHECK(slip_gmp_realloc_test(&p_new, p_new, 1, 0));
 
                 // Incorrect calling with NULL pointer(s)
                 TEST_CHECK_FAILURE(SLIP_LU_analyze(NULL, NULL, NULL));
@@ -707,13 +713,14 @@ int main( int argc, char* argv[])
                     TEST_CHECK_FAILURE(SLIP_get_double_soln(NULL, sol_mpq, n,
                         numRHS));
                     TEST_CHECK_FAILURE(SLIP_get_mpfr_soln(NULL, sol_mpq, n,
-                        numRHS));
+                        numRHS, option));
 
                     TEST_CHECK(SLIP_check_solution(A, sol_mpq, b));
                     check2 = ok;  // track the status of SLIP_check_solution
                     TEST_CHECK(SLIP_print_stats_mpq(stdout, sol_mpq, n, numRHS,
                         check2,option));
-                    TEST_CHECK(SLIP_spok (A, 3));
+		    option->print_level = 3;
+                    TEST_CHECK(SLIP_spok (A, option));
                     //SLIP_PRINT_OK(ok);
 
                     //intentionally change b to fail SLIP_LU_Check()

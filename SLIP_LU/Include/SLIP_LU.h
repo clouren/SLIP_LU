@@ -990,6 +990,11 @@ SLIP_info SLIP_check_solution
 // returned to GMP.  Instead, all allocated blocks in the list are freed,
 // and slip_gmp_allocate returns directly to wrapper.
 
+#ifdef SLIP_LU_TCOV
+    /* include this header to redefine SLIP_MEMORY_REALLOC (used in SLIP_gmp.c)
+     * for memory test and to use macro GOTCHA */
+    #include "../Tcov/tcov_malloc_test.h"
+#endif
 
 #ifndef SLIP_GMP_LIST_INIT
 // A size of 32 ensures that the list never needs to be increased in size.

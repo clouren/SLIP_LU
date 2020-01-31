@@ -41,8 +41,6 @@
 # include <gmp.h>
 # include <mpfr.h>
 
-#include "SLIP_LU.h"
-
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //-------------------------Common Macros----------------------------------------
@@ -101,11 +99,7 @@
     }                                                                   \
 }
 
-#ifdef SLIP_LU_TCOV
-    /* include this header to redefine SLIP_MEMORY_REALLOC (used in SLIP_gmp.c)
-     * for memory test and to use macro GOTCHA */
-    #include "../Tcov/tcov_malloc_test.h"
-#endif
+#include "SLIP_LU.h"
 
 // Tolerance used in the pivoting schemes. This number can be anything in
 // between 0 and 1. A value of 0 selects the diagonal element exclusively and a
@@ -625,6 +619,7 @@ SLIP_info slip_dense_alloc
     int32_t n      // number of columns
 );
 
+// TODO why use SLIP_ instead of slip_
 /*
  * Purpose: This function populates the SLIP_sparse A by the ccf
  * stored vectors i, p, and x

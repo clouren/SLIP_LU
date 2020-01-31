@@ -47,7 +47,7 @@ extern int malloc_count;
 }
 
 
-int SLIP_gmp_realloc_test
+int slip_gmp_realloc_test
 (
     void **p_new,
     void * p_old,
