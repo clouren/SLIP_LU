@@ -483,7 +483,7 @@ SLIP_info SLIP_read_dense
     //------------------------------------------------------------------
     
     ok = SLIP_build_dense_mpz(b, b_orig, nrows, ncols);
-    
+    SLIP_delete_mpz_mat(&b_orig, nrows, ncols);
     return SLIP_OK;
 }
 

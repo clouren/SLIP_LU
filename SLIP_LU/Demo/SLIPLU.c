@@ -93,40 +93,44 @@ int main( int argc, char* argv[])
     
     //--------------------------------------------------------------------------
     // We first initialize the default parameters. These parameters are modified
-    // either via command line arguments or when reading in data. The important 
-    // initializations are in the second block below, where we initialize the following:
+    // either via command line arguments or when reading in data. The important
+    // initializations are in the second block below, where we initialize the
+    // following:
     //
     //  rhos: Sequence of pivots used in LU
     //
-    //  x: The final solution vector of the system (notice it is rational mpq_t)
+    //  x: The final solution vector of the system (notice it is rational
+    //     mpq_t)
     //  pinv: inverse row permutation used for LU factorization
     //
     //  S: Analysis struct that contains the column ordering used
     //
-    //  x_doub: Final solution to the linear system stored as double precision (note 
-    //          that we declare it here to enumerate all possibilities).
+    //  x_doub: Final solution to the linear system stored as double precision
+    //          (note that we declare it here to enumerate all possibilities).
     //
-    //  x_mpfr: Final solution to the linear system stored as double precision (note 
-    //          that we declare it here to enumerate all possibilities).
+    //  x_mpfr: Final solution to the linear system stored as double precision
+    //          (note that we declare it here to enumerate all possibilities).
     //
-    //  A, L, U: Sparse integer matrices. This is the default struct used within
-    //           SLIP LU to perform most internal routines. Sparse matrices are
-    //           always initialized with a call to SLIP_create_sparse(); Note that
-    //           the numeric entries within these matrices are integral mpz_t data
-    //           types. If the input matrix contains non integral entries, it must
-    //           be appropriately scaled using one of the SLIP_build_sparse_* functions.
+    //  A, L, U: Sparse integer matrices. This is the default struct used
+    //          within SLIP LU to perform most internal routines. Sparse
+    //          matrices are always initialized with a call to
+    //          SLIP_create_sparse(); Note that the numeric entries within
+    //          these matrices are integral mpz_t data types. If the input
+    //          matrix contains non integral entries, it must be appropriately
+    //          scaled using one of the SLIP_build_sparse_* functions.
     //
-    //  b: Dense right hand side vector(s). Currently SLIP LU assumes that the RHS
-    //     is always dense. All dense matrices must be initialized with the function
-    //     SLIP_create_dense(); Note that dense matrices are subject to the same caveat
-    //     as the sparse matrices, namely that their entries are assumed to be integral
-    //     thus if they are not they must be appropraite scaled using the appropriate 
-    //     SLIP_build_dense_* function.
+    //  b: Dense right hand side vector(s). Currently SLIP LU assumes that the
+    //     RHS is always dense. All dense matrices must be initialized with the
+    //     function SLIP_create_dense(); Note that dense matrices are subject
+    //     to the same caveat as the sparse matrices, namely that their entries
+    //     are assumed to be integral thus if they are not they must be
+    //     appropraite scaled using the appropriate SLIP_build_dense_*
+    //     function.
     //
-    //  option: The SLIP_options struct contains various command parameters for 
-    //          the factorization which are highlighed both above and in the user 
-    //          guide. Much like a sparse and dense matrix, it must be created 
-    //          with a call to SLIP_create_default_options();
+    //  option: The SLIP_options struct contains various command parameters for
+    //          the factorization which are highlighed both above and in the
+    //          user guide. Much like a sparse and dense matrix, it must be
+    //          created with a call to SLIP_create_default_options();
     //--------------------------------------------------------------------------
     int nrows = 0, numRHS = 0;
     int rat = 1;
@@ -164,9 +168,9 @@ int main( int argc, char* argv[])
         &mat_name, &rhs_name, &rat));
 
     //--------------------------------------------------------------------------
-    // In this demo file, we now read in the A and b matrices from external files.
-    // Please refer to the example*.c files or the user for other methods of 
-    // creating the input matrix
+    // In this demo file, we now read in the A and b matrices from external
+    // files.  Please refer to the example*.c files or the user for other
+    // methods of creating the input matrix
     //--------------------------------------------------------------------------
     
     // Read in A
@@ -202,8 +206,9 @@ int main( int argc, char* argv[])
     numRHS = b->n;
 
     //--------------------------------------------------------------------------
-    // Now that we have read in the input matrix, we allocate memory for the pivots,
-    // inverse row permutation, solution to the system, and the analysis struct.
+    // Now that we have read in the input matrix, we allocate memory for the
+    // pivots, inverse row permutation, solution to the system, and the
+    // analysis struct.
     //--------------------------------------------------------------------------
     rhos = SLIP_create_mpz_array(nrows);
     pinv = (int*) SLIP_malloc(nrows* sizeof(int));
@@ -238,9 +243,9 @@ int main( int argc, char* argv[])
     // row permutation P such that PAQ = LDU. Note that the D matrix is never
     // explicitly constructed or used.
     //
-    // Note that in the simple interface of SLIP LU (shown in the example*.c files)
-    // it is not necessary to utilize the L and U matrices nor split the solution 
-    // process into factorization and solve.
+    // Note that in the simple interface of SLIP LU (shown in the example*.c
+    // files) it is not necessary to utilize the L and U matrices nor split the
+    // solution process into factorization and solve.
     //--------------------------------------------------------------------------
     clock_t start_factor = clock();
 
@@ -263,15 +268,16 @@ int main( int argc, char* argv[])
     OK(SLIP_permute_x(x, nrows, numRHS, S));
     
     //--------------------------------------------------------------------------
-    // SLIP LU has an optional check step which can verify that the solution vector
-    // x satisfies Ax=b in perfect precision. 
+    // SLIP LU has an optional check step which can verify that the solution
+    // vector x satisfies Ax=b in perfect precision. 
     //
-    // Note that this is entirely OPTIONAL and NOT NECESSARY. The solution returned
-    // is guaranteed to be exact. Also, note that this function can be quite time
-    // consuming; thus it is not recommended to be used in general.
+    // Note that this is entirely OPTIONAL and NOT NECESSARY. The solution
+    // returned is guaranteed to be exact. Also, note that this function can be
+    // quite time consuming; thus it is not recommended to be used in
+    // general.
     // 
-    // This function returns the status SLIP_OK if it is successfully verified to
-    // be correct. 
+    // This function returns the status SLIP_OK if it is successfully verified
+    // to be correct. 
     //--------------------------------------------------------------------------
     
     check = SLIP_check_solution(A, x, b);
