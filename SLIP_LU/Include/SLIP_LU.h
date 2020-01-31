@@ -1158,7 +1158,7 @@ SLIP_info SLIP_mpz_cmp_ui(int32_t *r, const mpz_t x, const uint64_t y) ;
 
 SLIP_info SLIP_mpz_sgn(int32_t *sgn, const mpz_t x) ;
 
-SLIP_info SLIP_mpz_sizeinbase(uint64_t *size, const mpz_t x, int32_t base) ;
+SLIP_info SLIP_mpz_sizeinbase(size_t *size, const mpz_t x, int32_t base) ;
 
 SLIP_info SLIP_mpq_init(mpq_t x) ;
 

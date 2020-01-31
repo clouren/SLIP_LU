@@ -844,7 +844,7 @@ SLIP_info SLIP_mpz_sgn
  * in the given base */
 SLIP_info SLIP_mpz_sizeinbase
 (
-    uint64_t *size,
+    size_t *size,
     const mpz_t x,
     int32_t base
 )
@@ -852,8 +852,8 @@ SLIP_info SLIP_mpz_sizeinbase
     // Start the GMP wrapper
     SLIP_GMP_WRAPPER_START;
 
-    // call mpz_lcm
-    *size = (uint64_t) mpz_sizeinbase(x, (int) base);
+    // call mpz_sizeinbase
+    *size = (size_t) mpz_sizeinbase(x, (int) base);
 
     // Finish the wrapper and return 0 if successful
     SLIP_GMP_WRAPPER_FINISH;

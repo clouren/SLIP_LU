@@ -60,7 +60,7 @@ SLIP_info SLIP_LU_factorize
     int32_t n = A->n, k = 0, top, i, j, col, loc,
         lnz = 0, unz = 0, pivot, jnew, *xi = NULL, *h = NULL, *col_loc = NULL,
         *pivs = NULL, *row_perm = NULL;
-    uint64_t size;
+    size_t size;
     mpz_t sigma; SLIP_MPZ_SET_NULL(sigma);
     mpfr_t temp; SLIP_MPFR_SET_NULL(temp);
     mpz_t* x = NULL ;
