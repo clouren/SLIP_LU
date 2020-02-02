@@ -196,7 +196,7 @@ SLIP_info SLIP_LU_factorize
         //----------------------------------------------------------------------
         // U entries
         //----------------------------------------------------------------------
-        if (loc <= k && ok == SLIP_OK)
+        if (loc <= k)
         {
             // ith value of x[j]
             U->i[unz] = jnew;
@@ -213,7 +213,7 @@ SLIP_info SLIP_LU_factorize
         //----------------------------------------------------------------------
         // L entries
         //----------------------------------------------------------------------
-        if (loc >= k && ok == SLIP_OK)
+        if (loc >= k)
         {
             // ith value of x[j]
             L->i[lnz] = jnew;
@@ -271,7 +271,7 @@ SLIP_info SLIP_LU_factorize
             //------------------------------------------------------------------
             // loc <= k are rows above k, thus go to U
             //------------------------------------------------------------------
-            if (loc <= k && ok == SLIP_OK)
+            if (loc <= k)
             {
                 // Place the i location of the U->nz nonzero
                 U->i[unz] = jnew;
@@ -287,7 +287,7 @@ SLIP_info SLIP_LU_factorize
             //------------------------------------------------------------------
             // loc >= k are rows below k, thus go to L
             //------------------------------------------------------------------
-            if (loc >= k && ok == SLIP_OK)
+            if (loc >= k)
             {
                 // Place the i location of the L->nz nonzero
                 L->i[lnz] = jnew;
