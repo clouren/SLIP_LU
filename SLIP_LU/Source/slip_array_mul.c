@@ -18,10 +18,10 @@
 
 SLIP_info slip_array_mul // multiplies vector x by the determinant of matrix
 (
-    mpz_t** x,      // matrix to be multiplied
-    mpz_t det,      // given determinant of matrix
-    int32_t n,      // size of x
-    int32_t numRHS  // number of RHS vectors
+    mpz_t** x,          // matrix to be multiplied
+    const mpz_t det,    // given determinant of matrix
+    int32_t n,          // size of x
+    int32_t numRHS      // number of RHS vectors
 )
 {
     SLIP_info ok = SLIP_OK;
