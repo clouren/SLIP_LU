@@ -23,7 +23,7 @@ SLIP_info slip_sparse_realloc
     int32_t nzmax = A->nzmax;
     // Double size of A->x and A->i without initializing the new entries in A->x
     // cannot use SLIP_realloc here, since it frees its input on failure.
-    mpz_t *Ax_new = (mpz_t*) SLIP_MEMORY_REALLOC(A->x, 2*nzmax*SIZE_MPZ);
+    mpz_t *Ax_new = (mpz_t*) SLIP_MEMORY_REALLOC(A->x, 2*nzmax*sizeof(mpz_t));
 
     if (!Ax_new) {return SLIP_OUT_OF_MEMORY;}
     A->x = Ax_new;
