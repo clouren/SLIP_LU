@@ -714,7 +714,6 @@ SLIP_info slip_REF_triangular_solve // performs the sparse REF triangular solve
     mpz_t* rhos,              // sequence of pivots
     int32_t* pinv,            // inverse row permutation
     int32_t* row_perm,        // row permutation
-    int32_t* col_loc,         // column permutation
     int32_t* h,               // history vector
     mpz_t* x                  // solution of system ==> kth column of L and U
 );
