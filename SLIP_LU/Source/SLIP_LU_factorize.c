@@ -54,7 +54,6 @@ SLIP_info SLIP_LU_factorize
     //--------------------------------------------------------------------------
     // Declare and initialize workspace
     //--------------------------------------------------------------------------
-    // Begin timing factorization
     SLIP_info ok = SLIP_OK;
     int32_t n = A->n, k = 0, top, i, j, col, loc,
         lnz = 0, unz = 0, pivot, jnew, *xi = NULL, *h = NULL,
@@ -66,13 +65,25 @@ SLIP_info SLIP_LU_factorize
 
     SLIP_CHECK(SLIP_mpz_init(sigma));
     SLIP_CHECK(SLIP_mpfr_init2(temp, 256));
-    // Sequence of chosen pivots
+    
+    // Indicator of which rows have been pivotal
+    // pivs[i] = 1 if row i has been selected as a pivot
+    // row, otherwise, pivs[i] < 0
     pivs = (int32_t*) SLIP_malloc(n* sizeof(int32_t));
-    // History vector
+    
+    // h is the history vector utilized for the sparse REF 
+    // triangular solve algorithm. h serves as a global
+    // vector which is repeatedly passed into the triangular
+    // solve algorithm
     h = (int32_t*) SLIP_malloc(n* sizeof(int32_t));
-    // Nonzero pattern
+    
+    // xi is the global nonzero pattern vector. It stores
+    // the pattern of nonzeros of the kth column of L and U
+    // for the triangular solve.
     xi = (int32_t*) SLIP_malloc(2*n* sizeof(int32_t));
-    // Row permutation, inverse of pinv
+    
+    // Actual row permutation, the inverse of pinv. This
+    // is used for sorting
     row_perm = (int32_t*) SLIP_malloc(n* sizeof(int32_t));
 
     if (!pivs || !h || !xi || !row_perm)
@@ -81,23 +92,26 @@ SLIP_info SLIP_LU_factorize
         SLIP_FREE_WORKSPACE ;
         return SLIP_OUT_OF_MEMORY;
     }
+    // Initialize pivs and h; that is set pivs[i] = -1 and
+    // h[i] = -1 for all i
     slip_reset_int_array(pivs,n);
     slip_reset_int_array(h,n);
 
     //--------------------------------------------------------------------------
-    // Compute a bound for the size of each entry in the matrix. This bound is
-    // used to allocate the size of each entry in the x vector in order to
-    // reduce the number of intermediate reallocations performed in the
-    // triangular solve.
+    // This section of the code computes a bound for the worst case bit-length
+    // of each entry in the matrix. This bound is used to allocate the size of
+    // each number in the global x vector. As a result of this allocation, 
+    // computing the values in L and U via repeated triangular solves will
+    // not require intermediate memory reallocations from the GMP library.
     //
-    // This bound is based on a relaxation of Hadamard's bound
-    //
+    // This bound is based on a relaxation of sparse Hadamard's bound
     //--------------------------------------------------------------------------
-    // Initialize sigma = largest entry in A
-
+    
+    // sigma is the largest initial entry in A. First we initialize sigma to be 
+    // the first nonzero in A
     SLIP_CHECK(SLIP_mpz_set(sigma, A->x[0]));
 
-    // Get sigma = max(A)
+    // Iterate throughout A and set sigma = max (A)
     for (i = 1; i < A->nz; i++)
     {
         if(mpz_cmpabs(sigma,A->x[i]) < 0)
@@ -105,11 +119,15 @@ SLIP_info SLIP_LU_factorize
             SLIP_CHECK(SLIP_mpz_set(sigma,A->x[i]));
         }
     }
+    
     // sigma = |sigma|
     SLIP_CHECK(SLIP_mpz_abs(sigma,sigma));
 
+    // gamma is the number of nonzeros in the most dense column of A. First, we
+    // initialize gamma to be the number of nonzeros in A(:,1).
     int32_t gamma = A->p[1];
-    // get gamma as most dense column
+    
+    // Iterate throughout A and obtain gamma as the most dense column of A
     for (i = 1; i<n; i++)
     {
         if( gamma < A->p[i+1] - A->p[i])
@@ -122,7 +140,7 @@ SLIP_info SLIP_LU_factorize
     SLIP_CHECK(SLIP_mpfr_set_z(temp, sigma, option->SLIP_MPFR_ROUND));
 
     //--------------------------------------------------------------------------
-    // Bound = gamma*log2(sigma sqrt(gamma))
+    // The bound is given as: gamma*log2(sigma sqrt(gamma))
     //--------------------------------------------------------------------------
     // temp = sigma*sqrt(gamma)
     SLIP_CHECK(SLIP_mpfr_mul_d(temp, temp, (double) sqrt(gamma), option->SLIP_MPFR_ROUND));
@@ -135,9 +153,10 @@ SLIP_info SLIP_LU_factorize
     // SLIP_LU_final(), it has to be called here to prevent memory leak in
     // some rare situations.
     SLIP_mpfr_free_cache();
-    // bound = gamma * inner2+1
+    // bound = gamma * inner2+1. We add 1 to inner2 because log2(1) = 0
     int32_t bound = ceil(gamma*(inner2+1));
-    // Ensure bound is at least 64 bit
+    // Ensure bound is at least 64 bit. In some rare cases the bound is very small
+    // so we default to 64 bits.
     if (bound < 64) {bound = 64;}
 
 
@@ -145,7 +164,8 @@ SLIP_info SLIP_LU_factorize
     // Declare memory for x, L, and U
     //--------------------------------------------------------------------------
 
-    // Initialize x
+    // Initialize x. x is the global mpz_t vector of size n which is used 
+    // repeatedly in the sparse REF triangular solve.
     x = slip_create_mpz_array2(n,bound);
     if (!x)
     {
@@ -155,7 +175,6 @@ SLIP_info SLIP_LU_factorize
     // Initialize location based vectors
     for (i = 0; i < n; i++)
     {
-        // pinv is the inverse row permutation
         pinv[i] = i;
         row_perm[i] = i;
     }
