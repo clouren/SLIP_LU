@@ -8,7 +8,30 @@
 
 //------------------------------------------------------------------------------
 
-/* Purpose: This function solves the linear system LD^(-1)U x = b.*/
+/* Purpose: This function solves the linear system LD^(-1)U x = b. It essnetially
+*  serves as a wrapper for all forward and backward substitution routines
+*
+* Input/output arguments:
+*
+* x:        mpq_t** array. Unitialized on input, on output
+*           contains the exact rational solution to Ax = b
+*
+* b:        SLIP_dense data structure containing the set of RHS vectors.
+*           Contains un permuted b on input and contains permuted b on
+*           output.
+*
+* rhos:     mpz_t* array of size n. Contains the sequence of pivots
+*           encountered during factorization and is used for forward/back
+*           substitution. Unmodified on input/output.
+*
+* L:        Lower triangular matrix. Unmodified on input/output
+*
+* U:        Upper triangular matrix. Unmodified on input/output
+*
+* pinv:     inverse row permutation vector, used to permute the b vectors.
+*           unmodified on input/output.
+*
+*/
 
 #define SLIP_FREE_WORKSPACE                        \
     SLIP_delete_mpz_mat(&b2, n, numRHS);
@@ -17,12 +40,12 @@
 
 SLIP_info SLIP_LU_solve  //solves the linear system LD^(-1)U x = b
 (
-    mpq_t **x,           // rational solution to the system
-    SLIP_dense *b,       // right hand side vector
-    mpz_t *rhos,         // sequence of pivots
-    SLIP_sparse *L,      // lower triangular matrix
-    SLIP_sparse *U,      // upper triangular matrix
-    int32_t *pinv        // row permutation
+    mpq_t **x,                 // rational solution to the system
+    SLIP_dense *b,             // right hand side vector
+    const mpz_t *rhos,         // sequence of pivots
+    const SLIP_sparse *L,      // lower triangular matrix
+    const SLIP_sparse *U,      // upper triangular matrix
+    const int32_t *pinv        // row permutation
 )
 {
     if (!x || !b || !rhos || !pinv || !L || !U || !b->x
