@@ -26,7 +26,6 @@
     SLIP_delete_mpz_array(&x,n);    \
     SLIP_FREE(xi);                  \
     SLIP_FREE(h);                   \
-    SLIP_FREE(col_loc);             \
     SLIP_FREE(pivs);                \
     SLIP_FREE(row_perm);            \
     SLIP_MPFR_CLEAR(temp);          \
@@ -58,7 +57,7 @@ SLIP_info SLIP_LU_factorize
     // Begin timing factorization
     SLIP_info ok = SLIP_OK;
     int32_t n = A->n, k = 0, top, i, j, col, loc,
-        lnz = 0, unz = 0, pivot, jnew, *xi = NULL, *h = NULL, *col_loc = NULL,
+        lnz = 0, unz = 0, pivot, jnew, *xi = NULL, *h = NULL,
         *pivs = NULL, *row_perm = NULL;
     size_t size;
     mpz_t sigma; SLIP_MPZ_SET_NULL(sigma);
@@ -69,8 +68,6 @@ SLIP_info SLIP_LU_factorize
     SLIP_CHECK(SLIP_mpfr_init2(temp, 256));
     // Sequence of chosen pivots
     pivs = (int32_t*) SLIP_malloc(n* sizeof(int32_t));
-    // Location of a column WRT the order
-    col_loc = (int32_t*) SLIP_malloc(n* sizeof(int32_t));
     // History vector
     h = (int32_t*) SLIP_malloc(n* sizeof(int32_t));
     // Nonzero pattern
@@ -78,7 +75,7 @@ SLIP_info SLIP_LU_factorize
     // Row permutation, inverse of pinv
     row_perm = (int32_t*) SLIP_malloc(n* sizeof(int32_t));
 
-    if (!pivs || !col_loc || !h || !xi || !row_perm)
+    if (!pivs || !h || !xi || !row_perm)
     {
         // out of memory: free everything and return
         SLIP_FREE_WORKSPACE ;
@@ -158,7 +155,7 @@ SLIP_info SLIP_LU_factorize
     // Initialize location based vectors
     for (i = 0; i < n; i++)
     {
-        col_loc[S->q[i]] = i;
+        // pinv is the inverse row permutation
         pinv[i] = i;
         row_perm[i] = i;
     }
@@ -254,7 +251,7 @@ SLIP_info SLIP_LU_factorize
 
         // LDx = A(:,k)
         SLIP_CHECK(slip_REF_triangular_solve(&top, L, A, k, xi, S->q, rhos,
-            pinv, row_perm, col_loc, h, x));
+            pinv, row_perm, h, x));
         // Obtain pivot index
         SLIP_CHECK(slip_get_pivot(&pivot, x, pivs, n, top, xi, option->pivot,
             col, k, rhos, pinv, row_perm, option->tol));
