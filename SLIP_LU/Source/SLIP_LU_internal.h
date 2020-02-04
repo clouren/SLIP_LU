@@ -202,19 +202,19 @@ void slip_gmp_failure (int32_t status) ;
     SLIP_MPZ_SIZ(x) = 0;                    \
     SLIP_MPZ_ALLOC(x) = 0;
 
-#define SLIP_MPQ_SET_NULL(x)                \
-    SLIP_MPZ_PTR(MPQ_NUM(x)) = NULL;        \
-    SLIP_MPZ_SIZ(MPQ_NUM(x)) = 0;           \
-    SLIP_MPZ_ALLOC(MPQ_NUM(x)) = 0;         \
-    SLIP_MPZ_PTR(MPQ_DEN(x)) = NULL;        \
-    SLIP_MPZ_SIZ(MPQ_DEN(x)) = 0;           \
-    SLIP_MPZ_ALLOC(MPQ_DEN(x)) = 0;
+#define SLIP_MPQ_SET_NULL(x)                     \
+    SLIP_MPZ_PTR(SLIP_MPQ_NUM(x)) = NULL;        \
+    SLIP_MPZ_SIZ(SLIP_MPQ_NUM(x)) = 0;           \
+    SLIP_MPZ_ALLOC(SLIP_MPQ_NUM(x)) = 0;         \
+    SLIP_MPZ_PTR(SLIP_MPQ_DEN(x)) = NULL;        \
+    SLIP_MPZ_SIZ(SLIP_MPQ_DEN(x)) = 0;           \
+    SLIP_MPZ_ALLOC(SLIP_MPQ_DEN(x)) = 0;
 
 #define SLIP_MPFR_SET_NULL(x)               \
     SLIP_MPFR_MANT(x) = NULL;               \
     SLIP_MPFR_PREC(x) = 0;                  \
     SLIP_MPFR_SIGN(x) = 1;                  \
-    SLIP_MPFR_EXP(x) = MPFR_EXP_INVALID;
+    SLIP_MPFR_EXP(x) = SLIP_MPFR_EXP_INVALID;
 
 /* GMP does not give a mechanism to tell a user when an mpz, mpq, or mpfr
  * item has been cleared; thus, if mp*_clear is called on an object that

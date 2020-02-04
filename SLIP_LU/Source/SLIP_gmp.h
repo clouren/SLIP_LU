@@ -75,7 +75,7 @@
         }                                                               \
         if (p == SLIP_MPZ_PTR(SLIP_MPQ_DEN(*slip_gmpq_archive)))        \
         {                                                               \
-            SLIP_MPZ_PTR(MPQ_DEN(*slip_gmpq_archive)) = NULL ;          \
+            SLIP_MPZ_PTR(SLIP_MPQ_DEN(*slip_gmpq_archive)) = NULL ;     \
         }                                                               \
     }                                                                   \
     else if (slip_gmpfr_archive != NULL)                                \
