@@ -6,7 +6,7 @@
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
-//------------------------------------------------------------------------------
+
 
 #define SLIP_FREE_WORKSPACE                 \
     SLIP_MPQ_CLEAR(temp);                   \
@@ -14,16 +14,25 @@
 
 # include "SLIP_LU_internal.h"
 
-/* ========================================================================== */
-/* ============= Check the solution of the linear system===================== */
-/* ========= Performs a very quick rational arithmetic A*x=b ================ */
-/* ========================================================================== */
+/*
+ * Check the solution of the linear system by performing a quick rational
+ * arithmetic A*x = b.
+ *
+ *
+ * WARNING: This function WILL produce incorrect results if called with the
+ * final scaled x vector! This function assumes that A and b are in their scaled
+ * integral form! Thus x is the solution to the scaled system Ax=b. Once x has been
+ * finalized, this function will report an incorrect result. Please refer to 
+ * Demo/SLIPLU.c for the proper usage of this function
+ */
+
+
 
 SLIP_info SLIP_check_solution
 (
     SLIP_sparse *A,          // input matrix
     mpq_t** x,               // solution vector
-    SLIP_dense *b            // righ hand side
+    SLIP_dense *b            // right hand side
 )
 {
     if (!A || !x || !b || !b->x || !A->p || !A->i || !A->x) 
