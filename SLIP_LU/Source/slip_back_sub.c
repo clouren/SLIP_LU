@@ -20,9 +20,9 @@
 
 SLIP_info slip_back_sub  // performs sparse REF backward substitution
 (
-    SLIP_sparse *U,   // input upper triangular matrix
-    mpz_t **bx,       // right hand side matrix of size n*numRHS
-    int32_t numRHS    // number of columns in bx
+    const SLIP_sparse *U,   // input upper triangular matrix
+    mpz_t **bx,             // right hand side matrix of size n*numRHS
+    int32_t numRHS          // number of columns in bx
 )
 {
     int32_t sgn;
