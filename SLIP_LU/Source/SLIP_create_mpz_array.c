@@ -22,7 +22,7 @@ mpz_t* SLIP_create_mpz_array
     if (n <= 0) {return NULL;}
     
     // Malloc memory
-    mpz_t* x = (mpz_t*) SLIP_calloc(n, SIZE_MPZ);
+    mpz_t* x = (mpz_t*) SLIP_calloc(n, sizeof(mpz_t));
     if (!x) {return NULL;}
     for (int32_t i = 0; i < n; i++)
     {
