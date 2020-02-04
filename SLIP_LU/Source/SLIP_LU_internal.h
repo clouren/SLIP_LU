@@ -351,10 +351,10 @@ SLIP_info slip_array_mul // multiplies vector x by the determinant of matrix
  */
 SLIP_info slip_forward_sub
 (
-    SLIP_sparse *L,   // lower triangular matrix
-    mpz_t **x,        // right hand side matrix of size n*numRHS
-    mpz_t *rhos,      // sequence of pivots used in factorization
-    int32_t numRHS    // number of columns in x
+    const SLIP_sparse *L,   // lower triangular matrix
+    mpz_t **x,              // right hand side matrix of size n*numRHS
+    const mpz_t *rhos,      // sequence of pivots used in factorization
+    int32_t numRHS          // number of columns in x
 );
 
 /* Purpose: This function performs sparse REF backward substitution. In essense
@@ -367,9 +367,9 @@ SLIP_info slip_forward_sub
 
 SLIP_info slip_back_sub  // performs sparse REF backward substitution
 (
-    SLIP_sparse *U,   // input upper triangular matrix
-    mpz_t **bx,       // right hand side matrix of size n*numRHS
-    int32_t numRHS    // number of columns in bx
+    const SLIP_sparse *U,   // input upper triangular matrix
+    mpz_t **bx,             // right hand side matrix of size n*numRHS
+    int32_t numRHS          // number of columns in bx
 )  ;
 
 /*
