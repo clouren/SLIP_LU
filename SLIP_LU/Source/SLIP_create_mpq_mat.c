@@ -24,7 +24,7 @@ mpq_t** SLIP_create_mpq_mat
     if (!x) {return NULL;}
     for (int32_t i = 0; i < m; i++)
     {
-        x[i] = (mpq_t*) SLIP_calloc(n, SIZE_MPQ);
+        x[i] = (mpq_t*) SLIP_calloc(n, sizeof(mpq_t));
         if ( x[i] == NULL)
         {
             // out of memory 
