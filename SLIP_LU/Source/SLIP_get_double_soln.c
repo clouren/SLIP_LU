@@ -31,7 +31,7 @@
 SLIP_info SLIP_get_double_soln
 (
     double **x_doub,      // double soln of size n*numRHS to Ax = b
-    const mpq_t  **x_mpq, // mpq solution to Ax = b. x is of size n*numRHS
+    mpq_t  **x_mpq,       // mpq solution to Ax = b. x is of size n*numRHS
     int32_t n,            // Dimension of A, number of rows of x 
     int32_t numRHS        // Number of right hand side vectors
 )
