@@ -918,10 +918,10 @@ SLIP_info SLIP_LU_solve     //solves the linear system LD^(-1)U x = b
 (
     mpq_t **x,              // rational solution to the system
     SLIP_dense *b,          // right hand side vector
-    mpz_t *rhos,            // sequence of pivots
-    SLIP_sparse *L,         // lower triangular matrix
-    SLIP_sparse *U,         // upper triangular matrix
-    int32_t *pinv           // row permutation
+    const mpz_t *rhos,      // sequence of pivots
+    const SLIP_sparse *L,   // lower triangular matrix
+    const SLIP_sparse *U,   // upper triangular matrix
+    const int32_t *pinv     // row permutation
 );
 
 // check and print a SLIP_sparse matrix
@@ -938,7 +938,7 @@ SLIP_info SLIP_spok  // returns a SLIP_LU status code
 SLIP_info SLIP_get_double_soln
 (
     double **x_doub,      // double soln of size n*numRHS to Ax = b
-    mpq_t  **x_mpq,       // mpq solution to Ax = b. x is of size n*numRHS
+    const mpq_t  **x_mpq, // mpq solution to Ax = b. x is of size n*numRHS
     int32_t n,            // Dimension of A, number of rows of x
     int32_t numRHS        // Number of right hand side vectors
 ) ;
@@ -951,10 +951,10 @@ SLIP_info SLIP_get_double_soln
 SLIP_info SLIP_get_mpfr_soln
 (
     mpfr_t **x_mpfr,      // mpfr solution of size n*numRHS to Ax = b
-    mpq_t  **x_mpq,       // mpq solution of size n*numRHS to Ax = b.
+    const mpq_t  **x_mpq, // mpq solution of size n*numRHS to Ax = b.
     int32_t n,            // Dimension of A, number of rows of x
-    int32_t numRHS,        // Number of right hand side vectors
-    SLIP_options* option
+    int32_t numRHS,       // Number of right hand side vectors
+    SLIP_options* option  // Contains mpfr parameters
 );
 
 /*
