@@ -9,7 +9,24 @@
 //------------------------------------------------------------------------------
 
 
-/* This code utilizes the SLIP LU factorization. Soln is output as mpfr_t. */
+/* This code utilizes the SLIP LU factorization. Soln is output as mpfr_t. 
+ *
+ * Input/Output arguments:
+ *
+ * x_mpfr:  A mpfr_t** array which is unitialized on input. On output, contains 
+ *          the solution to the linear system Ax=b in user specified precision.
+ *
+ * A:       User's input matrix. It must be populated prior to calling this function
+ *
+ * S:       Symbolic analysis struct. It is important that this data structure
+ *          is both allocated and populated prior to calling this function. 
+ *          That is, this function MUST be preceded by a call to the function
+ *          SLIP_LU_analyze.
+ *
+ * b:       Collection of right hand side vectors. Must be populated prior to factorization
+ *
+ * option:  Struct containing various command parameters for the factorization
+ */
 
 # define SLIP_FREE_WORKSPACE                \
     SLIP_delete_sparse(&L);                 \
