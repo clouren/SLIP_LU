@@ -18,7 +18,6 @@ all: lib example example2 example3 example4 example5 lu
 	- ./example4
 	- ./example5
 	- ./SLIPLU
-	- ./SLIPLU f ../ExampleMats/NSR8K_mat.txt ../ExampleMats/NSR8K_v.txt
 
 lib:
 	( cd ../Lib ; $(MAKE) )
@@ -40,7 +39,6 @@ example5: lib example5.c Makefile
 
 lu: lib SLIPLU.c demos.h demos.c Makefile
 	$(CC) $(LDFLAGS) $(CF) $(I) -o SLIPLU SLIPLU.c demos.c $(CS)
-
 clean:
 	- $(RM) *.o
 
