@@ -24,7 +24,7 @@ mpz_t* slip_create_mpz_array2
     // Check input
     if (n <= 0 || size <= 0) {return NULL;}
     // Malloc space
-    mpz_t* x = (mpz_t*) SLIP_calloc(n, SIZE_MPZ);
+    mpz_t* x = (mpz_t*) SLIP_calloc(n, sizeof(mpz_t));
     if (!x) {return NULL;}
     for (int32_t i = 0; i < n; i++)
     {
