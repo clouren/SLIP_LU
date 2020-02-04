@@ -173,30 +173,21 @@ void slip_gmp_failure (int32_t status) ;
 
 #define SLIP_DEFAULT_MPFR_ROUND MPFR_RNDN;
 
-// TODO delete these
-
-// Size of mpz_t, mpq_t and mpfr_t values
-#define SIZE_MPZ  sizeof(mpz_t)
-#define SIZE_MPQ  sizeof(mpq_t)
-#define SIZE_MPFR sizeof(mpfr_t)
-
-// TODO rename these (MPZ_SIZ to SLIP_MPZ_SIZ etc)
-
 // Field access macros for MPZ/MPQ/MPFR struct
 // (similar definition in gmp-impl.h and mpfr-impl.h)
 
-#define MPZ_SIZ(x)   ((x)->_mp_size)
-#define MPZ_PTR(x)   ((x)->_mp_d)
-#define MPZ_ALLOC(x) ((x)->_mp_alloc)
-#define MPQ_NUM(x)   mpq_numref(x)
-#define MPQ_DEN(x)   mpq_denref(x)
-#define MPFR_MANT(x) ((x)->_mpfr_d)
-#define MPFR_EXP(x)  ((x)->_mpfr_exp)
-#define MPFR_PREC(x) ((x)->_mpfr_prec)
-#define MPFR_SIGN(x) ((x)->_mpfr_sign)
-#define MPFR_REAL_PTR(x) (&((x)->_mpfr_d[-1])) /*re-define but same result*/
+#define SLIP_MPZ_SIZ(x)   ((x)->_mp_size)
+#define SLIP_MPZ_PTR(x)   ((x)->_mp_d)
+#define SLIP_MPZ_ALLOC(x) ((x)->_mp_alloc)
+#define SLIP_MPQ_NUM(x)   mpq_numref(x)
+#define SLIP_MPQ_DEN(x)   mpq_denref(x)
+#define SLIP_MPFR_MANT(x) ((x)->_mpfr_d)
+#define SLIP_MPFR_EXP(x)  ((x)->_mpfr_exp)
+#define SLIP_MPFR_PREC(x) ((x)->_mpfr_prec)
+#define SLIP_MPFR_SIGN(x) ((x)->_mpfr_sign)
+#define SLIP_MPFR_REAL_PTR(x) (&((x)->_mpfr_d[-1])) /*re-define but same result*/
 /* Invalid exponent value (to track bugs...) */
-#define MPFR_EXP_INVALID \
+#define SLIP_MPFR_EXP_INVALID \
  ((mpfr_exp_t) 1 << (GMP_NUMB_BITS*sizeof(mpfr_exp_t)/sizeof(mp_limb_t)-2))
 
 /* Macros to set the pointer in mpz_t/mpq_t/mpfr_t variable to NULL. It is best
@@ -207,23 +198,23 @@ void slip_gmp_failure (int32_t status) ;
  */
 
 #define SLIP_MPZ_SET_NULL(x)                \
-    MPZ_PTR(x) = NULL;                      \
-    MPZ_SIZ(x) = 0;                         \
-    MPZ_ALLOC(x) = 0;
+    SLIP_MPZ_PTR(x) = NULL;                 \
+    SLIP_MPZ_SIZ(x) = 0;                    \
+    SLIP_MPZ_ALLOC(x) = 0;
 
 #define SLIP_MPQ_SET_NULL(x)                \
-    MPZ_PTR(MPQ_NUM(x)) = NULL;             \
-    MPZ_SIZ(MPQ_NUM(x)) = 0;                \
-    MPZ_ALLOC(MPQ_NUM(x)) = 0;              \
-    MPZ_PTR(MPQ_DEN(x)) = NULL;             \
-    MPZ_SIZ(MPQ_DEN(x)) = 0;                \
-    MPZ_ALLOC(MPQ_DEN(x)) = 0;
+    SLIP_MPZ_PTR(MPQ_NUM(x)) = NULL;        \
+    SLIP_MPZ_SIZ(MPQ_NUM(x)) = 0;           \
+    SLIP_MPZ_ALLOC(MPQ_NUM(x)) = 0;         \
+    SLIP_MPZ_PTR(MPQ_DEN(x)) = NULL;        \
+    SLIP_MPZ_SIZ(MPQ_DEN(x)) = 0;           \
+    SLIP_MPZ_ALLOC(MPQ_DEN(x)) = 0;
 
 #define SLIP_MPFR_SET_NULL(x)               \
-    MPFR_MANT(x) = NULL;                    \
-    MPFR_PREC(x) = 0;                       \
-    MPFR_SIGN(x) = 1;                       \
-    MPFR_EXP(x) = MPFR_EXP_INVALID;
+    SLIP_MPFR_MANT(x) = NULL;               \
+    SLIP_MPFR_PREC(x) = 0;                  \
+    SLIP_MPFR_SIGN(x) = 1;                  \
+    SLIP_MPFR_EXP(x) = MPFR_EXP_INVALID;
 
 /* GMP does not give a mechanism to tell a user when an mpz, mpq, or mpfr
  * item has been cleared; thus, if mp*_clear is called on an object that
@@ -233,28 +224,28 @@ void slip_gmp_failure (int32_t status) ;
  * multiple times.
  */
 
-#define SLIP_MPZ_CLEAR(x)                   \
-{                                           \
-    if ((x) != NULL && MPZ_PTR(x) != NULL)  \
-    {                                       \
-        mpz_clear(x);                       \
-        SLIP_MPZ_SET_NULL(x);               \
-    }                                       \
+#define SLIP_MPZ_CLEAR(x)                        \
+{                                                \
+    if ((x) != NULL && SLIP_MPZ_PTR(x) != NULL)  \
+    {                                            \
+        mpz_clear(x);                            \
+        SLIP_MPZ_SET_NULL(x);                    \
+    }                                            \
 }
 
 #define SLIP_MPQ_CLEAR(x)                   \
 {                                           \
-    SLIP_MPZ_CLEAR(MPQ_NUM(x));             \
-    SLIP_MPZ_CLEAR(MPQ_DEN(x));             \
+    SLIP_MPZ_CLEAR(SLIP_MPQ_NUM(x));        \
+    SLIP_MPZ_CLEAR(SLIP_MPQ_DEN(x));        \
 }
 
-#define SLIP_MPFR_CLEAR(x)                  \
-{                                           \
-    if ((x) != NULL && MPFR_MANT(x) != NULL)\
-    {                                       \
-        mpfr_clear(x);                      \
-        SLIP_MPFR_SET_NULL(x);              \
-    }                                       \
+#define SLIP_MPFR_CLEAR(x)                        \
+{                                                 \
+    if ((x) != NULL && SLIP_MPFR_MANT(x) != NULL) \
+    {                                             \
+        mpfr_clear(x);                            \
+        SLIP_MPFR_SET_NULL(x);                    \
+    }                                             \
 }
 
 

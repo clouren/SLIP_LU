@@ -62,27 +62,27 @@
 {                                                                       \
     if (slip_gmpz_archive != NULL)                                      \
     {                                                                   \
-        if (p == MPZ_PTR(*slip_gmpz_archive))                           \
+        if (p == SLIP_MPZ_PTR(*slip_gmpz_archive))                      \
         {                                                               \
-            MPZ_PTR(*slip_gmpz_archive) = NULL ;                        \
+            SLIP_MPZ_PTR(*slip_gmpz_archive) = NULL ;                   \
         }                                                               \
     }                                                                   \
     else if (slip_gmpq_archive != NULL)                                 \
     {                                                                   \
-        if (p == MPZ_PTR(MPQ_NUM(*slip_gmpq_archive)))                  \
+        if (p == SLIP_MPZ_PTR(SLIP_MPQ_NUM(*slip_gmpq_archive)))        \
         {                                                               \
-            MPZ_PTR(MPQ_NUM(*slip_gmpq_archive)) = NULL ;               \
+            SLIP_MPZ_PTR(SLIP_MPQ_NUM(*slip_gmpq_archive)) = NULL ;     \
         }                                                               \
-        if (p == MPZ_PTR(MPQ_DEN(*slip_gmpq_archive)))                  \
+        if (p == SLIP_MPZ_PTR(SLIP_MPQ_DEN(*slip_gmpq_archive)))        \
         {                                                               \
-            MPZ_PTR(MPQ_DEN(*slip_gmpq_archive)) = NULL ;               \
+            SLIP_MPZ_PTR(MPQ_DEN(*slip_gmpq_archive)) = NULL ;          \
         }                                                               \
     }                                                                   \
     else if (slip_gmpfr_archive != NULL)                                \
     {                                                                   \
-        if (p == MPFR_REAL_PTR(*slip_gmpfr_archive))                    \
+        if (p == SLIP_MPFR_REAL_PTR(*slip_gmpfr_archive))               \
         {                                                               \
-            MPFR_MANT(*slip_gmpfr_archive) = NULL ;                     \
+            SLIP_MPFR_MANT(*slip_gmpfr_archive) = NULL ;                \
         }                                                               \
     }                                                                   \
     SLIP_FREE (p) ;                                                     \
