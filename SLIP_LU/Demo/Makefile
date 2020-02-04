@@ -18,6 +18,7 @@ all: lib example example2 example3 example4 example5 lu
 	- ./example4
 	- ./example5
 	- ./SLIPLU
+	- ./SLIPLU f ../ExampleMats/NSR8K_mat.txt ../ExampleMats/NSR8K_v.txt
 
 lib:
 	( cd ../Lib ; $(MAKE) )
