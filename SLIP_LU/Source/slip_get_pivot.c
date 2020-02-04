@@ -102,8 +102,8 @@ SLIP_info slip_get_pivot
             SLIP_CHECK(SLIP_mpq_init(ratio));
 
             // ratio = |smallest/diagonal|
-            SLIP_CHECK(SLIP_mpz_abs(MPQ_NUM(ratio), x[*pivot]));
-            SLIP_CHECK(SLIP_mpz_abs(MPQ_DEN(ratio), x[col]));
+            SLIP_CHECK(SLIP_mpz_abs(SLIP_MPQ_NUM(ratio), x[*pivot]));
+            SLIP_CHECK(SLIP_mpz_abs(SLIP_MPQ_DEN(ratio), x[col]));
 
             // Set user specified tolerance
             SLIP_CHECK(SLIP_mpq_set_d(tol, tolerance));
