@@ -13,12 +13,25 @@
 /* Purpose: Convert the output mpq_t** solution vector obtained from
  * SLIP_Solve and SLIP_Permute_x from mpq_t** to double.
  * x_doub has to be initialized before passed in.
+ *
+ * Input/output arguments:
+ *
+ * x_doub:  double** containing the users final solution in double precision.
+ *          uninitialized on input, contains the double version of the solution
+ *          on output.
+ *
+ * x_mpq:   mpq_t** containing the exact solution of the linear system. Unmodified
+ *          on output and input.
+ *
+ * n:       Number of columns in the input matrix = number of rows in x
+ *
+ * numRHS:  Number of RHS vectors = number of columns in x
  */
 
 SLIP_info SLIP_get_double_soln
 (
     double **x_doub,      // double soln of size n*numRHS to Ax = b
-    mpq_t  **x_mpq,       // mpq solution to Ax = b. x is of size n*numRHS
+    const mpq_t  **x_mpq, // mpq solution to Ax = b. x is of size n*numRHS
     int32_t n,            // Dimension of A, number of rows of x 
     int32_t numRHS        // Number of right hand side vectors
 )
