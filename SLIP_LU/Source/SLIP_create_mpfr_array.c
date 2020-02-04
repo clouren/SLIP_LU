@@ -19,7 +19,7 @@ mpfr_t* SLIP_create_mpfr_array
 {
     // Check input
     if (n <= 0) {return NULL;}
-    mpfr_t* x = (mpfr_t*) SLIP_calloc(n, SIZE_MPFR);
+    mpfr_t* x = (mpfr_t*) SLIP_calloc(n, sizeof(mpfr_t));
     if (!x) {return NULL;}
     for (int32_t i = 0; i < n; i++)        
     {
