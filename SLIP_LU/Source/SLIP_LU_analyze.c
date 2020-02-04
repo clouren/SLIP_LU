@@ -11,6 +11,16 @@
 /*
  * Purpose: This function performs the symbolic ordering for SLIP LU. Currently,
  * there are three options: user-defined order, COLAMD, or AMD.
+ *
+ *
+ * Input/output arguments:
+ * 
+ * S:       Symbolic analysis struct. Unitialized on input, contains column permutation
+ *          and guesses on L and U nnz on output
+ *
+ * A:       Input matrix, unmodified on input/output
+ *
+ * option:  option->order tells the function which ordering scheme to use
  */
 
 #define SLIP_FREE_WORKSPACE   \
@@ -39,7 +49,9 @@ SLIP_info SLIP_LU_analyze
     }
 
     //--------------------------------------------------------------------------
-    // No ordering
+    // No ordering is used. S->q is set to [0 ... n] and the number of nonzeros
+    // in L and U is estimated to be 10 times the number of nonzeros in A. This
+    // is a very crude estimate on the nnz(L) and nnz(U)
     //--------------------------------------------------------------------------
     if (option->order == SLIP_NO_ORDERING)
     {
@@ -52,7 +64,9 @@ SLIP_info SLIP_LU_analyze
     }
 
     //--------------------------------------------------------------------------
-    // AMD
+    // The AMD ordering is used. S->q is set to AMD's column ordering on 
+    // A+A'. The numer of nonzeros in L and U is given as AMD's computed
+    // number of nonzeros in the Cholesky factor L of A+A'
     //--------------------------------------------------------------------------
     else if (option->order == SLIP_AMD)
     {
@@ -70,7 +84,9 @@ SLIP_info SLIP_LU_analyze
     }
 
     //--------------------------------------------------------------------------
-    // COLAMD
+    // The COLAMD ordering is used. S->q is set as COLAMD's column ordering. 
+    // The number of nonzeros in L and U is set as 10 times the number of nonzeros
+    // in A. This is a crude estimate.
     //--------------------------------------------------------------------------
     else
     {
@@ -104,7 +120,10 @@ SLIP_info SLIP_LU_analyze
     }
 
     //--------------------------------------------------------------------------
-    // Make sure too much space isn't allocated
+    // Make sure appropriate space is allocated. It's possible to return guesses
+    // which exceed the dimension of L and U or guesses which are too small for L
+    // U. In this case, this block of code ensures that the guesses on nnz(L) and 
+    // nnz(U) are at least n and no more than n*n
     //--------------------------------------------------------------------------
     // Guess exceeds max number of nnz in A
     if (S->lnz > (double) n*n)
