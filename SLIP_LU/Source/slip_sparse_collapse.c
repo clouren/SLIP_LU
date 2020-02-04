@@ -28,7 +28,7 @@ SLIP_info slip_sparse_collapse
     A->i = (int32_t*) SLIP_realloc(A->i, A->nzmax*sizeof(int32_t),
         nz*sizeof(int32_t));
     // SLIP_realloc can be used here, since it would not fail when shrinking.
-    A->x = (mpz_t*) SLIP_realloc(A->x, A->nzmax*SIZE_MPZ, nz*SIZE_MPZ);
+    A->x = (mpz_t*) SLIP_realloc(A->x, A->nzmax*sizeof(mpz_t), nz*sizeof(mpz_t));
     A->nzmax = nz;
     return SLIP_OK;
 }
