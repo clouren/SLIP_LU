@@ -18,12 +18,12 @@
  */
 void slip_dfs // performs a dfs of the graph of the matrix starting at node j
 (
-    int32_t *top,    // beginning of stack
-    int32_t j,       // What node to start DFS at
-    SLIP_sparse* L,  // matrix which represents the Graph of L 
-    int32_t* xi,     // the nonzero pattern
-    int32_t* pstack, // workspace vector
-    int32_t* pinv    // row permutation 
+    int32_t *top,          // beginning of stack
+    int32_t j,             // What node to start DFS at
+    SLIP_sparse* L,        // matrix which represents the Graph of L 
+    int32_t* xi,           // the nonzero pattern
+    int32_t* pstack,       // workspace vector
+    const int32_t* pinv    // row permutation 
 )
 {
     // No check here, input is checked in slip_reach.c

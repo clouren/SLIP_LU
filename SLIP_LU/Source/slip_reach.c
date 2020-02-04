@@ -19,11 +19,11 @@
 void slip_reach    // compute the reach of column k of A on the graph of L
 (
     int32_t *top,
-    SLIP_sparse* L,   // matrix representing graph of L
-    SLIP_sparse* A,   // input matrix 
-    int32_t k,        // column of A of interest
-    int32_t* xi,      // nonzero pattern
-    int32_t* pinv     // row permutation
+    SLIP_sparse* L,         // matrix representing graph of L
+    SLIP_sparse* A,         // input matrix 
+    int32_t k,              // column of A of interest
+    int32_t* xi,            // nonzero pattern
+    const int32_t* pinv     // row permutation
 )
 {
     // inputs have been checked in slip_REF_triangular_solve

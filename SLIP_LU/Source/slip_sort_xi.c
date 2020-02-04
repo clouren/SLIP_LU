@@ -26,11 +26,11 @@ static inline int32_t compare (const void * a, const void * b)
 
 void slip_sort_xi
 (
-    int32_t* xi,        // nonzero pattern
-    int32_t top,        // nonzeros are stored in xi[top..n-1]
-    int32_t n,          // size of problem
-    int32_t* pinv,      // inverse row permutation
-    int32_t* row_perm   // opposite of pinv. if pinv[j] = k then row_perm[k] = j
+    int32_t* xi,              // nonzero pattern
+    int32_t top,              // nonzeros are stored in xi[top..n-1]
+    int32_t n,                // size of problem
+    const int32_t* pinv,      // inverse row permutation
+    const int32_t* row_perm   // opposite of pinv. if pinv[j] = k then row_perm[k] = j
 )
 {
     // Convert xi vector with respect to pinv

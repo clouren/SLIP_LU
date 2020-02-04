@@ -69,10 +69,10 @@ SLIP_info slip_REF_triangular_solve // performs the sparse REF triangular solve
     SLIP_sparse* A,           // input matrix
     int32_t k,                // constructing L(:,k)
     int32_t* xi,              // nonzero pattern vector
-    int32_t* q,         // column permutation, not modified
-    mpz_t* rhos,        // sequence of pivots
-    int32_t* pinv,      // inverse row permutation
-    int32_t* row_perm,  // row permutation
+    const int32_t* q,         // column permutation, not modified
+    const mpz_t* rhos,        // sequence of pivots
+    const int32_t* pinv,      // inverse row permutation
+    const int32_t* row_perm,  // row permutation
     int32_t* h,               // history vector
     mpz_t* x                  // solution of system ==> kth column of L and U
 )

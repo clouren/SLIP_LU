@@ -392,12 +392,12 @@ SLIP_info slip_cumsum
  */
 void slip_dfs // performs a dfs of the graph of the matrix starting at node j
 (
-    int32_t *top,    // beginning of stack
-    int32_t j,       // What node to start DFS at
-    SLIP_sparse* L,  // matrix which represents the Graph of L
-    int32_t* xi,     // the nonzero pattern
-    int32_t* pstack, // workspace vector
-    int32_t* pinv    // row permutation
+    int32_t *top,          // beginning of stack
+    int32_t j,             // What node to start DFS at
+    SLIP_sparse* L,        // matrix which represents the Graph of L
+    int32_t* xi,           // the nonzero pattern
+    int32_t* pstack,       // workspace vector
+    const int32_t* pinv    // row permutation
 );
 
 /* Purpose: This function converts a double array of size n to an appropriate
@@ -668,11 +668,11 @@ SLIP_info slip_mpz_populate_mat
 void slip_reach    // compute the reach of column k of A on the graph of L
 (
     int32_t *top,
-    SLIP_sparse* L,   // matrix representing graph of L
-    SLIP_sparse* A,   // input matrix
-    int32_t k,        // column of A of interest
-    int32_t* xi,      // nonzero pattern
-    int32_t* pinv     // row permutation
+    SLIP_sparse* L,         // matrix representing graph of L
+    SLIP_sparse* A,         // input matrix
+    int32_t k,              // column of A of interest
+    int32_t* xi,            // nonzero pattern
+    const int32_t* pinv     // row permutation
 )  ;
 
 /*
@@ -686,11 +686,11 @@ void slip_reach    // compute the reach of column k of A on the graph of L
 
 void slip_sort_xi
 (
-    int32_t* xi,        // nonzero pattern
-    int32_t top,        // nonzeros are stored in xi[top..n-1]
-    int32_t n,          // size of problem
-    int32_t* pinv,      // inverse row permutation
-    int32_t* row_perm   // opposite of pinv. if pinv[j] = k then row_perm[k] = j
+    int32_t* xi,              // nonzero pattern
+    int32_t top,              // nonzeros are stored in xi[top..n-1]
+    int32_t n,                // size of problem
+    const int32_t* pinv,      // inverse row permutation
+    const int32_t* row_perm   // opposite of pinv. if pinv[j] = k then row_perm[k] = j
 );
 
 
@@ -710,10 +710,10 @@ SLIP_info slip_REF_triangular_solve // performs the sparse REF triangular solve
     SLIP_sparse* A,           // input matrix
     int32_t k,                // iteration of algorithm
     int32_t* xi,              // nonzero pattern vector
-    int32_t* q,               // column permutation
-    mpz_t* rhos,              // sequence of pivots
-    int32_t* pinv,            // inverse row permutation
-    int32_t* row_perm,        // row permutation
+    const int32_t* q,         // column permutation
+    const mpz_t* rhos,        // sequence of pivots
+    const int32_t* pinv,      // inverse row permutation
+    const int32_t* row_perm,  // row permutation
     int32_t* h,               // history vector
     mpz_t* x                  // solution of system ==> kth column of L and U
 );
