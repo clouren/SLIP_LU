@@ -31,7 +31,7 @@ mpfr_t** SLIP_create_mpfr_mat
     }
     for (int32_t i = 0; i < m; i++)
     {
-        x[i] = (mpfr_t*) SLIP_calloc(n, SIZE_MPFR);
+        x[i] = (mpfr_t*) SLIP_calloc(n, sizeof(mpfr_t));
         if (x[i] == NULL)
         {
             // Out of memory
