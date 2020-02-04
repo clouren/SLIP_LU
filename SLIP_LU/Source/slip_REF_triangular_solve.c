@@ -18,32 +18,46 @@
  * as possible.
  */
 
-/*
-
-    q       an array of size n+1, where j = q [k] if the original column j
-            is the kth column of the LU factorization.  Unmodified.
-
-    pinv
-
-    row_perm
-
-    xi      workspace of size 2n, uninitialized on input.  On output,
-            xi [top..n-1] contain the nonzero pattern of L(:,k), in
-            strictly sorted order.  The row indices in xi [top..n-1] reflect
-            the row indices in the original A matrix, not the final L and U,
-            since the row permutation.
-
-    top_output  undefined on input.  On output, top = (*top_output) gives the
-            size of the pattern xi [top..n-1].
-
-    x       workspace of size n, uninitialized on input.  On output,
-            x [i] is the value of L(i,k), where i is in the pattern
-            xi [top..n-1].  Other entries of x are undefined on output.
-
-    h       workspace of size n,
-            uninitialized on input and undefined on output.
-
-*/
+/* Description of input/output
+ *
+ *  top_output: An int which on input is uninitialized. On output contains the 
+ *              contains the beginning of the nonzero pattern. That is the nonzero
+ *              pattern is contained in xi[top_output...n-1]
+ *
+ *  L:          The partial L matrix. On input contains columns 1:k-1 of L. Unmodified on
+ *              on output.
+ *
+ *  A:          The input matrix. Unmodified on input/output
+ *
+ *  k:          Unmodified int which indicates which column of L and U is being computed.
+ *              That is, this triangular solve computes L(:,k) and U(:,k)
+ *
+ *  xi:         A worspace array of size 2n, unitialized on input. On output, xi[top...n-1]
+ *              contains the nonzero pattern of L(:,k) and U(:,k) in strictly sorted order.
+ *              The row indices in xi[top...n-1] reflect the row indices in the original A matrix
+ *              not the final L and U because of permutation.
+ *
+ *  q:          An array of size n+1 which is unmodified on input/output. j = q[k] if the original
+ *          `   column j is the kth column of the LU factorization.
+ *
+ *  rhos:       Sequence of pivots, unmodified on input/output. This vector is utilized to perform
+ *              history and IPGE updates in the triangular solve.
+ *
+ *  pinv:       An array of size n which contains the inverse row permutation, unmodified on input/
+ *              output. This vector is utilized in the factorization as well as for sorting.
+ *
+ *  row_perm:   An array of size n which contains the row permutation, unmodified on input/output. 
+ *              row_perm is the inverse of pinv and is utilized for the sorting routine.
+ *
+ *
+ *  h:          A workspace array of size n, unitialized on input and undefined on output. This
+ *              vector is utilized to perform history updates on entries in x. During the triangular 
+ *              solve, h[i] indicates the last pivot in which entry x[i] was IPGE updated
+ *
+ *  x:          Workspace of size n, unitialized on input. On output, x[i] is the value of L(i,k)
+ *              here i is in the nonzero patter xi[top...n-1]. Other entries of x are undefined on 
+ *              output.
+ */
 
 
 #include "SLIP_LU_internal.h"
@@ -51,12 +65,12 @@
 SLIP_info slip_REF_triangular_solve // performs the sparse REF triangular solve
 (
     int32_t *top_output,      // Output the beginning of nonzero pattern
-    SLIP_sparse* L,           // partial L matrix
-    SLIP_sparse* A,           // input matrix
+    const SLIP_sparse* L,     // partial L matrix
+    const SLIP_sparse* A,     // input matrix
     int32_t k,                // constructing L(:,k)
     int32_t* xi,              // nonzero pattern vector
     const int32_t* q,         // column permutation, not modified
-    mpz_t* rhos,              // sequence of pivots
+    const mpz_t* rhos,        // sequence of pivots
     const int32_t* pinv,      // inverse row permutation
     const int32_t* row_perm,  // row permutation
     int32_t* h,               // history vector
@@ -68,7 +82,8 @@ SLIP_info slip_REF_triangular_solve // performs the sparse REF triangular solve
     SLIP_info ok;
 
     //--------------------------------------------------------------------------
-    // Initialize REF TS by getting nonzero patern of x && obtaining A(:,k)
+    // Begin the REF triangular solve by obtaining the nonzero pattern, and 
+    // reseting the vectors x, xi, and h
     //--------------------------------------------------------------------------
 
     // Size of matrix and the dense vectors
