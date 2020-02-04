@@ -184,68 +184,9 @@ SLIP_info SLIP_LU_factorize
     SLIP_CHECK(slip_sparse_alloc2(U, n, n, S->unz));
 
     //--------------------------------------------------------------------------
-    // Iteration 0, must select pivot
+    // Iterations 0:n-1 (1:n in standard)
     //--------------------------------------------------------------------------
-    col = S->q[0];
-    // x = A(:,col)
-    SLIP_CHECK(slip_get_column(x, A, col)); 
-    // top: nnz in column col
-    top = n - ( (A->p[col+1]) - (A->p[col]) );
-    j = 0;
-
-    // Populate nonzero pattern
-    for (i = A->p[col]; i < A->p[col+1]; i++)
-    {
-        xi[top+j] = A->i[i];
-        j+=1;
-    }
-    // Get pivot
-    SLIP_CHECK(slip_get_pivot(&pivot, x, pivs, n, top, xi, option->pivot,
-        col, k, rhos, pinv, row_perm, option->tol));
-    
-    // Populate L and U
-    for (j = top; j < n; j++)
-    {
-        jnew = xi[j];
-        loc = pinv[jnew];
-
-        //----------------------------------------------------------------------
-        // U entries
-        //----------------------------------------------------------------------
-        if (loc <= k)
-        {
-            // ith value of x[j]
-            U->i[unz] = jnew;
-            // Allocate memory for x[j]
-            SLIP_CHECK(SLIP_mpz_sizeinbase(&size, x[jnew], 2));
-            // GMP manual: Allocated size should be size+2
-            SLIP_CHECK(SLIP_mpz_init2(U->x[unz],size+2));
-            // Set U[x]
-            SLIP_CHECK(SLIP_mpz_set(U->x[unz],x[jnew]));
-            // Increment nnz of U
-            unz++;
-        }
-
-        //----------------------------------------------------------------------
-        // L entries
-        //----------------------------------------------------------------------
-        if (loc >= k)
-        {
-            // ith value of x[j]
-            L->i[lnz] = jnew;
-            SLIP_CHECK(SLIP_mpz_sizeinbase(&size, x[jnew], 2));
-            // GMP manual: Allocated size should be size+2
-            SLIP_CHECK(SLIP_mpz_init2(L->x[lnz], size+2));
-            // Set L[x]
-            SLIP_CHECK(SLIP_mpz_set(L->x[lnz], x[jnew]));
-            lnz++;
-        }
-    }
-
-    //--------------------------------------------------------------------------
-    // Iterations 1:n-1 (2:n in standard)
-    //--------------------------------------------------------------------------
-    for (k = 1; k < n; k++)
+    for (k = 0; k < n; k++)
     {
         // Column pointers for column k of L and U
         L->p[k] = lnz;

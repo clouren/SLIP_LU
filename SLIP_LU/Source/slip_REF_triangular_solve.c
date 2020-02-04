@@ -65,14 +65,14 @@
 SLIP_info slip_REF_triangular_solve // performs the sparse REF triangular solve
 (
     int32_t *top_output,      // Output the beginning of nonzero pattern
-    const SLIP_sparse* L,     // partial L matrix
-    const SLIP_sparse* A,     // input matrix
+    SLIP_sparse* L,           // partial L matrix
+    SLIP_sparse* A,           // input matrix
     int32_t k,                // constructing L(:,k)
     int32_t* xi,              // nonzero pattern vector
-    const int32_t* q,         // column permutation, not modified
-    const mpz_t* rhos,        // sequence of pivots
-    const int32_t* pinv,      // inverse row permutation
-    const int32_t* row_perm,  // row permutation
+    int32_t* q,         // column permutation, not modified
+    mpz_t* rhos,        // sequence of pivots
+    int32_t* pinv,      // inverse row permutation
+    int32_t* row_perm,  // row permutation
     int32_t* h,               // history vector
     mpz_t* x                  // solution of system ==> kth column of L and U
 )
@@ -110,7 +110,7 @@ SLIP_info slip_REF_triangular_solve // performs the sparse REF triangular solve
     // not in the pattern xi [top..n-1].  The value x[col] is set to zero
     // here, in case the entry A(col,col) is not present, so that the pivot
     // search query the value of the diagonal.
-    SLIP_CHECK(slip_mpz_set_ui(x[col], 0));
+    SLIP_CHECK(SLIP_mpz_set_ui(x[col], 0));
 
     // Reset h[i] = -1 for all i in nonzero pattern xi [top..n-1]
     SLIP_CHECK(slip_reset_int_array2(h, n, top, xi));
