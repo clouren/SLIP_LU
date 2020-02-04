@@ -23,11 +23,11 @@
 
 SLIP_info slip_array_div // divides the x vector by the determinant
 (
-    mpq_t** x2,     // solution of x/det
-    mpz_t** x,      // input vector
-    mpz_t det,      // given determinant of matrix
-    int32_t n,      // size of x and x2 
-    int32_t numRHS  // number of rhs vectors
+    mpq_t** x2,         // solution of x/det
+    mpz_t** x,          // input vector
+    const mpz_t det,    // given determinant of matrix
+    int32_t n,          // size of x and x2 
+    int32_t numRHS      // number of rhs vectors
 )
 {
     if (!x2 || !x) {return SLIP_INCORRECT_INPUT;}
