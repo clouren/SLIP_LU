@@ -971,13 +971,13 @@ SLIP_info SLIP_check_solution
 //------------------------------------------------------------------------------
 //---------------------------SLIP GMP/MPFR Functions----------------------------
 //------------------------------------------------------------------------------
-/* The following functions are the SLIP LU interface to the GMP/MPFR libary. Each 
- * corresponding GMP/MPFR function is given a wrapper to ensure that no memory 
- * leaks or crashes occur. All covered GMP functions can be found in SLIP_gmp.c
+
+/* The following functions are the SLIP LU interface to the GMP/MPFR libary.
+ * Each corresponding GMP/MPFR function is given a wrapper to ensure that no
+ * memory leaks or crashes occur. All covered GMP functions can be found in
+ * SLIP_gmp.c
  *
  */
-
-//TODO should these variables prefixed with slip_ be renamed?
 
 // The GMP library does not handle out-of-memory failures.  However, it does
 // provide a mechanism for passing function pointers that replace GMP's use of
@@ -995,85 +995,6 @@ SLIP_info SLIP_check_solution
      * for memory test and to use macro GOTCHA */
     #include "../Tcov/tcov_malloc_test.h"
 #endif
-
-
-#define SLIP_GMP_WRAPPER_START                                          \
-{                                                                       \
-    slip_gmp_nmalloc = 0 ;                                              \
-    /* setjmp returns 0 if called from here, or > 0 if from longjmp */  \
-    int32_t slip_gmp_status = setjmp (slip_gmp_environment) ;           \
-    if (slip_gmp_status != 0)                                           \
-    {                                                                   \
-        /* failure from longjmp */                                      \
-        slip_gmp_failure (slip_gmp_status) ;                            \
-        return (SLIP_OUT_OF_MEMORY) ;                                   \
-    }                                                                   \
-}
-#define SLIP_GMPZ_WRAPPER_START(x)                                      \
-{                                                                       \
-    slip_gmpz_archive = (mpz_t *) x;                                    \
-    slip_gmpq_archive = NULL;                                           \
-    slip_gmpfr_archive = NULL;                                          \
-    SLIP_GMP_WRAPPER_START;                                             \
-}
-
-#define SLIP_GMPQ_WRAPPER_START(x)                                      \
-{                                                                       \
-    slip_gmpz_archive = NULL;                                           \
-    slip_gmpq_archive =(mpq_t *) x;                                     \
-    slip_gmpfr_archive = NULL;                                          \
-    SLIP_GMP_WRAPPER_START;                                             \
-}
-
-#define SLIP_GMPFR_WRAPPER_START(x)                                     \
-{                                                                       \
-    slip_gmpz_archive = NULL;                                           \
-    slip_gmpq_archive = NULL;                                           \
-    slip_gmpfr_archive = (mpfr_t *) x;                                  \
-    SLIP_GMP_WRAPPER_START;                                             \
-}
-
-#define SLIP_GMP_WRAPPER_FINISH                                         \
-{                                                                       \
-    /* clear (but do not free) the list.  The caller must ensure */     \
-    /* the result is eventually freed. */                               \
-    slip_gmpz_archive = NULL ;                                          \
-    slip_gmpq_archive = NULL ;                                          \
-    slip_gmpfr_archive = NULL ;                                         \
-    slip_gmp_nmalloc = 0 ;                                              \
-}
-
-// free a block of memory, and also remove it from the archive if it's there
-#define SLIP_SAFE_FREE(p)                                               \
-{                                                                       \
-    if (slip_gmpz_archive != NULL)                                      \
-    {                                                                   \
-        if (p == MPZ_PTR(*slip_gmpz_archive))                           \
-        {                                                               \
-            MPZ_PTR(*slip_gmpz_archive) = NULL ;                        \
-        }                                                               \
-    }                                                                   \
-    else if (slip_gmpq_archive != NULL)                                 \
-    {                                                                   \
-        if (p == MPZ_PTR(MPQ_NUM(*slip_gmpq_archive)))                  \
-        {                                                               \
-            MPZ_PTR(MPQ_NUM(*slip_gmpq_archive)) = NULL ;               \
-        }                                                               \
-        if (p == MPZ_PTR(MPQ_DEN(*slip_gmpq_archive)))                  \
-        {                                                               \
-            MPZ_PTR(MPQ_DEN(*slip_gmpq_archive)) = NULL ;               \
-        }                                                               \
-    }                                                                   \
-    else if (slip_gmpfr_archive != NULL)                                \
-    {                                                                   \
-        if (p == MPFR_REAL_PTR(*slip_gmpfr_archive))                    \
-        {                                                               \
-            MPFR_MANT(*slip_gmpfr_archive) = NULL ;                     \
-        }                                                               \
-    }                                                                   \
-    SLIP_FREE (p) ;                                                     \
-}
-
 
 SLIP_info SLIP_gmp_fprintf(FILE *fp, const char *format, ... );
 

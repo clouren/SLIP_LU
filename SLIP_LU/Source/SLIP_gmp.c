@@ -20,6 +20,7 @@
 // the error condition to the caller.
 
 # include "SLIP_LU_internal.h"
+# include "SLIP_gmp.h"
 
 //------------------------------------------------------------------------------
 // global variables
@@ -210,7 +211,7 @@ void slip_gmp_free
     // SLIP_gmp_list if it was allocated inside the current GMP function.
     // If the block was allocated by one GMP function and freed by another,
     // it is not in the list.
-    SLIP_SAFE_FREE (p) ;
+    SLIP_GMP_SAFE_FREE (p) ;
 }
 
 //------------------------------------------------------------------------------
@@ -296,7 +297,7 @@ void slip_gmp_failure
     {
         for (int64_t i = 0 ; i < slip_gmp_nmalloc ; i++)
         {
-            SLIP_SAFE_FREE (slip_gmp_list [i]) ;
+            SLIP_GMP_SAFE_FREE (slip_gmp_list [i]) ;
         }
     }
     slip_gmp_finalize ( ) ;

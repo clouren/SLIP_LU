@@ -137,7 +137,7 @@ SLIP_info slip_REF_triangular_solve // performs the sparse REF triangular solve
             // IPGE updates
             //------------------------------------------------------------------
 
-            // ----------- Iterate accross nonzeros in Lij ---------------------
+            // ----------- Iterate across nonzeros in Lij ---------------------
             for (m = L->p[jnew]; m < L->p[jnew+1]; m++)
             {
                 i = L->i[m];               // i value of Lij

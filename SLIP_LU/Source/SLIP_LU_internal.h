@@ -173,11 +173,14 @@ void slip_gmp_failure (int32_t status) ;
 
 #define SLIP_DEFAULT_MPFR_ROUND MPFR_RNDN;
 
+// TODO delete these
+
 // Size of mpz_t, mpq_t and mpfr_t values
 #define SIZE_MPZ  sizeof(mpz_t)
 #define SIZE_MPQ  sizeof(mpq_t)
 #define SIZE_MPFR sizeof(mpfr_t)
 
+// TODO rename these (MPZ_SIZ to SLIP_MPZ_SIZ etc)
 
 // Field access macros for MPZ/MPQ/MPFR struct
 // (similar definition in gmp-impl.h and mpfr-impl.h)
