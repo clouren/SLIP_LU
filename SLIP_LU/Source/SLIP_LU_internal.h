@@ -321,7 +321,7 @@ SLIP_info slip_array_div // divides the x vector by the determinant
 (
     mpq_t** x2,     // solution of x/det
     mpz_t** x,      // input vector
-    mpz_t det,      // given determinant of matrix
+    const mpz_t det,// given determinant of matrix
     int32_t n,      // size of x and x2
     int32_t numRHS  // number of rhs vectors
 );
@@ -334,7 +334,7 @@ SLIP_info slip_array_div // divides the x vector by the determinant
 SLIP_info slip_array_mul // multiplies vector x by the determinant of matrix
 (
     mpz_t** x,      // matrix to be multiplied
-    mpz_t det,      // given determinant of matrix
+    const mpz_t det,// given determinant of matrix
     int32_t n,      // size of x
     int32_t numRHS  // number of RHS vectors
 );
