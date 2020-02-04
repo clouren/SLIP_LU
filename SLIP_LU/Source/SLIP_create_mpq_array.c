@@ -21,7 +21,7 @@ mpq_t* SLIP_create_mpq_array
     // Check input
     if (n <= 0) {return NULL;}
     // Malloc space
-    mpq_t* x = (mpq_t*) SLIP_calloc(n, SIZE_MPQ);
+    mpq_t* x = (mpq_t*) SLIP_calloc(n, sizeof(mpq_t));
     if (!x) {return NULL;}
     for (int32_t i = 0; i < n; i++)
     {
