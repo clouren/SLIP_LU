@@ -23,10 +23,6 @@
  * option:  option->order tells the function which ordering scheme to use
  */
 
-#define SLIP_FREE_WORKSPACE   \
-    SLIP_FREE(p);             \
-    SLIP_FREE(q);             \
-    SLIP_FREE(Ax);
 
 # include "SLIP_LU_internal.h"
 
