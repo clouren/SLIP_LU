@@ -1,26 +1,71 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/SLIP_gmp: interface to the gmp library
+// SLIP_LU/SLIP_gmp.c: interface to the gmp library
 //------------------------------------------------------------------------------
 
-
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-// This file (SLIP_gmp.c) provides a wrapper for all functions in the GMP
-// library used by SLIP_LU.  The wrappers enable memory failures to be caught
-// and handled properly.  GMP, by default, aborts the user's application if any
-// internal malloc fails.  This is not acceptable in a robust end-user
+// Purpose: This file (SLIP_gmp.c) provides a wrapper for all functions in the
+// GMP library used by SLIP_LU.  The wrappers enable memory failures to be
+// caught and handled properly.  GMP, by default, aborts the user's application
+// if any internal malloc fails.  This is not acceptable in a robust end-user
 // application.  Fortunately, GMP allows the user package (SLIP_LU in this
 // case) to pass in function pointers for malloc, calloc, realloc, and free.
 // These functions are defined below.  If they fail, they do not return to GMP.
 // Instead, they use the ANSI C longjmp feature to trap the error, and return
 // the error condition to the caller.
 
-# include "SLIP_LU_internal.h"
-# include "SLIP_gmp.h"
+// Note that not all functions in the GMP library are wrapped by these
+// functions, but just the ones used by SLIP_LU.  However, most of the wrapper
+// functions follow the same structure, and this method would easily extend to
+// all GMP functions.  To that end, the wrapper mechanism (here, and in
+// SLIP_gmp.h) is described below.
+
+// For a given GMP function 'gmpfunc' with no return value, the SLIP wrapper is
+// SLIP_gmpfunc, with the same arguments:
+
+/*
+    SLIP_info SLIP_gmpfunc (args)
+    {
+        SLIP_GMP_WRAPPER_START ;
+        gmpfunc (args;
+        SLIP_GMP_WRAPPER_FINISH ;
+        return SLIP_OK ;
+    }
+*/
+
+// The SLIP_GMP*_WRAPPER_START and SLIP_GMP_WRAPPER_FINISH macros work together
+// to establish a try/catch mechanism, via setjmp and longjmp.  If a memory
+// error occurs, a NULL is not returned to GMP (which would terminate the user
+// application).  Instead, the malloc wrapper traps the error via the longjmp,
+// and an out-of-memory condition is returned to the caller of SLIP_gmpfunc.
+
+// If the gmpfunc has a return value, as in r = mpz_cmp (x,y), the return value
+// is passed as the first argument to the SLIP_gmpfunc:
+
+/*
+    SLIP_info SLIP_gmfunc (result, args)
+    {
+        SLIP_GMP_WRAPPER_START ;
+        (*result) = gmpfunc (args) ;
+        SLIP_GMP_WRAPPER_FINISH ;
+        return SLIP_OK ;
+    }
+*/
+
+// The SLIP_GMP*_WRAPPER_START macros also take an single 'archive' parameter,
+// for the current mpz, mpq, or mpfr object being operated on.  A pointer
+// parameter to this parameter is kept so that it can be safely freed in case
+// a memory error occurs (avoiding a double-free), in SLIP_GMP_SAFE_FREE.
+
+#include "SLIP_LU_internal.h"
+#include "SLIP_gmp.h"
+
+// ignore warnings about unused parameters in this file
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 
 //------------------------------------------------------------------------------
 // global variables
@@ -179,7 +224,7 @@ void *slip_gmp_allocate
 void slip_gmp_free
 (
     void *p,        // Block to be freed
-    size_t size     // Size of p
+    size_t size     // Size of p (currently an unused parameter)
 )
 {
     #ifdef SLIP_GMP_MEMORY_DEBUG
@@ -282,7 +327,8 @@ void slip_gmp_dump ( )
 /* Purpose: Catch an error from longjmp */
 void slip_gmp_failure
 (
-    int32_t status      // Status returned from longjmp
+    int32_t status  // Status returned from longjmp
+                    // (unused parameter unless debugging)
 )
 {
     #ifdef SLIP_GMP_MEMORY_DEBUG
@@ -309,10 +355,20 @@ void slip_gmp_failure
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
+//------------------------------------------------------------------------------
+// SLIP_gmp_fprintf
+//------------------------------------------------------------------------------
+
 /* Safely print to the stream fp. Return positive value (the number of
  * characters written) upon success, otherwise return negative value (error
  * code) */
-int32_t SLIP_gmp_fprintf(FILE *fp, const char *format, ... )
+
+int32_t SLIP_gmp_fprintf
+(
+    FILE *fp,
+    const char *format,
+    ...
+)
 {
     // Start the GMP wrapper
     SLIP_GMP_WRAPPER_START;
@@ -331,10 +387,19 @@ int32_t SLIP_gmp_fprintf(FILE *fp, const char *format, ... )
         ((int32_t) SLIP_INCORRECT_INPUT) : num_of_char) ;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_gmp_printf
+//------------------------------------------------------------------------------
+
 /* Safely print to the standard output stdout. Return positive value (the number
  * of characters written) upon success, otherwise return negative value (error
  * code) */
-int32_t SLIP_gmp_printf(const char *format, ... )
+
+int32_t SLIP_gmp_printf
+(
+    const char *format,
+    ...
+)
 {
     // Start the GMP wrapper
     SLIP_GMP_WRAPPER_START;
@@ -353,10 +418,20 @@ int32_t SLIP_gmp_printf(const char *format, ... )
         ((int32_t) SLIP_INCORRECT_INPUT) : num_of_char) ;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_gmp_fscanf
+//------------------------------------------------------------------------------
+
 /* Safely scan the stream fp. Return positive value (the number of fields
  * successfully parsed and stored), otherwise return negative value (error
  * code) */
-int32_t SLIP_gmp_fscanf(FILE *fp, const char *format, ... )
+
+int32_t SLIP_gmp_fscanf
+(
+    FILE *fp,
+    const char *format,
+    ...
+)
 {
     // Start the GMP wrapper
     SLIP_GMP_WRAPPER_START;
@@ -377,13 +452,19 @@ int32_t SLIP_gmp_fscanf(FILE *fp, const char *format, ... )
         ((int32_t) SLIP_INCORRECT_INPUT) : num_of_field) ;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpfr_asprintf
+//------------------------------------------------------------------------------
+
 /* Safely write the output as a null terminated string in a block of memory,
  * which is pointed to by a pointer stored in str. The block of memory must be
  * freed using mpfr_free_str. The return value is the number of characters
  * written in the string, excluding the null-terminator, or a negative value if
  * an error occurred */
- #if 0
+
+#if 0
 /* This function is currently unused, but kept here for future reference. */
+
 int32_t SLIP_mpfr_asprintf (char **str, const char *template, ... )
 {
     // Start the GMP wrapper
@@ -408,8 +489,17 @@ int32_t SLIP_mpfr_asprintf (char **str, const char *template, ... )
         return num_of_char;
     }
 }
+#endif
+
+//------------------------------------------------------------------------------
+// SLIP_mpfr_free_str
+//------------------------------------------------------------------------------
 
 /* Safely free a string allocated. */
+
+#if 0
+/* This function is currently unused, but kept here for future reference. */
+
 SLIP_info SLIP_mpfr_free_str (char *str)
 {
     // Start the GMP wrapper
@@ -424,10 +514,20 @@ SLIP_info SLIP_mpfr_free_str (char *str)
 }
 #endif
 
+//------------------------------------------------------------------------------
+// SLIP_mpfr_fprintf
+//------------------------------------------------------------------------------
+
 /* Safely print to the stream fp. Return positive value (the number of
  * characters written) upon success, otherwise return negative value (error
  * code) */
-int32_t SLIP_mpfr_fprintf(FILE *fp, const char *format, ... )
+
+int32_t SLIP_mpfr_fprintf
+(
+    FILE *fp,
+    const char *format,
+    ...
+)
 {
     // Start the GMP wrapper
     SLIP_GMP_WRAPPER_START;
@@ -457,8 +557,12 @@ int32_t SLIP_mpfr_fprintf(FILE *fp, const char *format, ... )
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
+//------------------------------------------------------------------------------
+// SLIP_mpz_init
+//------------------------------------------------------------------------------
 
 /* Purpose: Safely initialize an mpz_t number */
+
 SLIP_info SLIP_mpz_init
 (
     mpz_t x
@@ -475,8 +579,12 @@ SLIP_info SLIP_mpz_init
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpz_init2
+//------------------------------------------------------------------------------
 
 /* Purpose: Safely initialize an mpz_t number with space for size bits */
+
 SLIP_info SLIP_mpz_init2
 (
     mpz_t x,                // Number to be initialized
@@ -494,7 +602,12 @@ SLIP_info SLIP_mpz_init2
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpz_set
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely set an mpz number = to an mpz number, i.e., x = y */
+
 SLIP_info SLIP_mpz_set
 (
     mpz_t x,
@@ -512,7 +625,12 @@ SLIP_info SLIP_mpz_set
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpz_set_ui
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely set an mpz number = to an unsigned int, i.e., x = y */
+
 SLIP_info SLIP_mpz_set_ui
 (
     mpz_t x,
@@ -530,7 +648,12 @@ SLIP_info SLIP_mpz_set_ui
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpz_set_si
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely set an mpz number = a signed int */
+
 SLIP_info SLIP_mpz_set_si
 (
     mpz_t x,
@@ -548,9 +671,15 @@ SLIP_info SLIP_mpz_set_si
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpz_set_d
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely set an mpz number = a double */
+
 #if 0
 /* This function is currently unused, but kept here for future reference. */
+
 SLIP_info SLIP_mpz_set_d
 (
     mpz_t x,
@@ -567,8 +696,17 @@ SLIP_info SLIP_mpz_set_d
     SLIP_GMP_WRAPPER_FINISH;
     return SLIP_OK;
 }
+#endif
+
+//------------------------------------------------------------------------------
+// SLIP_mpz_get_d
+//------------------------------------------------------------------------------
 
 /* Purpose: Safely set a double number = a mpz */
+
+#if 0
+/* This function is currently unused, but kept here for future reference. */
+
 SLIP_info SLIP_mpz_get_d
 (
     double *x,
@@ -587,7 +725,12 @@ SLIP_info SLIP_mpz_get_d
 }
 #endif
 
+//------------------------------------------------------------------------------
+// SLIP_mpz_set_q
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely set an mpz number = mpq number */
+
 SLIP_info SLIP_mpz_set_q
 (
     mpz_t x,
@@ -605,7 +748,12 @@ SLIP_info SLIP_mpz_set_q
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpz_mul
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely compute a = b*c */
+
 SLIP_info SLIP_mpz_mul
 (
     mpz_t a,
@@ -624,9 +772,15 @@ SLIP_info SLIP_mpz_mul
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpz_add
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely compute a = b+c */
+
 #if 0
 /* This function is currently unused, but kept here for future reference. */
+
 SLIP_info SLIP_mpz_add
 (
     mpz_t a,
@@ -644,9 +798,16 @@ SLIP_info SLIP_mpz_add
     SLIP_GMP_WRAPPER_FINISH;
     return SLIP_OK;
 }
+#endif
+
+//------------------------------------------------------------------------------
+// SLIP_mpz_addmul
+//------------------------------------------------------------------------------
 
 /* Purpose: Safely set an mpz number += product of two mpz numbers,
  * i.e., x = x + y*z */
+
+#if 0
 /* This function is currently unused, but kept here for future reference. */
 SLIP_info SLIP_mpz_addmul
 (
@@ -667,9 +828,14 @@ SLIP_info SLIP_mpz_addmul
 }
 #endif
 
+//------------------------------------------------------------------------------
+// SLIP_mpz_submul
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely set an mpz number = itself minus a product of
  * mpz numbers, i.e., x = x - y*z
  */
+
 SLIP_info SLIP_mpz_submul
 (
     mpz_t x,
@@ -688,7 +854,12 @@ SLIP_info SLIP_mpz_submul
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpz_divexact
+//------------------------------------------------------------------------------
+
 /* Purpose: Safe version of exact integer division, i.e., x = y / z */
+
 SLIP_info SLIP_mpz_divexact
 (
     mpz_t x,
@@ -707,7 +878,12 @@ SLIP_info SLIP_mpz_divexact
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpz_gcd
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely compute the gcd of two mpz_t numbers, i.e., x = gcd(y, z) */
+
 SLIP_info SLIP_mpz_gcd
 (
     mpz_t x,
@@ -726,7 +902,12 @@ SLIP_info SLIP_mpz_gcd
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpz_lcm
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely compute the lcm of two mpz numbers */
+
 SLIP_info SLIP_mpz_lcm
 (
     mpz_t lcm,   // lcm of x and y
@@ -745,7 +926,12 @@ SLIP_info SLIP_mpz_lcm
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpz_abs
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely set x = |y| */
+
 SLIP_info SLIP_mpz_abs
 (
     mpz_t x,
@@ -763,8 +949,13 @@ SLIP_info SLIP_mpz_abs
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpz_cmp
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely compare two mpz numbers,
  * r > 0 if x > y, r = 0 if x = y, and r < 0 if x < y */
+
 SLIP_info SLIP_mpz_cmp
 (
     int32_t *r,
@@ -783,8 +974,13 @@ SLIP_info SLIP_mpz_cmp
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpz_cmpabs
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely compare the absolute value of two mpz numbers,
  * r > 0 if |x| > |y|, r = 0 if |x| = |y|, and r < 0 if |x| < |y| */
+
 SLIP_info SLIP_mpz_cmpabs
 (
     int32_t *r,
@@ -802,6 +998,10 @@ SLIP_info SLIP_mpz_cmpabs
     SLIP_GMP_WRAPPER_FINISH;
     return SLIP_OK;
 }
+
+//------------------------------------------------------------------------------
+// SLIP_mpz_cmp_ui
+//------------------------------------------------------------------------------
 
 /* Purpose: Safely compare a mpz number with a uint64_t integer
  * r > 0 if x > y, r = 0 if x = y, and r < 0 if x < y */
@@ -823,7 +1023,12 @@ SLIP_info SLIP_mpz_cmp_ui
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpz_sgn
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely set sgn = 0 if x = 0, otherwise, sgn = x/|x| */
+
 SLIP_info SLIP_mpz_sgn
 (
     int32_t *sgn,
@@ -840,6 +1045,10 @@ SLIP_info SLIP_mpz_sgn
     SLIP_GMP_WRAPPER_FINISH;
     return SLIP_OK;
 }
+
+//------------------------------------------------------------------------------
+// SLIP_mpz_sizeinbase
+//------------------------------------------------------------------------------
 
 /* Purpose: Safely return the size of x measured in number of digits
  * in the given base */
@@ -867,7 +1076,12 @@ SLIP_info SLIP_mpz_sizeinbase
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
+//------------------------------------------------------------------------------
+// SLIP_mpq_init
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely initialize an mpq_t number */
+
 SLIP_info SLIP_mpq_init
 (
     mpq_t x
@@ -884,7 +1098,12 @@ SLIP_info SLIP_mpq_init
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpq_set
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely set an mpq number = to an mpq number, i.e., x = y */
+
 SLIP_info SLIP_mpq_set
 (
     mpq_t x,
@@ -902,7 +1121,12 @@ SLIP_info SLIP_mpq_set
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpq_set_z
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely set an mpq number = an mpz number. i.e., x = y */
+
 SLIP_info SLIP_mpq_set_z
 (
     mpq_t x,
@@ -919,6 +1143,10 @@ SLIP_info SLIP_mpq_set_z
     SLIP_GMP_WRAPPER_FINISH;
     return SLIP_OK;
 }
+
+//------------------------------------------------------------------------------
+// SLIP_mpq_set_d
+//------------------------------------------------------------------------------
 
 /* Purpose: Safely set an mpq number = a double */
 SLIP_info SLIP_mpq_set_d
@@ -938,9 +1166,14 @@ SLIP_info SLIP_mpq_set_d
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpq_set_ui
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely set an mpq number as the fraction of two
  * unsigned ints. i.e., x = y / z
  */
+
 SLIP_info SLIP_mpq_set_ui
 (
     mpq_t x,
@@ -959,7 +1192,12 @@ SLIP_info SLIP_mpq_set_ui
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpq_set_num
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely set the numerator of an mpq number */
+
 SLIP_info SLIP_mpq_set_num
 (
     mpq_t x,
@@ -977,7 +1215,12 @@ SLIP_info SLIP_mpq_set_num
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpq_set_den
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely set the denominator of an mpq number */
+
 SLIP_info SLIP_mpq_set_den
 (
     mpq_t x,
@@ -995,7 +1238,12 @@ SLIP_info SLIP_mpq_set_den
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpq_get_den
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely set an mpz number = denominator of an mpq number */
+
 SLIP_info SLIP_mpq_get_den
 (
     mpz_t x,
@@ -1013,7 +1261,12 @@ SLIP_info SLIP_mpq_get_den
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpq_get_d
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely set a double = a mpq number*/
+
 SLIP_info SLIP_mpq_get_d
 (
     double *x,
@@ -1031,7 +1284,12 @@ SLIP_info SLIP_mpq_get_d
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpq_abs
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely set an mpq number = absolute value of mpq */
+
 SLIP_info SLIP_mpq_abs
 (
     mpq_t x,
@@ -1049,7 +1307,12 @@ SLIP_info SLIP_mpq_abs
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpq_add
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely add two mpq numbers, i.e., x = y+z */
+
 SLIP_info SLIP_mpq_add
 (
     mpq_t x,
@@ -1067,6 +1330,10 @@ SLIP_info SLIP_mpq_add
     SLIP_GMP_WRAPPER_FINISH;
     return SLIP_OK;
 }
+
+//------------------------------------------------------------------------------
+// SLIP_mpq_mul
+//------------------------------------------------------------------------------
 
 /* Purpose: Safely multiply two mpq numbers, i.e., x = y*z */
 SLIP_info SLIP_mpq_mul
@@ -1087,7 +1354,12 @@ SLIP_info SLIP_mpq_mul
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpq_div
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely divide two mpq numbers, i.e., x = y/z */
+
 SLIP_info SLIP_mpq_div
 (
     mpq_t x,
@@ -1106,8 +1378,13 @@ SLIP_info SLIP_mpq_div
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpq_cmp
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely compare two mpq numbers,
  * r > 0 if x > y, r = 0 if x = y, and r < 0 if x < y */
+
 SLIP_info SLIP_mpq_cmp
 (
     int32_t *r,
@@ -1126,8 +1403,13 @@ SLIP_info SLIP_mpq_cmp
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpq_cmp_ui
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely compare x and num/den. r > 0 if x > num/den,
  * r = 0 if x = num/den, and r < 0 if x < num/den */
+
 SLIP_info SLIP_mpq_cmp_ui
 (
     int32_t *r,
@@ -1147,6 +1429,10 @@ SLIP_info SLIP_mpq_cmp_ui
     SLIP_GMP_WRAPPER_FINISH;
     return SLIP_OK;
 }
+
+//------------------------------------------------------------------------------
+// SLIP_mpq_equal
+//------------------------------------------------------------------------------
 
 /* Purpose: Safely check if two mpq numbers equal,
  * r = 0 (r = false) if x != y, r != 0 (r = true) if x = y */
@@ -1174,7 +1460,12 @@ SLIP_info SLIP_mpq_equal
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
+//------------------------------------------------------------------------------
+// SLIP_mpfr_init2
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely initialize an mpfr_t number */
+
 SLIP_info SLIP_mpfr_init2
 (
     mpfr_t x,       // Floating point number to initialize
@@ -1192,9 +1483,15 @@ SLIP_info SLIP_mpfr_init2
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpfr_set
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely set an mpfr number = to an mpfr number, i.e., x = y */
+
 #if 0
 /* This function is currently unused, but kept here for future reference. */
+
 SLIP_info SLIP_mpfr_set
 (
     mpfr_t x,
@@ -1214,7 +1511,12 @@ SLIP_info SLIP_mpfr_set
 }
 #endif
 
+//------------------------------------------------------------------------------
+// SLIP_mpfr_set_d
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely set an mpfr number = to a double, i.e., x = y */
+
 SLIP_info SLIP_mpfr_set_d
 (
     mpfr_t x,
@@ -1233,7 +1535,12 @@ SLIP_info SLIP_mpfr_set_d
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpfr_set_q
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely set an mpfr number = to an mpq number */
+
 SLIP_info SLIP_mpfr_set_q
 (
     mpfr_t x,
@@ -1252,7 +1559,12 @@ SLIP_info SLIP_mpfr_set_q
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpfr_set_z
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely set an mpfr number = to an mpz number */
+
 SLIP_info SLIP_mpfr_set_z
 (
     mpfr_t x,
@@ -1271,7 +1583,12 @@ SLIP_info SLIP_mpfr_set_z
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpfr_get_z
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely set an mpz number = to an mpfr number, i.e., x = y */
+
 SLIP_info SLIP_mpfr_get_z
 (
     mpz_t x,
@@ -1290,7 +1607,12 @@ SLIP_info SLIP_mpfr_get_z
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpfr_get_d
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely set a double = to a mpfr number, i.e., x = y */
+
 SLIP_info SLIP_mpfr_get_d
 (
     double *x,
@@ -1309,7 +1631,12 @@ SLIP_info SLIP_mpfr_get_d
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpfr_mul
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely multiply mpfr numbers, x = y*z */
+
 SLIP_info SLIP_mpfr_mul
 (
     mpfr_t x,
@@ -1329,9 +1656,14 @@ SLIP_info SLIP_mpfr_mul
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpfr_mul_d
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely set an mpfr number = to a product of an mpfr_t and double,
  * i.e., x = y*z
  */
+
 SLIP_info SLIP_mpfr_mul_d
 (
     mpfr_t x,
@@ -1351,9 +1683,14 @@ SLIP_info SLIP_mpfr_mul_d
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpfr_div_d
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely set a mpfr number = a mpfr number divided by a double,
  * i.e., x = y/z
  */
+
 SLIP_info SLIP_mpfr_div_d
 (
     mpfr_t x,
@@ -1373,9 +1710,14 @@ SLIP_info SLIP_mpfr_div_d
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpfr_ui_pow_ui
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely set an mpfr number = power of two ints, i.e.,
  * x = y^z
  */
+
 SLIP_info SLIP_mpfr_ui_pow_ui
 (
     mpfr_t x,
@@ -1395,7 +1737,12 @@ SLIP_info SLIP_mpfr_ui_pow_ui
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpfr_log2
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely take the log2 of an mpfr number */
+
 SLIP_info SLIP_mpfr_log2
 (
     mpfr_t x,
@@ -1414,7 +1761,12 @@ SLIP_info SLIP_mpfr_log2
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_mpfr_free_cache
+//------------------------------------------------------------------------------
+
 /* Purpose: Safely free all caches and pools used by MPFR internally */
+
 SLIP_info SLIP_mpfr_free_cache(void)
 {
     // Start the GMP wrapper

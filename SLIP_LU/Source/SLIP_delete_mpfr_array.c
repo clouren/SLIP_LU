@@ -2,21 +2,23 @@
 // SLIP_LU/SLIP_delete_mpfr_array: delete an mpfr array
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-# include "SLIP_LU_internal.h"
-
-/* Purpose: This function clears the memory used for an mpfr array of size n. 
+/* Purpose: This function clears the memory used for an mpfr array of size n.
  *
- * Input is a mpfr** array and its size. The input array is destroyed on output
+ * Input is a mpfr** array and its size. The input array is destroyed on
+ * output.
  */
+
+#include "SLIP_LU_internal.h"
+
 void SLIP_delete_mpfr_array
 (
-    mpfr_t** x,    // mpfr array to be deleted 
+    mpfr_t** x,    // mpfr array to be deleted
     int32_t n      // size of x
 )
 {

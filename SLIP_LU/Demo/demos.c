@@ -1,8 +1,36 @@
-# include "demos.h"
+//------------------------------------------------------------------------------
+// SLIP_LU/Demo/demos.c: support functions for the demo programs
+//------------------------------------------------------------------------------
 
-/* Purpose: This function prints out the user specified/default options
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
+// SLIP_print_options: print user options.
+// SLIP_process_command_line: process command line for demo programs.
+// SLIP_show_usage: show usage of demo program.
+// SLIP_tripread: read a matrix from a file in triplet format.
+// SLIP_tripread_double: read a double matrix from a file in triplet format.
+// SLIP_read_dense: read a dense matrix from a file.
+// SLIP_print_stats_mpq: prints the mpq solution vector(s)
+// SLIP_print_stats_double: prints double solution vector(s)
+// SLIP_print_stats_mpfr: prints the mpfr solution vector(s)
+
+#include "demos.h"
+
+// ignore warnings about unused parameters in this file
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
+//------------------------------------------------------------------------------
+// SLIP_print_options
+//------------------------------------------------------------------------------
+
+/* Purpose: This function prints out the user specified/default options.
  * this is primarily intended for debugging
  */
+
 void SLIP_print_options // display specified/default options to user
 (
     SLIP_options* option // struct containing all of the options
@@ -60,8 +88,12 @@ void SLIP_print_options // display specified/default options to user
     }
 }
 
+//------------------------------------------------------------------------------
+// SLIP_process_command_line
+//------------------------------------------------------------------------------
 
 /* Purpose: This processes the command line for user specified options */
+
 SLIP_info SLIP_process_command_line //processes the command line
 (
     int32_t argc,           // number of command line arguments
@@ -218,6 +250,9 @@ SLIP_info SLIP_process_command_line //processes the command line
     return SLIP_OK;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_show_usage
+//------------------------------------------------------------------------------
 
 /* Purpose: This function shows the usage of the code.*/
 void SLIP_show_usage() //display the usage of the code
@@ -236,12 +271,16 @@ void SLIP_show_usage() //display the usage of the code
      \n");
 }
 
+//------------------------------------------------------------------------------
+// SLIP_tripread
+//------------------------------------------------------------------------------
 
 /* Purpose: This function reads in a matrix stored in a triplet format
- * This format used can be seen in any of the example mat files. 
- * 
- * This is only used for Demo purposes
+ * This format used can be seen in any of the example mat files.
+ *
+ * This is only used for Demo purposes.
  */
+
 SLIP_info SLIP_tripread
 (
     SLIP_sparse* A,     // Matrix to be populated
@@ -253,7 +292,7 @@ SLIP_info SLIP_tripread
     {
         return SLIP_INCORRECT_INPUT;
     }
-    
+
     int32_t m, n, nz;
 
     // Read in size of matrix & number of nonzeros
@@ -262,13 +301,13 @@ SLIP_info SLIP_tripread
     {
         return SLIP_INCORRECT_INPUT;
     }
-    // Initialize i and j vectors 
+    // Initialize i and j vectors
     int32_t *i = (int32_t*) SLIP_malloc(nz * sizeof(int32_t));
     int32_t *j = (int32_t*) SLIP_malloc(nz * sizeof(int32_t));
 
     // Create an initialized input mpz vector
     mpz_t* x_mpz = SLIP_create_mpz_array(nz);
-    
+
     if (!i || !j || !x_mpz)
     {
         SLIP_FREE(i);
@@ -301,7 +340,7 @@ SLIP_info SLIP_tripread
     // Read in the values from file
     for (int32_t p = 1; p < nz; p++)
     {
-        ok = SLIP_gmp_fscanf(file, "%d %d %Zd\n", &i[p], &j[p], &x_mpz[p]); 
+        ok = SLIP_gmp_fscanf(file, "%d %d %Zd\n", &i[p], &j[p], &x_mpz[p]);
         if ((feof(file) && p != nz-1) || ok < 3)
         {
             SLIP_FREE(i);
@@ -315,25 +354,28 @@ SLIP_info SLIP_tripread
     }
 
     //------------------------------------------------------------------
-    // At this point, we have read in i, j, and x arrays and have 
-    // allocated memory for the A matrix. The i & j are stored as 
-    // int32_t and x is stored as a mpz_array. We conclude by using the 
+    // At this point, we have read in i, j, and x arrays and have
+    // allocated memory for the A matrix. The i & j are stored as
+    // int32_t and x is stored as a mpz_array. We conclude by using the
     // appropriate SLIP_build_* to construct our input matrix A
     //------------------------------------------------------------------
     ok = SLIP_build_sparse_trip_mpz(A, i, j, x_mpz, n, nz);
-    
+
     // A now contains our input matrix. Free memory for i, j, and x
-    
+
     SLIP_FREE(i);
     SLIP_FREE(j);
     SLIP_delete_mpz_array(&x_mpz, nz);
     return ok;
 }
 
+//------------------------------------------------------------------------------
+// SLIP_tripread_double
+//------------------------------------------------------------------------------
 
 /* Purpose: This function reads in a double matrix stored in a triplet format
- * This format used can be seen in any of the example mat files. 
- * 
+ * This format used can be seen in any of the example mat files.
+ *
  * This is only used for Demo purposes
  */
 
@@ -358,16 +400,16 @@ SLIP_info SLIP_tripread_double
     {
         return SLIP_INCORRECT_INPUT;
     }
-    
+
     int32_t *i = (int32_t*) SLIP_malloc(nz* sizeof(int32_t));
     int32_t *j = (int32_t*) SLIP_malloc(nz* sizeof(int32_t));
     double *x_doub = (double*) SLIP_malloc(nz* sizeof(double));
 
     if (!i || !j || !x_doub )
     {
-        SLIP_FREE(i);                 
-        SLIP_FREE(j);                     
-        SLIP_FREE(x_doub);                
+        SLIP_FREE(i);
+        SLIP_FREE(j);
+        SLIP_FREE(x_doub);
         return SLIP_OUT_OF_MEMORY;
     }
 
@@ -375,9 +417,9 @@ SLIP_info SLIP_tripread_double
     ok = fscanf(file, "%d %d %lf\n", &(i[0]), &(j[0]), &(x_doub[0]));
     if (feof(file) || ok < 3)
     {
-        SLIP_FREE(i);                 
-        SLIP_FREE(j);                     
-        SLIP_FREE(x_doub);                
+        SLIP_FREE(i);
+        SLIP_FREE(j);
+        SLIP_FREE(x_doub);
         return SLIP_INCORRECT_INPUT;
     }
 
@@ -398,9 +440,9 @@ SLIP_info SLIP_tripread_double
         ok = fscanf(file, "%d %d %lf\n", &(i[k]), &(j[k]), &(x_doub[k]));
         if ((feof(file) && k != nz-1) || ok < 3)
         {
-            SLIP_FREE(i);                 
-            SLIP_FREE(j);                     
-            SLIP_FREE(x_doub);                
+            SLIP_FREE(i);
+            SLIP_FREE(j);
+            SLIP_FREE(x_doub);
             return SLIP_INCORRECT_INPUT;
         }
         // Conversion from 1 based to 0 based
@@ -409,20 +451,24 @@ SLIP_info SLIP_tripread_double
     }
 
     //------------------------------------------------------------------
-    // At this point, we have read in i, j, and x arrays and have 
-    // allocated memory for the A matrix. The i & j are stored as 
+    // At this point, we have read in i, j, and x arrays and have
+    // allocated memory for the A matrix. The i & j are stored as
     // int32_t and x is stored as a double array. We conclude by using the
     // appropriate SLIP_build_* to construct our input matrix A
     //------------------------------------------------------------------
-    
+
     ok = SLIP_build_sparse_trip_double(A, i, j, x_doub, n, nz, option);
     // Now, A contains the input matrix
-    SLIP_FREE(i);                 
-    SLIP_FREE(j);                     
-    SLIP_FREE(x_doub);                
+    SLIP_FREE(i);
+    SLIP_FREE(j);
+    SLIP_FREE(x_doub);
     return ok;
 }
 
+
+//------------------------------------------------------------------------------
+// SLIP_read_dense
+//------------------------------------------------------------------------------
 
 /* Purpose: Read a dense matrix. This is for demo purposes only */
 
@@ -432,14 +478,14 @@ SLIP_info SLIP_read_dense
     FILE* file          // file to read from (must already be open)
 )
 {
-    
+
     //------------------------------------------------------------------
     // We read in a dense matrix and then utilize the appropriate
     // SLIP_build_dense_*. Here, we assume that the input is read in
-    // as a dense mpz_t** matrix. The main component of this code is 
+    // as a dense mpz_t** matrix. The main component of this code is
     // reading in said matrix.
     //------------------------------------------------------------------
-    
+
     if (b == NULL || file == NULL)
     {
         return SLIP_INCORRECT_INPUT;
@@ -453,20 +499,20 @@ SLIP_info SLIP_read_dense
     {
         return SLIP_INCORRECT_INPUT;
     }
-    
+
     // Now, we create our dense mpz_t matrix
     mpz_t** b_orig = SLIP_create_mpz_mat(nrows, ncols);
     if (b_orig == NULL)
     {
         return SLIP_OUT_OF_MEMORY;
     }
-    
+
     // We now populate the matrix b.
     for (int32_t i = 0; i < nrows; i++)
     {
         for (int32_t j = 0; j < ncols; j++)
         {
-            ok = SLIP_gmp_fscanf(file, "%Zd", &(b_orig[i][j])); 
+            ok = SLIP_gmp_fscanf(file, "%Zd", &(b_orig[i][j]));
             if (ok < 0) // return from this function can be a nonzero
             {
                         printf("\n\nhere at i = %d and j = %d", i, j);
@@ -475,13 +521,13 @@ SLIP_info SLIP_read_dense
             }
         }
     }
-    
+
     //------------------------------------------------------------------
     // At this point, b_orig contains our original matrix stored in
     // mpz_t** format. We now utilize the appropriate SLIP_build function
     // to form our internal SLIP_dense structure.
     //------------------------------------------------------------------
-    
+
     ok = SLIP_build_dense_mpz(b, b_orig, nrows, ncols);
     SLIP_delete_mpz_mat(&b_orig, nrows, ncols);
     return SLIP_OK;
@@ -532,7 +578,7 @@ SLIP_info SLIP_print_stats_mpq
         {
             for (int32_t j = 0; j < numRHS; j++)
             {
-                ok = SLIP_gmp_fprintf(out_file, "%Qd ", x_mpq[i][j]); 
+                ok = SLIP_gmp_fprintf(out_file, "%Qd ", x_mpq[i][j]);
                 if (ok < 0)
                 {
                     return ok;
@@ -545,7 +591,7 @@ SLIP_info SLIP_print_stats_mpq
 }
 
 //------------------------------------------------------------------------------
-// SLIP_print_stats_double:  prints the solution vector(s) as a set of double entries
+// SLIP_print_stats_double:  prints the solution vector(s) as a double entries
 //------------------------------------------------------------------------------
 
 SLIP_info SLIP_print_stats_double
@@ -585,7 +631,7 @@ SLIP_info SLIP_print_stats_double
 }
 
 //------------------------------------------------------------------------------
-// SLIP_print_stats_mpfr:prints the solution vector(s) as a set of mpfr_t entries
+// SLIP_print_stats_mpfr: prints the solution vector(s) as mpfr_t entries
 //------------------------------------------------------------------------------
 
 SLIP_info SLIP_print_stats_mpfr
@@ -604,7 +650,7 @@ SLIP_info SLIP_print_stats_mpfr
         return SLIP_INCORRECT_INPUT;
     }
 
-   // Info about output file
+    // Info about output file
     if (option->print_level >= 2 && out_file != NULL)
     {
         if (x_mpfr == NULL)
@@ -618,7 +664,7 @@ SLIP_info SLIP_print_stats_mpfr
             for (int32_t j = 0; j < numRHS; j++)
             {
                 ok = SLIP_mpfr_fprintf(out_file, "%.*Rf",
-                    option->prec, x_mpfr[i][j]); 
+                    option->prec, x_mpfr[i][j]);
                 if (ok < 0)
                 {
                     return ok;
@@ -629,3 +675,4 @@ SLIP_info SLIP_print_stats_mpfr
     }
     return SLIP_OK;
 }
+

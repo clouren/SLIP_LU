@@ -2,7 +2,7 @@
 // SLIP_LU/MATLAB/slip_get_matlab_options: Set factorization options for SLIP LU
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
@@ -54,3 +54,4 @@ void slip_get_matlab_options
     if (piv <= 5 && piv >= 0) {option->pivot = (SLIP_pivot) piv;}
     if (option->tol > 1 || option->tol <= 0) {option->tol = 0.1;}
 }
+

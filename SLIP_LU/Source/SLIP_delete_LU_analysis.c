@@ -2,21 +2,23 @@
 // SLIP_LU/SLIP_delete_LU_analysis: Free memory from symbolic analysis struct
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-# include "SLIP_LU_internal.h"
-
 /* Purpose: This function frees the memory of the SLIP_LU_analysis struct
  *
- * Input is the SLIP_LU_analysis structure, it is destroyed on function termination.
+ * Input is the SLIP_LU_analysis structure, it is destroyed on function
+ * termination.
  */
+
+#include "SLIP_LU_internal.h"
+
 void SLIP_delete_LU_analysis
 (
-    SLIP_LU_analysis **S // Structure to be deleted 
+    SLIP_LU_analysis **S // Structure to be deleted
 )
 {
     if ((S == NULL) || (*S == NULL)) {return;}

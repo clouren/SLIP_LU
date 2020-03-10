@@ -2,41 +2,41 @@
 // SLIP_LU/SLIP_LU_solve: exact solution of Ax=b
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-/* Purpose: This function solves the linear system LD^(-1)U x = b. It essnetially
-*  serves as a wrapper for all forward and backward substitution routines
-*
-* Input/output arguments:
-*
-* x:        mpq_t** array. Unitialized on input, on output
-*           contains the exact rational solution to Ax = b
-*
-* b:        SLIP_dense data structure containing the set of RHS vectors.
-*           Contains un permuted b on input and contains permuted b on
-*           output.
-*
-* rhos:     mpz_t* array of size n. Contains the sequence of pivots
-*           encountered during factorization and is used for forward/back
-*           substitution. Unmodified on input/output.
-*
-* L:        Lower triangular matrix. Unmodified on input/output
-*
-* U:        Upper triangular matrix. Unmodified on input/output
-*
-* pinv:     inverse row permutation vector, used to permute the b vectors.
-*           unmodified on input/output.
-*
-*/
+/* Purpose: This function solves the linear system LD^(-1)U x = b. It
+ * essnetially serves as a wrapper for all forward and backward substitution
+ * routines.
+ *
+ * Input/output arguments:
+ *
+ * x:        mpq_t** array. Unitialized on input, on output
+ *           contains the exact rational solution to Ax = b
+ *
+ * b:        SLIP_dense data structure containing the set of RHS vectors.
+ *           Contains un permuted b on input and contains permuted b on
+ *           output.
+ *
+ * rhos:     mpz_t* array of size n. Contains the sequence of pivots
+ *           encountered during factorization and is used for forward/back
+ *           substitution. Unmodified on input/output.
+ *
+ * L:        Lower triangular matrix. Unmodified on input/output
+ *
+ * U:        Upper triangular matrix. Unmodified on input/output
+ *
+ * pinv:     inverse row permutation vector, used to permute the b vectors.
+ *           unmodified on input/output.
+ */
 
 #define SLIP_FREE_WORKSPACE                        \
     SLIP_delete_mpz_mat(&b2, n, numRHS);
 
-# include "SLIP_LU_internal.h"
+#include "SLIP_LU_internal.h"
 
 SLIP_info SLIP_LU_solve  //solves the linear system LD^(-1)U x = b
 (

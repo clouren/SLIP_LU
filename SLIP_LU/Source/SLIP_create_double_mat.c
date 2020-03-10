@@ -2,15 +2,16 @@
 // SLIP_LU/SLIP_create_double_mat: create double dense matrix
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-# include "SLIP_LU_internal.h"
-
 /* Purpose: This function creates a double matrix of size m*n. */
+
+#include "SLIP_LU_internal.h"
+
 double** SLIP_create_double_mat
 (
     int32_t m,     // number of rows
@@ -21,7 +22,7 @@ double** SLIP_create_double_mat
     if (m <= 0 || n <= 0) {return NULL;}
     double **x = (double**) SLIP_calloc(m, sizeof(double*));
     if (!x) {return NULL;}
-    for (int32_t i = 0; i < m; i++) 
+    for (int32_t i = 0; i < m; i++)
     {
         x[i] = (double*) SLIP_calloc(n, sizeof(double));
         if (x[i] == NULL)

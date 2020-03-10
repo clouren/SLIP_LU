@@ -2,20 +2,20 @@
 // SLIP_LU/MATLAB/slip_mex_check_for_inf: Check A and b for inf
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
+/* Purpose: This function checks if the input matrix or RHS has numbers too
+ * large for double. */
+
 #include "SLIP_LU_mex.h"
 
-
-/* Purpose: This function checks if the input matrix or RHS has numbers too
- * large for double*/
 void slip_mex_check_for_inf
 (
-    double* x, // The array of numeric values 
+    double* x, // The array of numeric values
     mwSize n   // size of array
 )
 {
@@ -28,3 +28,4 @@ void slip_mex_check_for_inf
         }
     }
 }
+

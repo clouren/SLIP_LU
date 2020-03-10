@@ -1,4 +1,15 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/Demo/example2.c: example main program for SLIP_LU
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 #include "demos.h"
+
 // This example shows how to use SLIP LU within your code and read in a matrix
 // stored in MM format. Also shows how to use SLIP with an mpq output
 
@@ -10,7 +21,6 @@
 // ../ExampleMats/10teams.mat and ../ExampleMats/10teams.v, respectively.
 // out is file for output calculated result
 
-
 #define FREE_WORKSPACE                  \
     SLIP_delete_LU_analysis(&S);        \
     SLIP_delete_sparse(&A);             \
@@ -19,12 +29,11 @@
     SLIP_delete_mpq_mat(&x, n, numRHS); \
     SLIP_finalize();
 
-
 int main (int argc, char **argv)
 {
     //--------------------------------------------------------------------------
-    // Prior to using SLIP LU, its environment must be initialized. This is done
-    // by calling the SLIP_initialize() function. 
+    // Prior to using SLIP LU, its environment must be initialized. This is
+    // done by calling the SLIP_initialize() function.
     //--------------------------------------------------------------------------
     SLIP_initialize();
     SLIP_info ok;
@@ -90,7 +99,7 @@ int main (int argc, char **argv)
         FREE_WORKSPACE;
         return 0;
     }
-    n = A->m;                                             // Set n
+    n = A->m;       // Set n
     numRHS = b->n;
     S = SLIP_create_LU_analysis(n+1);
     x = SLIP_create_mpq_mat(n,numRHS);

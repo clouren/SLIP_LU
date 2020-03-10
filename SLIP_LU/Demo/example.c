@@ -1,3 +1,13 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/Demo/example.c: example main program for SLIP_LU
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 #include "demos.h"
 
 /* This example shows how to use SLIP LU with a given input matrix and a double
@@ -19,11 +29,11 @@
     SLIP_FREE(option);                         \
     SLIP_finalize() ;
 
-int main (int argc, char **argv)
+int main (void) // (int argc, char **argv)
 {
     //--------------------------------------------------------------------------
     // Prior to using SLIP LU, its environment must be initialized. This is done
-    // by calling the SLIP_initialize() function. 
+    // by calling the SLIP_initialize() function.
     //--------------------------------------------------------------------------
     SLIP_initialize();
 
@@ -95,8 +105,8 @@ int main (int argc, char **argv)
 
     clock_t start_f = clock();
 
-    // Solve the linear system. The keyword double below indicates that the final 
-    // solution vector will be output as a double**
+    // Solve the linear system. The keyword double below indicates that the
+    // final solution vector will be output as a double**.
     OK(SLIP_solve_double(soln, A, S, b, option));
 
     clock_t end_f = clock();
@@ -114,3 +124,4 @@ int main (int argc, char **argv)
     printf ("\n%s: all tests passed\n\n", __FILE__) ;
     return 0;
 }
+

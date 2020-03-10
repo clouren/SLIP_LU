@@ -1,5 +1,15 @@
-#ifndef SLIP_Include
-#define SLIP_Include
+//------------------------------------------------------------------------------
+// SLIP_LU/Include/SLIP_LU.h: user #include file for SLIP_LU.
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
+#ifndef SLIP_LU_H
+#define SLIP_LU_H
 
 // This software package exactly solves a sparse system of linear equations
 // using the SLIP LU factorization. This code accompanies the paper (submitted
@@ -175,14 +185,13 @@ SLIP_info ;
 
 typedef enum
 {
-    SLIP_SMALLEST = 0,              // Smallest pivot
-    SLIP_DIAGONAL = 1,              // Diagonal pivoting
-    SLIP_FIRST_NONZERO = 2,         // First nonzero per column chosen as pivot
-    SLIP_TOL_SMALLEST = 3,          // Diagonal pivoting with tolerance for
-                                    // smallest pivot. Default
-    SLIP_TOL_LARGEST = 4,           // Diagonal pivoting with tolerance for
-                                    // largest pivot
-    SLIP_LARGEST = 5                // Largest pivot
+    SLIP_SMALLEST = 0,      // Smallest pivot
+    SLIP_DIAGONAL = 1,      // Diagonal pivoting
+    SLIP_FIRST_NONZERO = 2, // First nonzero per column chosen as pivot
+    SLIP_TOL_SMALLEST = 3,  // Diagonal pivoting with tol for smallest pivot.
+                            //   (Default)
+    SLIP_TOL_LARGEST = 4,   // Diagonal pivoting with tol. for largest pivot
+    SLIP_LARGEST = 5        // Largest pivot
 }
 SLIP_pivot ;
 
@@ -211,14 +220,14 @@ SLIP_col_order ;
 
 typedef struct SLIP_options
 {
-    SLIP_pivot pivot;           // Type of pivoting scheme used.
-    SLIP_col_order order;       // Type of column ordering scheme used
-    double tol;                 // User specified tolerance for SLIP_TOL_SMALLEST and
-                                // SLIP_TOL_LARGEST
-    int32_t print_level;        // 0: print nothing, 1: just errors,
-                                // 2: terse, with basic stats from COLAMD/AMD and SLIP
-                                // 3: all, with matrices and results
-    uint64_t prec;              // Precision used to output file if MPFR is chosen
+    SLIP_pivot pivot;     // Type of pivoting scheme used.
+    SLIP_col_order order; // Type of column ordering scheme used
+    double tol;           // User specified tolerance for SLIP_TOL_SMALLEST and
+                          // SLIP_TOL_LARGEST
+    int32_t print_level;  // 0: print nothing, 1: just errors,
+                          // 2: terse, with basic stats from COLAMD/AMD and SLIP
+                          // 3: all, with matrices and results
+    uint64_t prec;        // Precision used to output file if MPFR is chosen
     mpfr_rnd_t SLIP_MPFR_ROUND; // Type of MPFR rounding used
 } SLIP_options;
 
@@ -404,7 +413,7 @@ void SLIP_free
 
 SLIP_info SLIP_build_sparse_ccf_mpz
 (
-    SLIP_sparse *A_output,// It should be initialized but unused yet
+    SLIP_sparse *A_output,// It should be initialized but unused yet TODO ??
     int32_t *p,           // The set of column pointers
     int32_t *I,           // set of row indices
     mpz_t *x,             // Set of values in full precision int.
@@ -416,7 +425,7 @@ SLIP_info SLIP_build_sparse_ccf_mpz
 
 SLIP_info SLIP_build_sparse_ccf_double
 (
-    SLIP_sparse *A_output,// It should be initialized but unused yet
+    SLIP_sparse *A_output,// It should be initialized but unused yet TODO ??
     int32_t *p,           // The set of column pointers
     int32_t *I,           // set of row indices
     double *x,            // Set of values as doubles
@@ -429,7 +438,7 @@ SLIP_info SLIP_build_sparse_ccf_double
 
 SLIP_info SLIP_build_sparse_ccf_int
 (
-    SLIP_sparse *A_output,// It should be initialized but unused yet
+    SLIP_sparse *A_output,// It should be initialized but unused yet TODO ??
     int32_t *p,           // The set of column pointers
     int32_t *I,           // set of row indices
     int32_t *x,           // Set of values as doubles
@@ -441,7 +450,7 @@ SLIP_info SLIP_build_sparse_ccf_int
 
 SLIP_info SLIP_build_sparse_ccf_mpq
 (
-    SLIP_sparse *A_output,// It should be initialized but unused yet
+    SLIP_sparse *A_output,// It should be initialized but unused yet TODO ??
     int32_t *p,           // The set of column pointers
     int32_t *I,           // set of row indices
     mpq_t *x,             // Set of values as mpq_t rational numbers
@@ -453,7 +462,7 @@ SLIP_info SLIP_build_sparse_ccf_mpq
 
 SLIP_info SLIP_build_sparse_ccf_mpfr
 (
-    SLIP_sparse *A_output,// It should be initialized but unused yet
+    SLIP_sparse *A_output,// It should be initialized but unused yet TODO ??
     int32_t *p,           // The set of column pointers
     int32_t *I,           // set of row indices
     mpfr_t *x,            // Set of values as doubles
@@ -477,7 +486,7 @@ SLIP_info SLIP_build_sparse_ccf_mpfr
 /* Purpose: Build a sparse matrix from triplet form where input is mpz_t */
 SLIP_info SLIP_build_sparse_trip_mpz
 (
-    SLIP_sparse *A_output,// It should be initialized but unused yet
+    SLIP_sparse *A_output,// It should be initialized but unused yet TODO ??
     int32_t *I,         // set of row indices
     int32_t *J,         // set of column indices
     mpz_t *x,           // Set of values in full precision int
@@ -488,7 +497,7 @@ SLIP_info SLIP_build_sparse_trip_mpz
 /* Purpose: Build a sparse matrix from triplet form where input is double */
 SLIP_info SLIP_build_sparse_trip_double
 (
-    SLIP_sparse *A_output,// It should be initialized but unused yet
+    SLIP_sparse *A_output,// It should be initialized but unused yet TODO ??
     int32_t *I,         // set of row indices
     int32_t *J,         // set of column indices
     double *x,          // Set of values in double
@@ -500,7 +509,7 @@ SLIP_info SLIP_build_sparse_trip_double
 /* Purpose: Build a sparse matrix from triplet form where input is int */
 SLIP_info SLIP_build_sparse_trip_int
 (
-    SLIP_sparse *A_output,// It should be initialized but unused yet
+    SLIP_sparse *A_output,// It should be initialized but unused yet TODO ??
     int32_t *I,         // set of row indices
     int32_t *J,         // set of column indices
     int32_t *x,             // Set of values in int
@@ -511,7 +520,7 @@ SLIP_info SLIP_build_sparse_trip_int
 /* Purpose: Build a sparse matrix from triplet form where input is mpq_t */
 SLIP_info SLIP_build_sparse_trip_mpq
 (
-    SLIP_sparse *A_output,// It should be initialized but unused yet
+    SLIP_sparse *A_output,// It should be initialized but unused yet TODO ??
     int32_t *I,         // set of row indices
     int32_t *J,         // set of column indices
     mpq_t *x,           // Set of values as rational numbers
@@ -522,7 +531,7 @@ SLIP_info SLIP_build_sparse_trip_mpq
 /* Purpose: Build a sparse matrix from triplet form where input is mpfr_t */
 SLIP_info SLIP_build_sparse_trip_mpfr
 (
-    SLIP_sparse *A_output,// It should be initialized but unused yet
+    SLIP_sparse *A_output,// It should be initialized but unused yet TODO ??
     int32_t *I,         // set of row indices
     int32_t *J,         // set of column indices
     mpfr_t *x,          // Set of values as mpfr_t
@@ -547,7 +556,7 @@ SLIP_info SLIP_build_sparse_trip_mpfr
 /* Purpose: Build a dense matrix from mpz input */
 SLIP_info SLIP_build_dense_mpz
 (
-    SLIP_dense *A_output, // Dense matrix, allocated but unused
+    SLIP_dense *A_output, // Dense matrix, allocated but unused TODO ??
     mpz_t **b,            // Set of values in full precision int.
     int32_t m,            // number of rows
     int32_t n             // number of columns
@@ -556,7 +565,7 @@ SLIP_info SLIP_build_dense_mpz
 /* Purpose: Build a dense matrix from double input */
 SLIP_info SLIP_build_dense_double
 (
-    SLIP_dense *A_output, // Dense matrix, allocated but unused
+    SLIP_dense *A_output, // Dense matrix, allocated but unused TODO ??
     double **b,           // Set of values as doubles
     int32_t m,            // number of rows
     int32_t n,             // number of columns
@@ -566,7 +575,7 @@ SLIP_info SLIP_build_dense_double
 /* Purpose: Build a dense matrix from int input */
 SLIP_info SLIP_build_dense_int
 (
-    SLIP_dense *A_output, // Dense matrix, allocated but unused
+    SLIP_dense *A_output, // Dense matrix, allocated but unused TODO ??
     int32_t **b,          // Set of values as ints
     int32_t m,            // number of rows
     int32_t n             // number of columns
@@ -575,7 +584,7 @@ SLIP_info SLIP_build_dense_int
 /* Purpose: Build a dense matrix from mpq_t input */
 SLIP_info SLIP_build_dense_mpq
 (
-    SLIP_dense *A_output, // dense matrix, allocated but unused
+    SLIP_dense *A_output, // dense matrix, allocated but unused TODO ??
     mpq_t **b,            // set of values as mpq_t
     int32_t m,            // number of rows
     int32_t n             // number of columns
@@ -584,7 +593,7 @@ SLIP_info SLIP_build_dense_mpq
 /* Purpose: Build a dense matrix from mpfr_t input */
 SLIP_info SLIP_build_dense_mpfr
 (
-    SLIP_dense *A_output, // Dense matrix, allocated but unused
+    SLIP_dense *A_output, // Dense matrix, allocated but unused TODO ??
     mpfr_t **b,           // Set of values as mpfr_t
     int32_t m,            // number of rows
     int32_t n,            // number of columns
@@ -613,7 +622,7 @@ void SLIP_delete_double_mat
 (
     double*** A,   // dense matrix
     int32_t m,     // number of rows of A
-    int32_t n      // number of columns of A
+    int32_t n      // number of columns of A (unused parameter)
 );
 
 //------------------------------------------------------------------------------
@@ -639,7 +648,7 @@ void SLIP_delete_int_mat
 (
     int32_t*** A,  // dense matrix
     int32_t m,     // number of rows
-    int32_t n      // number of columns
+    int32_t n      // number of columns (unused parameter)
 );
 
 //------------------------------------------------------------------------------
@@ -808,13 +817,13 @@ void SLIP_delete_mpz_array
  */
 void SLIP_initialize (void);
 
-/* Purpose: Initialize SLIP LU with user defined memory functions 
+/* Purpose: Initialize SLIP LU with user defined memory functions
  */
 void SLIP_initialize_expert
 (
-    void* (*MyMalloc) (size_t),                     // User defined malloc function
-    void* (*MyRealloc) (void *, size_t, size_t),    // User defined realloc function
-    void (*MyFree) (void*, size_t)                  // User defined free function
+    void* (*MyMalloc) (size_t),                     // User defined malloc
+    void* (*MyRealloc) (void *, size_t, size_t),    // User defined realloc
+    void (*MyFree) (void*, size_t)                  // User defined free
 );
 
 /*

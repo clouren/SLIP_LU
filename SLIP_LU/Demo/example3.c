@@ -1,3 +1,13 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/Demo/example3.c: example main program for SLIP_LU
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 #include "demos.h"
 
 //------------------------------------------------------------------------------
@@ -27,11 +37,11 @@ double bxden[4] = {15,  3,   6,  7};                      // Denominator of b
     SLIP_FREE(option);                       \
     SLIP_finalize();
 
-int main (int argc, char **argv)
+int main (void) // (int argc, char **argv)
 {
     //--------------------------------------------------------------------------
     // Prior to using SLIP LU, its environment must be initialized. This is done
-    // by calling the SLIP_initialize() function. 
+    // by calling the SLIP_initialize() function.
     //--------------------------------------------------------------------------
     SLIP_initialize();
 
@@ -39,7 +49,7 @@ int main (int argc, char **argv)
     // Declare and initialize essential variables
     //--------------------------------------------------------------------------
     SLIP_info ok;
-    int n = 4, prec = 256, nz = 11, j;                    // 256 bit precision
+    int n = 4, nz = 11, j;
     mpfr_t ** b_mpfr = NULL;
     int* i = NULL;
     int* p = NULL;

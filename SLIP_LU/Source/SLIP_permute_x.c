@@ -2,21 +2,20 @@
 // SLIP_LU/SLIP_permute_x: permute x, as x = Q*x
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-/* 
- * Purpose: This function permutes x to get it back in its original form. 
- * That is x = Q*x.
+/* Purpose: This function permutes x to get it back in its original form.
+ * That is, x = Q*x.
  */
 
 #define SLIP_FREE_WORKSPACE                 \
     SLIP_delete_mpq_mat(&x2,n,numRHS);
 
-# include "SLIP_LU_internal.h"
+#include "SLIP_LU_internal.h"
 
 SLIP_info SLIP_permute_x
 (
@@ -27,7 +26,7 @@ SLIP_info SLIP_permute_x
 )
 {
     if (!x || !S || !S->q) {return SLIP_INCORRECT_INPUT;}
-    int32_t *q = S->q;     // column permutation  
+    int32_t *q = S->q;     // column permutation
     // Declare temp x
     mpq_t** x2 = SLIP_create_mpq_mat(n, numRHS);
     if (!x2) {return SLIP_OUT_OF_MEMORY;}

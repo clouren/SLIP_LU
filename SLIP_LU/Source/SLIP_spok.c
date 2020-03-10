@@ -2,7 +2,7 @@
 // SLIP_LU/SLIP_spok: check if a sparse matrix is OK
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
@@ -60,7 +60,7 @@ SLIP_info SLIP_spok     // returns a SLIP_LU status code
         if (print_level > 0) printf ("n invalid\n") ;
         return (SLIP_INCORRECT_INPUT) ;
     }
-    if (nzmax < 0) 
+    if (nzmax < 0)
     {
         if (print_level > 0) printf ("nzmax invalid\n") ;
         return (SLIP_INCORRECT_INPUT) ;

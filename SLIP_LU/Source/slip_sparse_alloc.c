@@ -2,22 +2,22 @@
 // SLIP_LU/slip_sparse_alloc: allocate a sparse mpz matrix
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-# include "SLIP_LU_internal.h"
+#include "SLIP_LU_internal.h"
 
-/* 
- * Purpose: This function allocates a SLIP LU matrix of size n*m with array
+/* Purpose: This function allocates a SLIP LU matrix of size n*m with array
  * size nzmax. This function initializes each entry in A->x therefore they are
  * immediately ready to be operated on. This is less efficient but more user
  * friendly.
  *
  * See also slip_sparse_alloc2.
  */
+
 SLIP_info slip_sparse_alloc
 (
     SLIP_sparse* A,// sparse matrix data structure to be allocated
@@ -32,9 +32,14 @@ SLIP_info slip_sparse_alloc
     A->n = n;                                    // Columns of the matrix
     A->nz = 0;                                   // Currently 0 nonzeros
     A->nzmax = nzmax;                            // Size of the vectors
-    A->x = SLIP_create_mpz_array(nzmax);         // Create and initialize A->x
-    A->p = (int32_t*) SLIP_calloc(n+1, sizeof(int32_t));// Initialize p
-    A->i = (int32_t*) SLIP_calloc(nzmax, sizeof(int32_t));// Initialize i
+
+    // Create and initialize A->x
+    A->x = SLIP_create_mpz_array(nzmax);
+
+    // Allocate A->p and A->i arrays.
+    A->p = (int32_t*) SLIP_calloc(n+1, sizeof(int32_t));
+    A->i = (int32_t*) SLIP_calloc(nzmax, sizeof(int32_t));
+
     if (!A->x || !A->p || !A->i) {return SLIP_OUT_OF_MEMORY;}
     return SLIP_OK;
 }

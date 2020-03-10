@@ -2,7 +2,7 @@
 // SLIP_LU/slip_back_sub: sparse REF backward substitution (x = U\x)
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
@@ -13,7 +13,6 @@
  * multiplied by the determinant of A.
  *
  * The input argument x is modified on output
- *
  */
 
 #include "SLIP_LU_internal.h"

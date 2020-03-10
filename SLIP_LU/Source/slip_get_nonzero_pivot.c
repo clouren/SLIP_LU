@@ -2,21 +2,23 @@
 // SLIP_LU/slip_get_nonzero_pivot: find a nonzero pivot in a column
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-# include "SLIP_LU_internal.h"
-
-/* This function obtains the first eligible nonzero pivot
+/* Purpose: This function obtains the first eligible nonzero pivot
  * This is enabled if the user sets option->pivot = SLIP_FIRST_NONZERO
- * NOTE: This pivoting scheme is not recommended
  *
- * On output, the kth pivot is returned
- * 
+ * NOTE: This pivoting scheme is NOT recommended for SLIP LU.  It is provided
+ * for comparison with other pivoting options.
+ *
+ * On output, the kth pivot is returned.
  */
+
+#include "SLIP_LU_internal.h"
+
 int32_t slip_get_nonzero_pivot // find the first eligible nonzero pivot
 (
     int32_t *pivot,   // the index of first eligible nonzero pivot
@@ -58,3 +60,4 @@ int32_t slip_get_nonzero_pivot // find the first eligible nonzero pivot
         return SLIP_OK;
     }
 }
+

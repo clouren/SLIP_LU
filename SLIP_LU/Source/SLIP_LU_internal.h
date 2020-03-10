@@ -2,7 +2,7 @@
 // SLIP_LU/SLIP_LU_internal: include file for internal use in SLIP_LU
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
@@ -11,8 +11,8 @@
 // This file is not intended to be #include'd in user applications.  Use
 // SLIP_LU.h instead.
 
-#ifndef SLIP_LU_internal
-#define SLIP_LU_internal
+#ifndef SLIP_LU_INTERNAL_H
+#define SLIP_LU_INTERNAL_H
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -21,15 +21,15 @@
 //------------------------------------------------------------------------------
 
 // Standard C libraries
-# include <setjmp.h>
-# include <assert.h>
-# include <math.h>
-# include <stdarg.h>
+#include <setjmp.h>
+#include <assert.h>
+#include <math.h>
+#include <stdarg.h>
 
 // SuiteSparse headers
-# include "SuiteSparse_config.h"
-# include "colamd.h"
-# include "amd.h"
+#include "SuiteSparse_config.h"
+#include "colamd.h"
+#include "amd.h"
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -40,8 +40,8 @@
 
 #ifdef MATLAB_MEX_FILE
 
-    # include "mex.h"
-    # include "matrix.h"
+    #include "mex.h"
+    #include "matrix.h"
     // use the MATLAB memory manager
     #define SLIP_MEMORY_MALLOC  mxMalloc
     #define SLIP_MEMORY_CALLOC  mxCalloc
@@ -116,7 +116,7 @@ extern int64_t slip_gmp_ntrials ;
 bool slip_gmp_init (void) ;
 
 void slip_gmp_finalize (void) ;
- 
+
 void *slip_gmp_allocate (size_t size) ;
 
 void slip_gmp_free (void *p, size_t size) ;
@@ -158,18 +158,20 @@ void slip_gmp_failure (int32_t status) ;
 #define SLIP_DEFAULT_PRECISION 128
 
 //------------------------------------------------------------------------------
-// Type of MPFR rounding used. 
+// Type of MPFR rounding used.
 //------------------------------------------------------------------------------
 
 // The MPFR library utilizes an internal rounding scheme. The options are
 //  MPFR_RNDN: round to nearest (roundTiesToEven in IEEE 754-2008),
 //  MPFR_RNDZ: round toward zero (roundTowardZero in IEEE 754-2008),
-//  MPFR_RNDU: round toward plus infinity (roundTowardPositive in IEEE 754-2008),
-//  MPFR_RNDD: round toward minus infinity (roundTowardNegative in IEEE 754-2008),
+//  MPFR_RNDU: round toward plus infinity (roundTowardPositive in
+//             IEEE 754-2008),
+//  MPFR_RNDD: round toward minus infinity (roundTowardNegative in
+//             IEEE 754-2008),
 //  MPFR_RNDA: round away from zero.
 //  MPFR_RNDF: faithful rounding. This is not stable
-// 
-// SLIP LU utilizes MPFR_RNDN by default. 
+//
+// SLIP LU utilizes MPFR_RNDN by default.
 
 #define SLIP_DEFAULT_MPFR_ROUND MPFR_RNDN;
 
@@ -185,7 +187,10 @@ void slip_gmp_failure (int32_t status) ;
 #define SLIP_MPFR_EXP(x)  ((x)->_mpfr_exp)
 #define SLIP_MPFR_PREC(x) ((x)->_mpfr_prec)
 #define SLIP_MPFR_SIGN(x) ((x)->_mpfr_sign)
-#define SLIP_MPFR_REAL_PTR(x) (&((x)->_mpfr_d[-1])) /*re-define but same result*/
+
+/*re-define but same result: */
+#define SLIP_MPFR_REAL_PTR(x) (&((x)->_mpfr_d[-1]))
+
 /* Invalid exponent value (to track bugs...) */
 #define SLIP_MPFR_EXP_INVALID \
  ((mpfr_exp_t) 1 << (GMP_NUMB_BITS*sizeof(mpfr_exp_t)/sizeof(mp_limb_t)-2))
@@ -496,26 +501,25 @@ SLIP_info slip_get_column //extract k-th column from A, i.e., x=A(:,k)
 
 /* This function performs the pivoting for the SLIP LU factorization.
  * The optional Order is:
- *     0: Smallest pivot 
+ *     0: Smallest pivot
  *     1: Natural/Diagonal pivoting
- *     2: Choose first nonzero
+ *     2: Choose first nonzero (not recommended, for comparison only)
  *     3: Diagonal with tolerance and smallest pivot (default)
  *     4: Diagonal with tolerance and largest pivoting
- *     5: Largest pivot
+ *     5: Largest pivot (not recommended, for comparison only)
  *
  * On output, the pivs, rhos, pinv, and row_perm arrays are all modified
- *
  */
 
 SLIP_info slip_get_pivot
 (
     int32_t *pivot,
     mpz_t* x,       // kth column of L and U
-    int32_t* pivs,  // vecor indicating which rows have been pivotal
+    int32_t* pivs,  // vector indicating which rows have been pivotal
     int32_t n,      // dimension of the problem
     int32_t top,    // nonzero pattern is located in xi[top..n-1]
     int32_t* xi,    // nonzero pattern of x
-    int32_t order,  // what kind of pivoting to use (see above description)
+    SLIP_pivot order,  // what kind of pivoting to use (see above description)
     int32_t col,    // current column of A (real kth column i.e., q[k])
     int32_t k,      // iteration of the algorithm
     mpz_t* rhos,    // vector of pivots
@@ -681,7 +685,8 @@ void slip_sort_xi
     int32_t top,              // nonzeros are stored in xi[top..n-1]
     int32_t n,                // size of problem
     const int32_t* pinv,      // inverse row permutation
-    const int32_t* row_perm   // opposite of pinv. if pinv[j] = k then row_perm[k] = j
+    const int32_t* row_perm   // opposite of pinv. if pinv[j] = k,
+                              //     then row_perm[k] = j
 );
 
 

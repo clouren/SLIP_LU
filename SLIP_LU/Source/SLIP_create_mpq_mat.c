@@ -2,15 +2,16 @@
 // SLIP_LU/SLIP_create_mpq_mat: create a dense mpq matrix
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-# include "SLIP_LU_internal.h"
-
 /* Purpose: This function creates a mpq_t matrix of size m*n. */
+
+#include "SLIP_LU_internal.h"
+
 mpq_t** SLIP_create_mpq_mat
 (
     int32_t m,     // number of rows
@@ -27,7 +28,7 @@ mpq_t** SLIP_create_mpq_mat
         x[i] = (mpq_t*) SLIP_calloc(n, sizeof(mpq_t));
         if ( x[i] == NULL)
         {
-            // out of memory 
+            // out of memory
             SLIP_delete_mpq_mat(&x, m, n);
             return NULL;
         }
@@ -40,7 +41,7 @@ mpq_t** SLIP_create_mpq_mat
                 SLIP_delete_mpq_mat(&x, m, n);
                 return NULL;
             }
-        }            
+        }
     }
     return x;
 }

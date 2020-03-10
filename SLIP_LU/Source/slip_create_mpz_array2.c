@@ -2,19 +2,19 @@
 // SLIP_LU/slip_create_mpz_array2: create an mpz array
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-# include "SLIP_LU_internal.h"
-
-/* Purpose: This function creates an mpz array of size n and allocates
- * memory for numbers of bit size prec. If the relative size of numbers is 
- * known ahead of time, this is more efficient than the
- * SLIP_create_mpz_array
+/* Purpose: This function creates an mpz array of size n and allocates memory
+ * for numbers of bit size prec. If the relative size of numbers is known ahead
+ * of time, this is more efficient than the SLIP_create_mpz_array.
  */
+
+#include "SLIP_LU_internal.h"
+
 mpz_t* slip_create_mpz_array2
 (
     int32_t n,     // size of the array

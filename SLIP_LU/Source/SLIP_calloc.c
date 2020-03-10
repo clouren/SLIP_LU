@@ -2,18 +2,17 @@
 // SLIP_LU/SLIP_calloc: wrapper for calloc
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-# include "SLIP_LU_internal.h"
-
-/* 
- * Purpose: calloc space of size n*size
+/* Purpose: calloc space of size n*size.
  * on failure, NULL is returned
  */
+
+#include "SLIP_LU_internal.h"
 
 void* SLIP_calloc
 (

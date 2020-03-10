@@ -2,16 +2,17 @@
 // SLIP_LU/MATLAB/slip_transpose: Transpose the matrix A
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
+/* Purpose: compute A = A' */
+
 #include "SLIP_LU_mex.h"
 
-/* A = A' */
-SLIP_info slip_transpose 
+SLIP_info slip_transpose
 (
     mxArray *A
 )
@@ -61,3 +62,4 @@ SLIP_info slip_transpose
 
     return (SLIP_OK) ;
 }
+

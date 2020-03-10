@@ -1,11 +1,18 @@
 //------------------------------------------------------------------------------
-// SLIP_gmp.h: definitions for SLIP_gmp.c
+// SLIP_LU/SLIP_gmp.h: definitions for SLIP_gmp.c
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
 //------------------------------------------------------------------------------
 
 // These macros are used by SLIP_gmp.c to create wrapper functions around all
-// GMP functions used by SLIP_LU, to safely handle out-of-memoryc conditions.
+// GMP functions used by SLIP_LU, to safely handle out-of-memory conditions.
 // They are placed in this separate #include file so that a future developer
-// can use them to construct their own wrappers around GMP functions.
+// can use them to construct their own wrappers around GMP functions.  See
+// SLIP_gmp.c for more details.
 
 #ifndef SLIP_GMP_H
 #define SLIP_GMP_H

@@ -2,19 +2,16 @@
 // SLIP_LU/SLIP_build_dense_mpz: build dense mpz matrix
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
+/* Purpose: Build a dense matrix from mpz input */
+
 #include "SLIP_LU_internal.h"
 
-//------------------------------------------------------------------------------
-// SLIP_build_dense_mpz: Build a dense matrix from mpz input
-//------------------------------------------------------------------------------
-
-/* Purpose: Build a dense matrix from mpz input */
 SLIP_info SLIP_build_dense_mpz
 (
     SLIP_dense *A_output, // Dense matrix

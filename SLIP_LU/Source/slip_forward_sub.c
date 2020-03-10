@@ -2,7 +2,7 @@
 // SLIP_LU/slip_forward_sub: sparse forward substitution (x = (LD)\x)
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
@@ -10,13 +10,12 @@
 
 /* Purpose: This function performs sparse REF forward substitution This is
  * essentially the same as the sparse REF triangular solve applied to each
- * column of the right hand side vectors. Like the normal one, this
- * function expects that the vector x is dense. As a result,the nonzero
- * pattern is not computed and each nonzero in x is iterated across.
- * The system to solve is LDx = x
+ * column of the right hand side vectors. Like the normal one, this function
+ * expects that the vector x is dense. As a result,the nonzero pattern is not
+ * computed and each nonzero in x is iterated across.  The system to solve is
+ * L*D*x_output = x_input, overwriting the right-hand-side with the solution.
  *
- * On output, the mpz_t** x structure is modified
- *
+ * On output, the mpz_t** x structure is modified.
  */
 
 #define SLIP_FREE_WORKSPACE            \

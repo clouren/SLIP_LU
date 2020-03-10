@@ -2,19 +2,19 @@
 // SLIP_LU/slip_dense_alloc: allocate a dense matrix
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-# include "SLIP_LU_internal.h"
-
-/* 
- * Purpose: This function allocates a SLIP dense matrix of size n*m.
- * This function manually initializes each entry in A->x therefore they
- * are immediately ready to be operated on.
+/* Purpose: This function allocates a SLIP dense matrix of size n*m.  This
+ * function manually initializes each entry in A->x therefore they are
+ * immediately ready to be operated on.
  */
+
+#include "SLIP_LU_internal.h"
+
 SLIP_info slip_dense_alloc
 (
     SLIP_dense* A, // dense matrix data structure to be allocated

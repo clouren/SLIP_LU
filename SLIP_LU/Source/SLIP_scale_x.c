@@ -2,7 +2,7 @@
 // SLIP_LU/SLIP_scale_x: scale the matrix x
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
@@ -10,7 +10,7 @@
 
 /* Purpose: This function scales the x matrix if necessary */
 
-# include "SLIP_LU_internal.h"
+#include "SLIP_LU_internal.h"
 
 SLIP_info SLIP_scale_x
 (

@@ -2,20 +2,20 @@
 // SLIP_LU/SLIP_delete_mpz_array: delete a dense mpz array
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-# include "SLIP_LU_internal.h"
-
-/* Purpose: This function clears the memory used for an mpz vector of size n. 
+/* Purpose: This function clears the memory used for an mpz vector of size n.
  * Call this function for all mpz vectors when done.
- * 
- * Input is a mpz_t** array which is destroyed upon function completion
- * 
+ *
+ * Input is a mpz_t** array which is destroyed upon function completion.
  */
+
+#include "SLIP_LU_internal.h"
+
 void SLIP_delete_mpz_array
 (
     mpz_t **x,      // mpz array to be deleted

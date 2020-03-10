@@ -2,20 +2,20 @@
 // SLIP_LU/MATLAB/slip_mex_output_U: Output the U matrix to matlab
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-// This function is no longer used but kept in case of a future update
+/* Purpose: This function outputs the sparse matrix U.  Note that this does not
+ * return the internal U but instead the Doolittle U.
+ *
+ * This function is no longer used but kept in case of a future update.
+ */
 
 #include "SLIP_LU_mex.h"
 
-/* Purpose: This function outputs the sparse matrix U
- * Note that this does not return the internal U but 
- * instead the Doolittle U
- */
 mxArray* slip_mex_output_U
 (
     SLIP_sparse *U,    // the sparse matrix to be output
@@ -52,7 +52,7 @@ mxArray* slip_mex_output_U
         SLIP_MEX_OK(SLIP_mpq_set_z(xU[j], U->x[j]));
         if (U->i[j] > 0)
         {
-            SLIP_MEX_OK(SLIP_mpq_set_z(temp, rhos[U->i[j]-1]));             
+            SLIP_MEX_OK(SLIP_mpq_set_z(temp, rhos[U->i[j]-1]));
             SLIP_MEX_OK(SLIP_mpq_div(xU[j], xU[j], temp));
         }
         // Populate xU
@@ -69,3 +69,4 @@ mxArray* slip_mex_output_U
     slip_transpose(Amatlab);
     return Amatlab;
 }
+

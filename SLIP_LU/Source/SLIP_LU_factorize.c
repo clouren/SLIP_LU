@@ -2,7 +2,7 @@
 // SLIP_LU/SLIP_LU_factorize: exact sparse LU factorization
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
@@ -31,7 +31,7 @@
     SLIP_MPFR_CLEAR(temp);          \
     SLIP_MPZ_CLEAR(sigma);
 
-# include "SLIP_LU_internal.h"
+#include "SLIP_LU_internal.h"
 
 SLIP_info SLIP_LU_factorize
 (
@@ -65,23 +65,23 @@ SLIP_info SLIP_LU_factorize
 
     SLIP_CHECK(SLIP_mpz_init(sigma));
     SLIP_CHECK(SLIP_mpfr_init2(temp, 256));
-    
+
     // Indicator of which rows have been pivotal
     // pivs[i] = 1 if row i has been selected as a pivot
     // row, otherwise, pivs[i] < 0
     pivs = (int32_t*) SLIP_malloc(n* sizeof(int32_t));
-    
-    // h is the history vector utilized for the sparse REF 
+
+    // h is the history vector utilized for the sparse REF
     // triangular solve algorithm. h serves as a global
     // vector which is repeatedly passed into the triangular
     // solve algorithm
     h = (int32_t*) SLIP_malloc(n* sizeof(int32_t));
-    
+
     // xi is the global nonzero pattern vector. It stores
     // the pattern of nonzeros of the kth column of L and U
     // for the triangular solve.
     xi = (int32_t*) SLIP_malloc(2*n* sizeof(int32_t));
-    
+
     // Actual row permutation, the inverse of pinv. This
     // is used for sorting
     row_perm = (int32_t*) SLIP_malloc(n* sizeof(int32_t));
@@ -100,14 +100,14 @@ SLIP_info SLIP_LU_factorize
     //--------------------------------------------------------------------------
     // This section of the code computes a bound for the worst case bit-length
     // of each entry in the matrix. This bound is used to allocate the size of
-    // each number in the global x vector. As a result of this allocation, 
+    // each number in the global x vector. As a result of this allocation,
     // computing the values in L and U via repeated triangular solves will
     // not require intermediate memory reallocations from the GMP library.
     //
     // This bound is based on a relaxation of sparse Hadamard's bound
     //--------------------------------------------------------------------------
-    
-    // sigma is the largest initial entry in A. First we initialize sigma to be 
+
+    // sigma is the largest initial entry in A. First we initialize sigma to be
     // the first nonzero in A
     SLIP_CHECK(SLIP_mpz_set(sigma, A->x[0]));
 
@@ -119,14 +119,14 @@ SLIP_info SLIP_LU_factorize
             SLIP_CHECK(SLIP_mpz_set(sigma,A->x[i]));
         }
     }
-    
+
     // sigma = |sigma|
     SLIP_CHECK(SLIP_mpz_abs(sigma,sigma));
 
     // gamma is the number of nonzeros in the most dense column of A. First, we
     // initialize gamma to be the number of nonzeros in A(:,1).
     int32_t gamma = A->p[1];
-    
+
     // Iterate throughout A and obtain gamma as the most dense column of A
     for (i = 1; i<n; i++)
     {
@@ -143,7 +143,8 @@ SLIP_info SLIP_LU_factorize
     // The bound is given as: gamma*log2(sigma sqrt(gamma))
     //--------------------------------------------------------------------------
     // temp = sigma*sqrt(gamma)
-    SLIP_CHECK(SLIP_mpfr_mul_d(temp, temp, (double) sqrt(gamma), option->SLIP_MPFR_ROUND));
+    SLIP_CHECK(SLIP_mpfr_mul_d(temp, temp, (double) sqrt(gamma),
+        option->SLIP_MPFR_ROUND));
     // temp = log2(temp)
     SLIP_CHECK(SLIP_mpfr_log2(temp, temp, option->SLIP_MPFR_ROUND));
     // inner2 = temp
@@ -155,16 +156,15 @@ SLIP_info SLIP_LU_factorize
     SLIP_mpfr_free_cache();
     // bound = gamma * inner2+1. We add 1 to inner2 because log2(1) = 0
     int32_t bound = ceil(gamma*(inner2+1));
-    // Ensure bound is at least 64 bit. In some rare cases the bound is very small
-    // so we default to 64 bits.
+    // Ensure bound is at least 64 bit. In some rare cases the bound is very
+    // small so we default to 64 bits.
     if (bound < 64) {bound = 64;}
-
 
     //--------------------------------------------------------------------------
     // Declare memory for x, L, and U
     //--------------------------------------------------------------------------
 
-    // Initialize x. x is the global mpz_t vector of size n which is used 
+    // Initialize x. x is the global mpz_t vector of size n which is used
     // repeatedly in the sparse REF triangular solve.
     x = slip_create_mpz_array2(n,bound);
     if (!x)
@@ -192,7 +192,7 @@ SLIP_info SLIP_LU_factorize
         L->p[k] = lnz;
         U->p[k] = unz;
         col = S->q[k];
-        
+
         //----------------------------------------------------------------------
         // Reallocate memory if necessary
         //----------------------------------------------------------------------
@@ -210,12 +210,17 @@ SLIP_info SLIP_LU_factorize
         }
 
         // LDx = A(:,k)
-        SLIP_CHECK(slip_REF_triangular_solve(&top, L, A, k, xi, S->q, rhos,
-            pinv, row_perm, h, x));
+        SLIP_CHECK(slip_REF_triangular_solve(&top, L, A, k, xi,
+            (const int32_t *) (S->q),
+            (const mpz_t   *) rhos,
+            (const int32_t *) pinv,
+            (const int32_t *) row_perm,
+            h, x)) ;
+
         // Obtain pivot index
         SLIP_CHECK(slip_get_pivot(&pivot, x, pivs, n, top, xi, option->pivot,
             col, k, rhos, pinv, row_perm, option->tol));
-        
+
         //----------------------------------------------------------------------
         // Iterate accross the nonzeros in x
         //----------------------------------------------------------------------
@@ -260,7 +265,7 @@ SLIP_info SLIP_LU_factorize
     }
 
     SLIP_FREE_WORKSPACE ;
-    
+
     // Finalize L and U
     L->nz = lnz;
     U->nz = unz;
@@ -276,7 +281,7 @@ SLIP_info SLIP_LU_factorize
     {
         // This cannot fail since the size of L and U are shrinking
         // Collapse L
-        slip_sparse_collapse(L); 
+        slip_sparse_collapse(L);
         // Collapse U
         slip_sparse_collapse(U);
     }
@@ -291,7 +296,7 @@ SLIP_info SLIP_LU_factorize
         L->i[i] = pinv[L->i[i]];
     }
     // Permute entries in U
-    for (i = 0; i < U->nz; i++)        
+    for (i = 0; i < U->nz; i++)
     {
         U->i[i] = pinv[U->i[i]];
     }

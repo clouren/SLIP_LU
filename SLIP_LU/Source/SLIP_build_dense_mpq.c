@@ -2,21 +2,19 @@
 // SLIP_LU/SLIP_build_dense_mpq: build dense mpq matrix
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
+/* Purpose: Build a dense matrix from mpq_t input */
+
 #include "SLIP_LU_internal.h"
 
-//------------------------------------------------------------------------------
-// SLIP_build_dense_mpq: Build a dense matrix from mpq input
-//------------------------------------------------------------------------------
-
-/* Purpose: Build a dense matrix from mpq_t input */
 SLIP_info SLIP_build_dense_mpq
 (
+    // TODO what does "allocated but unused yet" mean??
     SLIP_dense *A_output, // dense matrix, allocated but unused
     mpq_t **b,            // set of values as mpq_t
     int32_t m,            // number of rows

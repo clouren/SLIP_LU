@@ -2,25 +2,26 @@
 // SLIP_LU/SLIP_create_mpz_array: create a dense mpz array
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-# include "SLIP_LU_internal.h"
-
-/* Purpose: This function creates an mpz array of size n and allocates
- * default size.
+/* Purpose: This function creates an mpz array of size n and allocates default
+ * size for each entry.
  */
-mpz_t* SLIP_create_mpz_array 
+
+#include "SLIP_LU_internal.h"
+
+mpz_t* SLIP_create_mpz_array
 (
     int32_t n      // Size of x
-)        
+)
 {
     // Check inputs
     if (n <= 0) {return NULL;}
-    
+
     // Malloc memory
     mpz_t* x = (mpz_t*) SLIP_calloc(n, sizeof(mpz_t));
     if (!x) {return NULL;}

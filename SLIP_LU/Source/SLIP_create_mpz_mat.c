@@ -2,17 +2,18 @@
 // SLIP_LU/SLIP_create_mpz_mat: create a dense mpz matrix
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-# include "SLIP_LU_internal.h"
-
-/* Purpose: This function creates a dense mpz_t matrix of size m*n to
- * default size
+/* Purpose: This function creates a dense mpz_t matrix of size m*n, with each
+ * entry at its default size.
  */
+
+#include "SLIP_LU_internal.h"
+
 mpz_t** SLIP_create_mpz_mat
 (
     int32_t m,     // number of rows

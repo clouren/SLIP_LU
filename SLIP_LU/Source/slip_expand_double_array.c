@@ -2,7 +2,7 @@
 // SLIP_LU/slip_expand_double_array: convert double vector to mpz
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
@@ -10,8 +10,8 @@
 
 /* Purpose: This function converts a double array of size n to an appropriate
  * mpz array of size n. To do this, the number is multiplied by 10^17 then, the
- * GCD is found. This function allows the use of matrices in double precision to
- * work with SLIP LU
+ * GCD is found. This function allows the use of matrices in double precision
+ * to work with SLIP LU.
  *
  * See also slip_expand_double_mat, which converts an m-by-n matrix.
  */
@@ -60,7 +60,8 @@ SLIP_info slip_expand_double_array
         SLIP_CHECK(SLIP_mpfr_set_d(x3[i], x[i], option->SLIP_MPFR_ROUND));
 
         // x3[i] = x[i] * 10^17
-        SLIP_CHECK(SLIP_mpfr_mul_d(x3[i], x3[i], expon, option->SLIP_MPFR_ROUND));
+        SLIP_CHECK(SLIP_mpfr_mul_d(x3[i], x3[i], expon,
+            option->SLIP_MPFR_ROUND));
 
         // x_out[i] = x3[i]
         SLIP_CHECK(SLIP_mpfr_get_z(x_out[i], x3[i], option->SLIP_MPFR_ROUND));
@@ -70,7 +71,7 @@ SLIP_info slip_expand_double_array
     // Compute the GCD to reduce the size of scale
     //--------------------------------------------------------------------------
     SLIP_CHECK(SLIP_mpz_set_ui(one, 1));
-    // Find an initial GCD 
+    // Find an initial GCD
     for (i = 0; i < n; i++)
     {
         if (!nz_found)
@@ -101,7 +102,7 @@ SLIP_info slip_expand_double_array
         SLIP_mpq_set_z(scale, one);
         return SLIP_OK;
     }
-        
+
 
     //--------------------------------------------------------------------------
     // Scale all entries to make as small as possible

@@ -2,7 +2,7 @@
 // SLIP_LU/slip_expand_double_mat: convert double matrix to mpz
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
@@ -59,21 +59,23 @@ SLIP_info slip_expand_double_mat
         for (j = 0; j < n; j++)
         {
             // x3[i][j] = x[i][j]
-            SLIP_CHECK(SLIP_mpfr_set_d(x3[i][j], x[i][j], option->SLIP_MPFR_ROUND));
-            
+            SLIP_CHECK(SLIP_mpfr_set_d(x3[i][j], x[i][j],
+                option->SLIP_MPFR_ROUND));
+
             // x3[i][j] = x[i][j]*10^17
             SLIP_CHECK(SLIP_mpfr_mul_d(x3[i][j], x3[i][j], expon,
                 option->SLIP_MPFR_ROUND));
-            
+
             // x_out[i][j] = x3[i][j]
-            SLIP_CHECK(SLIP_mpfr_get_z(x_out[i][j], x3[i][j], option->SLIP_MPFR_ROUND));
+            SLIP_CHECK(SLIP_mpfr_get_z(x_out[i][j], x3[i][j],
+                option->SLIP_MPFR_ROUND));
         }
     }
     //--------------------------------------------------------------------------
     // Compute the gcd to reduce the size of scale
     //--------------------------------------------------------------------------
     SLIP_CHECK(SLIP_mpz_set_ui(one, 1))
-    // Find an initial GCD 
+    // Find an initial GCD
     for (i = 0; i < m; i++)
     {
         for (j = 0; j < n; j++)
@@ -105,7 +107,7 @@ SLIP_info slip_expand_double_mat
             break;
         }
     }
-            
+
     if (!nz_found) // Entire matrix is zeros
     {
         SLIP_FREE_WORKSPACE;
@@ -114,7 +116,7 @@ SLIP_info slip_expand_double_mat
     }
 
     //--------------------------------------------------------------------------
-    // Scale all entries to make as small as possible 
+    // Scale all entries to make as small as possible
     //--------------------------------------------------------------------------
     if (r2 != 0)                 // If gcd == 1 stop
     {
@@ -122,7 +124,7 @@ SLIP_info slip_expand_double_mat
         {
             if (i == k) {j = l;}
             else        {j = 0;}
-            for (; j < n; j++)    
+            for (; j < n; j++)
             {
                 SLIP_CHECK(SLIP_mpz_divexact(x_out[i][j], x_out[i][j], gcd));
             }

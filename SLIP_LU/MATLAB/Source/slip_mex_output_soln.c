@@ -2,21 +2,21 @@
 // SLIP_LU/MATLAB/slip_mex_output_soln: Output x to matlab
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
+/* Purpose: This function outputs the solution as a mxArray. */
+
 #include "SLIP_LU_mex.h"
 
-
-/* Purpose: This function outputs the solution as a mxArray. */
 mxArray* slip_mex_output_soln
 (
     double** x,        // The matrix to be output
     int32_t m,         // size of x
-    int32_t n          // the size of x 
+    int32_t n          // the size of x
 )
 {
     // Create a m * n array
@@ -37,3 +37,4 @@ mxArray* slip_mex_output_soln
     }
     return Xmatlab;
 }
+

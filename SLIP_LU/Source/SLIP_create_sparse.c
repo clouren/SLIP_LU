@@ -2,17 +2,17 @@
 // SLIP_LU/SLIP_create_sparse: create an empty sparse mpq matrix
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-# include "SLIP_LU_internal.h"
-
-/* Purpose: This function return a created empty sparse matrix as
- * SLIP_sparse pointer upon successful malloc
+/* Purpose: This function return a created empty sparse matrix as SLIP_sparse
+ * pointer upon successful malloc.
  */
+
+#include "SLIP_LU_internal.h"
 
 #define CHECK_RESULT(method)    \
 {                               \

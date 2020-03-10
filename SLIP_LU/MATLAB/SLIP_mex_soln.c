@@ -2,18 +2,17 @@
 // SLIP_LU/MATLAB/SLIP_mex_soln: Use SLIP LU within MATLAB
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-#include "SLIP_LU_mex.h"
-
 /* Purpose: one of the 3 .c files defining the SLIP LU matlab interfacee
  * This function defines: x = SLIP_LU(A, b, option)
  */
 
+#include "SLIP_LU_mex.h"
 
 void mexFunction
 (
@@ -84,7 +83,7 @@ void mexFunction
     // FB Substitution
     //--------------------------------------------------------------------------
     SLIP_MEX_OK(SLIP_LU_solve(soln_mpq, b, rhos, L, U, pinv));
-    
+
     SLIP_MEX_OK(SLIP_permute_x(soln_mpq, b->m, b->n, S));
 
     SLIP_MEX_OK(SLIP_scale_x(soln_mpq, A, b));
@@ -106,3 +105,4 @@ void mexFunction
     SLIP_delete_sparse(&A);
     SLIP_finalize();
 }
+

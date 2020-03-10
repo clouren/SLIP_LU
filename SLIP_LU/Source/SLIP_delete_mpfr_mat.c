@@ -2,18 +2,19 @@
 // SLIP_LU/SLIP_delete_mpfr_mat: delete a dense mpfr matrix
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-# include "SLIP_LU_internal.h"
-
-/* Purpose: This function deletes a dense mpfr matrix. 
- * 
- * Input is a mpfr*** mat which is destroyed on completion
+/* Purpose: This function deletes a dense mpfr matrix.
+ *
+ * Input is a mpfr*** mat which is destroyed on completion.
  */
+
+#include "SLIP_LU_internal.h"
+
 void SLIP_delete_mpfr_mat
 (
     mpfr_t ***A,   // Dense mpfr matrix

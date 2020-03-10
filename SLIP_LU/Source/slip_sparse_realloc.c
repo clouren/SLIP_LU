@@ -2,18 +2,18 @@
 // SLIP_LU/slip_sparse_realloc: double the space for a sparse mpz matrix
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-# include "SLIP_LU_internal.h"
-
-/* 
- * Purpose: This function expands a SLIP LU matrix by doubling its size. This
+/* Purpose: This function expands a SLIP LU matrix by doubling its size. This
  * version merely expands x and i and does not initialize/allocate the values!
  */
+
+#include "SLIP_LU_internal.h"
+
 SLIP_info slip_sparse_realloc
 (
     SLIP_sparse* A // the matrix to be expanded

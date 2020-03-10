@@ -2,21 +2,19 @@
 // SLIP_LU/SLIP_build_dense_int: build dense int matrix
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
+/* Purpose: Build a dense matrix from int input */
+
 #include "SLIP_LU_internal.h"
 
-//------------------------------------------------------------------------------
-// SLIP_build_dense_int: Build a dense matrix from int input
-//------------------------------------------------------------------------------
-
-/* Purpose: Build a dense matrix from int input */
 SLIP_info SLIP_build_dense_int
 (
+    // TODO what does "allocated but unused" mean??
     SLIP_dense *A_output, // Dense matrix, allocated but unused
     int32_t **b,          // Set of values as ints
     int32_t m,            // number of rows

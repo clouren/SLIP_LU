@@ -1,5 +1,5 @@
 SLIP_LU is a software package for solving a sparse systems of linear
-equations exactly using the SLIP LU factorization. 
+equations exactly using the SLIP LU factorization.
 
 Files and folders in this distribution:
 
@@ -9,9 +9,9 @@ Files and folders in this distribution:
 
 Dependencies (all part of SuiteSparse):
 
-    AMD         
-    COLAMD
-    SuiteSparse_config
+    AMD                 approximate minimum degree ordering
+    COLAMD              column approximate minimum degree ordering
+    SuiteSparse_config  configuration for all of SuiteSparse
 
 Default instalation locations:
 

@@ -2,18 +2,19 @@
 // SLIP_LU/slip_reset_mpz_array: clear the used entries of an mpz workspace
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-# include "SLIP_LU_internal.h"
-
-/* 
- * Purpose: This function resets an mpz array of size n with the nonzero pattern
- * given. This is more efficient than iterating accross all nonzeros in vector x
+/* Purpose: This function resets an mpz array of size n with the nonzero
+ * pattern given. This is more efficient than iterating accross all nonzeros in
+ * vector x.
  */
+
+#include "SLIP_LU_internal.h"
+
 SLIP_info slip_reset_mpz_array
 (
     mpz_t *x,      // mpz array to be reset

@@ -2,7 +2,7 @@
 // SLIP_LU/slip_REF_triangular_solve: sparse REF triangular solve
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
@@ -20,43 +20,49 @@
 
 /* Description of input/output
  *
- *  top_output: An int which on input is uninitialized. On output contains the 
- *              contains the beginning of the nonzero pattern. That is the nonzero
- *              pattern is contained in xi[top_output...n-1]
+ *  top_output: An int which on input is uninitialized. On output contains the
+ *              contains the beginning of the nonzero pattern. That is the
+ *              nonzero pattern is contained in xi[top_output...n-1].
  *
- *  L:          The partial L matrix. On input contains columns 1:k-1 of L. Unmodified on
- *              on output.
+ *  L:          The partial L matrix. On input contains columns 1:k-1 of L.
+ *              Unmodified on on output.
  *
  *  A:          The input matrix. Unmodified on input/output
  *
- *  k:          Unmodified int which indicates which column of L and U is being computed.
- *              That is, this triangular solve computes L(:,k) and U(:,k)
+ *  k:          Unmodified int which indicates which column of L and U is being
+ *              computed.  That is, this triangular solve computes L(:,k) and
+ *              U(:,k).
  *
- *  xi:         A worspace array of size 2n, unitialized on input. On output, xi[top...n-1]
- *              contains the nonzero pattern of L(:,k) and U(:,k) in strictly sorted order.
- *              The row indices in xi[top...n-1] reflect the row indices in the original A matrix
- *              not the final L and U because of permutation.
+ *  xi:         A worspace array of size 2n, unitialized on input. On output,
+ *              xi[top...n-1] contains the nonzero pattern of L(:,k) and U(:,k)
+ *              in strictly sorted order.  The row indices in xi[top...n-1]
+ *              reflect the row indices in the original A matrix not the final
+ *              L and U because of permutation.
  *
- *  q:          An array of size n+1 which is unmodified on input/output. j = q[k] if the original
- *          `   column j is the kth column of the LU factorization.
+ *  q:          An array of size n+1 which is unmodified on input/output.
+ *              j = q[k] if the original column j is the kth column of the
+ *              LU factorization.
  *
- *  rhos:       Sequence of pivots, unmodified on input/output. This vector is utilized to perform
- *              history and IPGE updates in the triangular solve.
+ *  rhos:       Sequence of pivots, unmodified on input/output. This vector is
+ *              utilized to perform history and IPGE updates in the triangular
+ *              solve.
  *
- *  pinv:       An array of size n which contains the inverse row permutation, unmodified on input/
- *              output. This vector is utilized in the factorization as well as for sorting.
+ *  pinv:       An array of size n which contains the inverse row permutation,
+ *              unmodified on input/ output. This vector is utilized in the
+ *              factorization as well as for sorting.
  *
- *  row_perm:   An array of size n which contains the row permutation, unmodified on input/output. 
- *              row_perm is the inverse of pinv and is utilized for the sorting routine.
+ *  row_perm:   An array of size n which contains the row permutation,
+ *              unmodified on input/output.  row_perm is the inverse of pinv
+ *              and is utilized for the sorting routine.
  *
+ *  h:          A workspace array of size n, unitialized on input and undefined
+ *              on output. This vector is utilized to perform history updates
+ *              on entries in x. During the triangular solve, h[i] indicates
+ *              the last pivot in which entry x[i] was IPGE updated.
  *
- *  h:          A workspace array of size n, unitialized on input and undefined on output. This
- *              vector is utilized to perform history updates on entries in x. During the triangular 
- *              solve, h[i] indicates the last pivot in which entry x[i] was IPGE updated
- *
- *  x:          Workspace of size n, unitialized on input. On output, x[i] is the value of L(i,k)
- *              here i is in the nonzero patter xi[top...n-1]. Other entries of x are undefined on 
- *              output.
+ *  x:          Workspace of size n, unitialized on input. On output, x[i] is
+ *              the value of L(i,k) here i is in the nonzero patter
+ *              xi[top...n-1]. Other entries of x are undefined on output.
  */
 
 
@@ -82,7 +88,7 @@ SLIP_info slip_REF_triangular_solve // performs the sparse REF triangular solve
     SLIP_info ok;
 
     //--------------------------------------------------------------------------
-    // Begin the REF triangular solve by obtaining the nonzero pattern, and 
+    // Begin the REF triangular solve by obtaining the nonzero pattern, and
     // reseting the vectors x, xi, and h
     //--------------------------------------------------------------------------
 

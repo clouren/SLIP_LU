@@ -2,7 +2,7 @@
 // SLIP_LU/SLIP_get_mpfr_soln: convert mpq solution to mpfr
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
@@ -17,17 +17,17 @@
  * Input/output arguments:
  *
  * x_mpfr:  mpfr_t** array containing the solution to the system.
- *          Uninitialized on input, contains the solution to Ax=b
- *          on output in mpfr_t precision
+ *          Uninitialized on input, contains the solution to Ax=b on output in
+ *          mpfr_t precision.
  *
- * x_mpq:   mpq_t** array containing the exact rational solution of the 
- *          system Ax = b. Unmodified on input/output
+ * x_mpq:   mpq_t** array containing the exact rational solution of the
+ *          system Ax = b. Unmodified on input/output.
  *
- * n:       number of columns in the input matrix = number of rows in x
+ * n:       number of columns in the input matrix = number of rows in x.
  *
  * numRHS:  number of RHS vectors = number of columns in x
  *
- * option:  contains command parameters for MPFR. Specifically, 
+ * option:  contains command parameters for MPFR. Specifically,
  *          option->SLIP_MPFR_ROUND contains the type of MPFR
  *          rounding used.
  */
@@ -36,7 +36,7 @@ SLIP_info SLIP_get_mpfr_soln
 (
     mpfr_t **x_mpfr,      // mpfr solution of size n*numRHS to Ax = b
     mpq_t  **x_mpq,       // mpq solution of size n*numRHS to Ax = b.
-    int32_t n,            // Dimension of A, number of rows of x 
+    int32_t n,            // Dimension of A, number of rows of x
     int32_t numRHS,       // Number of right hand side vectors
     SLIP_options* option  // Contains mpfr command parameters
 )

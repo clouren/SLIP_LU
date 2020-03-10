@@ -2,16 +2,16 @@
 // SLIP_LU/MATLAB/SLIP_gmp_mex_free: A gmp free function for Matlab mex files
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-#include "SLIP_LU_mex.h"
-
 /* Purpose: A GMP free function. This allows GMP to use
  * MATLAB's mxFree instead of free */
+
+#include "SLIP_LU_mex.h"
 
 // A GMP realloc function
 void SLIP_gmp_mex_free
@@ -20,6 +20,9 @@ void SLIP_gmp_mex_free
     size_t a    // Size
 )
 {
-    if (x) 
+    if (x)
+    {
         mxFree(x);
+    }
 }
+

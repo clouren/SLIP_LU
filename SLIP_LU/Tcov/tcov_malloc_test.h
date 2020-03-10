@@ -1,5 +1,16 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/Tcov/tcov_malloc_test.h
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 #ifndef SLIP_TCOV_MALLOC_TEST_H
 #define SLIP_TCOV_MALLOC_TEST_H
+
 #include "SLIP_LU_internal.h"
 
 #ifdef SLIP_MEMORY_REALLOC
@@ -15,7 +26,8 @@ void* slip_realloc_wrapper
 
 extern int malloc_count;
 #define GOTCHA \
-    printf ("%s, line %d, slip_gmp_ntrials = %ld, malloc_count = %d\n", __FILE__, __LINE__, slip_gmp_ntrials, malloc_count);
+    printf ("%s, line %d, slip_gmp_ntrials = %ld, malloc_count = %d\n", \
+    __FILE__, __LINE__, slip_gmp_ntrials, malloc_count);
 
 #define SLIP_PRINT_OK(ok)                                                \
 {                                                                        \

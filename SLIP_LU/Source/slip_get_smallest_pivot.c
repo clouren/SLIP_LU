@@ -2,31 +2,29 @@
 // SLIP_LU/slip_get_smallest_pivot: find the smallest entry in a column
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-/* Purpose: This function selects the pivot element as the smallest in the column 
- * This is activated by default or if the user sets
- * option->pivot = SLIP_SMALLEST
- * NOTE: This is the recommended pivoting scheme for SLIP LU
- * 
- * On output, the index of kth pivot is returned
- * 
+/* Purpose: This function selects the pivot element as the smallest in the
+ * column.  This is activated if the user sets option->pivot =
+ * SLIP_TOL_SMALLEST or SLIP_SMALLEST.
+ *
+ * On output, the index of kth pivot is returned.
  */
 
 #define SLIP_FREE_WORKSPACE        \
     SLIP_MPZ_CLEAR(small);
 
-# include "SLIP_LU_internal.h"
+#include "SLIP_LU_internal.h"
 
 SLIP_info slip_get_smallest_pivot
 (
     int32_t *pivot, // the index of smallest pivot
     mpz_t* x,       // kth column of L and U
-    int32_t* pivs,  // vector indicating whether each row has been pivotal 
+    int32_t* pivs,  // vector indicating whether each row has been pivotal
     int32_t n,      // dimension of problem
     int32_t top,    // nonzeros are stored in xi[top..n-1]
     int32_t* xi     // nonzero pattern of x
@@ -50,7 +48,7 @@ SLIP_info slip_get_smallest_pivot
     {
         // i location of first nonzero
         inew = xi[flag];
-        
+
         //check if inew can be pivotal
         SLIP_CHECK(SLIP_mpz_sgn(&sgn, x[inew]));
         if (pivs[inew] < 0 && sgn != 0)
@@ -75,7 +73,7 @@ SLIP_info slip_get_smallest_pivot
     {
         inew = xi[i];
         // check if inew can be pivotal
-        SLIP_CHECK(SLIP_mpz_cmpabs(&r, small, x[inew])); 
+        SLIP_CHECK(SLIP_mpz_cmpabs(&r, small, x[inew]));
         if (pivs[inew] < 0 && r > 0)
         {
             SLIP_CHECK(SLIP_mpz_sgn(&sgn, x[inew]));

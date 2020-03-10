@@ -2,17 +2,18 @@
 // SLIP_LU/SLIP_create_mpfr_mat: create a dense mpfr matrix
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-# include "SLIP_LU_internal.h"
-
 /* Purpose: This function creates a mpfr_t matrix of size m*n with
- * precision prec
+ * precision prec.
  */
+
+#include "SLIP_LU_internal.h"
+
 mpfr_t** SLIP_create_mpfr_mat
 (
     int32_t m,     // number of rows

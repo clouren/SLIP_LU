@@ -2,21 +2,22 @@
 // SLIP_LU/SLIP_create_mpq_array: create a dense mpq array
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-# include "SLIP_LU_internal.h"
-
-/* Purpose: This function creates an mpq array of size n. 
+/* Purpose: This function creates an mpq array of size n.
  * This function must be called for all mpq arrays created.
  */
+
+#include "SLIP_LU_internal.h"
+
 mpq_t* SLIP_create_mpq_array
 (
-    int32_t n      // size of the array 
-)        
+    int32_t n      // size of the array
+)
 {
     // Check input
     if (n <= 0) {return NULL;}

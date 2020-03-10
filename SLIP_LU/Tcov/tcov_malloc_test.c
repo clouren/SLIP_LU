@@ -1,5 +1,15 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/Tcov/tcov_malloc_test.c
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 #include "tcov_malloc_test.h"
-//#include "SLIP_LU_internal.h"
+
 int malloc_count = INT_MAX ;
 
 // Note that only the ANSI C memory manager is used here
@@ -11,7 +21,12 @@ void* SLIP_malloc
     size_t size        // Size to alloc
 )
 {
-    if (--malloc_count < 0) {printf("malloc pretend to fail\n");return (NULL) ;} /* pretend to fail */
+    if (--malloc_count < 0)
+    {
+        /* pretend to fail */
+        printf("malloc pretend to fail\n");
+        return (NULL) ;
+    }
     // ensure at least one byte is malloc'd
     if (size <= 0) {size = 1 ;}
     return (malloc(size));
@@ -24,7 +39,12 @@ void* SLIP_calloc
     size_t size        // Size to alloc
 )
 {
-    if (--malloc_count < 0) {printf("calloc pretend to fail\n");return (NULL) ;} /* pretend to fail */
+    if (--malloc_count < 0)
+    {
+        /* pretend to fail */
+        printf ("calloc pretend to fail\n");
+        return (NULL) ;
+    }
     // ensure at least one byte is calloc'd
     if (n <= 0) {n = 1 ;}
     if (size <= 0) {size = 1 ;}
@@ -50,7 +70,7 @@ void* slip_realloc_wrapper
 }
 
 /* wrapper for realloc */
-void* SLIP_realloc 
+void* SLIP_realloc
 (
     void* p,            // Pointer to be realloced
     size_t old_size,    // Old size of this pointer
@@ -60,7 +80,7 @@ void* SLIP_realloc
     // Ensure at least one byte is allocated
     old_size = SLIP_MAX(1, old_size);
     new_size = SLIP_MAX(1, new_size);
-    
+
     if (p == NULL)
     {
         return SLIP_malloc(new_size);

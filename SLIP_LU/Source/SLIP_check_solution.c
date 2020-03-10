@@ -2,31 +2,27 @@
 // SLIP_LU/SLIP_check_solution: check solution to Ax=b
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
+//------------------------------------------------------------------------------
 
+/* Purpose: Check the solution of the linear system by performing a quick
+ * rational arithmetic A*x = b.
+ *
+ * WARNING: This function WILL produce incorrect results if called with the
+ * final scaled x vector! This function assumes that A and b are in their
+ * scaled integral form! Thus x is the solution to the scaled system Ax=b. Once
+ * x has been finalized, this function will report an incorrect result. Please
+ * refer to Demo/SLIPLU.c for the proper usage of this function.
+ */
 
 #define SLIP_FREE_WORKSPACE                 \
     SLIP_MPQ_CLEAR(temp);                   \
     SLIP_delete_mpq_mat(&b2, n, numRHS);
 
-# include "SLIP_LU_internal.h"
-
-/*
- * Check the solution of the linear system by performing a quick rational
- * arithmetic A*x = b.
- *
- *
- * WARNING: This function WILL produce incorrect results if called with the
- * final scaled x vector! This function assumes that A and b are in their scaled
- * integral form! Thus x is the solution to the scaled system Ax=b. Once x has been
- * finalized, this function will report an incorrect result. Please refer to 
- * Demo/SLIPLU.c for the proper usage of this function
- */
-
-
+#include "SLIP_LU_internal.h"
 
 SLIP_info SLIP_check_solution
 (
@@ -35,7 +31,7 @@ SLIP_info SLIP_check_solution
     SLIP_dense *b            // right hand side
 )
 {
-    if (!A || !x || !b || !b->x || !A->p || !A->i || !A->x) 
+    if (!A || !x || !b || !b->x || !A->p || !A->i || !A->x)
     {
         return SLIP_INCORRECT_INPUT;
     }
@@ -51,10 +47,10 @@ SLIP_info SLIP_check_solution
     mpq_t** b2 = NULL;
     mpq_t temp; SLIP_MPQ_SET_NULL(temp);
     SLIP_CHECK(SLIP_mpq_init(temp));
-    
+
     // b2 stores the solution of A*x
     b2 = SLIP_create_mpq_mat(n, numRHS);
-    if (!b2) 
+    if (!b2)
     {
         SLIP_FREE_WORKSPACE;
         return SLIP_OUT_OF_MEMORY;
@@ -85,7 +81,7 @@ SLIP_info SLIP_check_solution
     //--------------------------------------------------------------------------
     // check if b==b2
     //--------------------------------------------------------------------------
-    
+
     for (j = 0; j < numRHS; j++)
     {
         for (i = 0; i < n; i++)
@@ -102,9 +98,9 @@ SLIP_info SLIP_check_solution
             }
         }
     }
-    
+
     //--------------------------------------------------------------------------
-    // Free memory 
+    // Free memory
     //--------------------------------------------------------------------------
 
     SLIP_FREE_WORKSPACE;

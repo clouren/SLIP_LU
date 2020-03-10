@@ -2,16 +2,19 @@ default: all
 
 include ../../SuiteSparse_config/SuiteSparse_config.mk
 
+# uncomment for extra error checking:
+# CFLAGS += -Wall -Wextra -Wpedantic -Werror
+
 # CF = $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -O
 I = -I../Include -I../Source -I../../SuiteSparse_config -I../../COLAMD/Include -I../../AMD/Include
 
 # LDFLAGS = -L../../lib
 
-LDLIBS += -lm -lgmp -lmpfr -lcolamd -lamd
-CS = ../Lib/libslip.a $(LDLIBS)
+LDLIBS += -lm -lgmp -lmpfr -lcolamd -lamd -lsliplu
+CS = $(LDLIBS)
 
 
-all: lib example example2 example3 example4 example5 lu
+all: lib example example2 example3 example4 example5 SLIPLU
 	- ./example
 	- ./example2
 	- ./example3
@@ -37,7 +40,7 @@ example4: lib example4.c Makefile
 example5: lib example5.c Makefile
 	$(CC) $(LDFLAGS) $(CF) $(I) -o example5 example5.c demos.c $(CS)
 
-lu: lib SLIPLU.c demos.h demos.c Makefile
+SLIPLU: lib SLIPLU.c demos.h demos.c Makefile
 	$(CC) $(LDFLAGS) $(CF) $(I) -o SLIPLU SLIPLU.c demos.c $(CS)
 clean:
 	- $(RM) *.o

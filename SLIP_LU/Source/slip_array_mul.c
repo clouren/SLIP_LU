@@ -2,16 +2,15 @@
 // SLIP_LU/slip_array_mul: multiplies a vector by a scalar
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-/* 
- * Purpose: This function multiplies vector x by the determinant of matrix. 
- * 
- * On output the contents of the x vector is modified 
+/* Purpose: This function multiplies vector x by the determinant of matrix.
+ *
+ * On output the contents of the x vector is modified.
  */
 
 #include "SLIP_LU_internal.h"

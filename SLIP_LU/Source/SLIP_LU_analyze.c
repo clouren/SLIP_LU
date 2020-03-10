@@ -2,29 +2,26 @@
 // SLIP_LU/SLIP_LU_analyze: symbolic ordering and analysis for sparse LU
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-/*
- * Purpose: This function performs the symbolic ordering for SLIP LU. Currently,
- * there are three options: user-defined order, COLAMD, or AMD.
- *
+/* Purpose: This function performs the symbolic ordering for SLIP LU.
+ * Currently, there are three options: user-defined order, COLAMD, or AMD.
  *
  * Input/output arguments:
- * 
- * S:       Symbolic analysis struct. Unitialized on input, contains column permutation
- *          and guesses on L and U nnz on output
+ *
+ * S:       Symbolic analysis struct. Unitialized on input, contains column
+ *          permutation and guesses on L and U nnz on output
  *
  * A:       Input matrix, unmodified on input/output
  *
  * option:  option->order tells the function which ordering scheme to use
  */
 
-
-# include "SLIP_LU_internal.h"
+#include "SLIP_LU_internal.h"
 
 SLIP_info SLIP_LU_analyze
 (
@@ -60,7 +57,7 @@ SLIP_info SLIP_LU_analyze
     }
 
     //--------------------------------------------------------------------------
-    // The AMD ordering is used. S->q is set to AMD's column ordering on 
+    // The AMD ordering is used. S->q is set to AMD's column ordering on
     // A+A'. The numer of nonzeros in L and U is given as AMD's computed
     // number of nonzeros in the Cholesky factor L of A+A'
     //--------------------------------------------------------------------------
@@ -80,9 +77,9 @@ SLIP_info SLIP_LU_analyze
     }
 
     //--------------------------------------------------------------------------
-    // The COLAMD ordering is used. S->q is set as COLAMD's column ordering. 
-    // The number of nonzeros in L and U is set as 10 times the number of nonzeros
-    // in A. This is a crude estimate.
+    // The COLAMD ordering is used. S->q is set as COLAMD's column ordering.
+    // The number of nonzeros in L and U is set as 10 times the number of
+    // nonzeros in A. This is a crude estimate.
     //--------------------------------------------------------------------------
     else
     {
@@ -116,10 +113,10 @@ SLIP_info SLIP_LU_analyze
     }
 
     //--------------------------------------------------------------------------
-    // Make sure appropriate space is allocated. It's possible to return guesses
-    // which exceed the dimension of L and U or guesses which are too small for L
-    // U. In this case, this block of code ensures that the guesses on nnz(L) and 
-    // nnz(U) are at least n and no more than n*n
+    // Make sure appropriate space is allocated. It's possible to return
+    // guesses which exceed the dimension of L and U or guesses which are too
+    // small for L U. In this case, this block of code ensures that the guesses
+    // on nnz(L) and nnz(U) are at least n and no more than n*n.
     //--------------------------------------------------------------------------
     // Guess exceeds max number of nnz in A
     if (S->lnz > (double) n*n)

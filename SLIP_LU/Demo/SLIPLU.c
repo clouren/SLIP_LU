@@ -1,9 +1,19 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/Demo/SLIPLU.c: example main program for SLIP_LU
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 #include "demos.h"
 
-/* This program will exactly solve the sparse linear system Ax = b by performing
- * the SLIP LU factorization. This is intended to be a demonstration of the 
- * "advanced interface" of SLIP LU. Please refer to README.txt for information 
- * on how to properly use this code
+/* This program will exactly solve the sparse linear system Ax = b by
+ * performing the SLIP LU factorization. This is intended to be a demonstration
+ * of the "advanced interface" of SLIP LU. Please refer to README.txt for
+ * information on how to properly use this code
  */
 
 // usage:
@@ -83,14 +93,14 @@
 
 int main( int argc, char* argv[])
 {
-    
+
     //--------------------------------------------------------------------------
     // Prior to using SLIP LU, its environment must be initialized. This is done
-    // by calling the SLIP_initialize() function. 
+    // by calling the SLIP_initialize() function.
     //--------------------------------------------------------------------------
-    
+
     SLIP_initialize();
-    
+
     //--------------------------------------------------------------------------
     // We first initialize the default parameters. These parameters are modified
     // either via command line arguments or when reading in data. The important
@@ -156,14 +166,14 @@ int main( int argc, char* argv[])
         SLIP_finalize();
         return 0;
     }
-    
+
     //--------------------------------------------------------------------------
     // After initializing memory, we process the command line for this function.
-    // Such a step is optional, a user can also manually set these parameters. 
+    // Such a step is optional, a user can also manually set these parameters.
     // For example, if one wished to use the AMD ordering, they can just set
     // option->order = SLIP_AMD.
     //--------------------------------------------------------------------------
-    
+
     OK(SLIP_process_command_line(argc, argv, option,
         &mat_name, &rhs_name, &rat));
 
@@ -172,7 +182,7 @@ int main( int argc, char* argv[])
     // files.  Please refer to the example*.c files or the user for other
     // methods of creating the input matrix
     //--------------------------------------------------------------------------
-    
+
     // Read in A
     FILE* mat_file = fopen(mat_name,"r");
     if( mat_file == NULL )
@@ -237,7 +247,7 @@ int main( int argc, char* argv[])
     }
 
     clock_t end_col = clock();
-    
+
     //--------------------------------------------------------------------------
     // Now we perform the SLIP LU factorization to obtain matrices L and U and a
     // row permutation P such that PAQ = LDU. Note that the D matrix is never
@@ -254,32 +264,36 @@ int main( int argc, char* argv[])
     clock_t end_factor = clock();
 
     //--------------------------------------------------------------------------
-    // We now solve the system Ax=b using the L and U factors computed above. 
-    // After we obtain the solution, we permute it with respect to the column 
+    // We now solve the system Ax=b using the L and U factors computed above.
+    // After we obtain the solution, we permute it with respect to the column
     // permutation (x_final = Q x).
     //--------------------------------------------------------------------------
     clock_t start_solve = clock();
 
     // Solve LDU x = b
-    OK(SLIP_LU_solve(x, b, rhos, L, U, pinv));
+    OK(SLIP_LU_solve(x, b,
+        (const mpz_t *) rhos,
+        (const SLIP_sparse *) L,
+        (const SLIP_sparse *) U,
+        (const int32_t *) pinv));
 
     clock_t end_solve = clock();
 
     OK(SLIP_permute_x(x, nrows, numRHS, S));
-    
+
     //--------------------------------------------------------------------------
     // SLIP LU has an optional check step which can verify that the solution
-    // vector x satisfies Ax=b in perfect precision. 
+    // vector x satisfies Ax=b in perfect precision.
     //
     // Note that this is entirely OPTIONAL and NOT NECESSARY. The solution
     // returned is guaranteed to be exact. Also, note that this function can be
     // quite time consuming; thus it is not recommended to be used in
     // general.
-    // 
+    //
     // This function returns the status SLIP_OK if it is successfully verified
-    // to be correct. 
+    // to be correct.
     //--------------------------------------------------------------------------
-    
+
     check = SLIP_check_solution(A, x, b);
 
     if (check == SLIP_OK)
@@ -297,10 +311,10 @@ int main( int argc, char* argv[])
         FREE_WORKSPACE;
         return 0;
     }
-            
+
     //--------------------------------------------------------------------------
     // The x vector is now scaled. This consists of accounting for any scaling
-    // done to A and b to make these entries integral. 
+    // done to A and b to make these entries integral.
     //--------------------------------------------------------------------------
     OK(SLIP_scale_x(x, A, b));
 
@@ -344,3 +358,4 @@ int main( int argc, char* argv[])
     printf ("\n%s: all tests passed\n\n", __FILE__) ;
     return 0;
 }
+

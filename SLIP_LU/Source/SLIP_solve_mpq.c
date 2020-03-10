@@ -2,30 +2,32 @@
 // SLIP_LU/SLIP_solve_mpq: solve Ax=b, returning solution as mpq matrix
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-/* Purpose: This code utilizes the SLIP LU factorization. 
+/* Purpose: This code utilizes the SLIP LU factorization.
  * Soln is output as mpq_t mat.
  *
  * Input/Output arguments:
  *
- * x_mpq:   A mpq_t** array which is unitialized on input. On output, contains 
+ * x_mpq:   A mpq_t** array which is unitialized on input. On output, contains
  *          the solution to the linear system Ax=b in full precision.
  *
- * A:       User's input matrix. It must be populated prior to calling this function
+ * A:       User's input matrix. It must be populated prior to calling this
+ *          function.
  *
  * S:       Symbolic analysis struct. It is important that this data structure
- *          is both allocated and populated prior to calling this function. 
+ *          is both allocated and populated prior to calling this function.
  *          That is, this function MUST be preceded by a call to the function
  *          SLIP_LU_analyze.
  *
- * b:       Collection of right hand side vectors. Must be populated prior to factorization
+ * b:       Collection of right hand side vectors. Must be populated prior to
+ *          factorization.
  *
- * option:  Struct containing various command parameters for the factorization
+ * option:  Struct containing various command parameters for the factorization.
  */
 
 # define SLIP_FREE_WORKSPACE        \
@@ -34,21 +36,21 @@
     SLIP_FREE(pinv);                \
     SLIP_delete_mpz_array(&rhos,n);
 
-# include "SLIP_LU_internal.h"
+#include "SLIP_LU_internal.h"
 
-SLIP_info SLIP_solve_mpq 
-( 
-    mpq_t **x_mpq,          // Solution vector stored as an mpq_t array 
-    SLIP_sparse *A,         // Compressed column form full precision matrix A 
-    SLIP_LU_analysis *S,    // Column ordering  
-    SLIP_dense *b,          // Right hand side vectrors 
-    SLIP_options *option    // Control parameters 
+SLIP_info SLIP_solve_mpq
+(
+    mpq_t **x_mpq,          // Solution vector stored as an mpq_t array
+    SLIP_sparse *A,         // Compressed column form full precision matrix A
+    SLIP_LU_analysis *S,    // Column ordering
+    SLIP_dense *b,          // Right hand side vectrors
+    SLIP_options *option    // Control parameters
 )
 {
     //-------------------------------------------------------------------------
     // Check input
     //-------------------------------------------------------------------------
-    if (!x_mpq || !A || !A->p || !A->i || !A->x || 
+    if (!x_mpq || !A || !A->p || !A->i || !A->x ||
         !S || !S->q || !b || !b->x || !option)
     {
         return SLIP_INCORRECT_INPUT;
@@ -77,8 +79,12 @@ SLIP_info SLIP_solve_mpq
     //--------------------------------------------------------------------------
     // FB Substitution
     //--------------------------------------------------------------------------
+    SLIP_CHECK(SLIP_LU_solve(x_mpq, b,
+        (const mpz_t *) rhos,
+        (const SLIP_sparse *) L,
+        (const SLIP_sparse *) U,
+        (const int32_t *) pinv));
 
-    SLIP_CHECK(SLIP_LU_solve(x_mpq, b, rhos, L, U, pinv));
     SLIP_CHECK(SLIP_permute_x(x_mpq, n, numRHS, S));
 
 #if 0

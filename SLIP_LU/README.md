@@ -1,5 +1,5 @@
 This software package is used to solve a sparse systems of linear equations
-exactly using the SLIP LU factorization. 
+exactly using the SLIP LU factorization.
 
 
 *********SLIPLU*********

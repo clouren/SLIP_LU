@@ -2,20 +2,22 @@
 // SLIP_LU/MATLAB/slip_mex_output_L: Output the L matrix to matlab
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-// This function is no longer used, but kept for potential usage in a future update
+/* Purpose: This function outputs the sparse matrix L Note that this is not the
+ * L matrix used within SLIP LU but is instead a Doolittle (unit lower
+ * triangular) version.
+ *
+ * This function is no longer used, but kept for potential usage in a future
+ * update.
+ */
 
 #include "SLIP_LU_mex.h"
 
-/* Purpose: This function outputs the sparse matrix L
- * Note that this is not the L matrix used within SLIP LU
- * but is instead a Doolittle (unit lower triangular) version
- */
 mxArray* slip_mex_output_L
 (
     SLIP_sparse *L,    // the sparse matrix to be output
@@ -68,3 +70,4 @@ mxArray* slip_mex_output_L
     slip_transpose(Amatlab);
     return Amatlab;
 }
+

@@ -2,20 +2,18 @@
 // SLIP_LU/slip_cumsum: cumulative sum
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-# include "SLIP_LU_internal.h"
-
-/* 
- * Purpose: p [0..n] = cumulative sum of c [0..n-1], and then copy p [0..n-1] in
- * to c 
- * This function is lightly modified from CSparse
- * 
+/* Purpose: p [0..n] = cumulative sum of c [0..n-1], and then copy p [0..n-1]
+ * in to c.  This function is lightly modified from CSparse.
  */
+
+#include "SLIP_LU_internal.h"
+
 SLIP_info slip_cumsum
 (
     int32_t *p,      // vector to store the sum of c

@@ -2,16 +2,13 @@
 // SLIP_LU/SLIP_initialize_expert: intialize SLIP_LU memory functions for GMP
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
-# include "SLIP_LU_internal.h"
-
-/* 
- * Purpose: This function initializes the working environment for SLIP_LU with
+/* Purpose: This function initializes the working environment for SLIP_LU with
  * custom memory functions that are used for GMP. If the user passes in their
  * own malloc, realloc, or free function(s) we use those internally to process
  * memory. If a NULL pointer is passed in for any function, then default
@@ -61,11 +58,13 @@
  * mxMalloc, mxCalloc, mxRealloc, and mxFree functions.
  */
 
+#include "SLIP_LU_internal.h"
+
 void SLIP_initialize_expert
 (
-    void* (*MyMalloc) (size_t),                     // User defined malloc function
-    void* (*MyRealloc) (void *, size_t, size_t),    // User defined realloc function
-    void (*MyFree) (void*, size_t)                  // User defined free function
+    void* (*MyMalloc) (size_t),                     // User defined malloc
+    void* (*MyRealloc) (void *, size_t, size_t),    // User defined realloc
+    void (*MyFree) (void*, size_t)                  // User defined free
 )
 {
 
@@ -89,7 +88,7 @@ void SLIP_initialize_expert
     }
 
     //--------------------------------------------------------------------------
-    // Set GMP memory functions 
+    // Set GMP memory functions
     //--------------------------------------------------------------------------
 
     mp_set_memory_functions ((*MyMalloc), (*MyRealloc), (*MyFree)) ;

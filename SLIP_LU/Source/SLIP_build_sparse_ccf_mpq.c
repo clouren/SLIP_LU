@@ -2,23 +2,22 @@
 // SLIP_LU/SLIP_build_sparse_ccf_mpq: build sparse matrix from mpq_t
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
+/* Purpose: build sparse matrix from mpq values */
+
 #define SLIP_FREE_WORKSPACE                 \
     SLIP_delete_mpz_array(&x_new, nz);
 
-# include "SLIP_LU_internal.h"
-    
-//------------------------------------------------------------------------------
-// SLIP_build_sparse_ccf_mpq: build sparse matrix from mpq values
-//------------------------------------------------------------------------------
+#include "SLIP_LU_internal.h"
 
 SLIP_info SLIP_build_sparse_ccf_mpq
 (
+    // TODO what does "It should be initialized but unused yet" mean??
     SLIP_sparse *A_output,// It should be initialized but unused yet
     int32_t *p,           // The set of column pointers
     int32_t *I,           // set of row indices

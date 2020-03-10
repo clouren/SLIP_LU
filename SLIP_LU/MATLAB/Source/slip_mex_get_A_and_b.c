@@ -2,21 +2,21 @@
 // SLIP_LU/MATLAB/slip_mex_get_A_and_b: Obtain user's A and b matrices
 //------------------------------------------------------------------------------
 
-// SLIP_LU: (c) 2019, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 // Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
 
+/* Purpose: This function reads in the A matrix and right hand side vectors. */
+
 #include "SLIP_LU_mex.h"
 
-
-/* Purpose: This function reads in the A matrix and right hand side vectors. */
 void slip_mex_get_A_and_b
 (
-    SLIP_sparse *A,          // Internal SLIP Mat stored in ccf 
+    SLIP_sparse *A,          // Internal SLIP Mat stored in ccf
     SLIP_dense *b,           // mpz matrix used internally
-    const mxArray* pargin[], // The input A matrix and options 
+    const mxArray* pargin[], // The input A matrix and options
     int32_t nargin           // Number of input to the mexFunction
 )
 {
@@ -24,7 +24,7 @@ void slip_mex_get_A_and_b
     {
         slip_mex_error (SLIP_INCORRECT_INPUT);
     }
-    
+
     // Declare variables
     SLIP_info status;
     mxArray* tmp;
@@ -32,7 +32,7 @@ void slip_mex_get_A_and_b
     mwIndex *Ap, *Ai;
     double *Ax, *bx;
     SLIP_options* option = SLIP_create_default_options();
-    
+
     //--------------------------------------------------------------------------
     // Read in A
     //--------------------------------------------------------------------------
@@ -69,7 +69,7 @@ void slip_mex_get_A_and_b
     {
         mexErrMsgTxt("Error at getting the int parameter");
     }
-    if (mxGetScalar(tmp) > 0) 
+    if (mxGetScalar(tmp) > 0)
     {
         // Declare memory
         int32_t* Ax_int = (int32_t*) SLIP_malloc(Anz* sizeof(int32_t));
@@ -89,7 +89,7 @@ void slip_mex_get_A_and_b
         status = SLIP_build_sparse_ccf_double(A, Ap_int, Ai_int, Ax,
             (int32_t) nA, (int32_t) Anz, option);
     }
-    if (status != SLIP_OK) 
+    if (status != SLIP_OK)
     {
         mexErrMsgTxt("Issue reading in A. Please ensure matrix is correct "
             "and try again");
@@ -121,7 +121,7 @@ void slip_mex_get_A_and_b
         // Is b integral?
         tmp = mxGetField(pargin[nargin-1], 0, "intb");
         if (tmp == NULL)
-        {   
+        {
             mexErrMsgTxt("Error at getting the intb parameter");
         }
         int32_t count = 0;
@@ -134,7 +134,7 @@ void slip_mex_get_A_and_b
             {
                 for (j = 0; j < mb; j++)
                 {
-                    bx_int[j][k] = (int32_t) bx[count]; 
+                    bx_int[j][k] = (int32_t) bx[count];
                     count++;
                 }
             }
@@ -166,7 +166,7 @@ void slip_mex_get_A_and_b
                 (int32_t) nb, option);
             SLIP_delete_double_mat(&bx_doub, (int32_t) mb, (int32_t) nb);
         }
-        if (status != SLIP_OK) 
+        if (status != SLIP_OK)
         {
             mexErrMsgTxt("Issue reading in b. Please ensure RHS is correct "
                 "and try again");
@@ -174,3 +174,4 @@ void slip_mex_get_A_and_b
     }
     SLIP_FREE(option);
 }
+

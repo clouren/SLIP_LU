@@ -1,13 +1,18 @@
-
+This file lists all licenses for all packages in SuiteSparse, for your
+convenience.  Each package has its own separate license, which can be
+found in the lists below.
 
 ==> SLIP_LU/License/license.txt <==
 
     SLIP LU: a Sparse Left-looking Integer-Preserving LU Factorization
 
-    Copyright (c) 2019, Christopher Lourenco, JinHao Chen, Erick Moreno-
-    Centeno, and Tim Davis
-    https://github.com/clouren/SLIP_LU
-    http://suitesparse.com
+    Copyright (c) 2019-2020, Christopher Lourenco, JinHao Chen, Erick Moreno-
+    Centeno, and Timothy A. Davis.
+
+    Available at:
+
+        https://github.com/clouren/SLIP_LU
+        http://suitesparse.com
 
     Contact Chris Lourenco, chrisjlourenco@gmail.com, or Tim Davis
     (timdavis@aldenmath.com or DrTimothyAldenDavis@gmail.com) for a commercial
