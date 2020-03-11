@@ -1,4 +1,4 @@
-\documentclass[11pt]{article}
+\documentclass[12pt]{article}
 \usepackage{amsmath,amssymb,amsthm,latexsym,paralist}
 \usepackage{graphicx}
 \usepackage{psfrag}
@@ -23,7 +23,7 @@
 % \usepackage[margin=1in]{geometry}
 \usepackage{geometry}
 \theoremstyle{definition}
-\setlength{\parskip}{1em}
+% \setlength{\parskip}{1em}
 
 \newcommand{\N}{\mathbf{N}}
 \newcommand{\R}{\mathbf{R}}
@@ -57,6 +57,7 @@ Contact Information: Contact Chris Lourenco, \href{mailto:chrisjlourenco@gmail.c
 
 % Keep table of contents black
 {
+\small
 \hypersetup{ linkcolor = black}
 \tableofcontents
 }
@@ -133,19 +134,24 @@ precision for the MPFR output; thus it is also accurate to user specified
 precision.
 
 All left-hand side matrices (referred to as $A$ henceforth) within this package
-are stored in sparse compressed sparse column form (CSC). This data structure
+are stored in compressed sparse column form (CSC). This data structure
 stores the matrix $A$ as a sequence of three arrays:
 
+\begin{itemize}
+\item
 \verb|A->p|: Column pointers; an array of size \verb|n+1|. The row indices of
 column $j$ are located in positions \verb|A->p[j]| to \verb|A->p[j+1]-1| of the
 array \verb|A->i|. Data type: \verb|int32_t|.
 
+\item
 \verb|A->i|: Row indices; an array of size equal to the number of entries in
 the matrix. The entry \verb|A->i[k]| is the row index of the $k$th nonzero in
 the matrix. Data type: \verb|int32_t|.
 
+\item
 \verb|A->x|: Numeric entries. The entry \verb|A->x[k]| is the numeric value of
 the $k$th nonzero in the matrix. Data type: \verb|mpz_t|.
+\end{itemize}
 
 An example matrix $A$ is stored as follows (notice that via C convention, the
 indexing is zero based).
@@ -484,7 +490,7 @@ The SLIP LU package uses the following function/macro to create and destroy a
 
 %----------------------------------------
 \begin{center}
-\begin{tabular}{lp{3in}l}
+\begin{tabular}{lp{2.5in}l}
 \hline
 function/macro name & description & section \\
 \hline
@@ -548,7 +554,7 @@ LU sparse matrix, \verb|SLIP_sparse|, as shown in the following table.
 {\small
  %\begin{table*}[htbp]
 \begin{center}
-\begin{tabular}{lp{3in}l}
+\begin{tabular}{lp{2.5in}l}
 \hline
 function name & description & section \\
 \hline
@@ -1117,177 +1123,318 @@ dense matrix.
 
 % TODO: TIM IS HERE
 
-\cprotect\subsubsection{\verb|SLIP_build_sparse_csc_double|: build sparse matrix using CSC with \verb|double| entries}\label{s:user:build_sparse_csc_double}
-\begin{lstlisting}[language=C,frame=single]
-SLIP_info SLIP_build_sparse_csc_double
-(
-    SLIP_sparse *A_output,// It should be initialized but unused yet
-    int32_t *p,           // The set of column pointers
-    int32_t *I,           // set of row indices
-    double *x,            // Set of values as doubles
-    int32_t n,            // dimension of the matrix
-    int32_t nz            // number of nonzeros in A (size of x and I vectors)
-);
-\end{lstlisting}
+%-------------------------------------------------------------------------------
+\cprotect\subsubsection{\verb|SLIP_build_sparse_csc_double|: build sparse matrix using CSC with \verb|double| entries}
+\label{s:user:build_sparse_csc_double}
+%-------------------------------------------------------------------------------
 
-\verb|SLIP_build_sparse_csc_double| builds a sparse matrix using compressed column form inputs, where the entry values are \verb|double| type. The input sparse matrix \verb|A_output| should be a created empty matrix. The best practice is to use the one returned from \verb|SLIP_create_sparse| (in Section \ref{ss:create_sparse}). WARNING: Using sparse matrix that has been built with \verb|SLIP_build_sparse_*| as input would cause memory leak.
+% TODO what is "initialzed but unused" ???
 
-\cprotect\subsubsection{\verb|SLIP_build_sparse_csc_int|: build sparse matrix using CSC with \verb|int32_t| entries}\label{s:user:build_sparse_csc_int}
-\begin{lstlisting}[language=C,frame=single]
-SLIP_info SLIP_build_sparse_csc_int
-(
-    SLIP_sparse *A_output,// It should be initialized but unused yet
-    int32_t *p,           // The set of column pointers
-    int32_t *I,           // set of row indices
-    int32_t *x,           // Set of values as doubles
-    int32_t n,            // dimension of the matrix
-    int32_t nz            // number of nonzeros in A (size of x and I vectors)
-);
-\end{lstlisting}
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    SLIP_info SLIP_build_sparse_csc_double
+    (
+        SLIP_sparse *A_output,// It should be initialized but unused yet TODO?
+        int32_t *p,         // The set of column pointers
+        int32_t *I,         // set of row indices
+        double *x,          // Set of values as doubles
+        int32_t n,          // dimension of the matrix
+        int32_t nz          // number of nonzeros in A (size of x and I vectors)
+    );
+\end{verbatim}
+} \end{mdframed}
 
-\verb|SLIP_build_sparse_csc_int| builds a sparse matrix using compressed column form inputs, where the entry values are \verb|int32_t| type. The input sparse matrix \verb|A_output| should be a created empty matrix. The best practice is to use the one returned from \verb|SLIP_create_sparse| (in Section \ref{ss:create_sparse}). WARNING: Using sparse matrix that has been built with \verb|SLIP_build_sparse_*| as input would cause memory leak.
+\verb|SLIP_build_sparse_csc_double| builds a sparse matrix using compressed
+sparse column (CSC) form inputs, where the entry values are \verb|double| type.
+The input sparse matrix \verb|A_output| should be a created empty matrix. The
+best practice is to use the one returned from \verb|SLIP_create_sparse| (in
+Section \ref{ss:create_sparse}). WARNING: Using a sparse matrix that has been
+built with \verb|SLIP_build_sparse_*| as input would cause memory leak.
+{\bf TODO: why a leak???} % TODO I don't understand this.
 
-\cprotect\subsubsection{\verb|SLIP_build_sparse_csc_mpq|: build sparse matrix using CSC with \verb|mpq_t| entries}\label{s:user:build_sparse_csc_mpq}
-\begin{lstlisting}[language=C,frame=single]
-SLIP_info SLIP_build_sparse_csc_mpq
-(
-    SLIP_sparse *A_output,// It should be initialized but unused yet
-    int32_t *p,           // The set of column pointers
-    int32_t *I,           // set of row indices
-    mpq_t *x,             // Set of values as mpq_t rational numbers
-    int32_t n,            // dimension of the matrix
-    int32_t nz            // number of nonzeros in A (size of x and I vectors)
-);
-\end{lstlisting}
+%-------------------------------------------------------------------------------
+\cprotect\subsubsection{\verb|SLIP_build_sparse_csc_int|: build sparse matrix using CSC with \verb|int32_t| entries}
+\label{s:user:build_sparse_csc_int}
+%-------------------------------------------------------------------------------
 
-\verb|SLIP_build_sparse_csc_mpq| builds a sparse matrix using compressed column form inputs, where the entry values are \verb|mpq_t| type. The input sparse matrix \verb|A_output| should be a created empty matrix. The best practice is to use the one returned from \verb|SLIP_create_sparse| (in Section \ref{ss:create_sparse}). WARNING: Using sparse matrix that has been built with \verb|SLIP_build_sparse_*| as input would cause memory leak.
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    SLIP_info SLIP_build_sparse_csc_int
+    (
+        SLIP_sparse *A_output,// It should be initialized but unused yet TODO??
+        int32_t *p,         // The set of column pointers
+        int32_t *I,         // set of row indices
+        int32_t *x,         // Set of values as doubles
+        int32_t n,          // dimension of the matrix
+        int32_t nz          // number of nonzeros in A (size of x and I vectors)
+    );
+\end{verbatim}
+} \end{mdframed}
 
-\cprotect\subsubsection{\verb|SLIP_build_sparse_csc_mpfr|: build sparse matrix using CSC with \verb|mpfr_t| entries}\label{s:user:build_sparse_csc_mpfr}
-\begin{lstlisting}[language=C,frame=single]
-SLIP_info SLIP_build_sparse_csc_mpfr
-(
-    SLIP_sparse *A_output,// It should be initialized but unused yet
-    int32_t *p,           // The set of column pointers
-    int32_t *I,           // set of row indices
-    mpfr_t *x,            // Set of values as doubles
-    int32_t n,            // dimension of the matrix
-    int32_t nz,           // number of nonzeros in A (size of x and I vectors)
-    SLIP_options *option  // command options containing the prec for mpfr
-);
-\end{lstlisting}
+\verb|SLIP_build_sparse_csc_int| builds a sparse matrix using compressed column
+form inputs, where the entry values are \verb|int32_t| type. The input sparse
+matrix \verb|A_output| should be a created empty matrix. The best practice is
+to use the one returned from \verb|SLIP_create_sparse| (in Section
+\ref{ss:create_sparse}). WARNING: Using sparse matrix that has been built with
+\verb|SLIP_build_sparse_*| as input would cause memory leak.
+{\bf TODO: why a leak???} % TODO I don't understand this.
 
-\verb|SLIP_build_sparse_csc_mpfr| builds a sparse matrix using compressed column form inputs, where the entry values are \verb|mpfr_t| type. The input sparse matrix \verb|A_output| should be a created empty matrix. The best practice is to use the one returned from \verb|SLIP_create_sparse| (in Section \ref{ss:create_sparse}). WARNING: Using sparse matrix that has been built with \verb|SLIP_build_sparse_*| as input would cause memory leak.
+%-------------------------------------------------------------------------------
+\cprotect\subsubsection{\verb|SLIP_build_sparse_csc_mpq|: build sparse matrix using CSC with \verb|mpq_t| entries}
+\label{s:user:build_sparse_csc_mpq}
+%-------------------------------------------------------------------------------
 
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    SLIP_info SLIP_build_sparse_csc_mpq
+    (
+        SLIP_sparse *A_output,// It should be initialized but unused yet TODO??
+        int32_t *p,         // The set of column pointers
+        int32_t *I,         // set of row indices
+        mpq_t *x,           // Set of values as mpq_t rational numbers
+        int32_t n,          // dimension of the matrix
+        int32_t nz          // number of nonzeros in A (size of x and I vectors)
+    );
+\end{verbatim}
+} \end{mdframed}
 
-\cprotect\subsubsection{\verb|SLIP_build_sparse_csc_mpz|: build sparse matrix using CSC with \verb|mpz_t| entries}\label{s:user:build_sparse_csc_mpz}
-\begin{lstlisting}[language=C,frame=single]
-SLIP_info SLIP_build_sparse_csc_mpz
-(
-    SLIP_sparse *A_output,// It should be initialized but unused yet
-    int32_t *p,           // The set of column pointers
-    int32_t *I,           // set of row indices
-    mpz_t *x,             // Set of values in full precision int.
-    int32_t n,            // dimension of the matrix
-    int32_t nz            // number of nonzeros in A (size of x and I vectors)
-);
-\end{lstlisting}
+\verb|SLIP_build_sparse_csc_mpq| builds a sparse matrix using compressed
+sparse column (CSC) form inputs, where the entry values are \verb|mpq_t| type.
+The input sparse matrix \verb|A_output| should be a created empty matrix. The
+best practice is to use the one returned from \verb|SLIP_create_sparse| (in
+Section \ref{ss:create_sparse}). WARNING: Using sparse matrix that has been
+built with \verb|SLIP_build_sparse_*| as input would cause memory leak.
+{\bf TODO: why a leak???} % TODO I don't understand this.
 
-\verb|SLIP_build_sparse_csc_mpz| builds a sparse matrix using compressed column form inputs, where the entry values are \verb|mpz_t| type. The input sparse matrix \verb|A_output| should be a created empty matrix. The best practice is to use the one returned from \verb|SLIP_create_sparse| (in Section \ref{ss:create_sparse}). WARNING: Using sparse matrix that has been built with \verb|SLIP_build_sparse_*| as input would cause memory leak.
+%-------------------------------------------------------------------------------
+\cprotect\subsubsection{\verb|SLIP_build_sparse_csc_mpfr|: build sparse matrix using CSC with \verb|mpfr_t| entries}
+\label{s:user:build_sparse_csc_mpfr}
+%-------------------------------------------------------------------------------
 
-\cprotect\subsubsection{\verb|SLIP_build_sparse_trip_double|: build sparse matrix using triplet with \verb|double| entries}\label{s:user:build_sparse_trip_double}
-\begin{lstlisting}[language=C,frame=single]
-SLIP_info SLIP_build_sparse_trip_double
-(
-    SLIP_sparse *A_output,// It should be initialized but unused yet
-    int32_t *I,         // set of row indices
-    int32_t *J,         // set of column indices
-    double *x,          // Set of values in double
-    int32_t n,          // dimension of the matrix
-    int32_t nz          // number of nonzeros in A (size of x, I,
-                        // and J vectors)
-);
-\end{lstlisting}
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    SLIP_info SLIP_build_sparse_csc_mpfr
+    (
+        SLIP_sparse *A_output,// It should be initialized but unused yet TODO??
+        int32_t *p,         // The set of column pointers
+        int32_t *I,         // set of row indices
+        mpfr_t *x,          // Set of values as doubles
+        int32_t n,          // dimension of the matrix
+        int32_t nz,         // number of nonzeros in A (size of x and I vectors)
+        SLIP_options *option  // command options containing the prec for mpfr
+    );
+\end{verbatim}
+} \end{mdframed}
 
-\verb|SLIP_build_sparse_trip_double| builds a sparse matrix using triplet form inputs, where the entry values are \verb|double| type. The input sparse matrix \verb|A_output| should be a created empty matrix. The best practice is to use the one returned from \verb|SLIP_create_sparse| (in Section \ref{ss:create_sparse}). WARNING: Using sparse matrix that has been built with \verb|SLIP_build_sparse_*| as input would cause memory leak.
+\verb|SLIP_build_sparse_csc_mpfr| builds a sparse matrix using compressed
+sparse column (CSC) form inputs, where the entry values are \verb|mpfr_t| type.
+The input sparse matrix \verb|A_output| should be a created empty matrix. The
+best practice is to use the one returned from \verb|SLIP_create_sparse| (in
+Section \ref{ss:create_sparse}). WARNING: Using sparse matrix that has been
+built with \verb|SLIP_build_sparse_*| as input would cause memory leak.
+{\bf TODO: why a leak???} % TODO I don't understand this.
 
-\cprotect\subsubsection{\verb|SLIP_build_sparse_trip_int|: build sparse matrix using triplet with \verb|int32_t| entries}\label{s:user:build_sparse_trip_int}
-\begin{lstlisting}[language=C,frame=single]
-SLIP_info SLIP_build_sparse_trip_int
-(
-    SLIP_sparse *A_output,// It should be initialized but unused yet
-    int32_t *I,         // set of row indices
-    int32_t *J,         // set of column indices
-    int32_t *x,         // Set of values in int
-    int32_t n,          // dimension of the matrix
-    int32_t nz          // number of nonzeros in A (size of x, I,
-                        // and J vectors)
-);
-\end{lstlisting}
+%-------------------------------------------------------------------------------
+\cprotect\subsubsection{\verb|SLIP_build_sparse_csc_mpz|: build sparse matrix using CSC with \verb|mpz_t| entries}
+\label{s:user:build_sparse_csc_mpz}
+%-------------------------------------------------------------------------------
 
-\verb|SLIP_build_sparse_trip_int| builds a sparse matrix using triplet form inputs, where the entry values are \verb|int32_t| type. The input sparse matrix \verb|A_output| should be a created empty matrix. The best practice is to use the one returned from \verb|SLIP_create_sparse| (in Section \ref{ss:create_sparse}). WARNING: Using sparse matrix that has been built with \verb|SLIP_build_sparse_*| as input would cause memory leak.
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    SLIP_info SLIP_build_sparse_csc_mpz
+    (
+        SLIP_sparse *A_output,// It should be initialized but unused yet
+        int32_t *p,        // The set of column pointers
+        int32_t *I,        // set of row indices
+        mpz_t *x,          // Set of values in full precision int.
+        int32_t n,         // dimension of the matrix
+        int32_t nz         // number of nonzeros in A (size of x and I vectors)
+    );
+\end{verbatim}
+} \end{mdframed}
 
-\cprotect\subsubsection{\verb|SLIP_build_sparse_trip_mpq|: build sparse matrix using triplet with \verb|mpq_t| entries}\label{s:user:build_sparse_trip_mpq}
-\begin{lstlisting}[language=C,frame=single]
-SLIP_info SLIP_build_sparse_trip_mpq
-(
-    SLIP_sparse *A_output,// It should be initialized but unused yet
-    int32_t *I,         // set of row indices
-    int32_t *J,         // set of column indices
-    mpq_t *x,           // Set of values as rational numbers
-    int32_t n,          // dimension of the matrix
-    int32_t nz          // number of nonzeros in A (size of x, I
-                        // and J vectors)
-);
-\end{lstlisting}
+\verb|SLIP_build_sparse_csc_mpz| builds a sparse matrix using compressed column
+form inputs, where the entry values are \verb|mpz_t| type. The input sparse
+matrix \verb|A_output| should be a created empty matrix. The best practice is
+to use the one returned from \verb|SLIP_create_sparse| (in Section
+\ref{ss:create_sparse}). WARNING: Using sparse matrix that has been built with
+\verb|SLIP_build_sparse_*| as input would cause memory leak.
+{\bf TODO: why a leak???} % TODO I don't understand this.
 
-\verb|SLIP_build_sparse_trip_mpq| builds a sparse matrix using triplet form inputs, where the entry values are \verb|mpq_t| type. The input sparse matrix \verb|A_output| should be a created empty matrix. The best practice is to use the one returned from \verb|SLIP_create_sparse| (in Section \ref{ss:create_sparse}). WARNING: Using sparse matrix that has been built with \verb|SLIP_build_sparse_*| as input would cause memory leak.
+%-------------------------------------------------------------------------------
+\cprotect\subsubsection{\verb|SLIP_build_sparse_trip_double|: build sparse matrix using triplet with \verb|double| entries}
+\label{s:user:build_sparse_trip_double}
+%-------------------------------------------------------------------------------
 
-\cprotect\subsubsection{\verb|SLIP_build_sparse_trip_mpfr|: build sparse matrix using triplet with \verb|mpfr_t| entries}\label{s:user:build_sparse_trip_mpfr}
-\begin{lstlisting}[language=C,frame=single]
-SLIP_info SLIP_build_sparse_trip_mpfr
-(
-    SLIP_sparse *A_output,// It should be initialized but unused yet
-    int32_t *I,         // set of row indices
-    int32_t *J,         // set of column indices
-    mpfr_t *x,          // Set of values as mpfr_t
-    int32_t n,          // dimension of the matrix
-    int32_t nz,         // number of nonzeros in A (size of x, I,
-                        // and J vectors)
-    SLIP_options *option// command options containing the prec for mpfr
-);
-\end{lstlisting}
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    SLIP_info SLIP_build_sparse_trip_double
+    (
+        SLIP_sparse *A_output,// It should be initialized but unused yet TODO??
+        int32_t *I,         // set of row indices
+        int32_t *J,         // set of column indices
+        double *x,          // Set of values in double
+        int32_t n,          // dimension of the matrix
+        int32_t nz          // number of nonzeros in A (size of x, I,
+                            // and J vectors)
+    );
+\end{verbatim}
+} \end{mdframed}
 
-\verb|SLIP_build_sparse_trip_mpfr| builds a sparse matrix using triplet form inputs, where the entry values are \verb|mpfr_t| type. The input sparse matrix \verb|A_output| should be a created empty matrix. The best practice is to use the one returned from \verb|SLIP_create_sparse| (in Section \ref{ss:create_sparse}). WARNING: Using sparse matrix that has been built with \verb|SLIP_build_sparse_*| as input would cause memory leak.
+\verb|SLIP_build_sparse_trip_double| builds a sparse matrix using triplet form
+inputs, where the entry values are \verb|double| type. The input sparse matrix
+\verb|A_output| should be a created empty matrix. The best practice is to use
+the one returned from \verb|SLIP_create_sparse| (in Section
+\ref{ss:create_sparse}). WARNING: Using sparse matrix that has been built with
+\verb|SLIP_build_sparse_*| as input would cause memory leak.
+{\bf TODO: why a leak???} % TODO I don't understand this.
 
+%-------------------------------------------------------------------------------
+\cprotect\subsubsection{\verb|SLIP_build_sparse_trip_int|: build sparse matrix using triplet with \verb|int32_t| entries}
+\label{s:user:build_sparse_trip_int}
+%-------------------------------------------------------------------------------
 
-\cprotect\subsubsection{\verb|SLIP_build_sparse_trip_mpz|: build sparse matrix using triplet with \verb|mpz_t| entries}\label{s:user:build_sparse_trip_mpz}
-\begin{lstlisting}[language=C,frame=single]
-SLIP_info SLIP_build_sparse_trip_mpz
-(
-    SLIP_sparse *A_output,// It should be initialized but unused yet
-    int32_t *I,         // set of row indices
-    int32_t *J,         // set of column indices
-    mpz_t *x,           // Set of values in full precision int
-    int32_t n,          // dimension of the matrix
-    int32_t nz          // number of nonzeros in A (size of x, I,
-                        // and J vectors)
-);
-\end{lstlisting}
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    SLIP_info SLIP_build_sparse_trip_int
+    (
+        SLIP_sparse *A_output,// It should be initialized but unused yet TODO??
+        int32_t *I,         // set of row indices
+        int32_t *J,         // set of column indices
+        int32_t *x,         // Set of values in int
+        int32_t n,          // dimension of the matrix
+        int32_t nz          // number of nonzeros in A (size of x, I,
+                            // and J vectors)
+    );
+\end{verbatim}
+} \end{mdframed}
 
-\verb|SLIP_build_sparse_trip_mpz| builds a sparse matrix using triplet form inputs, where the entry values are \verb|mpz_t| type. The input sparse matrix \verb|A_output| should be a created empty matrix. The best practice is to use the one returned from \verb|SLIP_create_sparse| (in Section \ref{ss:create_sparse}). WARNING: Using sparse matrix that has been built with \verb|SLIP_build_sparse_*| as input would cause memory leak.
+\verb|SLIP_build_sparse_trip_int| builds a sparse matrix using triplet form
+inputs, where the entry values are \verb|int32_t| type. The input sparse matrix
+\verb|A_output| should be a created empty matrix. The best practice is to use
+the one returned from \verb|SLIP_create_sparse| (in Section
+\ref{ss:create_sparse}). WARNING: Using sparse matrix that has been built with
+\verb|SLIP_build_sparse_*| as input would cause memory leak.
+{\bf TODO: why a leak???} % TODO I don't understand this.
 
-\cprotect\subsubsection{\verb|SLIP_build_dense_double|: build dense matrix using 2D \verb|double| array}\label{s:user:build_dense_double}
-\begin{lstlisting}[language=C,frame=single]
-SLIP_info SLIP_build_dense_double
-(
-    SLIP_dense *A_output, // Dense matrix, allocated but unused
-    double **b,           // Set of values as doubles
-    int32_t m,            // number of rows
-    int32_t n             // number of columns
-);
-\end{lstlisting}
+%-------------------------------------------------------------------------------
+\cprotect\subsubsection{\verb|SLIP_build_sparse_trip_mpq|: build sparse matrix using triplet with \verb|mpq_t| entries}
+\label{s:user:build_sparse_trip_mpq}
+%-------------------------------------------------------------------------------
 
-\verb|SLIP_build_dense_double| builds a dense matrix using 2D \verb|double| array. The input dense matrix \verb|A_output| should be a created empty matrix. The best practice is to use the one returned from \verb|SLIP_create_dense| (in Section \ref{ss:create_dense}). WARNING: Using dense matrix that has been built with \verb|SLIP_build_dense_*| as input would cause memory leak.
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    SLIP_info SLIP_build_sparse_trip_mpq
+    (
+        SLIP_sparse *A_output,// It should be initialized but unused yet TODO??
+        int32_t *I,         // set of row indices
+        int32_t *J,         // set of column indices
+        mpq_t *x,           // Set of values as rational numbers
+        int32_t n,          // dimension of the matrix
+        int32_t nz          // number of nonzeros in A (size of x, I
+                            // and J vectors)
+    );
+\end{verbatim}
+} \end{mdframed}
+
+\verb|SLIP_build_sparse_trip_mpq| builds a sparse matrix using triplet form
+inputs, where the entry values are \verb|mpq_t| type. The input sparse matrix
+\verb|A_output| should be a created empty matrix. The best practice is to use
+the one returned from \verb|SLIP_create_sparse| (in Section
+\ref{ss:create_sparse}). WARNING: Using sparse matrix that has been built with
+\verb|SLIP_build_sparse_*| as input would cause memory leak.
+{\bf TODO: why a leak???} % TODO I don't understand this.
+
+%-------------------------------------------------------------------------------
+\cprotect\subsubsection{\verb|SLIP_build_sparse_trip_mpfr|: build sparse matrix using triplet with \verb|mpfr_t| entries}
+\label{s:user:build_sparse_trip_mpfr}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    SLIP_info SLIP_build_sparse_trip_mpfr
+    (
+        SLIP_sparse *A_output,// It should be initialized but unused yet TODO??
+        int32_t *I,         // set of row indices
+        int32_t *J,         // set of column indices
+        mpfr_t *x,          // Set of values as mpfr_t
+        int32_t n,          // dimension of the matrix
+        int32_t nz,         // number of nonzeros in A (size of x, I,
+                            // and J vectors)
+        SLIP_options *option// command options containing the prec for mpfr
+    );
+\end{verbatim}
+} \end{mdframed}
+
+\verb|SLIP_build_sparse_trip_mpfr| builds a sparse matrix using triplet form
+inputs, where the entry values are \verb|mpfr_t| type. The input sparse matrix
+\verb|A_output| should be a created empty matrix. The best practice is to use
+the one returned from \verb|SLIP_create_sparse| (in Section
+\ref{ss:create_sparse}). WARNING: Using sparse matrix that has been built with
+\verb|SLIP_build_sparse_*| as input would cause memory leak.
+{\bf TODO: why a leak???} % TODO I don't understand this.
+
+%-------------------------------------------------------------------------------
+\cprotect\subsubsection{\verb|SLIP_build_sparse_trip_mpz|: build sparse matrix using triplet with \verb|mpz_t| entries}
+\label{s:user:build_sparse_trip_mpz}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    SLIP_info SLIP_build_sparse_trip_mpz
+    (
+        SLIP_sparse *A_output,// It should be initialized but unused yet
+        int32_t *I,         // set of row indices
+        int32_t *J,         // set of column indices
+        mpz_t *x,           // Set of values in full precision int
+        int32_t n,          // dimension of the matrix
+        int32_t nz          // number of nonzeros in A (size of x, I,
+                            // and J vectors)
+    );
+\end{verbatim}
+} \end{mdframed}
+
+\verb|SLIP_build_sparse_trip_mpz| builds a sparse matrix using triplet form
+inputs, where the entry values are \verb|mpz_t| type. The input sparse matrix
+\verb|A_output| should be a created empty matrix. The best practice is to use
+the one returned from \verb|SLIP_create_sparse| (in Section
+\ref{ss:create_sparse}). WARNING: Using sparse matrix that has been built with
+\verb|SLIP_build_sparse_*| as input would cause memory leak.
+{\bf TODO: why a leak???} % TODO I don't understand this.
+
+%-------------------------------------------------------------------------------
+\cprotect\subsubsection{\verb|SLIP_build_dense_double|: build dense matrix using 2D \verb|double| array}
+\label{s:user:build_dense_double}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    SLIP_info SLIP_build_dense_double
+    (
+        SLIP_dense *A_output, // Dense matrix, allocated but unused
+        double **b,           // Set of values as doubles
+        int32_t m,            // number of rows
+        int32_t n             // number of columns
+    );
+\end{verbatim}
+} \end{mdframed}
+
+\verb|SLIP_build_dense_double| builds a dense matrix using 2D \verb|double|
+array. The input dense matrix \verb|A_output| should be a created empty matrix.
+The best practice is to use the one returned from \verb|SLIP_create_dense| (in
+Section \ref{ss:create_dense}). WARNING: Using dense matrix that has been built
+with \verb|SLIP_build_dense_*| as input would cause memory leak.
 
 \cprotect\subsubsection{\verb|SLIP_build_dense_int|: build dense matrix using 2D \verb|int32_t| array}\label{s:user:build_dense_int}
 \begin{lstlisting}[language=C,frame=single]
