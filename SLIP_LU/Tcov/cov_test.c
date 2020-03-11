@@ -318,7 +318,7 @@ int main( int argc, char* argv[])
             SLIP_sparse *A = SLIP_create_sparse();
             SLIP_dense *b = SLIP_create_dense();
             // for Column ordering
-            SLIP_LU_analysis* S = SLIP_create_LU_analysis(n+1);
+            SLIP_LU_analysis* S = SLIP_create_LU_analysis(n);
             option->print_level = 0;
 
             if (!A || !b || !S) {SLIP_FREE_WORKSPACE; continue;}

@@ -14,8 +14,8 @@
 
 int32_t** SLIP_create_int_mat
 (
-    int32_t m,     // number of rows
-    int32_t n      // number of columns
+    int32_t m,     // number of rows (must be > 0)
+    int32_t n      // number of columns (must be > 0)
 )
 {
     // Check input

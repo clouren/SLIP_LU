@@ -318,13 +318,13 @@ typedef struct
                     // i.e., initial size of U
 } SLIP_LU_analysis;
 
-/* Purpose: This function returns a pointer to a created SLIP_LU_analysis type
- * with the length of S->q set as n (which needs to 1 + number of rows of input
- * matrix) upon successful malloc, otherwise, return NULL
+/* Purpose: This function returns a pointer to a created SLIP_LU_analysis
+ * object.  The input parameter n is the number of columns of the input matrix
+ * to be analyzed.  Returns NULL on failure.
  */
 SLIP_LU_analysis *SLIP_create_LU_analysis
 (
-    int32_t n      // length of S->q
+    int32_t n     // numbers of columns in matrix to be analyzed
 );
 
 /* Purpose: This function frees the memory of the SLIP_LU_analysis struct

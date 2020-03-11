@@ -22,21 +22,21 @@
 SLIP_info SLIP_build_sparse_csc_mpz
 (
     // TODO what does "It should be initialized but unused yet" mean??
-    SLIP_sparse *A_output,// It should be initialized but unused yet
-    int32_t *p,           // The set of column pointers
-    int32_t *I,           // set of row indices
-    mpz_t *x,             // Set of values in full precision int.
-    int32_t n,            // dimension of the matrix
-    int32_t nz            // number of nonzeros in A (size of x and I vectors)
+    SLIP_sparse *A,     // It should be initialized but unused yet
+    int32_t *p,         // The set of column pointers
+    int32_t *I,         // set of row indices
+    mpz_t *x,           // Set of values in full precision int.
+    int32_t n,          // dimension of the matrix
+    int32_t nz          // number of nonzeros in A (size of x and I vectors)
 )
 {
     SLIP_info ok;
-    if (!p || !I || !x || !A_output ||!A_output->scale)
+    if (!p || !I || !x || !A ||!A->scale)
     {
         return SLIP_INCORRECT_INPUT;
     }
 
-    SLIP_CHECK(slip_mpz_populate_mat(A_output, I, p, x, n, nz));
-    SLIP_CHECK(SLIP_mpq_set_ui(A_output->scale, 1, 1));
+    SLIP_CHECK(slip_mpz_populate_mat(A, I, p, x, n, nz));
+    SLIP_CHECK(SLIP_mpq_set_ui(A->scale, 1, 1));
     return SLIP_OK;
 }

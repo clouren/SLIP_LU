@@ -57,7 +57,7 @@ int main (void) // (int argc, char **argv)
     double** soln = NULL;
     SLIP_sparse* A = SLIP_create_sparse();
     SLIP_dense *b = SLIP_create_dense();
-    SLIP_LU_analysis *S = SLIP_create_LU_analysis(n+1);
+    SLIP_LU_analysis *S = SLIP_create_LU_analysis(n);
     SLIP_options* option = SLIP_create_default_options();
     if (!A || !b ||  !S || !option)
     {

@@ -62,7 +62,7 @@ void mexFunction
     slip_mex_get_A_and_b(A, b, pargin, nargin);
 
     // Create arrays based on the size of input matrix
-    S = SLIP_create_LU_analysis((A->n)+1);
+    S = SLIP_create_LU_analysis(A->n);
     double** soln = SLIP_create_double_mat(b->m, b->n);
     int32_t* pinv = (int32_t*) SLIP_malloc(A->n* sizeof(int32_t));
     mpz_t* rhos = SLIP_create_mpz_array(A->n);

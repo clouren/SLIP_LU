@@ -15,7 +15,7 @@
 
 SLIP_LU_analysis *SLIP_create_LU_analysis
 (
-    int32_t n     // Dimension of the column permutation
+    int32_t n     // number of columns in matrix to be analyzed
 )
 {
     // ALlocate memory for S
@@ -24,7 +24,7 @@ SLIP_LU_analysis *SLIP_create_LU_analysis
     if (S == NULL) {return S;}
 
     // Allocate memory for column permutation
-    S->q = (int32_t*) SLIP_malloc(n* sizeof(int32_t));
+    S->q = (int32_t*) SLIP_malloc((n+1) * sizeof(int32_t));
     if (S->q == NULL)
     {
         SLIP_FREE(S);

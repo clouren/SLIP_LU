@@ -381,8 +381,8 @@ SLIP_info SLIP_tripread
 
 SLIP_info SLIP_tripread_double
 (
-    SLIP_sparse* A,        // Matrix to be populated
-    FILE* file,          // file to read from (must already be open)
+    SLIP_sparse* A,         // Matrix to be populated
+    FILE* file,             // file to read from (must already be open)
     SLIP_options* option
 )
 {

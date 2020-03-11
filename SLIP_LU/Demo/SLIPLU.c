@@ -223,7 +223,7 @@ int main( int argc, char* argv[])
     rhos = SLIP_create_mpz_array(nrows);
     pinv = (int*) SLIP_malloc(nrows* sizeof(int));
     x = SLIP_create_mpq_mat(nrows, numRHS);
-    S = SLIP_create_LU_analysis(nrows+1);
+    S = SLIP_create_LU_analysis(nrows);     // TODO: should be ncols, not nrows
     if (!rhos || !pinv || !x || !S)
     {
         fprintf (stderr, "Error! OUT of MEMORY!\n");

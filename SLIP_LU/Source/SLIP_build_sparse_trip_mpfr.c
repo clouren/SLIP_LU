@@ -24,7 +24,7 @@
 SLIP_info SLIP_build_sparse_trip_mpfr
 (
     // TODO what does "It should be initialized but unused yet" mean??
-    SLIP_sparse *A_output,// It should be initialized but unused yet
+    SLIP_sparse *A,     // It should be initialized but unused yet
     int32_t *I,         // set of row indices
     int32_t *J,         // set of column indices
     mpfr_t *x,          // Set of values as mpfr_t
@@ -34,7 +34,7 @@ SLIP_info SLIP_build_sparse_trip_mpfr
 )
 {
     SLIP_info ok;
-    if (!I || !J || !A_output || !x || n <= 0 || nz <= 0 || !A_output->scale
+    if (!I || !J || !A || !x || n <= 0 || nz <= 0 || !A->scale
         || !option)
     {
         return SLIP_INCORRECT_INPUT;
@@ -46,9 +46,9 @@ SLIP_info SLIP_build_sparse_trip_mpfr
         return SLIP_OUT_OF_MEMORY;
     }
 
-    SLIP_CHECK(slip_expand_mpfr_array(x_new, x, A_output->scale, nz, option));
+    SLIP_CHECK(slip_expand_mpfr_array(x_new, x, A->scale, nz, option));
 
-    SLIP_CHECK(slip_trip_to_mat(A_output, I, J, x_new, n, nz));
+    SLIP_CHECK(slip_trip_to_mat(A, I, J, x_new, n, nz));
 
     SLIP_FREE_WORKSPACE;
 

@@ -18,16 +18,16 @@
 SLIP_info SLIP_build_sparse_csc_mpq
 (
     // TODO what does "It should be initialized but unused yet" mean??
-    SLIP_sparse *A_output,// It should be initialized but unused yet
-    int32_t *p,           // The set of column pointers
-    int32_t *I,           // set of row indices
-    mpq_t *x,             // Set of values as mpq_t rational numbers
-    int32_t n,            // dimension of the matrix
-    int32_t nz            // number of nonzeros in A (size of x and I vectors)
+    SLIP_sparse *A,     // It should be initialized but unused yet
+    int32_t *p,         // The set of column pointers
+    int32_t *I,         // set of row indices
+    mpq_t *x,           // Set of values as mpq_t rational numbers
+    int32_t n,          // dimension of the matrix
+    int32_t nz          // number of nonzeros in A (size of x and I vectors)
 )
 {
     SLIP_info ok;
-    if (!p || !I || !x || !A_output ||!A_output->scale)
+    if (!p || !I || !x || !A ||!A->scale)
     {
         return SLIP_INCORRECT_INPUT;
     }
@@ -35,9 +35,9 @@ SLIP_info SLIP_build_sparse_csc_mpq
     mpz_t* x_new = SLIP_create_mpz_array(nz);
     if (!x_new) {return SLIP_OUT_OF_MEMORY;}
 
-    SLIP_CHECK(slip_expand_mpq_array(x_new, x, A_output->scale, nz));
+    SLIP_CHECK(slip_expand_mpq_array(x_new, x, A->scale, nz));
 
-    SLIP_CHECK(slip_mpz_populate_mat(A_output, I, p, x_new, n, nz));
+    SLIP_CHECK(slip_mpz_populate_mat(A, I, p, x_new, n, nz));
 
     SLIP_FREE_WORKSPACE;
 

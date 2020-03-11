@@ -48,8 +48,8 @@ int main (void) // (int argc, char **argv)
     double **b_doub = NULL;
     double **soln = NULL;                       // Solution vector
     SLIP_sparse *A = SLIP_create_sparse();      // input matrix
-    SLIP_dense *b = SLIP_create_dense();       // Right hand side vector
-    SLIP_LU_analysis *S = SLIP_create_LU_analysis(n+1);// Column permutation
+    SLIP_dense *b = SLIP_create_dense();        // Right hand side vector
+    SLIP_LU_analysis *S = SLIP_create_LU_analysis(n);   // Column permutation
     SLIP_options *option = SLIP_create_default_options();
     if (!A || !b || !S || !option)
     {
