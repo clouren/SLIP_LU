@@ -16,6 +16,7 @@ SLIP_LU_UserGuide.pdf: SLIP_LU_UserGuide.tex SLIP_LU_UserGuide.bib
 	pdflatex SLIP_LU_UserGuide.tex
 	pdflatex SLIP_LU_UserGuide.tex
 	pdflatex SLIP_LU_UserGuide.tex
+	- $(RM) -r *.out *.aux *.log *.bbl *.blg *.toc *.cpt
 
 clean:
 	- $(RM) -r *.out *.aux *.log *.bbl *.blg *.toc *.cpt

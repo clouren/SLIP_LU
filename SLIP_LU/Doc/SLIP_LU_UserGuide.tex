@@ -12,6 +12,8 @@
 \usepackage{listings}
 \usepackage[dvipsnames]{xcolor}
 \usepackage[hidelinks]{hyperref}
+\usepackage{framed}
+\usepackage{mdframed}
 \hypersetup{
      colorlinks = true,
      citecolor = blue,
@@ -61,7 +63,8 @@ Contact Information: Contact Chris Lourenco, \href{mailto:chrisjlourenco@gmail.c
 \newpage
 
 %-------------------------------------------------------------------------------
-\section{Summary} \label{s:intro}
+\section{Summary}
+\label{s:intro}
 %-------------------------------------------------------------------------------
 
 SLIP LU is a software package designed to exactly solve unsymmetric sparse
@@ -294,7 +297,8 @@ The remainder of this section describes each of these data structures and
 enumerated types.
 
 %-------------------------------------------------------------------------------
-\cprotect\subsection{\verb|SLIP_info|: status code returned by SLIP LU}\label{ss:SLIP_info}
+\cprotect\subsection{\verb|SLIP_info|: status code returned by SLIP LU}
+\label{ss:SLIP_info}
 %-------------------------------------------------------------------------------
 
 Most of SLIP LU functions return its status to the caller as its return value,
@@ -371,7 +375,8 @@ schemes are described as follows:
 }
 
 %-------------------------------------------------------------------------------
-\cprotect\subsection{\verb|SLIP_col_order|: enum for column ordering schemes}\label{ss:SLIP_col_order}
+\cprotect\subsection{\verb|SLIP_col_order|: enum for column ordering schemes}
+\label{ss:SLIP_col_order}
 %-------------------------------------------------------------------------------
 
 The SLIP LU library provides three column ordering schemes: no ordering,
@@ -399,7 +404,7 @@ already has a good preordering.
                               factorization based on the AMD
                               \cite{amestoy2004algorithmamd} ordering of
                               $A+A^T$. This works well if $A$ has a mostly
-                              symmetric pattern, but tends to be worse 
+                              symmetric pattern, but tends to be worse
                               than COLAMD on matrices with unsymmetric pattern.
                               \cite{davis2004column}.\\
 \hline
@@ -410,7 +415,8 @@ already has a good preordering.
 }
 
 %-------------------------------------------------------------------------------
-\cprotect\subsection{ \verb|SLIP_options| structure} \label{ss:SLIP_options}
+\cprotect\subsection{ \verb|SLIP_options| structure}
+\label{ss:SLIP_options}
 %-------------------------------------------------------------------------------
 
 The \verb|SLIP_options| struct stores key command parameters for various
@@ -477,7 +483,6 @@ The SLIP LU package uses the following function/macro to create and destroy a
 \verb|SLIP_options| object.
 
 %----------------------------------------
-% \begin{table*}[htbp]
 \begin{center}
 \begin{tabular}{lp{3in}l}
 \hline
@@ -493,12 +498,11 @@ function/macro name & description & section \\
     & \ref{ss:SLIP_free} \\
 \hline
 \end{tabular}
-% \label{tab:SLIP_options}
 \end{center}
-% \end{table*}
 
 %-------------------------------------------------------------------------------
-\cprotect\subsection{The \verb|SLIP_sparse| Structure}\label{ss:SLIP_sparse}
+\cprotect\subsection{The \verb|SLIP_sparse| structure}
+\label{ss:SLIP_sparse}
 %-------------------------------------------------------------------------------
 
 All internal left-hand side matrices are stored in compressed sparse column
@@ -538,7 +542,7 @@ point, or rational. Data Type: \verb|mpq_t|
 \end{itemize}
 
 The SLIP LU package has a set of functions to create, build and destroy a SLIP
-LU sparse matrix, \verb|SLIP_sparse|:
+LU sparse matrix, \verb|SLIP_sparse|, as shown in the following table.
 
 %----------------------------------------
 {\small
@@ -558,24 +562,36 @@ function name & description & section \\
 \verb|SLIP_build_sparse_csc_int|
     & build sparse matrix from \verb|int32_t| type CSC matrix
     & \ref{s:user:build_sparse_csc_int} \\
-
-\verb|SLIP_build_sparse_csc_mpq| & build sparse matrix from \verb|mpq_t| type CSC matrix           & \ref{s:user:build_sparse_csc_mpq} \\
-
-\verb|SLIP_build_sparse_csc_mpfr| & build sparse matrix from \verb|mpfr_t| type CSC matrix           & \ref{s:user:build_sparse_csc_mpfr} \\
-
-\verb|SLIP_build_sparse_csc_mpz| & build sparse matrix from \verb|mpz_t| type CSC matrix           & \ref{s:user:build_sparse_csc_mpz} \\
+\verb|SLIP_build_sparse_csc_mpq|
+    & build sparse matrix from \verb|mpq_t| type CSC matrix
+    & \ref{s:user:build_sparse_csc_mpq} \\
+\verb|SLIP_build_sparse_csc_mpfr|
+    & build sparse matrix from \verb|mpfr_t| type CSC matrix
+    & \ref{s:user:build_sparse_csc_mpfr} \\
+\verb|SLIP_build_sparse_csc_mpz|
+    & build sparse matrix from \verb|mpz_t| type CSC matrix
+    & \ref{s:user:build_sparse_csc_mpz} \\
 \hline
-\verb|SLIP_build_sparse_trip_double|  & build sparse matrix from \verb|double| type triplet-format matrix            & \ref{s:user:build_sparse_trip_double} \\
+\verb|SLIP_build_sparse_trip_double|
+    & build sparse matrix from \verb|double| type triplet-format matrix
+    & \ref{s:user:build_sparse_trip_double} \\
+\verb|SLIP_build_sparse_trip_int|
+    & build sparse matrix from \verb|int32_t| type triplet-format matrix
+    & \ref{s:user:build_sparse_trip_int} \\
+\verb|SLIP_build_sparse_trip_mpq|
+    & build sparse matrix from \verb|mpq_t| type triplet-format matrix
+    & \ref{s:user:build_sparse_trip_mpq} \\
 
-\verb|SLIP_build_sparse_trip_int|  & build sparse matrix from \verb|int32_t| type triplet-format matrix            & \ref{s:user:build_sparse_trip_int} \\
-
-\verb|SLIP_build_sparse_trip_mpq|  & build sparse matrix from \verb|mpq_t| type triplet-format matrix            & \ref{s:user:build_sparse_trip_mpq} \\
-
-\verb|SLIP_build_sparse_trip_mpfr|  & build sparse matrix from \verb|mpfr_t| type triplet-format matrix            & \ref{s:user:build_sparse_trip_mpfr} \\
-
-\verb|SLIP_build_sparse_trip_mpz|  & build sparse matrix from \verb|mpz_t| type triplet-format matrix            & \ref{s:user:build_sparse_trip_mpz} \\
+\verb|SLIP_build_sparse_trip_mpfr|
+    & build sparse matrix from \verb|mpfr_t| type triplet-format matrix
+    & \ref{s:user:build_sparse_trip_mpfr} \\
+\verb|SLIP_build_sparse_trip_mpz|
+    & build sparse matrix from \verb|mpz_t| type triplet-format matrix
+    & \ref{s:user:build_sparse_trip_mpz} \\
 \hline
-\verb|SLIP_delete_sparse|    & destroy sparse matrix        & \ref{ss:delete_sparse}\\
+\verb|SLIP_delete_sparse|
+    & destroy sparse matrix
+    & \ref{ss:delete_sparse}\\
 \hline
 \end{tabular}
 \end{center}
@@ -583,305 +599,523 @@ function name & description & section \\
 }
 
 
-\cprotect\subsection{The \verb|SLIP_dense| Structure}\label{ss:SLIP_dense}
+%-------------------------------------------------------------------------------
+\cprotect\subsection{The \verb|SLIP_dense| structure}
+\label{ss:SLIP_dense}
+%-------------------------------------------------------------------------------
 
-All internal right-hand side matrices are stored as \verb|SLIP_dense| structure. A dense matrix \verb|SLIP_dense *b| has the following components:
+All internal right-hand side matrices are stored as dense matrice, using the
+\verb|SLIP_dense| structure. A dense matrix \verb|SLIP_dense *b| has the
+following components:
 
-\verb|b->m|: Number of rows in the matrix. Data Type: \verb|int32_t|
+\begin{itemize}
+\item \verb|b->m|: Number of rows in the matrix. Data Type: \verb|int32_t|
+\item \verb|b->n|: Number of columns in the matrix. Data Type: \verb|int32_t|
+\item \verb|b->x|: A 2D array of size $m$-by-$n$ which contains the numeric
+    values of the matrix. Data Type: \verb|mpz_t**|
+\item \verb|b->scale|: A scaling parameters that ensures integrality if the
+    input dense matrix is stored as either double, variable precision floating
+    point, or rational. Data Type: \verb|mpq_t|
+\end{itemize}
 
-\verb|b->n|: Number of columns in the matrix. Data Type: \verb|int32_t|
-
-\verb|b->x|: An 2D array of size $m$-by-$n$ which contains the numeric values of the matrix. Data Type: \verb|mpz_t**|
-
-\verb|b->scale|: A scaling parameters that ensures integrality if the input dense matrix is stored as either double, variable precision floating point, or rational. Data Type: \verb|mpq_t|
-
-The SLIP LU package has a set of functions to create, build and destroy a SLIP LU dense matrix, \verb|SLIP_dense|:
+The SLIP LU package has a set of functions to create, build and destroy a SLIP
+LU dense matrix, \verb|SLIP_dense|, described in the following table:
 
 %----------------------------------------
-\begin{table*}[htbp]
+{\small
+% \begin{table*}[htbp]
 \begin{center}
 \begin{tabular}{lll}
 \hline
 function name & description & section \\
 \hline
-\verb|SLIP_create_dense|       & create empty dense matrix     & \ref{ss:create_dense} \\
+\verb|SLIP_create_dense|
+    & create empty dense matrix
+    & \ref{ss:create_dense} \\
 \hline
-\verb|SLIP_build_dense_double| & build dense matrix from \verb|double| type CSC matrix           & \ref{s:user:build_dense_double} \\
-
-\verb|SLIP_build_dense_int| & build dense matrix from \verb|int32_t| type CSC matrix           & \ref{s:user:build_dense_int} \\
-
-\verb|SLIP_build_dense_mpq| & build dense matrix from \verb|mpq_t| type CSC matrix           & \ref{s:user:build_dense_mpq} \\
-
-\verb|SLIP_build_dense_mpfr| & build dense matrix from \verb|mpfr_t| type CSC matrix           & \ref{s:user:build_dense_mpfr} \\
-
-\verb|SLIP_build_dense_mpz| & build dense matrix from \verb|mpz_t| type CSC matrix           & \ref{s:user:build_dense_mpz} \\
+\verb|SLIP_build_dense_double|
+    & build dense matrix from \verb|double| type CSC matrix
+    & \ref{s:user:build_dense_double} \\
+\verb|SLIP_build_dense_int|
+    & build dense matrix from \verb|int32_t| type CSC matrix
+    & \ref{s:user:build_dense_int} \\
+\verb|SLIP_build_dense_mpq|
+    & build dense matrix from \verb|mpq_t| type CSC matrix
+    & \ref{s:user:build_dense_mpq} \\
+\verb|SLIP_build_dense_mpfr|
+    & build dense matrix from \verb|mpfr_t| type CSC matrix
+    & \ref{s:user:build_dense_mpfr} \\
+\verb|SLIP_build_dense_mpz|
+    & build dense matrix from \verb|mpz_t| type CSC matrix
+    & \ref{s:user:build_dense_mpz} \\
 \hline
-\verb|SLIP_delete_dense|    & destroy dense matrix        & \ref{ss:delete_dense}\\
+\verb|SLIP_delete_dense|
+    & destroy dense matrix
+    & \ref{ss:delete_dense}\\
 \hline
 \end{tabular}
 \end{center}
-\end{table*}
+% \end{table*}
+}
 
+%-------------------------------------------------------------------------------
+\cprotect\subsection{\verb|SLIP_LU_analysis| structure}
+\label{ss:SLIP_LU_analysis}
+%-------------------------------------------------------------------------------
 
-\cprotect\subsection{\verb|SLIP_LU_analysis| Structure}\label{ss:SLIP_LU_analysis}
+The \verb|SLIP_LU_analysis| data structure is used for storing the column
+permutation for LU and the guess on nonzeros for L and U. Users do not need to
+modify this struct, just pass it into the functions. A
+\verb|SLIP_LU_analysis| structure has the following components:
 
-The \verb|SLIP_LU_analysis| data structure is used for storing the column permutation for LU and the guess on nonzeros for L and U. Users do not need to modify this struct, just pass it into the functions. A \verb|SLIP_LU_analysis* S| has the following components:
+\begin{itemize}
+\item \verb|S->q|: The column permutation stored as a dense \verb|int32_t|
+vector of size $n+1$, where $n$ is the number of rows of the analyzed matrix.
+Currently this vector is obtained via COLAMD, AMD, or is set to no ordering
+(i.e., $[0, 1, \hdots, n-1]$).
 
-\verb|S->q|: The column permutation stored as a dense \verb|int32_t| vector of size $n+1$, where $n$ is the number of rows of the analyzed matrix. Currently this vector is obtained via COLAMD, AMD, or is set to no ordering (i.e., $[0, 1, \hdots, n-1]$).
+\item \verb|S->lnz|: An \verb|int32_t| which is a guess for the number of
+nonzeros in $L$. \verb|S->lnz| must be greater than or equal to $n$ and less
+than or equal to $n^2$. If \verb|S->lnz| is too small, the program may waste
+time performing extra memory reallocations. This is set during the symbolic
+analysis.
 
-\verb|S->lnz|: An \verb|int32_t| which is a guess for the number of nonzeros in $L$. \verb|S->lnz| must be greater than or equal to $n$ and less than or equal to $n^2$. If \verb|S->lnz| is too small, the program may waste time performing extra memory reallocations. This is set during the symbolic analysis.
+\item \verb|S->unz|: An \verb|int32_t| which is a guess for the number of
+nonzeros in $U$. \verb|S->unz| must be greater than or equal to $n$ and less
+than or equal to $n^2$. If \verb|S->unz| is too small, the program may waste
+time performing extra memory reallocations. This is set during the symbolic
+analysis.
+\end{itemize}
 
-\verb|S->unz|: An \verb|int32_t| which is a guess for the number of nonzeros in $U$. \verb|S->unz| must be greater than or equal to $n$ and less than or equal to $n^2$. If \verb|S->unz| is too small, the program may waste time performing extra memory reallocations. This is set during the symbolic analysis.
-
-The SLIP LU package provides the following functions to create and destroy a \verb|SLIP_LU_analysis| object.
+The SLIP LU package provides the following functions to create and destroy a
+\verb|SLIP_LU_analysis| object:
 
 %----------------------------------------
-\begin{table*}[htbp]
+{\small
+% \begin{table*}[htbp]
 \begin{center}
 \begin{tabular}{lll}
 \hline
 function/macro name & description & section \\
 \hline
-\verb|SLIP_create_LU_analysis|       & create and return \verb|SLIP_LU_analysis| pointer &\ref{ss:create_LU_analysis}\\
+\verb|SLIP_create_LU_analysis|
+    & create \verb|SLIP_LU_analysis| object
+    &\ref{ss:create_LU_analysis}\\
 \hline
-\verb|SLIP_delete_LU_analysis| & destroy \verb|SLIP_LU_analysis| object           & \ref{ss:delete_LU_analysis} \\
+\verb|SLIP_delete_LU_analysis|
+    & destroy \verb|SLIP_LU_analysis| object
+    & \ref{ss:delete_LU_analysis} \\
 \hline
 \end{tabular}
 \end{center}
-\end{table*}
-
-\newpage
-
-\cprotect\section{Overview of SLIP LU User-Called Routines} \label{s:UserRoutines}
-
-This section provides a brief overview of the user callable routines in SLIP LU. A comprehensive list of these routines can be located in the \verb|SLIP_LU.h| file. For each of these functions, this section briefly describes its purpose, syntax, input arguments, and output.
-
-\subsection{Memory Management Routines} \label{s:user:memmanag}
-
-The routines in this section are used to allocate and free memory for the data structures used in SLIP LU.
-
-\cprotect\subsubsection{\verb|SLIP_calloc|: allocate initialized memory}\label{ss:SLIP_calloc}
-
-\begin{lstlisting}[language=C,frame=single]
-void *SLIP_calloc
-(
-    size_t n,          // Size of array
-    size_t size        // Size to alloc
-);
-\end{lstlisting}
-
-\verb|SLIP_calloc| allocates block of memory for an array of \verb|n| elements, each of them \verb|size| bytes long, and initializes all its bits to zero. The input parameters \verb|n| and \verb|size| must be at least 1. If the function failed to allocate the requested block of memory, then a \verb|NULL| pointer is returned.
-
-\cprotect\subsubsection{\verb|SLIP_malloc|: allocate uninitialized memory}\label{ss:SLIP_malloc}
-
-\begin{lstlisting}[language=C,frame=single]
-void * SLIP_malloc
-(
-    size_t size        // Size to alloc
-);
-\end{lstlisting}
-
-\verb|SLIP_malloc| allocates a block of \verb|size| bytes of memory, returning a pointer to the beginning of the block. The content of the newly allocated block of memory is not initialized, remaining with indeterminate values. The function function makes sure \verb|size| at least be 1. If the function failed to allocate the requested block of memory, then a \verb|NULL| pointer is returned.
-
-\cprotect\subsubsection{\verb|SLIP_realloc|: resize allocated memory}
-
-\begin{lstlisting}[language=C,frame=single]
-void* SLIP_realloc
-(
-    void *p,            // Pointer to be realloced
-    size_t old_size,    // Old size of this pointer
-    size_t new_size     // New size of this pointer
-);
-\end{lstlisting}
-
-\verb|SLIP_realloc| attempts to resize the memory block pointed to by \verb|p| that was previously allocated with a call to \verb|SLIP_malloc| or \verb|SLIP_calloc|. In the case when the function fails to allocate new block of memory as required and the newly required memory size is smaller than the old one, then the old block is kept unchanged and \verb|SLIP_realloc| pretends to succeed. Otherwise, the function returns either \verb|NULL| when it fails, or the new block of memory when it succeeds.
-
-
-\cprotect\subsubsection{\verb|SLIP_free|: free allocated memory}\label{ss:SLIP_free}
-
-\begin{lstlisting}[language=C,frame=single]
-void SLIP_free
-(
-    void *p         // Pointer to be free'd
-);
-\end{lstlisting}
-
-\verb|SLIP_free| deallocates the memory previously allocated by a call to \verb|SLIP_calloc|, \verb|SLIP_malloc|, or \verb|SLIP_realloc|. Note that the default C \verb|free| function can cause a segmentation fault if called multiple times on the same pointer or is called via other inappropriate behavior. To remedy this issue, this function frees  the input pointer \verb|p| only when it is not \verb|NULL|. To further prevent the potential segmentation fault that could be caused by \verb|free|, the following macro \verb|SLIP_FREE| is created, which sets the free'd pointer to \verb|NULL|.
-
-\begin{lstlisting}[language=C,frame=single]
-#define SLIP_FREE(p)                        \
-{                                           \
-    SLIP_free (p) ;                         \
-    (p) = NULL ;                            \
+% \end{table*}
 }
-\end{lstlisting}
 
+%-------------------------------------------------------------------------------
+\cprotect\section{Overview of SLIP LU User-Callable Routines}
+\label{s:UserRoutines}
+%-------------------------------------------------------------------------------
 
+This section provides a brief overview of the user callable routines in SLIP
+LU. A comprehensive list of these routines is located in the \verb|SLIP_LU.h|
+file. For each of these functions, this section briefly describes its purpose,
+syntax, input arguments, and output.
+
+%-------------------------------------------------------------------------------
+\subsection{Memory Management Routines} \label{s:user:memmanag}
+%-------------------------------------------------------------------------------
+
+The routines in this section are used to allocate and free memory for the data
+structures used in SLIP LU.
+
+%-------------------------------------------------------------------------------
+\cprotect\subsubsection{\verb|SLIP_calloc|: allocate initialized memory}
+\label{ss:SLIP_calloc}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    void *SLIP_calloc
+    (
+        size_t n,          // Size of array
+        size_t size        // Size to alloc
+    );
+\end{verbatim}
+} \end{mdframed}
+
+\verb|SLIP_calloc| allocates a block of memory for an array of \verb|n|
+elements, each of them \verb|size| bytes long, and initializes all its bits to
+zero.  If any input is equal to zero, it is treated as if equal to 1.  If the
+function failed to allocate the requested block of memory, then a \verb|NULL|
+pointer is returned.
+
+%-------------------------------------------------------------------------------
+\cprotect\subsubsection{\verb|SLIP_malloc|: allocate uninitialized memory}
+\label{ss:SLIP_malloc}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    void * SLIP_malloc
+    (
+        size_t size        // Size to alloc
+    );
+\end{verbatim}
+} \end{mdframed}
+
+\verb|SLIP_malloc| allocates a block of \verb|size| bytes of memory, returning
+a pointer to the beginning of the block. The content of the newly allocated
+block of memory is not initialized, remaining with indeterminate values.  If
+the \verb|size| is zero, it is treated as if equal to 1.  If the function fails
+to allocate the requested block of memory, then a \verb|NULL| pointer is
+returned.
+
+%-------------------------------------------------------------------------------
+\cprotect\subsubsection{\verb|SLIP_realloc|: resize allocated memory}
+\label{ss:SLIP_realloc}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    void* SLIP_realloc
+    (
+        void *p,            // Pointer to array to be realloced
+        size_t old_size,    // Old size of the array
+        size_t new_size     // New size of the array
+    );
+\end{verbatim}
+} \end{mdframed}
+
+\verb|SLIP_realloc| attempts to resize the memory block pointed to by \verb|p|
+that was previously allocated with a call to \verb|SLIP_malloc| or
+\verb|SLIP_calloc|. In the case when the function fails to allocate new block
+of memory as required and the newly required memory size is smaller than the
+old one, then the old block is kept unchanged and \verb|SLIP_realloc| pretends
+to succeed. Otherwise, the function returns either \verb|NULL| when it fails,
+or the new block of memory when it succeeds.
+
+%-------------------------------------------------------------------------------
+\cprotect\subsubsection{\verb|SLIP_free|: free allocated memory}
+\label{ss:SLIP_free}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    void SLIP_free
+    (
+        void *p         // Pointer to be free'd
+    );
+\end{verbatim}
+} \end{mdframed}
+
+\verb|SLIP_free| deallocates the memory previously allocated by a call to
+\verb|SLIP_calloc|, \verb|SLIP_malloc|, or \verb|SLIP_realloc|. Note that the
+default C \verb|free| function can cause a segmentation fault if called
+multiple times on the same pointer or is called via other inappropriate
+behavior. To remedy this issue, this function frees the input pointer \verb|p|
+only when it is not \verb|NULL|. To further prevent the potential segmentation
+fault that could be caused by \verb|free|, the following macro \verb|SLIP_FREE|
+is provided, which sets the free'd pointer to \verb|NULL|.
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    #define SLIP_FREE(p)                        \
+    {                                           \
+        SLIP_free (p) ;                         \
+        (p) = NULL ;                            \
+    }
+\end{verbatim}
+} \end{mdframed}
+
+%-------------------------------------------------------------------------------
 \cprotect\subsubsection{\verb|SLIP_initialize|: initialize the working environment}
+%-------------------------------------------------------------------------------
 
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    void SLIP_initialize
+    (
+        void
+    );
+\end{verbatim}
+} \end{mdframed}
 
-\begin{lstlisting}[language=C,frame=single]
-void SLIP_initialize
-(
-    void
-);
-\end{lstlisting}
+\verb|SLIP_initialize| initializes the working environment for SLIP LU
+functions. SLIP LU utilizes a specialized memory management scheme in order to
+prevent potential memory failures caused by GMP library. This function
+\textcolor{blue}{\textbf{must}} be called prior to using the library. See the
+next section \verb|SLIP_initialize_expert| for more details.
 
-\verb|SLIP_initialize| initializes the working environment for SLIP LU functions. SLIP LU utilizes a specialized memory management scheme in order to prevent potential memory failures caused by GMP library. This function \textcolor{blue}{\textbf{must}} be called prior to using the library. See the next section \verb|SLIP_initialize_expert| for more details.
-
-
+%-------------------------------------------------------------------------------
 \cprotect\subsubsection{\verb|SLIP_initialize_expert|: initialize the working environment (expert version)}
+%-------------------------------------------------------------------------------
 
-\begin{lstlisting}[language=C,frame=single]
-void SLIP_initialize_expert
-(
-    void* (*MyMalloc) (size_t),                 // User defined malloc
-    void* (*MyRealloc) (void *, size_t, size_t),// User defined realloc
-    void (*MyFree) (void*, size_t)              // User defined free
-);
-\end{lstlisting}
-
-\verb|SLIP_initialize_expert| initializes the working environment for SLIP LU with custom memory functions that are used for GMP. If the user passes in their
- own \verb|malloc|, \verb|realloc|, or \verb|free| function(s), we use those internally to process
- memory. If a NULL pointer is passed in for any function, then default functions are used.
-
-  The three functions are similar to ANSI C \verb|malloc|, \verb|realloc|, and \verb|free|
-  functions, but the calling syntax is not the same.  Below are the definitions that \textcolor{blue}{\textbf{must}} be followed, per the GMP specification:
-
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
 \begin{verbatim}
-   void *MyMalloc (size_t size) ;  // same as the ANSI C malloc
-   void *MyRealloc (void *p, size_t oldsize, size_t newsize) ; // differs
-   void MyFree (void *p, size_t size) ; // differs
+    void SLIP_initialize_expert
+    (
+        void* (*MyMalloc) (size_t),                 // User defined malloc
+        void* (*MyRealloc) (void *, size_t, size_t),// User defined realloc
+        void (*MyFree) (void*, size_t)              // User defined free
+    );
 \end{verbatim}
+} \end{mdframed}
 
-  \verb|MyMalloc| has the identical to the ANSI C \verb|malloc|.  MyRealloc adds a parameter,
-  \verb|oldsize|, which is the prior size of the block of memory to be reallocated.
-  \verb|MyFree| takes a second argument, which is the size of the block that is being free'd.
+\verb|SLIP_initialize_expert| initializes the working environment for SLIP LU
+with custom memory functions that are used for GMP. If the user passes in their
+own \verb|malloc|, \verb|realloc|, or \verb|free| function(s), we use those
+internally to process memory. If a NULL pointer is passed in for any function,
+then default functions are used.
 
-  The default memory management functions used inside of SLIP LU's GMP interface are:
+The three functions are similar to ANSI C \verb|malloc|, \verb|realloc|, and
+\verb|free| functions, but the calling syntax is not the same.  Below are the
+definitions that \textcolor{blue}{\textbf{must}} be followed, per the GMP
+specification:
 
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
 \begin{verbatim}
-       MyMalloc    slip_gmp_allocate
-       MyRealloc   slip_gmp_reallocate
-       MyFree      slip_gmp_free
+    void *MyMalloc (size_t size) ;  // same as the ANSI C malloc
+    void *MyRealloc (void *p, size_t oldsize, size_t newsize) ; // differs
+    void MyFree (void *p, size_t size) ; // differs
 \end{verbatim}
+} \end{mdframed}
 
-  The \verb|slip_gmp_*| memory management functions are unique to SLIP LU Library.  They
-  provide an elegant workaround for how GMP manages its memory.  By default,
-  if GMP attempts to allocate memory, but it fails, then it simply terminates
-  the user application.  This behavior is not suitable for many applications
-  (MATLAB in particular).  Fortunately, GMP allows the user application
-  (SLIP LU in this case) to pass in alternative memory manager functions, via
-  \verb|mp_set_memory_functions|.  The \verb|slip_gmp_*| functions do not return to GMP if
-  the allocation fails, but instead use the \verb|longjmp| feature of ANSI C to
-  implement a try/catch mechanism.  The memory failure can then be safely
-  handled by SLIP LU, without memory leaks and without terminating the user
-  application.
+\verb|MyMalloc| has identical parameters as the the ANSI C \verb|malloc|.
+\verb|MyRealloc| adds a parameter, \verb|oldsize|, which is the prior size of
+the block of memory to be reallocated.  \verb|MyFree| takes a second argument,
+which is the size of the block that is being free'd.
 
-  When SLIP LU is used via MATLAB, the following functions are used instead:
+The default memory management functions used inside of SLIP LU's GMP interface
+are:
 
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
 \begin{verbatim}
-       MyMalloc    mxMalloc
-       MyRealloc   slip_gmp_mex_realloc (a wrapper for mxRealloc)
-       MyFree      slip_gmp_mex_free (a wrapper for mxFree)
+    MyMalloc    slip_gmp_allocate
+    MyRealloc   slip_gmp_reallocate
+    MyFree      slip_gmp_free
 \end{verbatim}
+} \end{mdframed}
 
-  Note that these functions are not used by SLIP LU itself, but only inside
-  GMP.  The functions used by SLIP LU itself are \verb|SLIP_malloc|, \verb|SLIP_calloc|,
-  \verb|SLIP_realloc|, and \verb|SLIP_free|, which are wrappers for the ANSI C \verb|malloc|,
-  \verb|calloc|, \verb|realloc|, and \verb|free| (see Sections \ref{ss:SLIP_calloc}-\ref{ss:SLIP_free}), or (if used inside MATLAB), for the MATLAB
-  \verb|mxMalloc|, \verb|mxCalloc|, \verb|mxRealloc|, and \verb|mxFree| functions.
+The \verb|slip_gmp_*| memory management functions are unique to SLIP LU
+Library.  They provide an elegant workaround for how GMP manages its memory.
+By default, if GMP attempts to allocate memory, but it fails, then it simply
+terminates the user application.  This behavior is not suitable for many
+applications (MATLAB in particular).  Fortunately, GMP allows the user
+application (SLIP LU in this case) to pass in alternative memory manager
+functions, via \verb|mp_set_memory_functions|.  The \verb|slip_gmp_*| functions
+do not return to GMP if the allocation fails, but instead use the
+\verb|longjmp| feature of ANSI C to implement a try/catch mechanism.  The
+memory failure can then be safely handled by SLIP LU, without memory leaks and
+without terminating the user application.
 
-\cprotect\subsubsection{\verb|SLIP_finalize|: free the working environment}\label{ss:SLIP_finalize}
+When SLIP LU is used via MATLAB, the following functions are used instead:
 
-\begin{lstlisting}[language=C,frame=single]
-void SLIP_finalize
-(
-    void
-);
-\end{lstlisting}
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    MyMalloc    mxMalloc
+    MyRealloc   slip_gmp_mex_realloc (a wrapper for mxRealloc)
+    MyFree      slip_gmp_mex_free (a wrapper for mxFree)
+\end{verbatim}
+} \end{mdframed}
 
-\verb|SLIP_finalize| frees the working environment for SLIP LU library. SLIP LU utilizes a specialized memory management scheme in order to prevent memory failures. Calling the function \verb|SLIP_finalize| after you are finished using the library ensures all memory is freed.
+Note that these functions are not used by SLIP LU itself, but only inside GMP.
+The functions used by SLIP LU itself are \verb|SLIP_malloc|,
+\verb|SLIP_calloc|, \verb|SLIP_realloc|, and \verb|SLIP_free|, which are
+wrappers for the ANSI C \verb|malloc|, \verb|calloc|, \verb|realloc|, and
+\verb|free| (see Sections \ref{ss:SLIP_calloc}-\ref{ss:SLIP_free}), or (if used
+inside MATLAB), for the MATLAB \verb|mxMalloc|, \verb|mxCalloc|,
+\verb|mxRealloc|, and \verb|mxFree| functions.
 
-\cprotect\subsubsection{\verb|SLIP_create_default_options|: create default \verb|SLIP_option| object}\label{ss:create_default_options}
-\begin{lstlisting}[language=C,frame=single]
-SLIP_options* SLIP_create_default_options
-(
-    void
-);
-\end{lstlisting}
+%-------------------------------------------------------------------------------
+\cprotect\subsubsection{\verb|SLIP_finalize|: free the working environment}
+\label{ss:SLIP_finalize}
+%-------------------------------------------------------------------------------
 
-\verb|SLIP_create_default_options| creates and returns \verb|SLIP_options| pointer with default parameters upon successful allocation, which are discussed in Section \ref{ss:SLIP_options}.
-To safely free the \verb|SLIP_options* option| structure, simply use \verb|SLIP_FREE(option)|.
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    void SLIP_finalize
+    (
+        void
+    );
+\end{verbatim}
+} \end{mdframed}
+
+\verb|SLIP_finalize| frees the working environment for SLIP LU library. SLIP LU
+utilizes a specialized memory management scheme in order to prevent memory
+failures. Calling the function \verb|SLIP_finalize| after you are finished
+using the library ensures all memory is freed.
+
+%-------------------------------------------------------------------------------
+\cprotect\subsubsection{\verb|SLIP_create_default_options|: create default \verb|SLIP_option| object}
+\label{ss:create_default_options}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    SLIP_options* SLIP_create_default_options
+    (
+        void
+    );
+\end{verbatim}
+} \end{mdframed}
+
+\verb|SLIP_create_default_options| creates and returns a pointer to a
+\verb|SLIP_options| struct with default parameters upon successful allocation,
+which are discussed in Section \ref{ss:SLIP_options}.  To safely free the
+\verb|SLIP_options* option| structure, simply use \verb|SLIP_FREE(option)|.
+
+%-------------------------------------------------------------------------------
+\cprotect\subsubsection{\verb|SLIP_create_sparse|: create empty sparse matrix}
+\label{ss:create_sparse}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    SLIP_sparse *SLIP_create_sparse
+    (
+        void
+    );
+\end{verbatim}
+} \end{mdframed}
+
+\verb|SLIP_create_sparse| allocates a new empty sparse matrix and returns a
+\verb|SLIP_sparse| pointer to this matrix upon successful allocation.  The
+returned matrix has size of $0$-by-$0$ and scale parameter of $1$. For methods
+to build the created sparse matrix, users can refer to the table in Section
+\ref{ss:SLIP_sparse}.
+
+%-------------------------------------------------------------------------------
+\cprotect\subsubsection{\verb|SLIP_delete_sparse|: delete sparse matrix}
+\label{ss:delete_sparse}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    void SLIP_delete_sparse
+    (
+        SLIP_sparse **A // matrix to be deleted
+    );
+\end{verbatim}
+} \end{mdframed}
+
+\verb|SLIP_delete_sparse| deletes the sparse matrix \verb|A|. Note that the
+input of the function is the pointer to the pointer of a \verb|SLIP_sparse|
+structure. This is because this function internally sets the pointer of a
+\verb|SLIP_sparse| to be \verb|NULL| to prevent potential segmentation fault
+that could be caused by double \verb|free|.
+
+%-------------------------------------------------------------------------------
+\cprotect\subsubsection{\verb|SLIP_create_dense|: create empty dense matrix}
+\label{ss:create_dense}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    SLIP_dense *SLIP_create_dense
+    (
+        void
+    );
+\end{verbatim}
+} \end{mdframed}
+
+\verb|SLIP_create_dense| allocates a new empty dense matrix and returns a
+\verb|SLIP_dense| pointer to this matrix upon successful allocation. The
+returned matrix has size of $0$-by-$0$ and scale parameter of $1$. For methods
+to build the created dense matrix, users can refer to the table in Section
+\ref{ss:SLIP_dense}.
+
+%-------------------------------------------------------------------------------
+\cprotect\subsubsection{\verb|SLIP_delete_dense|: delete dense matrix}
+\label{ss:delete_dense}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    void SLIP_delete_dense
+    (
+        SLIP_dense **A
+    );
+\end{verbatim}
+} \end{mdframed}
+
+\verb|SLIP_delete_dense| deletes the dense matrix \verb|A|. Note that the input
+of the function is the pointer to the pointer of a \verb|SLIP_dense| structure.
+This is because this function internally sets the pointer of a
+\verb|SLIP_dense| to be \verb|NULL| to prevent potential segmentation fault
+that could be caused by double \verb|free|.
+
+%-------------------------------------------------------------------------------
+\cprotect\subsubsection{\verb|SLIP_create_LU_analysis|: create \verb|SLIP_LU_analysis| structure}
+\label{ss:create_LU_analysis}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    SLIP_LU_analysis *SLIP_create_LU_analysis
+    (
+        int32_t n      // length of S->q
+    );
+\end{verbatim}
+} \end{mdframed}
+
+This function allocates an object that will contain a symbolic analysis of an
+LU factorization, and returns a \verb|SLIP_LU_analysis| pointer to this newly
+created object.  The object contains an array \verb|S->q| of length \verb|n|
+(which needs to be $1$ + number of rows of the analyzed matrix) upon successful
+allocation, otherwise, return NULL. Both \verb|lnz| and \verb|unz| are set to
+0. For more information about the \verb|SLIP_LU_analysis| structure, users can
+refer to Section \ref{ss:SLIP_LU_analysis}.
+
+% TODO: this is confusing.  It should take in n as the dimension of the matrix
+% to be factorized, and allocate S->q of size n.
+
+%-------------------------------------------------------------------------------
+\cprotect\subsubsection{\verb|SLIP_delete_LU_analysis|: delete \verb|SLIP_LU_analysis| structure}
+\label{ss:delete_LU_analysis}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    void SLIP_delete_LU_analysis
+    (
+        SLIP_LU_analysis **S // Structure to be deleted
+    );
+\end{verbatim}
+} \end{mdframed}
 
 
-\cprotect\subsubsection{\verb|SLIP_create_sparse|: create empty sparse matrix}\label{ss:create_sparse}
+\verb|SLIP_delete_LU_analysis| deletes a \verb|SLIP_LU_analysis| structure.
+Note that the input of the function is the pointer to the pointer of a
+\verb|SLIP_LU_analysis| structure. This is because this function internally
+sets the pointer of a \verb|SLIP_LU_analysis| to be \verb|NULL| to prevent
+potential segmentation fault that could be caused by double \verb|free|.
 
-\begin{lstlisting}[language=C,frame=single]
-SLIP_sparse *SLIP_create_sparse
-(
-    void
-);
-\end{lstlisting}
-
-\verb|SLIP_create_sparse| returns a pointer to a created empty sparse matrix as \verb|SLIP_sparse| pointer upon successful allocation. The returned matrix has size of $0$-by-$0$ and scale parameter of $1$. For methods to build the created sparse matrix, users can refer to the table in Section \ref{ss:SLIP_sparse}.
-
-\cprotect\subsubsection{\verb|SLIP_delete_sparse|: delete sparse matrix}\label{ss:delete_sparse}
-\begin{lstlisting}[language=C,frame=single]
-void SLIP_delete_sparse
-(
-    SLIP_sparse **A // matrix to be deleted
-);
-\end{lstlisting}
-
-\verb|SLIP_delete_sparse| deletes the sparse matrix \verb|A|. Note that the input of the function is the pointer to the pointer of a \verb|SLIP_sparse| structure. This is because this function internally sets the pointer of a \verb|SLIP_sparse| to be \verb|NULL| to prevent potential segmentation fault that could be caused by double \verb|free|.
-
-\cprotect\subsubsection{\verb|SLIP_create_dense|: create empty dense matrix}\label{ss:create_dense}
-\begin{lstlisting}[language=C,frame=single]
-SLIP_dense *SLIP_create_dense
-(
-    void
-);
-\end{lstlisting}
-
-\verb|SLIP_create_dense| returns a pointer to a created empty dense matrix as \verb|SLIP_dense| pointer upon successful allocation. The returned matrix has size of $0$-by-$0$ and scale parameter of $1$. For methods to build the created dense matrix, users can refer to the table in Section \ref{ss:SLIP_dense}.
-
-\cprotect\subsubsection{\verb|SLIP_delete_dense|: delete dense matrix}\label{ss:delete_dense}
-\begin{lstlisting}[language=C,frame=single]
-void SLIP_delete_dense
-(
-    SLIP_dense **A
-);
-\end{lstlisting}
-
-\verb|SLIP_delete_dense| deletes the dense matrix \verb|A|. Note that the input of the function is the pointer to the pointer of a \verb|SLIP_dense| structure. This is because this function internally sets the pointer of a \verb|SLIP_dense| to be \verb|NULL| to prevent potential segmentation fault that could be caused by double \verb|free|.
-
-\cprotect\subsubsection{\verb|SLIP_create_LU_analysis|: create \verb|SLIP_LU_analysis| structure}\label{ss:create_LU_analysis}
-\begin{lstlisting}[language=C,frame=single]
-SLIP_LU_analysis *SLIP_create_LU_analysis
-(
-    int32_t n      // length of S->q
-);
-\end{lstlisting}
-
-This function returns a pointer to a created \verb|SLIP_LU_analysis| type
-with the length of \verb|S->q| set as \verb|n| (which needs to be $1$ + number of rows of the analyzed matrix) upon successful allocation, otherwise, return NULL. Both \verb|lnz| and \verb|unz| are set to 0. For more information about the \verb|SLIP_LU_analysis| structure, users can refer to Section \ref{ss:SLIP_LU_analysis}
-
-\cprotect\subsubsection{\verb|SLIP_delete_LU_analysis|: delete \verb|SLIP_LU_analysis| structure}\label{ss:delete_LU_analysis}
-\begin{lstlisting}[language=C,frame=single]
-void SLIP_delete_LU_analysis
-(
-    SLIP_LU_analysis **S // Structure to be deleted
-);
-\end{lstlisting}
-
-\verb|SLIP_delete_LU_analysis| deletes a \verb|SLIP_LU_analysis| structure. Note that the input of the function is the pointer to the pointer of a \verb|SLIP_LU_analysis| structure. This is because this function internally sets the pointer of a \verb|SLIP_LU_analysis| to be \verb|NULL| to prevent potential segmentation fault that could be caused by double \verb|free|.
-
-
-
+%-------------------------------------------------------------------------------
 \subsection{Matrix Building Routines} \label{s:Matrix_building_routines}
+%-------------------------------------------------------------------------------
 
-The routines in this section are used to build either the sparse matrix or the dense matrix.
+The routines in this section are used to build either the sparse matrix or the
+dense matrix.
+
+% TODO: TIM IS HERE
 
 \cprotect\subsubsection{\verb|SLIP_build_sparse_csc_double|: build sparse matrix using CSC with \verb|double| entries}\label{s:user:build_sparse_csc_double}
 \begin{lstlisting}[language=C,frame=single]
