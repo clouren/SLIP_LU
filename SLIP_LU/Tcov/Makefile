@@ -31,9 +31,9 @@ CS =slip_array_div.o slip_array_mul.o slip_back_sub.o SLIP_build_dense_mpz.o \
     SLIP_build_dense_double.o SLIP_build_sparse_trip_mpz.o \
     SLIP_build_sparse_trip_mpq.o SLIP_build_sparse_trip_mpfr.o \
     SLIP_build_sparse_trip_int.o SLIP_build_sparse_trip_double.o \
-    SLIP_build_sparse_ccf_mpz.o SLIP_build_sparse_ccf_mpq.o \
-    SLIP_build_sparse_ccf_mpfr.o  SLIP_build_sparse_ccf_int.o \
-    SLIP_build_sparse_ccf_double.o \
+    SLIP_build_sparse_csc_mpz.o SLIP_build_sparse_csc_mpq.o \
+    SLIP_build_sparse_csc_mpfr.o  SLIP_build_sparse_csc_int.o \
+    SLIP_build_sparse_csc_double.o \
     SLIP_check_solution.o SLIP_create_LU_analysis.o SLIP_create_dense.o \
     SLIP_create_double_mat.o SLIP_delete_int_mat.o SLIP_free.o \
     SLIP_create_int_mat.o SLIP_create_mpfr_array.o SLIP_create_mpfr_mat.o \

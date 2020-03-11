@@ -2,6 +2,12 @@
 # SLIP_LU Makefile
 #------------------------------------------------------------------------------
 
+# SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+# Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+# SLIP_LU/License for the license.
+
+#------------------------------------------------------------------------------
+
 SUITESPARSE ?= $(realpath $(CURDIR)/..)
 export SUITESPARSE
 
@@ -33,6 +39,7 @@ clean:
 	( cd Tcov ; $(MAKE) clean )
 	- ( cd MATLAB/Source ; $(RM) *.o )
 	- ( cd MATLAB    ; $(RM) *.o )
+	( cd Doc ; $(MAKE) clean )
 
 purge:
 	( cd Lib ; $(MAKE) purge )
@@ -40,6 +47,7 @@ purge:
 	( cd Tcov ; $(MAKE) purge )
 	- ( cd MATLAB/Source ; $(RM) *.o *.mex* )
 	- ( cd MATLAB    ; $(RM) *.o *.mex* )
+	( cd Doc ; $(MAKE) clean )
 
 distclean: purge
 

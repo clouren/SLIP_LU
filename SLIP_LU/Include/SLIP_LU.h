@@ -396,10 +396,10 @@ void SLIP_free
 }
 
 //------------------------------------------------------------------------------
-//---------------------------Build the users input matrix from ccf--------------
+//---------------------------Build the users input matrix from CSC--------------
 //------------------------------------------------------------------------------
 
-/* SLIP_build_sparse_ccf_[type] will allow the user to take a matrix of their
+/* SLIP_build_sparse_csc_[type] will allow the user to take a matrix of their
  * defined type (either double, mpfr_t, mpz_t, or mpq_t) and convert it from
  * their version of compressed column form to our data structure. The integrity
  * of the user defined arrays are maintained (therefore, one would need to
@@ -409,9 +409,9 @@ void SLIP_free
  *
  */
 
-/* Purpose: Build a SLIP_sparse from mpz_t stored ccf matrix */
+/* Purpose: Build a SLIP_sparse from mpz_t stored CSC matrix */
 
-SLIP_info SLIP_build_sparse_ccf_mpz
+SLIP_info SLIP_build_sparse_csc_mpz
 (
     SLIP_sparse *A_output,// It should be initialized but unused yet TODO ??
     int32_t *p,           // The set of column pointers
@@ -421,9 +421,9 @@ SLIP_info SLIP_build_sparse_ccf_mpz
     int32_t nz            // number of nonzeros in A (size of x and I vectors)
 );
 
-/* Purpose: Build a SLIP_sparse from double stored ccf matrix */
+/* Purpose: Build a SLIP_sparse from double stored CSC matrix */
 
-SLIP_info SLIP_build_sparse_ccf_double
+SLIP_info SLIP_build_sparse_csc_double
 (
     SLIP_sparse *A_output,// It should be initialized but unused yet TODO ??
     int32_t *p,           // The set of column pointers
@@ -434,9 +434,9 @@ SLIP_info SLIP_build_sparse_ccf_double
     SLIP_options* option
 );
 
-/* Purpose: Build a SLIP_sparse from int stored ccf matrix */
+/* Purpose: Build a SLIP_sparse from int stored CSC matrix */
 
-SLIP_info SLIP_build_sparse_ccf_int
+SLIP_info SLIP_build_sparse_csc_int
 (
     SLIP_sparse *A_output,// It should be initialized but unused yet TODO ??
     int32_t *p,           // The set of column pointers
@@ -446,9 +446,9 @@ SLIP_info SLIP_build_sparse_ccf_int
     int32_t nz            // number of nonzeros in A (size of x and I vectors)
 );
 
-/* Purpose: Build a SLIP_sparse from mpq_t stored ccf matrix */
+/* Purpose: Build a SLIP_sparse from mpq_t stored CSC matrix */
 
-SLIP_info SLIP_build_sparse_ccf_mpq
+SLIP_info SLIP_build_sparse_csc_mpq
 (
     SLIP_sparse *A_output,// It should be initialized but unused yet TODO ??
     int32_t *p,           // The set of column pointers
@@ -458,9 +458,9 @@ SLIP_info SLIP_build_sparse_ccf_mpq
     int32_t nz            // number of nonzeros in A (size of x and I vectors)
 );
 
-/* Purpose: Build a SLIP_sparse from int stored ccf matrix */
+/* Purpose: Build a SLIP_sparse from int stored CSC matrix */
 
-SLIP_info SLIP_build_sparse_ccf_mpfr
+SLIP_info SLIP_build_sparse_csc_mpfr
 (
     SLIP_sparse *A_output,// It should be initialized but unused yet TODO ??
     int32_t *p,           // The set of column pointers

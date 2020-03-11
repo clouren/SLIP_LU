@@ -11,7 +11,7 @@
 #include "demos.h"
 
 //------------------------------------------------------------------------------
-// This example uses an ccf input in mpfr precision/
+// This example uses an CSC input in mpfr precision/
 //------------------------------------------------------------------------------
 
 // usage:
@@ -97,7 +97,7 @@ int main (void) // (int argc, char **argv)
     //--------------------------------------------------------------------------
     // Build A and b
     //--------------------------------------------------------------------------
-    OK(SLIP_build_sparse_ccf_mpfr(A, p, i, x_mpfr, n, nz, option));
+    OK(SLIP_build_sparse_csc_mpfr(A, p, i, x_mpfr, n, nz, option));
     OK(SLIP_build_dense_mpfr(b, b_mpfr, n, 1, option));
 
     //--------------------------------------------------------------------------

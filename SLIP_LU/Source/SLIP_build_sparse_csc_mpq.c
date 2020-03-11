@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/SLIP_build_sparse_ccf_int: build sparse matrix from int
+// SLIP_LU/SLIP_build_sparse_csc_mpq: build sparse matrix from mpq_t
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -8,20 +8,20 @@
 
 //------------------------------------------------------------------------------
 
-/* Purpose: build sparse matrix from int values */
+/* Purpose: build sparse matrix from mpq values */
 
 #define SLIP_FREE_WORKSPACE                 \
     SLIP_delete_mpz_array(&x_new, nz);
 
 #include "SLIP_LU_internal.h"
 
-SLIP_info SLIP_build_sparse_ccf_int
+SLIP_info SLIP_build_sparse_csc_mpq
 (
     // TODO what does "It should be initialized but unused yet" mean??
     SLIP_sparse *A_output,// It should be initialized but unused yet
     int32_t *p,           // The set of column pointers
     int32_t *I,           // set of row indices
-    int32_t *x,           // Set of values as doubles
+    mpq_t *x,             // Set of values as mpq_t rational numbers
     int32_t n,            // dimension of the matrix
     int32_t nz            // number of nonzeros in A (size of x and I vectors)
 )
@@ -35,14 +35,11 @@ SLIP_info SLIP_build_sparse_ccf_int
     mpz_t* x_new = SLIP_create_mpz_array(nz);
     if (!x_new) {return SLIP_OUT_OF_MEMORY;}
 
-    for (int32_t i = 0; i < nz; i++)
-    {
-            SLIP_CHECK(SLIP_mpz_set_si(x_new[i], x[i]));
-    }
-    SLIP_CHECK(SLIP_mpq_set_ui(A_output->scale, 1, 1));
+    SLIP_CHECK(slip_expand_mpq_array(x_new, x, A_output->scale, nz));
 
     SLIP_CHECK(slip_mpz_populate_mat(A_output, I, p, x_new, n, nz));
 
     SLIP_FREE_WORKSPACE;
+
     return SLIP_OK;
 }

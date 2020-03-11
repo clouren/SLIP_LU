@@ -341,11 +341,11 @@ int main( int argc, char* argv[])
                 //failure due to invalid input
                 TEST_CHECK_FAILURE(SLIP_build_dense_mpz(b, NULL, n, numRHS));
                 TEST_CHECK_FAILURE(SLIP_build_dense_mpz(b, B_mpz, 0, numRHS));
-                TEST_CHECK_FAILURE(SLIP_build_sparse_ccf_mpz(A, Ap, Ai, NULL,
+                TEST_CHECK_FAILURE(SLIP_build_sparse_csc_mpz(A, Ap, Ai, NULL,
                     n, nz));
 
                 // successful case
-                TEST_CHECK(SLIP_build_sparse_ccf_mpz(A, Ap, Ai, Ax_mpz, n, nz));
+                TEST_CHECK(SLIP_build_sparse_csc_mpz(A, Ap, Ai, Ax_mpz, n, nz));
         TEST_CHECK (SLIP_spok (A, option)) ;
                 TEST_CHECK(SLIP_build_dense_mpz(b, B_mpz, n, numRHS));
                 option->pivot = SLIP_DIAGONAL;
@@ -355,7 +355,7 @@ int main( int argc, char* argv[])
                 //failure due to NULL input
                 TEST_CHECK_FAILURE(SLIP_build_dense_double(b, NULL, n, numRHS,
             option));
-                TEST_CHECK_FAILURE(SLIP_build_sparse_ccf_double(A, Ap, Ai, NULL,
+                TEST_CHECK_FAILURE(SLIP_build_sparse_csc_double(A, Ap, Ai, NULL,
                     n, nz, option));
 
                 Ax_doub = (double*) SLIP_calloc(nz, sizeof(double));
@@ -363,7 +363,7 @@ int main( int argc, char* argv[])
                 if (!B_doub || !Ax_doub) {SLIP_FREE_WORKSPACE; continue;}
 
                 // create empty A and b using uninitialized double mat/array
-                TEST_CHECK(SLIP_build_sparse_ccf_double(A, Ap, Ai,
+                TEST_CHECK(SLIP_build_sparse_csc_double(A, Ap, Ai,
                     Ax_doub, n, nz, option));
                 CLEAR_SLIP_MAT_A;                //free the memory alloc'd in A
                 TEST_CHECK(SLIP_build_dense_double(b, B_doub, n,
@@ -391,7 +391,7 @@ int main( int argc, char* argv[])
                 {
                     Ax_doub[j] = Axnum[j]/Axden[j];
                 }
-                TEST_CHECK(SLIP_build_sparse_ccf_double(A, Ap, Ai, Ax_doub, n,
+                TEST_CHECK(SLIP_build_sparse_csc_double(A, Ap, Ai, Ax_doub, n,
                     nz, option));
                 TEST_CHECK (SLIP_spok (A, option)) ;
                 option->pivot = SLIP_SMALLEST;
@@ -400,7 +400,7 @@ int main( int argc, char* argv[])
             {
                 //failure due to NULL input
                 TEST_CHECK_FAILURE(SLIP_build_dense_int(b, NULL, n, numRHS));
-                TEST_CHECK_FAILURE(SLIP_build_sparse_ccf_int(A, Ap, Ai, NULL,
+                TEST_CHECK_FAILURE(SLIP_build_sparse_csc_int(A, Ap, Ai, NULL,
                     n, nz));
 
                 B_int = SLIP_create_int_mat(n, numRHS);
@@ -416,7 +416,7 @@ int main( int argc, char* argv[])
                     Ax_int[j]=Axnum3[j];
                 }
 
-                TEST_CHECK(SLIP_build_sparse_ccf_int(A, Ap, Ai, Ax_int, n, nz));
+                TEST_CHECK(SLIP_build_sparse_csc_int(A, Ap, Ai, Ax_int, n, nz));
                 TEST_CHECK (SLIP_spok (A, option)) ;
                 TEST_CHECK(SLIP_build_dense_int(b, B_int, n, numRHS));
             }
@@ -424,7 +424,7 @@ int main( int argc, char* argv[])
             {
                 //failure due to NULL input
                 TEST_CHECK_FAILURE(SLIP_build_dense_mpq(b, NULL, n, numRHS));
-                TEST_CHECK_FAILURE(SLIP_build_sparse_ccf_mpq(A, Ap, Ai, NULL,
+                TEST_CHECK_FAILURE(SLIP_build_sparse_csc_mpq(A, Ap, Ai, NULL,
                     n, nz));
 
                 B_mpq = SLIP_create_mpq_mat(n, numRHS);
@@ -441,7 +441,7 @@ int main( int argc, char* argv[])
                     TEST_CHECK(SLIP_mpq_set_ui(Ax_mpq [j],Axnum3[j],Axden3[j]));
                 }
 
-                TEST_CHECK(SLIP_build_sparse_ccf_mpq(A, Ap, Ai, Ax_mpq, n, nz));
+                TEST_CHECK(SLIP_build_sparse_csc_mpq(A, Ap, Ai, Ax_mpq, n, nz));
                 TEST_CHECK (SLIP_spok (A, option)) ;
                 TEST_CHECK(SLIP_build_dense_mpq(b, B_mpq, n, numRHS));
             }
@@ -450,7 +450,7 @@ int main( int argc, char* argv[])
                 //failure due to NULL input
                 TEST_CHECK_FAILURE(SLIP_build_dense_mpfr(b, NULL, n, numRHS,
                     option));
-                TEST_CHECK_FAILURE(SLIP_build_sparse_ccf_mpfr(A, Ap, Ai, NULL,
+                TEST_CHECK_FAILURE(SLIP_build_sparse_csc_mpfr(A, Ap, Ai, NULL,
                     n, nz, option));
 
                 B_mpfr = SLIP_create_mpfr_mat(n, numRHS, option);
@@ -458,7 +458,7 @@ int main( int argc, char* argv[])
                 if (!B_mpfr|| !Ax_mpfr) {SLIP_FREE_WORKSPACE; continue;}
 
                 // create empty A and b using uninitialized double mat/array
-                TEST_CHECK(SLIP_build_sparse_ccf_mpfr(A, Ap, Ai,
+                TEST_CHECK(SLIP_build_sparse_csc_mpfr(A, Ap, Ai,
                     Ax_mpfr, n, nz, option));
                 TEST_CHECK(SLIP_build_dense_mpfr(b, B_mpfr, n,
                     numRHS, option));
@@ -491,7 +491,7 @@ int main( int argc, char* argv[])
                         MPFR_RNDN));
                 }
                 TEST_CHECK(SLIP_build_dense_mpfr(b, B_mpfr, n, numRHS, option));
-                TEST_CHECK(SLIP_build_sparse_ccf_mpfr(A, Ap, Ai, Ax_mpfr,
+                TEST_CHECK(SLIP_build_sparse_csc_mpfr(A, Ap, Ai, Ax_mpfr,
                     n, nz, option));
                 CLEAR_SLIP_MAT_A;
                 CLEAR_SLIP_MAT_B;
@@ -511,7 +511,7 @@ int main( int argc, char* argv[])
                     TEST_CHECK(SLIP_mpfr_div_d(Ax_mpfr[j], Ax_mpfr[j], Axden[j],
                         MPFR_RNDN));
                 }
-                TEST_CHECK(SLIP_build_sparse_ccf_mpfr(A, Ap, Ai, Ax_mpfr,
+                TEST_CHECK(SLIP_build_sparse_csc_mpfr(A, Ap, Ai, Ax_mpfr,
                     n, nz, option));
                 TEST_CHECK (SLIP_spok (A, option)) ;
                 TEST_CHECK(SLIP_build_dense_mpfr(b, B_mpfr, n, numRHS, option));
@@ -605,7 +605,7 @@ int main( int argc, char* argv[])
                 TEST_CHECK_FAILURE(SLIP_build_sparse_trip_mpz(A, I1, J, x_mpz,
                     n, nz));
                 CLEAR_SLIP_MAT_A;                //free the memory alloc'd in A
-                TEST_CHECK_FAILURE(SLIP_build_sparse_ccf_mpz(A, P1, I1, x_mpz,
+                TEST_CHECK_FAILURE(SLIP_build_sparse_csc_mpz(A, P1, I1, x_mpz,
                     n, nz));
                 CLEAR_SLIP_MAT_A;                //free the memory alloc'd in A
 

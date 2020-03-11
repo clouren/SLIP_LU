@@ -21,7 +21,7 @@
 
 SLIP_info slip_trip_to_mat
 (
-    SLIP_sparse *A,     //matrix stored in ccf that will take B
+    SLIP_sparse *A,     //matrix stored in CSC that will take B
     int32_t *I,         // Row indices.
     int32_t *J,         // Column indices
     mpz_t *x,           // Values in the matrix

@@ -96,7 +96,7 @@ int main (void) // (int argc, char **argv)
     //--------------------------------------------------------------------------
     // Build A and b
     //--------------------------------------------------------------------------
-    OK(SLIP_build_sparse_ccf_double(A, p, i, x, n, nz, option));
+    OK(SLIP_build_sparse_csc_double(A, p, i, x, n, nz, option));
     OK(SLIP_build_dense_double(b, b_doub, n, numRHS, option));
 
     //--------------------------------------------------------------------------

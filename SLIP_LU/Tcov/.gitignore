@@ -15,11 +15,11 @@ SLIP_build_dense_int.c
 SLIP_build_dense_mpfr.c
 SLIP_build_dense_mpq.c
 SLIP_build_dense_mpz.c
-SLIP_build_sparse_ccf_double.c
-SLIP_build_sparse_ccf_int.c
-SLIP_build_sparse_ccf_mpfr.c
-SLIP_build_sparse_ccf_mpq.c
-SLIP_build_sparse_ccf_mpz.c
+SLIP_build_sparse_csc_double.c
+SLIP_build_sparse_csc_int.c
+SLIP_build_sparse_csc_mpfr.c
+SLIP_build_sparse_csc_mpq.c
+SLIP_build_sparse_csc_mpz.c
 SLIP_build_sparse_trip_double.c
 SLIP_build_sparse_trip_int.c
 SLIP_build_sparse_trip_mpfr.c

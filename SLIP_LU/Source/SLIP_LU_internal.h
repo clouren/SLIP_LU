@@ -643,7 +643,7 @@ SLIP_info slip_dense_alloc
 );
 
 /*
- * Purpose: This function populates the SLIP_sparse A by the ccf
+ * Purpose: This function populates the SLIP_sparse A by the CSC
  * stored vectors i, p, and x
  */
 SLIP_info slip_mpz_populate_mat
@@ -720,7 +720,7 @@ SLIP_info slip_REF_triangular_solve // performs the sparse REF triangular solve
  */
 SLIP_info slip_trip_to_mat
 (
-    SLIP_sparse *A,     //matrix stored in ccf that will take B
+    SLIP_sparse *A,     //matrix stored in CSC that will take B
     int32_t *I,         // Row indices.
     int32_t *J,         // Column indices
     mpz_t *x,           // Values in the matrix

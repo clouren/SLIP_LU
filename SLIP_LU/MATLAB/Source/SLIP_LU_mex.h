@@ -93,7 +93,7 @@ void slip_mex_check_for_inf
 /* Purpose: This function reads in the A matrix and right hand side vectors. */
 void slip_mex_get_A_and_b
 (
-    SLIP_sparse *A,          // Internal SLIP Mat stored in ccf
+    SLIP_sparse *A,          // Internal SLIP Mat stored in CSC
     SLIP_dense *b,           // mpz matrix used internally
     const mxArray* input[],  // The input A matrix and options
     int32_t nargin           // Number of input to the mexFunction

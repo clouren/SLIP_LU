@@ -14,7 +14,7 @@
 
 void slip_mex_get_A_and_b
 (
-    SLIP_sparse *A,          // Internal SLIP Mat stored in ccf
+    SLIP_sparse *A,          // Internal SLIP Mat stored in CSC
     SLIP_dense *b,           // mpz matrix used internally
     const mxArray* pargin[], // The input A matrix and options
     int32_t nargin           // Number of input to the mexFunction
@@ -79,14 +79,14 @@ void slip_mex_get_A_and_b
             Ax_int[k] = (int32_t) Ax[k];
         }
         // Create A with no scaling
-        status = SLIP_build_sparse_ccf_int(A, Ap_int, Ai_int, Ax_int,
+        status = SLIP_build_sparse_csc_int(A, Ap_int, Ai_int, Ax_int,
             (int32_t) nA, (int32_t) Anz);
         SLIP_FREE(Ax_int);
     }
     else
     {
         // Create A with scaling
-        status = SLIP_build_sparse_ccf_double(A, Ap_int, Ai_int, Ax,
+        status = SLIP_build_sparse_csc_double(A, Ap_int, Ai_int, Ax,
             (int32_t) nA, (int32_t) Anz, option);
     }
     if (status != SLIP_OK)

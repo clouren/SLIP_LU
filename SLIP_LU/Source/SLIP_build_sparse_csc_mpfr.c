@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/SLIP_build_sparse_ccf_mpz: build sparse matrix from mpz_t
+// SLIP_LU/SLIP_build_sparse_csc_mpfr: build sparse matrix from mpfr_t
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -8,35 +8,39 @@
 
 //------------------------------------------------------------------------------
 
-/* Purpose: This function will allow the user to take a matrix of their defined
- * type (either double, mpfr_t, mpz_t, or mpq_t) and convert it from their
- * version of compressed column form to our data structure. The integrity of
- * the user defined arrays are maintained (therefore, one would need to delete
- * these arrays).
- *
- * On output, the SLIP_sparse* A structure contains the input matrix
- */
+/* Purpose: build sparse matrix from mpfr values */
+
+#define SLIP_FREE_WORKSPACE                 \
+    SLIP_delete_mpz_array(&x_new, nz);
 
 #include "SLIP_LU_internal.h"
 
-SLIP_info SLIP_build_sparse_ccf_mpz
+SLIP_info SLIP_build_sparse_csc_mpfr
 (
     // TODO what does "It should be initialized but unused yet" mean??
     SLIP_sparse *A_output,// It should be initialized but unused yet
     int32_t *p,           // The set of column pointers
     int32_t *I,           // set of row indices
-    mpz_t *x,             // Set of values in full precision int.
+    mpfr_t *x,            // Set of values as doubles
     int32_t n,            // dimension of the matrix
-    int32_t nz            // number of nonzeros in A (size of x and I vectors)
+    int32_t nz,           // number of nonzeros in A (size of x and I vectors)
+    SLIP_options *option  // command options containing the prec for mpfr
 )
 {
     SLIP_info ok;
-    if (!p || !I || !x || !A_output ||!A_output->scale)
+    if (!p || !I || !x || !A_output ||!A_output->scale || !option)
     {
         return SLIP_INCORRECT_INPUT;
     }
 
-    SLIP_CHECK(slip_mpz_populate_mat(A_output, I, p, x, n, nz));
-    SLIP_CHECK(SLIP_mpq_set_ui(A_output->scale, 1, 1));
+    mpz_t* x_new = SLIP_create_mpz_array(nz);
+    if (!x_new) {return SLIP_OUT_OF_MEMORY;}
+
+    SLIP_CHECK(slip_expand_mpfr_array(x_new, x, A_output->scale, nz, option));
+
+    SLIP_CHECK(slip_mpz_populate_mat(A_output, I, p, x_new, n, nz));
+
+    SLIP_FREE_WORKSPACE;
+
     return SLIP_OK;
 }
