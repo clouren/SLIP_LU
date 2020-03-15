@@ -916,15 +916,17 @@ SLIP_info SLIP_scale_x
 );
 
 /* Purpose: SLIP_LU_solve solves the linear system LD^(-1)U x = b.*/
-SLIP_info SLIP_LU_solve     //solves the linear system LD^(-1)U x = b
+SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
 (
+    // output:
     mpq_t **x,              // rational solution to the system
+    // input:
     SLIP_dense *b,          // right hand side vector
-    const mpz_t *rhos,      // sequence of pivots
     const SLIP_sparse *L,   // lower triangular matrix
     const SLIP_sparse *U,   // upper triangular matrix
+    const mpz_t *rhos,      // sequence of pivots
     const int32_t *pinv     // row permutation
-);
+) ;
 
 // SLIP_spok: check and print a SLIP_sparse matrix
 SLIP_info SLIP_spok  // returns a SLIP_LU status code

@@ -86,7 +86,7 @@ void mexFunction
     // FB Substitution
     //--------------------------------------------------------------------------
 
-    SLIP_MEX_OK (SLIP_LU_solve(soln_mpq, b, rhos, L, U, pinv));
+    SLIP_MEX_OK (SLIP_LU_solve(soln_mpq, b, L, U, rhos, pinv));
     SLIP_MEX_OK (SLIP_permute_x(soln_mpq, b->m, b->n, S));
     SLIP_MEX_OK (SLIP_scale_x(soln_mpq, A, b));
     SLIP_MEX_OK (SLIP_get_double_soln(soln, soln_mpq, b->m, b->n));

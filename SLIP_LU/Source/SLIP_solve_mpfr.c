@@ -87,8 +87,10 @@ SLIP_info SLIP_solve_mpfr
     // FB substituion
     //--------------------------------------------------------------------------
 
-    SLIP_CHECK (SLIP_LU_solve(x_mpq, b, (const mpz_t *) rhos,
-        (const SLIP_sparse *) L, (const SLIP_sparse *) U,
+    SLIP_CHECK (SLIP_LU_solve(x_mpq, b,
+        (const SLIP_sparse *) L,
+        (const SLIP_sparse *) U,
+        (const mpz_t *) rhos,
         (const int32_t *) pinv)) ;
 
     SLIP_CHECK(SLIP_permute_x(x_mpq, n, numRHS, S));

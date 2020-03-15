@@ -1594,9 +1594,6 @@ returned as \verb|NULL|.
 \label{ss:SLIP_LU_solve}
 %-------------------------------------------------------------------------------
 
-% TODO order of arguments is wrong; should be L, U, rhos, pinv, to match
-% SLIP_LU_factorize.
-
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
@@ -1606,9 +1603,9 @@ returned as \verb|NULL|.
         mpq_t **x,              // rational solution to the system
         // input:
         SLIP_dense *b,          // right hand side vector
-        mpz_t *rhos,            // sequence of pivots
         SLIP_sparse *L,         // lower triangular matrix
         SLIP_sparse *U,         // upper triangular matrix
+        mpz_t *rhos,            // sequence of pivots
         int32_t *pinv           // row permutation
     );
 \end{verbatim}

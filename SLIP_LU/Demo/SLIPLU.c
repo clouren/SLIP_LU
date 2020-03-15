@@ -269,9 +269,9 @@ int main( int argc, char* argv[])
 
     // Solve LDU x = b
     OK(SLIP_LU_solve(x, b,
-        (const mpz_t *) rhos,
         (const SLIP_sparse *) L,
         (const SLIP_sparse *) U,
+        (const mpz_t *) rhos,
         (const int32_t *) pinv));
 
     clock_t end_solve = clock();
