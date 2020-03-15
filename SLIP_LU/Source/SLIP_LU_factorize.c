@@ -323,14 +323,11 @@ SLIP_info SLIP_LU_factorize
     // free everything, but keep L, U, rhos, and pinv
     SLIP_FREE_WORK ;
 
-    if (ok == SLIP_OK)      // TODO can ok be != SLIP_OK?
-    {
-        // This cannot fail since the size of L and U are shrinking
-        // Collapse L
-        slip_sparse_collapse(L);
-        // Collapse U
-        slip_sparse_collapse(U);
-    }
+    // This cannot fail since the size of L and U are shrinking.
+    // Collapse L
+    slip_sparse_collapse(L);
+    // Collapse U
+    slip_sparse_collapse(U);
 
     //--------------------------------------------------------------------------
     // finalize the row indices in L and U
@@ -357,14 +354,13 @@ SLIP_info SLIP_LU_factorize
     #endif
 
     //--------------------------------------------------------------------------
-    // return results
+    // return result
     //--------------------------------------------------------------------------
 
     (*L_handle) = L ;
     (*U_handle) = U ;
     (*rhos_handle) = rhos ;
     (*pinv_handle) = pinv ;
-
-    return ok;      // TODO this should be SLIP_OK
+    return (SLIP_OK) ;
 }
 
