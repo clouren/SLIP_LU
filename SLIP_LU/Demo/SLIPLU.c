@@ -156,11 +156,11 @@ int main( int argc, char* argv[])
     double **x_doub = NULL;
     mpfr_t **x_mpfr = NULL;
     SLIP_sparse *A = SLIP_create_sparse();
-    SLIP_sparse *L = SLIP_create_sparse();
-    SLIP_sparse *U = SLIP_create_sparse();
+    SLIP_sparse *L = NULL ;
+    SLIP_sparse *U = NULL ;
     SLIP_dense *b  = SLIP_create_dense();
     SLIP_options *option = SLIP_create_default_options();
-    if (!A || !L || !U || !b || !option)
+    if (!A || !b || !option)
     {
         fprintf (stderr, "Error! OUT of MEMORY!\n");
         SLIP_finalize();
@@ -220,10 +220,8 @@ int main( int argc, char* argv[])
     // pivots, inverse row permutation, solution to the system, and the
     // analysis struct.
     //--------------------------------------------------------------------------
-    rhos = SLIP_create_mpz_array(nrows);
-    pinv = (int*) SLIP_malloc(nrows* sizeof(int));
     x = SLIP_create_mpq_mat(nrows, numRHS);
-    if (!rhos || !pinv || !x)
+    if (!x)
     {
         fprintf (stderr, "Error! OUT of MEMORY!\n");
         FREE_WORKSPACE;
@@ -258,7 +256,7 @@ int main( int argc, char* argv[])
     //--------------------------------------------------------------------------
     clock_t start_factor = clock();
 
-    OK(SLIP_LU_factorize(L, U, A, S, rhos, pinv, option));
+    OK(SLIP_LU_factorize(&L, &U, &rhos, &pinv, A, S, option));
 
     clock_t end_factor = clock();
 

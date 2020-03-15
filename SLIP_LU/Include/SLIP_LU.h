@@ -829,9 +829,8 @@ void SLIP_finalize (void);
 // Primary factorization & solve routines
 //------------------------------------------------------------------------------
 
-/*
- * Purpose: This function performs the symbolic ordering for SLIP LU. Currently,
- * there are four options: user defined order, COLAMD, AMD.
+/* Purpose: SLIP_LU_analyze performs the symbolic ordering for SLIP LU.
+ * Currently, * there are four options: user defined order, COLAMD, AMD.
  */
 SLIP_info SLIP_LU_analyze
 (
@@ -840,31 +839,34 @@ SLIP_info SLIP_LU_analyze
     SLIP_options *option  // Control parameters
 );
 
-/* Purpose: This function performs the SLIP LU factorization. This factorization
- * is done via n iterations of the sparse REF triangular solve function. The
- * overall factorization is PAQ = LDU
- * The determinant can be obtained as rhos[n-1]
+/* Purpose: SLIP_LU_factorize performs the SLIP LU factorization. This
+ * factorization is done via n iterations of the sparse REF triangular solve
+ * function. The overall factorization is PAQ = LDU.  The determinant can be
+ * obtained as rhos[n-1]
+ *
+ *  L: undefined on input, created on output
+ *  U: undefined on input, created on output
+ *  rhos: undefined on input, created on output
+ *  pinv: undefined on input, created on output
  *
  *  A: input only, not modified
- *  L: allocated on input, modified on output
- *  U: allocated on input, modified on output
  *  S: input only, not modified
- *  rhos: allocated on input, modified on output
- *  pinv: allocated on input, modified on output
  *  option: input only, not modified
  */
 SLIP_info SLIP_LU_factorize
 (
-    SLIP_sparse *L,         // lower triangular matrix
-    SLIP_sparse *U,         // upper triangular matrix
+    // output:
+    SLIP_sparse **L_handle, // lower triangular matrix
+    SLIP_sparse **U_handle, // upper triangular matrix
+    mpz_t **rhos_handle,    // sequence of pivots
+    int32_t **pinv_handle,  // inverse row permutation
+    // input:
     SLIP_sparse *A,         // matrix to be factored
-    SLIP_LU_analysis *S,    // prior symbolic analysis
-    mpz_t *rhos,            // sequence of pivots
-    int32_t *pinv,          // inverse row permutation
-    SLIP_options *option    // command options
-);
+    SLIP_LU_analysis *S,    // stores guess on nnz and column permutation
+    SLIP_options* option    // command options
+) ;
 
-// Solves Ax=b, returning the solution x as a double matrix
+// SLIP_solve_double: Solves Ax=b, returning the solution x as a double matrix
 SLIP_info SLIP_solve_double
 (
     double **x_doub,        // Solution vector stored as an double
@@ -874,7 +876,7 @@ SLIP_info SLIP_solve_double
     SLIP_options *option    // Control parameters
 );
 
-// Solves Ax=b, returning the solution x as an mpfr_t matrix
+// SLIP_solve_mpfr: Solves Ax=b, returning the solution x as an mpfr_t matrix
 SLIP_info SLIP_solve_mpfr
 (
     mpfr_t **x_mpfr,        // Solution vector stored as an mpfr_t array
@@ -884,7 +886,7 @@ SLIP_info SLIP_solve_mpfr
     SLIP_options *option    // Control parameters
 );
 
-// Solves Ax=b, returning the solution x as an mpq_t matrix
+// SLIP_solve_mpq: Solves Ax=b, returning the solution x as an mpq_t matrix
 SLIP_info SLIP_solve_mpq
 (
     mpq_t **x_mpq,          // Solution vector stored as an mpq_t array
@@ -894,8 +896,7 @@ SLIP_info SLIP_solve_mpq
     SLIP_options *option    // Control parameters
 );
 
-/*
- * Purpose: This function permutes x to get it back in its original form.
+/* Purpose: SLIP_permute_x permutes x to get it back in its original form.
  * That is x = Q*x.
  */
 SLIP_info SLIP_permute_x
@@ -906,8 +907,7 @@ SLIP_info SLIP_permute_x
     SLIP_LU_analysis *S   // symbolic analysis with the column ordering Q
 );
 
-
-/* Purpose: This function scales the x matrix if necessary */
+/* Purpose: SLIP_scale_x scales the x matrix if necessary */
 SLIP_info SLIP_scale_x
 (
     mpq_t **x,              // Solution matrix
@@ -915,7 +915,7 @@ SLIP_info SLIP_scale_x
     SLIP_dense *b           // right hand side
 );
 
-/* Purpose: This function solves the linear system LD^(-1)U x = b.*/
+/* Purpose: SLIP_LU_solve solves the linear system LD^(-1)U x = b.*/
 SLIP_info SLIP_LU_solve     //solves the linear system LD^(-1)U x = b
 (
     mpq_t **x,              // rational solution to the system
@@ -926,16 +926,16 @@ SLIP_info SLIP_LU_solve     //solves the linear system LD^(-1)U x = b
     const int32_t *pinv     // row permutation
 );
 
-// check and print a SLIP_sparse matrix
+// SLIP_spok: check and print a SLIP_sparse matrix
 SLIP_info SLIP_spok  // returns a SLIP_LU status code
 (
     SLIP_sparse *A,     // matrix to check
     SLIP_options* option  // Determine print level
 ) ;
 
-/* Purpose: Convert the output mpq_t** solution vector obtained from
- * SLIP_Solve and SLIP_Permute_x from mpq_t** to double
- * x_doub has to be initialized before passed in
+/* Purpose: SLIP_get_double_soln converts the output mpq_t** solution vector
+ * obtained from SLIP_Solve and SLIP_Permute_x from mpq_t** to double.  x_doub
+ * has to be initialized before passed in.
  */
 SLIP_info SLIP_get_double_soln
 (
@@ -945,11 +945,10 @@ SLIP_info SLIP_get_double_soln
     int32_t numRHS        // Number of right hand side vectors
 ) ;
 
-/* Purpose: Convert the output mpq_t** solution vector obtained from
- * SLIP_Solve and SLIP_Permute_x from mpq_t** to mpfr_t**
- * x_mpfr has to be initialized before passed in
+/* Purpose: SLIP_get_mpfr_soln converts the output mpq_t** solution vector
+ * obtained from SLIP_Solve and SLIP_Permute_x from mpq_t** to mpfr_t**.
+ * x_mpfr has to be initialized before passed in.
  */
-
 SLIP_info SLIP_get_mpfr_soln
 (
     mpfr_t **x_mpfr,      // mpfr solution of size n*numRHS to Ax = b
@@ -959,9 +958,8 @@ SLIP_info SLIP_get_mpfr_soln
     SLIP_options* option  // Contains mpfr parameters
 );
 
-/*
- * Check the solution of the linear system
- * Performs a quick rational arithmetic A*x=b
+/* SLIP_check_solution: checks the solution of the linear system.  Performs a
+ * quick rational arithmetic check of A*x=b.
  */
 SLIP_info SLIP_check_solution
 (

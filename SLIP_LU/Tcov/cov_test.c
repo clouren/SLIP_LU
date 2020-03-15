@@ -1,3 +1,13 @@
+//------------------------------------------------------------------------------
+// SLIP_LU/Tcov/cov_test.c: test coverage for SLIP_LU
+//------------------------------------------------------------------------------
+
+// SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+// Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+// SLIP_LU/License for the license.
+
+//------------------------------------------------------------------------------
+
 /*
  * When the test is run without input argument, brutal test is used and simple
  * test otherwise. Read the following for detailed instruction and information
@@ -675,6 +685,11 @@ int main( int argc, char* argv[])
                 TEST_CHECK_FAILURE(SLIP_LU_analyze(NULL, NULL, NULL));
                 TEST_CHECK_FAILURE(SLIP_LU_analyze(&S, NULL, NULL));
                 TEST_CHECK_FAILURE(SLIP_LU_factorize(NULL, NULL, NULL, NULL,
+                    NULL, NULL, NULL));
+                SLIP_sparse *L, *U ;
+                int32_t *pinv ;
+                mpz_t *rhos ;
+                TEST_CHECK_FAILURE(SLIP_LU_factorize(&L, &U, &rhos, &pinv,
                     NULL, NULL, NULL));
                 TEST_CHECK_FAILURE(SLIP_LU_solve(NULL, NULL, NULL, NULL, NULL,
                     NULL));

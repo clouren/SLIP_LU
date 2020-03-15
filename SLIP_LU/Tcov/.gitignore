@@ -95,4 +95,5 @@ slip_sparse_alloc.c
 slip_sparse_collapse.c
 slip_sparse_realloc.c
 SLIP_spok.c
+SLIP_free.c
 slip_trip_to_mat.c

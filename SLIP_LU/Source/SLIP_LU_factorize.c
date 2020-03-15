@@ -13,16 +13,17 @@
  * overall factorization is PAQ = LDU
  * The determinant of A can be obtained as determinant = rhos[n-1]
  *
+ *  L: undefined on input, created on output
+ *  U: undefined on input, created on output
+ *  rhos: undefined on input, created on output
+ *  pinv: undefined on input, created on output
+ *
  *  A: input only, not modified
- *  L: allocated on input, modified on output
- *  U: allocated on input, modified on output
  *  S: input only, not modified
- *  rhos: allocated on input, modified on output
- *  pinv: allocated on input, modified on output
  *  option: input only, not modified
  */
 
-#define SLIP_FREE_WORKSPACE         \
+#define SLIP_FREE_WORK              \
     SLIP_delete_mpz_array(&x,n);    \
     SLIP_FREE(xi);                  \
     SLIP_FREE(h);                   \
@@ -31,22 +32,57 @@
     SLIP_MPFR_CLEAR(temp);          \
     SLIP_MPZ_CLEAR(sigma);
 
+#define SLIP_FREE_WORKSPACE         \
+    SLIP_FREE_WORK                  \
+    SLIP_delete_sparse(&L);         \
+    SLIP_delete_sparse(&U);         \
+    SLIP_delete_mpz_array(&rhos,n); \
+    SLIP_free(pinv);
+
 #include "SLIP_LU_internal.h"
 
 SLIP_info SLIP_LU_factorize
 (
-    SLIP_sparse *L,         // lower triangular matrix
-    SLIP_sparse *U,         // upper triangular matrix
+    // output:
+    SLIP_sparse **L_handle, // lower triangular matrix
+    SLIP_sparse **U_handle, // upper triangular matrix
+    mpz_t **rhos_handle,    // sequence of pivots
+    int32_t **pinv_handle,  // inverse row permutation
+    // input:
     SLIP_sparse *A,         // matrix to be factored
     SLIP_LU_analysis *S,    // stores guess on nnz and column permutation
-    mpz_t * rhos,           // sequence of pivots
-    int32_t* pinv,          // inverse row permutation
     SLIP_options* option    // command options
 )
 {
-    // Input Check
-    if (!A || !L || !U || !S || !rhos || !pinv || !option ||
-        !A->p || !A->x || !A->i)
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    SLIP_sparse *L = NULL ;
+    SLIP_sparse *U = NULL ;
+    mpz_t *rhos = NULL ;
+    int32_t *pinv = NULL ;
+    int32_t *xi = NULL ;
+    int32_t *h = NULL ;
+    int32_t *pivs = NULL ;
+    int32_t *row_perm = NULL ;
+    mpz_t* x = NULL ;
+
+    mpz_t sigma; SLIP_MPZ_SET_NULL(sigma);
+    mpfr_t temp; SLIP_MPFR_SET_NULL(temp);
+
+    if (!L_handle || !U_handle || !rhos_handle || !pinv_handle)
+    {
+        return SLIP_INCORRECT_INPUT;
+    }
+
+    (*L_handle) = NULL ;
+    (*U_handle) = NULL ;
+    (*rhos_handle) = NULL ;
+    (*pinv_handle) = NULL ;
+
+    if (!A || !S || !option || !A->p || !A->x || !A->i)
     {
         return SLIP_INCORRECT_INPUT;
     }
@@ -54,14 +90,23 @@ SLIP_info SLIP_LU_factorize
     //--------------------------------------------------------------------------
     // Declare and initialize workspace
     //--------------------------------------------------------------------------
+
     SLIP_info ok = SLIP_OK;
-    int32_t n = A->n, k = 0, top, i, j, col, loc,
-        lnz = 0, unz = 0, pivot, jnew, *xi = NULL, *h = NULL,
-        *pivs = NULL, *row_perm = NULL;
-    size_t size;
-    mpz_t sigma; SLIP_MPZ_SET_NULL(sigma);
-    mpfr_t temp; SLIP_MPFR_SET_NULL(temp);
-    mpz_t* x = NULL ;
+    int32_t n = A->n ;
+
+    L = SLIP_create_sparse ( ) ;
+    U = SLIP_create_sparse ( ) ;
+    pinv = (int32_t *) SLIP_malloc (n * sizeof (int32_t)) ;
+    rhos = SLIP_create_mpz_array (n) ;
+    if (!L || !U || !pinv || !rhos)
+    {
+        // out of memory: free everything and return
+        SLIP_FREE_WORKSPACE;
+        return SLIP_OUT_OF_MEMORY;
+    }
+
+    int32_t k = 0, top, i, j, col, loc, lnz = 0, unz = 0, pivot, jnew ;
+    size_t size ;
 
     SLIP_CHECK(SLIP_mpz_init(sigma));
     SLIP_CHECK(SLIP_mpfr_init2(temp, 256));
@@ -264,8 +309,6 @@ SLIP_info SLIP_LU_factorize
         }
     }
 
-    SLIP_FREE_WORKSPACE ;
-
     // Finalize L and U
     L->nz = lnz;
     U->nz = unz;
@@ -277,7 +320,10 @@ SLIP_info SLIP_LU_factorize
     // Free memory
     //--------------------------------------------------------------------------
 
-    if (ok == SLIP_OK)
+    // free everything, but keep L, U, rhos, and pinv
+    SLIP_FREE_WORK ;
+
+    if (ok == SLIP_OK)      // TODO can ok be != SLIP_OK?
     {
         // This cannot fail since the size of L and U are shrinking
         // Collapse L
@@ -310,6 +356,15 @@ SLIP_info SLIP_LU_factorize
     SLIP_CHECK (SLIP_spok (U, option)) ;
     #endif
 
-    return ok;
+    //--------------------------------------------------------------------------
+    // return results
+    //--------------------------------------------------------------------------
+
+    (*L_handle) = L ;
+    (*U_handle) = U ;
+    (*rhos_handle) = rhos ;
+    (*pinv_handle) = pinv ;
+
+    return ok;      // TODO this should be SLIP_OK
 }
 

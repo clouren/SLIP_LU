@@ -1543,9 +1543,9 @@ there are three options: user-defined order, COLAMD, or AMD, which are passed
 in by \verb|SLIP_option *option|. For more details, users can refer to Section
 \ref{ss:SLIP_options}.
 
-The \verb|SLIP_LU_analysis| object is created by this function, and the
-value of \verb|S| is ignored on input.  On output, \verb|S| is a pointer to
-the newly created symbolic analysis object, or \verb|NULL| if a failure occurred.
+The \verb|SLIP_LU_analysis| object is created by this function, and the value
+of \verb|S| is ignored on input.  On output, \verb|S| is a pointer to the newly
+created symbolic analysis object, or \verb|NULL| if a failure occurred.
 
 The analysis \verb|S| is freed by \verb|SLIP_delete_LU_analysis|.
 
@@ -1559,12 +1559,14 @@ The analysis \verb|S| is freed by \verb|SLIP_delete_LU_analysis|.
 \begin{verbatim}
     SLIP_info SLIP_LU_factorize
     (
-        SLIP_sparse *L,         // lower triangular matrix
-        SLIP_sparse *U,         // upper triangular matrix
+        // output:
+        SLIP_sparse **L,         // lower triangular matrix
+        SLIP_sparse **U,         // upper triangular matrix
+        mpz_t **rhos,            // sequence of pivots
+        int32_t **pinv,          // inverse row permutation
+        // input:
         SLIP_sparse *A,         // matrix to be factored
         SLIP_LU_analysis *S,    // prior symbolic analysis
-        mpz_t *rhos,            // sequence of pivots
-        int32_t *pinv,          // inverse row permutation
         SLIP_options *option    // command options
     );
 \end{verbatim}
@@ -1576,12 +1578,7 @@ REF triangular solve function. The overall factorization is $PAQ = LDU$.  This
 routine allows the user to separate factorization and solve. For example codes,
 please refer to either \verb|Demos/SLIPLU.c| or Section \ref{s:Using:expert}.
 
-On input, both \verb|L| and \verb|U| should be created using
-\verb|SLIP_create_sparse| (see Section \ref{ss:create_sparse}), and both
-\verb|mpz_t *rhos| and \verb|int32_t *pinv| should be allocated as arrays of
-size $n$ using \verb|SLIP_create_mpz_array| (see Section
-\ref{ss:create_mpz_array}) and \verb|SLIP_malloc| (see Section
-\ref{ss:SLIP_malloc}), respectively.
+On input, \verb|L|, \verb|U|, \verb|rhos|, and \verb|pinv| are undefined.
 
 On output, \verb|L| and \verb|U| are the lower and upper triangular matrices,
 \verb|rhos| contains the sequence of pivots. The determinant of $A$ can be
@@ -1589,17 +1586,25 @@ obtained as \verb|rhos[n-1]|. \verb|pinv| contains the inverse row permutation
 (that is, the row index in the permuted matrix $PA$. For the $i$th row in $A$,
 \verb|pinv[i]| gives the row index in $PA$).
 
+If an error occurs, \verb|L|, \verb|U|, \verb|rhos|, and \verb|pinv| are all
+returned as \verb|NULL|.
+
 %-------------------------------------------------------------------------------
 \cprotect\subsubsection{\verb|SLIP_LU_solve|: solve the scaled linear system $LDUx=b$}
 \label{ss:SLIP_LU_solve}
 %-------------------------------------------------------------------------------
+
+% TODO order of arguments is wrong; should be L, U, rhos, pinv, to match
+% SLIP_LU_factorize.
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
     SLIP_info SLIP_LU_solve     //solves the linear system LDU x = b
     (
+        // output:
         mpq_t **x,              // rational solution to the system
+        // input:
         SLIP_dense *b,          // right hand side vector
         mpz_t *rhos,            // sequence of pivots
         SLIP_sparse *L,         // lower triangular matrix
@@ -1609,14 +1614,14 @@ obtained as \verb|rhos[n-1]|. \verb|pinv| contains the inverse row permutation
 \end{verbatim}
 } \end{mdframed}
 
-
 \verb|SLIP_LU_solve| obtains the solution to the scaled linear system $LDUx=b$
-upon a successful factorization.
+upon a successful factorization.  This function may be called after a
+successful return from \verb|SLIP_LU_factorize|, which computes \verb|L|
+\verb|U| \verb|rhos|, and \verb|pinv|. 
 
 On input, \verb|mpq_t **x| should be allocated as a 2D array of same size as
 \verb|b| using \verb|SLIP_create_mpq_mat| (see Section
-\ref{ss:create_mpq_mat}). The function is called upon successful return from
-\verb|SLIP_LU_factorize|.
+\ref{ss:create_mpq_mat}).
 
 Upon completion, \verb|x| contains the solution to the \textit{scaled} linear
 system. Like some of some other routines discussed in this section, this
@@ -2850,37 +2855,25 @@ followed by an example of putting it all together.
 \subsubsection{Allocating Memory}
 %-------------------------------------------------------------------------------
 
-Using SLIP LU in this form requires that memory be allocated for $L$, $U$, and
-the solution vector(s). The solution vectors are \textbf{required} to be stored
-as a \verb|mpq_t**| array. Additionally, SLIP LU utilizes a \verb|mpz_t| array
-which stores the pivot elements (referred to as \verb|rhos|) and the inverse
-row permutation (refereed to as \verb|pinv|). The following code snippet shows
-how to allocate these entries.
+Using SLIP LU in this form requires that memory be allocated for the solution
+vector(s). The solution vectors are stored as an \verb|mpq_t**| array.  The
+following code snippet shows how to allocate the solution vector(s).
 
     {\small
     \begin{verbatim}
-    /* Purpose: Allocate memory for L, U, and x */
-
-    SLIP_sparse* L = SLIP_create_sparse();
-    SLIP_sparse* U = SLIP_create_sparse();
-
+    /* Purpose: Allocate memory for x */
     // x is of size n * numRHS
     mpq_t** x = SLIP_create_mpq_mat(n, numRHS);
-
-    // rhos is the sequence of pivots
-    mpz_t* rhos = SLIP_create_mpz_array(n);
-
-    // pinv is the inverse row permutation
-    int32_t* pinv = (int32_t*) SLIP_malloc(n*sizeof(int32_t)); \end{verbatim}}
+    \end{verbatim}}
 
 %-------------------------------------------------------------------------------
 \subsubsection{Computing the Factorization}
 %-------------------------------------------------------------------------------
 
-The matrices $L$ and $U$ are computed via the \verb|SLIP_LU_factorize| function
-(Section \ref{ss:SLIP_LU_factorize}).
-
-Upon successful completion, this function returns \verb|SLIP_OK|.
+The matrices \verb|L| and \verb|U|, the pivot sequence \verb|rhos|, and the row
+permutation \verb|pinv| are computed via the \verb|SLIP_LU_factorize| function
+(Section \ref{ss:SLIP_LU_factorize}).  Upon successful completion, this
+function returns \verb|SLIP_OK|.
 
 %-------------------------------------------------------------------------------
 \subsubsection{Solving the Linear System}

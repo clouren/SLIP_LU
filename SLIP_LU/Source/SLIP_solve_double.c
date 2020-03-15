@@ -49,38 +49,45 @@ SLIP_info SLIP_solve_double
     SLIP_options *option    // Control parameters
 )
 {
+
     //-------------------------------------------------------------------------
-    // Check input
+    // check inputs
     //-------------------------------------------------------------------------
+
     if (!x_doub || !A || !A->p || !A->i || !A->x ||
         !S || !S->q || !b || !b->x || !option)
     {
         return SLIP_INCORRECT_INPUT;
     }
 
+    SLIP_sparse *L = NULL ;
+    SLIP_sparse *U = NULL ;
+    int32_t *pinv = NULL ;
+    mpz_t *rhos = NULL ;
+
     //--------------------------------------------------------------------------
     /* Declare memory */
     //--------------------------------------------------------------------------
-    int32_t *pinv, n = A->n, numRHS = b->n;
+
+    int32_t n = A->n, numRHS = b->n;
     SLIP_info ok;
     mpq_t **x_mpq = SLIP_create_mpq_mat(n, numRHS);
-    SLIP_sparse* L = SLIP_create_sparse();
-    SLIP_sparse* U = SLIP_create_sparse();
-    pinv = (int32_t*) SLIP_malloc(n* sizeof(int32_t));
-    mpz_t* rhos = SLIP_create_mpz_array(n);
-    if (!x_mpq || !L || !U || !pinv || !rhos)
+    if (!x_mpq)
     {
         SLIP_FREE_WORKSPACE;
         return SLIP_OUT_OF_MEMORY;
     }
+
     //--------------------------------------------------------------------------
     // LU factorization
     //--------------------------------------------------------------------------
-    SLIP_CHECK(SLIP_LU_factorize(L, U, A, S, rhos, pinv, option));
+
+    SLIP_CHECK(SLIP_LU_factorize(&L, &U, &rhos, &pinv, A, S, option));
 
     //--------------------------------------------------------------------------
     // FB Substitution
     //--------------------------------------------------------------------------
+
     SLIP_CHECK(SLIP_LU_solve(x_mpq, b,
         (const mpz_t *) rhos,
         (const SLIP_sparse *) L,
