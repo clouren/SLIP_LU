@@ -49,9 +49,9 @@ int main (void) // (int argc, char **argv)
     double **soln = NULL;                       // Solution vector
     SLIP_sparse *A = SLIP_create_sparse();      // input matrix
     SLIP_dense *b = SLIP_create_dense();        // Right hand side vector
-    SLIP_LU_analysis *S = SLIP_create_LU_analysis(n);   // Column permutation
+    SLIP_LU_analysis *S = NULL ;                // Column permutation
     SLIP_options *option = SLIP_create_default_options();
-    if (!A || !b || !S || !option)
+    if (!A || !b || !option)
     {
         fprintf (stderr, "Error! OUT of MEMORY!\n");
         FREE_WORKSPACE;
@@ -99,7 +99,7 @@ int main (void) // (int argc, char **argv)
     clock_t start_sym = clock();
 
     // Column permutation of A
-    OK(SLIP_LU_analyze(S, A, option));
+    OK(SLIP_LU_analyze(&S, A, option));
 
     clock_t end_sym = clock();
 

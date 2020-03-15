@@ -318,14 +318,7 @@ typedef struct
                     // i.e., initial size of U
 } SLIP_LU_analysis;
 
-/* Purpose: This function returns a pointer to a created SLIP_LU_analysis
- * object.  The input parameter n is the number of columns of the input matrix
- * to be analyzed.  Returns NULL on failure.
- */
-SLIP_LU_analysis *SLIP_create_LU_analysis
-(
-    int32_t n     // numbers of columns in matrix to be analyzed
-);
+// The symbolic analysis object is created by SLIP_LU_analyze.
 
 /* Purpose: This function frees the memory of the SLIP_LU_analysis struct
  *
@@ -842,7 +835,7 @@ void SLIP_finalize (void);
  */
 SLIP_info SLIP_LU_analyze
 (
-    SLIP_LU_analysis *S,  // symbolic analysis (column permutation and nnz L,U)
+    SLIP_LU_analysis **S, // symbolic analysis (column permutation and nnz L,U)
     SLIP_sparse *A,       // Input matrix
     SLIP_options *option  // Control parameters
 );

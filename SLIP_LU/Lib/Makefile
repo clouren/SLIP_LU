@@ -36,7 +36,7 @@ OBJ = \
     SLIP_build_sparse_csc_mpz.o SLIP_build_sparse_csc_mpq.o \
     SLIP_build_sparse_csc_mpfr.o \
     SLIP_build_sparse_csc_double.o SLIP_build_sparse_csc_int.o SLIP_calloc.o \
-    SLIP_check_solution.o SLIP_create_LU_analysis.o \
+    SLIP_check_solution.o slip_create_LU_analysis.o \
     SLIP_create_dense.o SLIP_create_double_mat.o SLIP_delete_int_mat.o \
     SLIP_create_int_mat.o SLIP_create_mpfr_array.o SLIP_create_mpfr_mat.o \
     SLIP_create_mpq_array.o SLIP_create_mpq_mat.o slip_create_mpz_array2.o \

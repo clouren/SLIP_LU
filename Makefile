@@ -10,7 +10,8 @@ default: go
 include SuiteSparse_config/SuiteSparse_config.mk
 
 # Compile the default rules for each package
-go: metis
+# go: metis
+go:
 	( cd SuiteSparse_config && $(MAKE) )
 #	( cd Mongoose  && $(MAKE) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' )
 	( cd AMD && $(MAKE) )
@@ -36,7 +37,8 @@ go: metis
 
 # install all packages in /usr/local/lib and /usr/local/include
 # (note that CSparse is not installed; CXSparse is installed instead)
-install: metisinstall
+# install: metisinstall
+install:
 	( cd SuiteSparse_config && $(MAKE) install )
 #	( cd Mongoose  && $(MAKE) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' install )
 	( cd AMD && $(MAKE) install )
@@ -62,22 +64,22 @@ install: metisinstall
 #	chmod 644 $(INSTALL_DOC)/SuiteSparse_README.txt
 
 metisinstall: metis
-ifeq (,$(MY_METIS_LIB))
-        # install METIS from SuiteSparse/metis-5.1.0
-	@mkdir -p $(INSTALL_LIB)
-	@mkdir -p $(INSTALL_INCLUDE)
-	@mkdir -p $(INSTALL_DOC)
-	- $(CP) lib/libmetis.* $(INSTALL_LIB)
-	- $(CP) metis-5.1.0/manual/manual.pdf $(INSTALL_DOC)/METIS_manual.pdf
-	- $(CP) metis-5.1.0/README.txt $(INSTALL_DOC)/METIS_README.txt
-        # the following is needed only on the Mac, so *.dylib is hardcoded:
-	$(SO_INSTALL_NAME) $(INSTALL_LIB)/libmetis.dylib $(INSTALL_LIB)/libmetis.dylib
-	- $(CP) include/metis.h $(INSTALL_INCLUDE)
-	chmod 755 $(INSTALL_LIB)/libmetis.*
-	chmod 644 $(INSTALL_INCLUDE)/metis.h
-	chmod 644 $(INSTALL_DOC)/METIS_manual.pdf
-	chmod 644 $(INSTALL_DOC)/METIS_README.txt
-endif
+# ifeq (,$(MY_METIS_LIB))
+#       # install METIS from SuiteSparse/metis-5.1.0
+#	@mkdir -p $(INSTALL_LIB)
+#	@mkdir -p $(INSTALL_INCLUDE)
+#	@mkdir -p $(INSTALL_DOC)
+#	- $(CP) lib/libmetis.* $(INSTALL_LIB)
+#	- $(CP) metis-5.1.0/manual/manual.pdf $(INSTALL_DOC)/METIS_manual.pdf
+#	- $(CP) metis-5.1.0/README.txt $(INSTALL_DOC)/METIS_README.txt
+#        # the following is needed only on the Mac, so *.dylib is hardcoded:
+#	$(SO_INSTALL_NAME) $(INSTALL_LIB)/libmetis.dylib $(INSTALL_LIB)/libmetis.dylib
+#	- $(CP) include/metis.h $(INSTALL_INCLUDE)
+#	chmod 755 $(INSTALL_LIB)/libmetis.*
+#	chmod 644 $(INSTALL_INCLUDE)/metis.h
+#	chmod 644 $(INSTALL_DOC)/METIS_manual.pdf
+#	chmod 644 $(INSTALL_DOC)/METIS_README.txt
+# endif
 
 # uninstall all packages
 uninstall:
@@ -114,6 +116,7 @@ uninstall:
 
 # compile the dynamic libraries.  For GraphBLAS and Mongoose, this also builds
 # the static library
+# library:
 library: metis
 	( cd SuiteSparse_config && $(MAKE) )
 #	( cd Mongoose  && $(MAKE) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' library )
@@ -140,6 +143,7 @@ library: metis
 # compile the static libraries (except for metis, GraphBLAS, and Mongoose).
 # metis is only dynamic, and the 'make static' for GraphBLAS and Mongoose makes
 # both the dynamic and static libraries.
+# static:
 static: metis
 	( cd SuiteSparse_config && $(MAKE) static )
 #	( cd Mongoose  && $(MAKE) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' static )
@@ -246,15 +250,16 @@ cx:
 
 # statement coverage (Linux only); this requires a lot of time.
 # The umfpack tcov requires a lot of disk space in /tmp
-cov: purge
-	( cd CXSparse && $(MAKE) cov )
-	( cd CSparse && $(MAKE) cov )
-	( cd CHOLMOD && $(MAKE) cov )
-	( cd KLU && $(MAKE) cov )
-	( cd SPQR && $(MAKE) cov )
-	( cd UMFPACK && $(MAKE) cov )
+cov:
+#	( cd CXSparse && $(MAKE) cov )
+#	( cd CSparse && $(MAKE) cov )
+#	( cd CHOLMOD && $(MAKE) cov )
+#	( cd KLU && $(MAKE) cov )
+#	( cd SPQR && $(MAKE) cov )
+#	( cd UMFPACK && $(MAKE) cov )
 #	( cd PIRO_BAND && $(MAKE) cov )
 #	( cd SKYLINE_SVD && $(MAKE) cov )
+	( cd SLIP_LU && $(MAKE) cov )
 
 # configure and compile METIS, placing the libmetis.* library in
 # SuiteSparse/lib and the metis.h include file in SuiteSparse/include.

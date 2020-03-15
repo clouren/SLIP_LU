@@ -22,6 +22,8 @@ function x = SLIP_get_options
 % option.int: Set equal to 1 if input mat is already integral
 % option.intb: set equal to 1 if input RHS vector(s) are already integral
 % option.tol: tolerance (0,1) which is used if some threshold pivoting is used
+%
+% See also SLIP_LU, SLIP_install, SLIP_test.
 
 % SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 % Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See

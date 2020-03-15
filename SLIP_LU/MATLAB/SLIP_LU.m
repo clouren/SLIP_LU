@@ -6,6 +6,9 @@ function varargout = SLIP_LU(A,b,option)
 % dense set of right hand side vectors. b can be either 1 or multiple vector(s)
 %
 % ****WARNING****: If A is very large or dense, this function may crash.
+% TODO: how?  Will it segfault and MATLAB dies?  Or just report out-of-memory?
+% If the latter, then delete this statement (it is true for all MATLAB
+% functions).  If the former ... why?  It shouldn't do that.
 %
 % USAGE:
 %
@@ -14,6 +17,8 @@ function varargout = SLIP_LU(A,b,option)
 % x = SLIP_LU(A,b,options) returns the solution to Ax=b with user defined
 % settings. The options settings can be obtained from option = SLIP_get_options
 % then changed from there.
+%
+% See also SLIP_install, SLIP_get_options, SLIP_test.
 
 % SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 % Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See

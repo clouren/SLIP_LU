@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/SLIP_create_LU_analysis: Allocate memory for symbolic analysis
+// SLIP_LU/slip_create_LU_analysis: Allocate memory for symbolic analysis
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -13,7 +13,7 @@
 
 #include "SLIP_LU_internal.h"
 
-SLIP_LU_analysis *SLIP_create_LU_analysis
+SLIP_LU_analysis *slip_create_LU_analysis
 (
     int32_t n     // number of columns in matrix to be analyzed
 )

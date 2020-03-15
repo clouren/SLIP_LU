@@ -2,6 +2,8 @@ function SLIP_test
 %SLIP_test: run a set of tests for SLIP_LU
 %
 % Usage:  SLIP_test
+%
+% See also SLIP_install, SLIP_get_options, SLIP_LU.
 
 maxerr = 0 ;
 
@@ -15,7 +17,11 @@ if (exist ('ssget') ~= 0)
     A = prob.A;
     [m n] = size(A);
     b = rand(m, 1);
-    maxerr = max (maxerr, slip_run_all_tests (A, b)) ;
+    x = SLIP_LU(A,b);
+    x2 = A\b;
+    err = norm(x-x2)/norm(x);
+    maxerr = max (maxerr, err) ;
+
 end
 
 for n = [1 10 100]
@@ -28,7 +34,10 @@ for n = [1 10 100]
             A = A + speye (n) ;
         end
         b = rand(n,1);
-        maxerr = max (maxerr, slip_run_all_tests (A, b)) ;
+        x = SLIP_LU(A,b);
+        x2 = A\b;
+        err = norm(x-x2)/norm(x);
+        maxerr = max (maxerr, err) ;
     end
 end
 

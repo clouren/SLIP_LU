@@ -223,8 +223,7 @@ int main( int argc, char* argv[])
     rhos = SLIP_create_mpz_array(nrows);
     pinv = (int*) SLIP_malloc(nrows* sizeof(int));
     x = SLIP_create_mpq_mat(nrows, numRHS);
-    S = SLIP_create_LU_analysis(nrows);     // TODO: should be ncols, not nrows
-    if (!rhos || !pinv || !x || !S)
+    if (!rhos || !pinv || !x)
     {
         fprintf (stderr, "Error! OUT of MEMORY!\n");
         FREE_WORKSPACE;
@@ -240,7 +239,7 @@ int main( int argc, char* argv[])
     clock_t start_col = clock();
 
     // Column ordering using either AMD, COLAMD or nothing
-    OK(SLIP_LU_analyze(S, A, option));
+    OK(SLIP_LU_analyze(&S, A, option));
     if (option->print_level > 0)
     {
         SLIP_print_options(option);

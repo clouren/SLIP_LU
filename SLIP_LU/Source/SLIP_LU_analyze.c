@@ -13,7 +13,7 @@
  *
  * Input/output arguments:
  *
- * S:       Symbolic analysis struct. Unitialized on input, contains column
+ * S:       Symbolic analysis struct. Undefined on input; contains column
  *          permutation and guesses on L and U nnz on output
  *
  * A:       Input matrix, unmodified on input/output
@@ -25,12 +25,24 @@
 
 SLIP_info SLIP_LU_analyze
 (
-    SLIP_LU_analysis* S,  // symbolic analysis (column permutation and nnz L,U)
-    SLIP_sparse* A,       // Input matrix
-    SLIP_options* option  // Control parameters
+    SLIP_LU_analysis** S_handle, // symbolic analysis (column perm. and nnz L,U)
+    SLIP_sparse *A,             // Input matrix
+    SLIP_options *option        // Control parameters
 )
 {
-    if (!S || !A || !(A->i) || !(A->x) || !(A->p) || !option || A->n != A->m)
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    SLIP_LU_analysis *S = NULL ;
+    if (!S_handle)
+    {
+        return SLIP_INCORRECT_INPUT;
+    }
+    (*S_handle) = NULL ;
+
+    if (!A || !(A->i) || !(A->x) || !(A->p) || !option || A->n != A->m)
     {
         return SLIP_INCORRECT_INPUT;
     }
@@ -39,6 +51,17 @@ SLIP_info SLIP_LU_analyze
     if (option->print_level > 0)
     {
         slip_lu_info();
+    }
+
+    //--------------------------------------------------------------------------
+    // allocate symbolic analysis object
+    //--------------------------------------------------------------------------
+
+    S = slip_create_LU_analysis (n) ;
+    if (!S)
+    {
+        // out of memory
+        return (SLIP_OUT_OF_MEMORY) ;
     }
 
     //--------------------------------------------------------------------------
@@ -86,7 +109,12 @@ SLIP_info SLIP_LU_analyze
         // Declared as per COLAMD documentation
         int32_t Alen = 2*A->nz + 6 *(n+1) + 6*(n+1) + n;
         int32_t* A2 = (int32_t*) SLIP_malloc(Alen* sizeof(int32_t));
-        if (!A2) {return SLIP_OUT_OF_MEMORY;}
+        if (!A2)
+        {
+            // out of memory
+            SLIP_delete_LU_analysis (&S) ;
+            return (SLIP_OUT_OF_MEMORY) ;
+        }
         // Initialize S->q as per COLAMD documentation
         for (i = 0; i < n+1; i++)
         {
@@ -134,6 +162,11 @@ SLIP_info SLIP_LU_analyze
         S->unz = S->unz + n;
     }
 
+    //--------------------------------------------------------------------------
+    // return result
+    //--------------------------------------------------------------------------
+
+    (*S_handle) = S ;
     return SLIP_OK;
 }
 

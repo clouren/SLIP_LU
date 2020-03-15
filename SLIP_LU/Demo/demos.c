@@ -278,7 +278,12 @@ void SLIP_show_usage() //display the usage of the code
 /* Purpose: This function reads in a matrix stored in a triplet format
  * This format used can be seen in any of the example mat files.
  *
- * This is only used for Demo purposes.
+ * The first line of the file contains three integers: m, n, nnz,
+ * where the matrix is m-by-n with nnz entries.
+ *
+ * This is followed by nnz lines, each containing a single triplet: i, j, aij,
+ * which defines the row index (i), column index (j), and value (aij) of
+ * the entry A(i,j).  The value aij is an integer.
  */
 
 SLIP_info SLIP_tripread
@@ -376,7 +381,12 @@ SLIP_info SLIP_tripread
 /* Purpose: This function reads in a double matrix stored in a triplet format
  * This format used can be seen in any of the example mat files.
  *
- * This is only used for Demo purposes
+ * The first line of the file contains three integers: m, n, nnz,
+ * where the matrix is m-by-n with nnz entries.
+ *
+ * This is followed by nnz lines, each containing a single triplet: i, j, aij,
+ * which defines the row index (i), column index (j), and value (aij) of
+ * the entry A(i,j).  The value aij is a floating-point number.
  */
 
 SLIP_info SLIP_tripread_double

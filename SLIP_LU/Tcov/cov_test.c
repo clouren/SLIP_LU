@@ -318,10 +318,10 @@ int main( int argc, char* argv[])
             SLIP_sparse *A = SLIP_create_sparse();
             SLIP_dense *b = SLIP_create_dense();
             // for Column ordering
-            SLIP_LU_analysis* S = SLIP_create_LU_analysis(n);
+            SLIP_LU_analysis* S = NULL ;
             option->print_level = 0;
 
-            if (!A || !b || !S) {SLIP_FREE_WORKSPACE; continue;}
+            if (!A || !b) {SLIP_FREE_WORKSPACE; continue;}
 
             if (Ab_type==0) //mpz
             {
@@ -463,7 +463,7 @@ int main( int argc, char* argv[])
                 TEST_CHECK(SLIP_build_dense_mpfr(b, B_mpfr, n,
                     numRHS, option));
                 // to trigger SLIP_SINGULAR
-                TEST_CHECK(SLIP_LU_analyze(S, A, option));
+                TEST_CHECK(SLIP_LU_analyze(&S, A, option));
                 sol_mpq = SLIP_create_mpq_mat(n, numRHS);
                 TEST_CHECK_FAILURE(SLIP_solve_mpq(sol_mpq, A, S, b, option));
                 option->pivot = SLIP_LARGEST;
@@ -472,6 +472,7 @@ int main( int argc, char* argv[])
                 TEST_CHECK_FAILURE(SLIP_solve_mpq(sol_mpq, A, S, b, option));
                 //free the memory alloc'd
                 SLIP_delete_mpq_mat(&sol_mpq, n, numRHS);
+                SLIP_delete_LU_analysis(&S) ;
                 CLEAR_SLIP_MAT_A;
                 CLEAR_SLIP_MAT_B;
 
@@ -672,6 +673,7 @@ int main( int argc, char* argv[])
 
                 // Incorrect calling with NULL pointer(s)
                 TEST_CHECK_FAILURE(SLIP_LU_analyze(NULL, NULL, NULL));
+                TEST_CHECK_FAILURE(SLIP_LU_analyze(&S, NULL, NULL));
                 TEST_CHECK_FAILURE(SLIP_LU_factorize(NULL, NULL, NULL, NULL,
                     NULL, NULL, NULL));
                 TEST_CHECK_FAILURE(SLIP_LU_solve(NULL, NULL, NULL, NULL, NULL,
@@ -696,7 +698,7 @@ int main( int argc, char* argv[])
             }
 
             // Column ordering using either AMD, COLAMD or nothing
-            TEST_CHECK(SLIP_LU_analyze(S, A, option));
+            TEST_CHECK(SLIP_LU_analyze(&S, A, option));
             option->print_level = 3;
             int check2;
 

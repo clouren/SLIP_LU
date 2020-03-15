@@ -62,12 +62,12 @@ void mexFunction
     slip_mex_get_A_and_b(A, b, pargin, nargin);
 
     // Create arrays based on the size of input matrix
-    S = SLIP_create_LU_analysis(A->n);
+
     double** soln = SLIP_create_double_mat(b->m, b->n);
     int32_t* pinv = (int32_t*) SLIP_malloc(A->n* sizeof(int32_t));
     mpz_t* rhos = SLIP_create_mpz_array(A->n);
     mpq_t** soln_mpq = SLIP_create_mpq_mat(b->m, b->n);
-    if (!S || !soln || !pinv || !rhos || !soln_mpq)
+    if (!soln || !pinv || !rhos || !soln_mpq)
     {
         slip_mex_error (SLIP_OUT_OF_MEMORY);
     }
@@ -75,7 +75,7 @@ void mexFunction
     //--------------------------------------------------------------------------
     // Symbolic analysis and factorization
     //--------------------------------------------------------------------------
-    SLIP_MEX_OK (SLIP_LU_analyze(S, A, option));// Symbolic Analysis
+    SLIP_MEX_OK (SLIP_LU_analyze(&S, A, option));// Symbolic Analysis
 
     SLIP_MEX_OK(SLIP_LU_factorize(L, U, A, S, rhos, pinv, option));
 

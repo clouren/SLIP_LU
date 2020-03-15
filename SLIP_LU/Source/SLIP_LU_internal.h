@@ -258,6 +258,15 @@ void slip_gmp_failure (int32_t status) ;
 //                           Internal Functions
 // ============================================================================
 
+/* Purpose: This function returns a pointer to a created SLIP_LU_analysis
+ * object.  The input parameter n is the number of columns of the input matrix
+ * to be analyzed.  Returns NULL on failure.
+ */
+SLIP_LU_analysis *slip_create_LU_analysis
+(
+    int32_t n     // numbers of columns in matrix to be analyzed
+);
+
 /* Purpose: This function creates an mpz array of size n and allocates
  * memory for numbers of bit size prec. If the relative size of numbers is
  * known ahead of time, this is more efficient than the

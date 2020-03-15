@@ -30,7 +30,7 @@ SLIP_create_default_options.c
 SLIP_create_dense.c
 SLIP_create_double_mat.c
 SLIP_create_int_mat.c
-SLIP_create_LU_analysis.c
+slip_create_LU_analysis.c
 SLIP_create_mpfr_array.c
 SLIP_create_mpfr_mat.c
 SLIP_create_mpq_array.c

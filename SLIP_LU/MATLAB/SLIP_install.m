@@ -10,6 +10,8 @@ function SLIP_install
 % Required Libraries: GMP, MPFR, AMD, COLAMD.  If -lamd and -lcolamd are not
 % available, install them with 'make install' first, in the top-level
 % SuiteSparse folder.
+%
+% See also SLIP_get_options, SLIP_LU, SLIP_test.
 
 % SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 % Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See

@@ -57,9 +57,9 @@ int main (void) // (int argc, char **argv)
     double** soln = NULL;
     SLIP_sparse* A = SLIP_create_sparse();
     SLIP_dense *b = SLIP_create_dense();
-    SLIP_LU_analysis *S = SLIP_create_LU_analysis(n);
+    SLIP_LU_analysis *S = NULL ;
     SLIP_options* option = SLIP_create_default_options();
-    if (!A || !b ||  !S || !option)
+    if (!A || !b || !option)
     {
         fprintf (stderr, "Error! OUT of MEMORY!\n");
         FREE_WORKSPACE;
@@ -107,7 +107,7 @@ int main (void) // (int argc, char **argv)
     clock_t start_sym = clock();
 
     // Symbolic analysis
-    OK(SLIP_LU_analyze(S, A, option));
+    OK(SLIP_LU_analyze(&S, A, option));
 
     clock_t end_sym = clock();
 

@@ -101,9 +101,8 @@ int main (int argc, char **argv)
     }
     n = A->m;       // Set n    TODO A->m ??  Should be A->n.
     numRHS = b->n;
-    S = SLIP_create_LU_analysis(n);
     x = SLIP_create_mpq_mat(n,numRHS);
-    if (!S || !x)
+    if (!x)
     {
         fprintf (stderr, "Error! OUT of MEMORY!\n");
         FREE_WORKSPACE;
@@ -117,7 +116,7 @@ int main (int argc, char **argv)
     clock_t start_sym = clock();
 
     // Symbolic analysis to obtain column permutation
-    OK(SLIP_LU_analyze(S, A, option));
+    OK(SLIP_LU_analyze(&S, A, option));
 
     clock_t end_sym = clock();
 
