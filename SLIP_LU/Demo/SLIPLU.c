@@ -122,12 +122,11 @@ int main( int argc, char* argv[])
     //          (note that we declare it here to enumerate all possibilities).
     //
     //  A, L, U: Sparse integer matrices. This is the default struct used
-    //          within SLIP LU to perform most internal routines. Sparse
-    //          matrices are always initialized with a call to
-    //          SLIP_create_sparse(); Note that the numeric entries within
-    //          these matrices are integral mpz_t data types. If the input
-    //          matrix contains non integral entries, it must be appropriately
-    //          scaled using one of the SLIP_build_sparse_* functions.
+    //          within SLIP LU to perform most internal routines.  Note that
+    //          the numeric entries within these matrices are integral mpz_t
+    //          data types. If the input matrix contains non integral entries,
+    //          it must be appropriately scaled using one of the
+    //          SLIP_build_sparse_* functions.
     //
     //  b: Dense right hand side vector(s). Currently SLIP LU assumes that the
     //     RHS is always dense. All dense matrices must be initialized with the

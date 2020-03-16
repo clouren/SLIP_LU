@@ -238,7 +238,7 @@ typedef struct SLIP_options
 SLIP_options* SLIP_create_default_options(void);
 
 //------------------------------------------------------------------------------
-// SLIP_sparse: a sparse matrix in compressed sparse column form
+// SLIP_sparse: a sparse matrix in CSC form, of mpz_t entries
 //------------------------------------------------------------------------------
 
 // This struct defines a matrix stored in sparse compressed column form. Since
