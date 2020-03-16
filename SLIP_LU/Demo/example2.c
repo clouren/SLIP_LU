@@ -55,11 +55,11 @@ int main (int argc, char **argv)
     // Declare our data structures
     //--------------------------------------------------------------------------
     mpq_t** x = NULL;
-    SLIP_sparse *A = SLIP_create_sparse();
+    SLIP_sparse *A = NULL ;
     SLIP_dense *b = SLIP_create_dense();
     SLIP_options* option = SLIP_create_default_options();
     SLIP_LU_analysis* S = NULL;
-    if (!A || !b || !option)
+    if (!b || !option)
     {
         fprintf (stderr, "Error! OUT of MEMORY!\n");
         FREE_WORKSPACE;
@@ -77,7 +77,7 @@ int main (int argc, char **argv)
         FREE_WORKSPACE;
         return 0;
     }
-    OK(SLIP_tripread(A, mat_file));
+    OK(SLIP_tripread(&A, mat_file));
     fclose(mat_file);
 
     // Read in right hand side

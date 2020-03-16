@@ -16,6 +16,7 @@
     ok = method ;                       \
     if (ok != SLIP_OK)                  \
     {                                   \
+        printf ("Error: line %d file %s\n", __LINE__, __FILE__) ; \
         FREE_WORKSPACE ;                \
         return 0 ;                      \
     }                                   \
@@ -45,29 +46,25 @@ void SLIP_print_options     // display specified/default options to user
 /* Purpose: This function shows the usage of the code.*/
 void SLIP_show_usage(void);
 
-/* Purpose: This function reads in a matrix stored in a triplet format
+/* Purpose: This function reads in a matrix stored in a triplet format.
  * This format used can be seen in any of the example mat files.
- *
- * This is only used for Demo purposes
  */
+
 SLIP_info SLIP_tripread
 (
-    SLIP_sparse* A,     // Matrix to be populated
-    FILE* file          // file to read from (must already be open)
-);
+    SLIP_sparse **A_handle,     // Matrix to be constructed
+    FILE* file                  // file to read from (must already be open)
+) ;
 
-/* Purpose: This function reads in a double matrix stored in a triplet format
+/* Purpose: This function reads in a double matrix stored in a triplet format.
  * This format used can be seen in any of the example mat files.
- *
- * This is only used for Demo purposes
  */
-
 SLIP_info SLIP_tripread_double
 (
-    SLIP_sparse* A,        // Matrix to be populated
-    FILE* file,          // file to read from (must already be open)
+    SLIP_sparse **A_handle,     // Matrix to be constructed
+    FILE* file,                 // file to read from (must already be open)
     SLIP_options* option
-);
+) ;
 
 /* Purpose: Read a dense matrix. This is for demo purposes only */
 

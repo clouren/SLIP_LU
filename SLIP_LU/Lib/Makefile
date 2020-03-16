@@ -29,19 +29,23 @@ all: install
 OBJ = \
     slip_array_div.o slip_array_mul.o slip_back_sub.o SLIP_build_dense_mpz.o \
     SLIP_build_dense_mpq.o SLIP_build_dense_mpfr.o SLIP_build_dense_int.o \
-    SLIP_build_dense_double.o SLIP_build_sparse_trip_mpz.o \
+    SLIP_build_dense_double.o \
+    SLIP_build_sparse_trip_mpz.o \
     SLIP_build_sparse_trip_mpq.o \
-    SLIP_build_sparse_trip_mpfr.o SLIP_build_sparse_trip_int.o \
+    SLIP_build_sparse_trip_mpfr.o \
+    SLIP_build_sparse_trip_int.o \
     SLIP_build_sparse_trip_double.o \
-    SLIP_build_sparse_csc_mpz.o SLIP_build_sparse_csc_mpq.o \
+    SLIP_build_sparse_csc_mpz.o \
+    SLIP_build_sparse_csc_mpq.o \
     SLIP_build_sparse_csc_mpfr.o \
-    SLIP_build_sparse_csc_double.o SLIP_build_sparse_csc_int.o SLIP_calloc.o \
-    SLIP_check_solution.o slip_create_LU_analysis.o \
+    SLIP_build_sparse_csc_double.o \
+    SLIP_build_sparse_csc_int.o \
+    SLIP_calloc.o SLIP_check_solution.o slip_create_LU_analysis.o \
     SLIP_create_dense.o SLIP_create_double_mat.o SLIP_delete_int_mat.o \
     SLIP_create_int_mat.o SLIP_create_mpfr_array.o SLIP_create_mpfr_mat.o \
     SLIP_create_mpq_array.o SLIP_create_mpq_mat.o slip_create_mpz_array2.o \
     SLIP_create_mpz_array.o SLIP_create_mpz_mat.o \
-    SLIP_create_sparse.o slip_cumsum.o SLIP_delete_dense.o \
+    slip_create_sparse.o slip_cumsum.o SLIP_delete_dense.o \
     SLIP_delete_double_mat.o SLIP_delete_LU_analysis.o \
     SLIP_delete_mpfr_array.o SLIP_solve_mpfr.o SLIP_create_default_options.o\
     SLIP_delete_mpfr_mat.o SLIP_delete_mpq_array.o SLIP_delete_mpq_mat.o \

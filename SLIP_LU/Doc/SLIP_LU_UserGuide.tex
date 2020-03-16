@@ -563,10 +563,6 @@ LU sparse matrix, \verb|SLIP_sparse|, as shown in the following table.
 \hline
 function name & description & section \\
 \hline
-\verb|SLIP_create_sparse|
-    & create empty sparse matrix
-    & \ref{ss:create_sparse} \\
-\hline
 \verb|SLIP_build_sparse_csc_double|
     & build sparse matrix from \verb|double| type CSC matrix
     & \ref{s:user:build_sparse_csc_double} \\
@@ -985,27 +981,6 @@ which are discussed in Section \ref{ss:SLIP_options}.  To safely free the
 \verb|SLIP_options* option| structure, simply use \verb|SLIP_FREE(option)|.
 
 %-------------------------------------------------------------------------------
-\cprotect\subsubsection{\verb|SLIP_create_sparse|: create empty sparse matrix}
-\label{ss:create_sparse}
-%-------------------------------------------------------------------------------
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-    SLIP_sparse *SLIP_create_sparse
-    (
-        void
-    );
-\end{verbatim}
-} \end{mdframed}
-
-\verb|SLIP_create_sparse| allocates a new empty sparse matrix and returns a
-\verb|SLIP_sparse| pointer to this matrix upon successful allocation.  The
-returned matrix has size of $0$-by-$0$ and scale parameter of $1$. For methods
-to build the created sparse matrix, users can refer to the table in Section
-\ref{ss:SLIP_sparse}.
-
-%-------------------------------------------------------------------------------
 \cprotect\subsubsection{\verb|SLIP_delete_sparse|: delete sparse matrix}
 \label{ss:delete_sparse}
 %-------------------------------------------------------------------------------
@@ -1102,14 +1077,12 @@ dense matrix.
 \label{s:user:build_sparse_csc_double}
 %-------------------------------------------------------------------------------
 
-% TODO what is "initialzed but unused" ???
-
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
     SLIP_info SLIP_build_sparse_csc_double
     (
-        SLIP_sparse *A,     // It should be initialized but unused yet TODO?
+        SLIP_sparse **A_handle,     // output matrix
         int32_t *p,         // The set of column pointers
         int32_t *I,         // set of row indices
         double *x,          // Set of values as doubles
@@ -1121,11 +1094,6 @@ dense matrix.
 
 \verb|SLIP_build_sparse_csc_double| builds a sparse matrix using compressed
 sparse column (CSC) form inputs, where the entry values are \verb|double| type.
-The input sparse matrix \verb|A| should be a created empty matrix. The
-best practice is to use the one returned from \verb|SLIP_create_sparse| (in
-Section \ref{ss:create_sparse}). WARNING: Using a sparse matrix that has been
-built with \verb|SLIP_build_sparse_*| as input would cause memory leak.
-{\bf TODO: why a leak???} % TODO I don't understand this.
 
 %-------------------------------------------------------------------------------
 \cprotect\subsubsection{\verb|SLIP_build_sparse_csc_int|: build sparse matrix using CSC with \verb|int32_t| entries}
@@ -1137,7 +1105,7 @@ built with \verb|SLIP_build_sparse_*| as input would cause memory leak.
 \begin{verbatim}
     SLIP_info SLIP_build_sparse_csc_int
     (
-        SLIP_sparse *A,     // It should be initialized but unused yet TODO??
+        SLIP_sparse **A_handle,     // output matrix
         int32_t *p,         // The set of column pointers
         int32_t *I,         // set of row indices
         int32_t *x,         // Set of values as doubles
@@ -1148,12 +1116,7 @@ built with \verb|SLIP_build_sparse_*| as input would cause memory leak.
 } \end{mdframed}
 
 \verb|SLIP_build_sparse_csc_int| builds a sparse matrix using compressed column
-form inputs, where the entry values are \verb|int32_t| type. The input sparse
-matrix \verb|A| should be a created empty matrix. The best practice is
-to use the one returned from \verb|SLIP_create_sparse| (in Section
-\ref{ss:create_sparse}). WARNING: Using sparse matrix that has been built with
-\verb|SLIP_build_sparse_*| as input would cause memory leak.
-{\bf TODO: why a leak???} % TODO I don't understand this.
+form inputs, where the entry values are \verb|int32_t| type.
 
 %-------------------------------------------------------------------------------
 \cprotect\subsubsection{\verb|SLIP_build_sparse_csc_mpq|: build sparse matrix using CSC with \verb|mpq_t| entries}
@@ -1165,7 +1128,7 @@ to use the one returned from \verb|SLIP_create_sparse| (in Section
 \begin{verbatim}
     SLIP_info SLIP_build_sparse_csc_mpq
     (
-        SLIP_sparse *A,     // It should be initialized but unused yet TODO??
+        SLIP_sparse **A_handle,     // output matrix
         int32_t *p,         // The set of column pointers
         int32_t *I,         // set of row indices
         mpq_t *x,           // Set of values as mpq_t rational numbers
@@ -1177,11 +1140,6 @@ to use the one returned from \verb|SLIP_create_sparse| (in Section
 
 \verb|SLIP_build_sparse_csc_mpq| builds a sparse matrix using compressed
 sparse column (CSC) form inputs, where the entry values are \verb|mpq_t| type.
-The input sparse matrix \verb|A| should be a created empty matrix. The
-best practice is to use the one returned from \verb|SLIP_create_sparse| (in
-Section \ref{ss:create_sparse}). WARNING: Using sparse matrix that has been
-built with \verb|SLIP_build_sparse_*| as input would cause memory leak.
-{\bf TODO: why a leak???} % TODO I don't understand this.
 
 %-------------------------------------------------------------------------------
 \cprotect\subsubsection{\verb|SLIP_build_sparse_csc_mpfr|: build sparse matrix using CSC with \verb|mpfr_t| entries}
@@ -1193,7 +1151,7 @@ built with \verb|SLIP_build_sparse_*| as input would cause memory leak.
 \begin{verbatim}
     SLIP_info SLIP_build_sparse_csc_mpfr
     (
-        SLIP_sparse *A,     // It should be initialized but unused yet TODO??
+        SLIP_sparse **A_handle,     // output matrix
         int32_t *p,         // The set of column pointers
         int32_t *I,         // set of row indices
         mpfr_t *x,          // Set of values as doubles
@@ -1206,11 +1164,6 @@ built with \verb|SLIP_build_sparse_*| as input would cause memory leak.
 
 \verb|SLIP_build_sparse_csc_mpfr| builds a sparse matrix using compressed
 sparse column (CSC) form inputs, where the entry values are \verb|mpfr_t| type.
-The input sparse matrix \verb|A| should be a created empty matrix. The
-best practice is to use the one returned from \verb|SLIP_create_sparse| (in
-Section \ref{ss:create_sparse}). WARNING: Using sparse matrix that has been
-built with \verb|SLIP_build_sparse_*| as input would cause memory leak.
-{\bf TODO: why a leak???} % TODO I don't understand this.
 
 %-------------------------------------------------------------------------------
 \cprotect\subsubsection{\verb|SLIP_build_sparse_csc_mpz|: build sparse matrix using CSC with \verb|mpz_t| entries}
@@ -1222,7 +1175,7 @@ built with \verb|SLIP_build_sparse_*| as input would cause memory leak.
 \begin{verbatim}
     SLIP_info SLIP_build_sparse_csc_mpz
     (
-        SLIP_sparse *A,     // It should be initialized but unused yet
+        SLIP_sparse **A_handle,     // output matrix
         int32_t *p,         // The set of column pointers
         int32_t *I,         // set of row indices
         mpz_t *x,           // Set of values in full precision int.
@@ -1233,12 +1186,7 @@ built with \verb|SLIP_build_sparse_*| as input would cause memory leak.
 } \end{mdframed}
 
 \verb|SLIP_build_sparse_csc_mpz| builds a sparse matrix using compressed column
-form inputs, where the entry values are \verb|mpz_t| type. The input sparse
-matrix \verb|A| should be a created empty matrix. The best practice is
-to use the one returned from \verb|SLIP_create_sparse| (in Section
-\ref{ss:create_sparse}). WARNING: Using sparse matrix that has been built with
-\verb|SLIP_build_sparse_*| as input would cause memory leak.
-{\bf TODO: why a leak???} % TODO I don't understand this.
+form inputs, where the entry values are \verb|mpz_t| type.
 
 %-------------------------------------------------------------------------------
 \cprotect\subsubsection{\verb|SLIP_build_sparse_trip_double|: build sparse matrix using triplet with \verb|double| entries}
@@ -1250,7 +1198,7 @@ to use the one returned from \verb|SLIP_create_sparse| (in Section
 \begin{verbatim}
     SLIP_info SLIP_build_sparse_trip_double
     (
-        SLIP_sparse *A,     // It should be initialized but unused yet TODO??
+        SLIP_sparse **A_handle,     // output matrix
         int32_t *I,         // set of row indices
         int32_t *J,         // set of column indices
         double *x,          // Set of values in double
@@ -1262,12 +1210,7 @@ to use the one returned from \verb|SLIP_create_sparse| (in Section
 } \end{mdframed}
 
 \verb|SLIP_build_sparse_trip_double| builds a sparse matrix using triplet form
-inputs, where the entry values are \verb|double| type. The input sparse matrix
-\verb|A| should be a created empty matrix. The best practice is to use
-the one returned from \verb|SLIP_create_sparse| (in Section
-\ref{ss:create_sparse}). WARNING: Using sparse matrix that has been built with
-\verb|SLIP_build_sparse_*| as input would cause memory leak.
-{\bf TODO: why a leak???} % TODO I don't understand this.
+inputs, where the entry values are \verb|double| type.
 
 %-------------------------------------------------------------------------------
 \cprotect\subsubsection{\verb|SLIP_build_sparse_trip_int|: build sparse matrix using triplet with \verb|int32_t| entries}
@@ -1279,7 +1222,7 @@ the one returned from \verb|SLIP_create_sparse| (in Section
 \begin{verbatim}
     SLIP_info SLIP_build_sparse_trip_int
     (
-        SLIP_sparse *A,     // It should be initialized but unused yet TODO??
+        SLIP_sparse **A_handle,     // output matrix
         int32_t *I,         // set of row indices
         int32_t *J,         // set of column indices
         int32_t *x,         // Set of values in int
@@ -1291,12 +1234,7 @@ the one returned from \verb|SLIP_create_sparse| (in Section
 } \end{mdframed}
 
 \verb|SLIP_build_sparse_trip_int| builds a sparse matrix using triplet form
-inputs, where the entry values are \verb|int32_t| type. The input sparse matrix
-\verb|A| should be a created empty matrix. The best practice is to use
-the one returned from \verb|SLIP_create_sparse| (in Section
-\ref{ss:create_sparse}). WARNING: Using sparse matrix that has been built with
-\verb|SLIP_build_sparse_*| as input would cause memory leak.
-{\bf TODO: why a leak???} % TODO I don't understand this.
+inputs, where the entry values are \verb|int32_t| type.
 
 %-------------------------------------------------------------------------------
 \cprotect\subsubsection{\verb|SLIP_build_sparse_trip_mpq|: build sparse matrix using triplet with \verb|mpq_t| entries}
@@ -1308,7 +1246,7 @@ the one returned from \verb|SLIP_create_sparse| (in Section
 \begin{verbatim}
     SLIP_info SLIP_build_sparse_trip_mpq
     (
-        SLIP_sparse *A,     // It should be initialized but unused yet TODO??
+        SLIP_sparse **A_handle,     // output matrix
         int32_t *I,         // set of row indices
         int32_t *J,         // set of column indices
         mpq_t *x,           // Set of values as rational numbers
@@ -1320,12 +1258,7 @@ the one returned from \verb|SLIP_create_sparse| (in Section
 } \end{mdframed}
 
 \verb|SLIP_build_sparse_trip_mpq| builds a sparse matrix using triplet form
-inputs, where the entry values are \verb|mpq_t| type. The input sparse matrix
-\verb|A| should be a created empty matrix. The best practice is to use
-the one returned from \verb|SLIP_create_sparse| (in Section
-\ref{ss:create_sparse}). WARNING: Using sparse matrix that has been built with
-\verb|SLIP_build_sparse_*| as input would cause memory leak.
-{\bf TODO: why a leak???} % TODO I don't understand this.
+inputs, where the entry values are \verb|mpq_t| type.
 
 %-------------------------------------------------------------------------------
 \cprotect\subsubsection{\verb|SLIP_build_sparse_trip_mpfr|: build sparse matrix using triplet with \verb|mpfr_t| entries}
@@ -1337,7 +1270,7 @@ the one returned from \verb|SLIP_create_sparse| (in Section
 \begin{verbatim}
     SLIP_info SLIP_build_sparse_trip_mpfr
     (
-        SLIP_sparse *A,     // It should be initialized but unused yet TODO??
+        SLIP_sparse **A_handle,     // output matrix
         int32_t *I,         // set of row indices
         int32_t *J,         // set of column indices
         mpfr_t *x,          // Set of values as mpfr_t
@@ -1350,12 +1283,7 @@ the one returned from \verb|SLIP_create_sparse| (in Section
 } \end{mdframed}
 
 \verb|SLIP_build_sparse_trip_mpfr| builds a sparse matrix using triplet form
-inputs, where the entry values are \verb|mpfr_t| type. The input sparse matrix
-\verb|A| should be a created empty matrix. The best practice is to use
-the one returned from \verb|SLIP_create_sparse| (in Section
-\ref{ss:create_sparse}). WARNING: Using sparse matrix that has been built with
-\verb|SLIP_build_sparse_*| as input would cause memory leak.
-{\bf TODO: why a leak???} % TODO I don't understand this.
+inputs, where the entry values are \verb|mpfr_t| type.
 
 %-------------------------------------------------------------------------------
 \cprotect\subsubsection{\verb|SLIP_build_sparse_trip_mpz|: build sparse matrix using triplet with \verb|mpz_t| entries}
@@ -1367,7 +1295,7 @@ the one returned from \verb|SLIP_create_sparse| (in Section
 \begin{verbatim}
     SLIP_info SLIP_build_sparse_trip_mpz
     (
-        SLIP_sparse *A,     // It should be initialized but unused yet
+        SLIP_sparse **A_handle,     // output matrix
         int32_t *I,         // set of row indices
         int32_t *J,         // set of column indices
         mpz_t *x,           // Set of values in full precision int
@@ -1379,12 +1307,7 @@ the one returned from \verb|SLIP_create_sparse| (in Section
 } \end{mdframed}
 
 \verb|SLIP_build_sparse_trip_mpz| builds a sparse matrix using triplet form
-inputs, where the entry values are \verb|mpz_t| type. The input sparse matrix
-\verb|A| should be a created empty matrix. The best practice is to use
-the one returned from \verb|SLIP_create_sparse| (in Section
-\ref{ss:create_sparse}). WARNING: Using sparse matrix that has been built with
-\verb|SLIP_build_sparse_*| as input would cause memory leak.
-{\bf TODO: why a leak???} % TODO I don't understand this.
+inputs, where the entry values are \verb|mpz_t| type.
 
 %-------------------------------------------------------------------------------
 \cprotect\subsubsection{\verb|SLIP_build_dense_double|: build dense matrix using 2D \verb|double| array}
@@ -2621,32 +2544,22 @@ contains them directly and \verb|b->scale|=1. Otherwise, \verb|b| is the scaled
 input right hand side vector(s).
 \end{itemize}
 
-SLIP LU provides four separate functions to allocate memory for and initialize
-each of these data structures. For more details, users can refer to Sections
-\ref{ss:SLIP_options}-\ref{ss:SLIP_LU_analysis}. Thus, after calling
-\verb|SLIP_initialize();|, the user should call the following:
-
-{\small
-\begin{verbatim}
-/* Assume SLIP LU environment has been initialized */
-SLIP_sparse *A = SLIP_create_sparse();                // Initialize A
-SLIP_options *option = SLIP_create_default_options(); // Initialize option
-SLIP_dense *b = SLIP_create_dense();                  // Initialize b
-\end{verbatim}
-}
-
 %-------------------------------------------------------------------------------
 \subsubsection{Populating Data Structures}
 %-------------------------------------------------------------------------------
 
 Of the four data structures discussed in Section~\ref{ss:init}, \verb|S| is
-populated during symbolic analysis (Section \ref{s:Using:symb}), \verb|option|
+constructed during symbolic analysis (Section \ref{s:Using:symb}), \verb|option|
 is initialized to default values and can be modified if the user desires
 (please refer to Section \ref{ss:SLIP_options} for the contents of
-\verb|option|) and \verb|A| and \verb|b| are populated by the user. SLIP LU
-allows the input numerical data for \verb|A| and \verb|b| to come in one of 5
-options: \verb|int32_t|, \verb|double|, \verb|mpfr_t|, \verb|mpq_t|, and
-\verb|mpz_t|. Moreover, \verb|A| can be stored in either triplet form or
+\verb|option|) and \verb|A| and \verb|b| are
+% TODO: this is not correct:
+populated by the user.
+TODO: no, we have functions that create A and b.
+
+SLIP LU allows the input numerical data for \verb|A| and \verb|b| to come in
+one of 5 options: \verb|int32_t|, \verb|double|, \verb|mpfr_t|, \verb|mpq_t|,
+and \verb|mpz_t|. Moreover, \verb|A| can be stored in either triplet form or
 compressed column form.  Compressed column form is discussed in Section
 \ref{s:intro}. Conversely, triplet form stores the contents of the matrix $A$
 in three arrays \verb|i|, \verb|j|, and \verb|x| where the $k$th nonzero entry
@@ -2677,23 +2590,23 @@ want to use and delete the surrounding if statements).
 
     if(X IS mpz_t)
     {
-        SLIP_build_sparse_csc_mpz(A, p, I, x, n, nz);
+        SLIP_build_sparse_csc_mpz(&A, p, I, x, n, nz);
     }
     else if (X IS double)
     {
-        SLIP_build_sparse_csc_double(A, p, I, x, n, nz);
+        SLIP_build_sparse_csc_double(&A, p, I, x, n, nz);
     }
     else if (X IS int32_t)
     {
-        SLIP_build_sparse_csc_int(A, p, I, x, n, nz);
+        SLIP_build_sparse_csc_int(&A, p, I, x, n, nz);
     }
     else if (X IS mpq_t)
     {
-        SLIP_build_sparse_csc_mpq(A, p, I, x, n, nz);
+        SLIP_build_sparse_csc_mpq(&A, p, I, x, n, nz);
     }
     else if (X IS mpfr_t)
     {
-        SLIP_build_sparse_csc_mpfr(A, p, I, x, n, nz, option);
+        SLIP_build_sparse_csc_mpfr(&A, p, I, x, n, nz, option);
     } \end{verbatim} }
 
 Conversely, if the input matrix is stored in triplet form, the functions \\
@@ -2721,23 +2634,23 @@ want to use and delete the surrounding if statements).
 
     if(X IS mpz_t)
     {
-        SLIP_build_sparse_trip_mpz(A, I, J, x, n, nz);
+        SLIP_build_sparse_trip_mpz(&A, I, J, x, n, nz);
     }
     else if (X IS double)
     {
-        SLIP_build_sparse_trip_double(A, I, J, x, n, nz);
+        SLIP_build_sparse_trip_double(&A, I, J, x, n, nz);
     }
     else if (X IS int32_t)
     {
-        SLIP_build_sparse_trip_int(A, I, J, x, n, nz);
+        SLIP_build_sparse_trip_int(&A, I, J, x, n, nz);
     }
     else if (X IS mpq_t)
     {
-        SLIP_build_sparse_trip_mpq(A, I, J, x, n, nz);
+        SLIP_build_sparse_trip_mpq(&A, I, J, x, n, nz);
     }
     else if (X IS mpfr_t)
     {
-        SLIP_build_sparse_trip_mpfr(A, I, J, x, n, nz, option);
+        SLIP_build_sparse_trip_mpfr(&A, I, J, x, n, nz, option);
     } \end{verbatim} }
 
 Lastly, the right hand side vectors \verb|b| are populated via the

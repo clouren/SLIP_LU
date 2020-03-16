@@ -154,12 +154,12 @@ int main( int argc, char* argv[])
     SLIP_LU_analysis* S = NULL;
     double **x_doub = NULL;
     mpfr_t **x_mpfr = NULL;
-    SLIP_sparse *A = SLIP_create_sparse();
+    SLIP_sparse *A = NULL ;
     SLIP_sparse *L = NULL ;
     SLIP_sparse *U = NULL ;
     SLIP_dense *b  = SLIP_create_dense();
     SLIP_options *option = SLIP_create_default_options();
-    if (!A || !b || !option)
+    if (!b || !option)
     {
         fprintf (stderr, "Error! OUT of MEMORY!\n");
         SLIP_finalize();
@@ -190,7 +190,7 @@ int main( int argc, char* argv[])
         FREE_WORKSPACE;
         return 0;
     }
-    OK(SLIP_tripread(A, mat_file));
+    OK(SLIP_tripread(&A, mat_file));
     fclose(mat_file);
 
     // Read in right hand side

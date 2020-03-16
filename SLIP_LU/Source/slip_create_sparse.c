@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/SLIP_create_sparse: create an empty sparse mpq matrix
+// SLIP_LU/slip_create_sparse: create an empty sparse mpq matrix
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -23,7 +23,7 @@
     }                           \
 }
 
-SLIP_sparse *SLIP_create_sparse( void )
+SLIP_sparse *slip_create_sparse( void )
 {
     SLIP_sparse *A = (SLIP_sparse*) SLIP_malloc(sizeof(SLIP_sparse));
     if (A == NULL) {return NULL;}

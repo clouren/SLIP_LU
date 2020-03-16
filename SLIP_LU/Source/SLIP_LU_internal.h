@@ -258,6 +258,9 @@ void slip_gmp_failure (int32_t status) ;
 //                           Internal Functions
 // ============================================================================
 
+// create a zero-by-zero sparse matrix with no content.
+SLIP_sparse *slip_create_sparse( void ) ;
+
 /* Purpose: This function returns a pointer to a created SLIP_LU_analysis
  * object.  The input parameter n is the number of columns of the input matrix
  * to be analyzed.  Returns NULL on failure.

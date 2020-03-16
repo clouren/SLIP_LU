@@ -14,16 +14,18 @@
 
 void slip_mex_get_A_and_b
 (
-    SLIP_sparse *A,          // Internal SLIP Mat stored in CSC
+    SLIP_sparse **A_handle,  // Internal SLIP Mat stored in CSC
     SLIP_dense *b,           // mpz matrix used internally
     const mxArray* pargin[], // The input A matrix and options
     int32_t nargin           // Number of input to the mexFunction
 )
 {
-    if (!A || !pargin)
+
+    if (!A_handle || !pargin)
     {
         slip_mex_error (SLIP_INCORRECT_INPUT);
     }
+    (*A_handle) = NULL ;
 
     // Declare variables
     SLIP_info status;
@@ -79,14 +81,14 @@ void slip_mex_get_A_and_b
             Ax_int[k] = (int32_t) Ax[k];
         }
         // Create A with no scaling
-        status = SLIP_build_sparse_csc_int(A, Ap_int, Ai_int, Ax_int,
+        status = SLIP_build_sparse_csc_int(A_handle, Ap_int, Ai_int, Ax_int,
             (int32_t) nA, (int32_t) Anz);
         SLIP_FREE(Ax_int);
     }
     else
     {
         // Create A with scaling
-        status = SLIP_build_sparse_csc_double(A, Ap_int, Ai_int, Ax,
+        status = SLIP_build_sparse_csc_double(A_handle, Ap_int, Ai_int, Ax,
             (int32_t) nA, (int32_t) Anz, option);
     }
     if (status != SLIP_OK)
@@ -100,6 +102,7 @@ void slip_mex_get_A_and_b
     //--------------------------------------------------------------------------
     // Read in b
     //--------------------------------------------------------------------------
+
     if (nargin == 3)
     {
         bx =  mxGetDoubles(pargin[1]);

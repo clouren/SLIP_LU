@@ -264,11 +264,6 @@ typedef struct
     mpq_t scale ; // scale factor for the matrix
 } SLIP_sparse ;
 
-/* Purpose: This function return a created empty sparse matrix as SLIP_sparse
- * pointer upon successful malloc
- */
-SLIP_sparse *SLIP_create_sparse( void );
-
 /* Purpose: This function deletes the sparse matrix A */
 void SLIP_delete_sparse
 (
@@ -406,7 +401,7 @@ void SLIP_free
 
 SLIP_info SLIP_build_sparse_csc_mpz
 (
-    SLIP_sparse *A_output,// It should be initialized but unused yet TODO ??
+    SLIP_sparse **A_handle,     // matrix to construct
     int32_t *p,           // The set of column pointers
     int32_t *I,           // set of row indices
     mpz_t *x,             // Set of values in full precision int.
@@ -418,7 +413,7 @@ SLIP_info SLIP_build_sparse_csc_mpz
 
 SLIP_info SLIP_build_sparse_csc_double
 (
-    SLIP_sparse *A_output,// It should be initialized but unused yet TODO ??
+    SLIP_sparse **A_handle,     // matrix to construct
     int32_t *p,           // The set of column pointers
     int32_t *I,           // set of row indices
     double *x,            // Set of values as doubles
@@ -431,7 +426,7 @@ SLIP_info SLIP_build_sparse_csc_double
 
 SLIP_info SLIP_build_sparse_csc_int
 (
-    SLIP_sparse *A_output,// It should be initialized but unused yet TODO ??
+    SLIP_sparse **A_handle,     // matrix to construct
     int32_t *p,           // The set of column pointers
     int32_t *I,           // set of row indices
     int32_t *x,           // Set of values as doubles
@@ -443,7 +438,7 @@ SLIP_info SLIP_build_sparse_csc_int
 
 SLIP_info SLIP_build_sparse_csc_mpq
 (
-    SLIP_sparse *A_output,// It should be initialized but unused yet TODO ??
+    SLIP_sparse **A_handle,     // matrix to construct
     int32_t *p,           // The set of column pointers
     int32_t *I,           // set of row indices
     mpq_t *x,             // Set of values as mpq_t rational numbers
@@ -455,7 +450,7 @@ SLIP_info SLIP_build_sparse_csc_mpq
 
 SLIP_info SLIP_build_sparse_csc_mpfr
 (
-    SLIP_sparse *A_output,// It should be initialized but unused yet TODO ??
+    SLIP_sparse **A_handle,     // matrix to construct
     int32_t *p,           // The set of column pointers
     int32_t *I,           // set of row indices
     mpfr_t *x,            // Set of values as doubles
@@ -479,7 +474,7 @@ SLIP_info SLIP_build_sparse_csc_mpfr
 /* Purpose: Build a sparse matrix from triplet form where input is mpz_t */
 SLIP_info SLIP_build_sparse_trip_mpz
 (
-    SLIP_sparse *A_output,// It should be initialized but unused yet TODO ??
+    SLIP_sparse **A_handle,     // matrix to construct
     int32_t *I,         // set of row indices
     int32_t *J,         // set of column indices
     mpz_t *x,           // Set of values in full precision int
@@ -490,7 +485,7 @@ SLIP_info SLIP_build_sparse_trip_mpz
 /* Purpose: Build a sparse matrix from triplet form where input is double */
 SLIP_info SLIP_build_sparse_trip_double
 (
-    SLIP_sparse *A_output,// It should be initialized but unused yet TODO ??
+    SLIP_sparse **A_handle,     // matrix to construct
     int32_t *I,         // set of row indices
     int32_t *J,         // set of column indices
     double *x,          // Set of values in double
@@ -502,7 +497,7 @@ SLIP_info SLIP_build_sparse_trip_double
 /* Purpose: Build a sparse matrix from triplet form where input is int */
 SLIP_info SLIP_build_sparse_trip_int
 (
-    SLIP_sparse *A_output,// It should be initialized but unused yet TODO ??
+    SLIP_sparse **A_handle,     // matrix to construct
     int32_t *I,         // set of row indices
     int32_t *J,         // set of column indices
     int32_t *x,             // Set of values in int
@@ -513,7 +508,7 @@ SLIP_info SLIP_build_sparse_trip_int
 /* Purpose: Build a sparse matrix from triplet form where input is mpq_t */
 SLIP_info SLIP_build_sparse_trip_mpq
 (
-    SLIP_sparse *A_output,// It should be initialized but unused yet TODO ??
+    SLIP_sparse **A_handle,     // matrix to construct
     int32_t *I,         // set of row indices
     int32_t *J,         // set of column indices
     mpq_t *x,           // Set of values as rational numbers
@@ -524,7 +519,7 @@ SLIP_info SLIP_build_sparse_trip_mpq
 /* Purpose: Build a sparse matrix from triplet form where input is mpfr_t */
 SLIP_info SLIP_build_sparse_trip_mpfr
 (
-    SLIP_sparse *A_output,// It should be initialized but unused yet TODO ??
+    SLIP_sparse **A_handle,     // matrix to construct
     int32_t *I,         // set of row indices
     int32_t *J,         // set of column indices
     mpfr_t *x,          // Set of values as mpfr_t

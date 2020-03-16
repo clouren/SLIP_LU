@@ -24,6 +24,7 @@ SLIP_info slip_mpz_populate_mat
     int32_t nz        // number of nonzeros in the matrix A
 )
 {
+
     // inputs have been validated in SLIP_build_sparse_csc_*.c
     SLIP_info ok;
     SLIP_CHECK(slip_sparse_alloc(A, n, n, nz));// Allocate the matrix A
@@ -43,3 +44,4 @@ SLIP_info slip_mpz_populate_mat
     }
     return ok;
 }
+

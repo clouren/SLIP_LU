@@ -17,12 +17,15 @@
  * On output, the SLIP_sparse* A structure contains the input matrix
  */
 
+#define SLIP_FREE_WORKSPACE                 \
+    (*A_handle) = NULL ;                    \
+    SLIP_delete_sparse (&A) ;
+
 #include "SLIP_LU_internal.h"
 
 SLIP_info SLIP_build_sparse_csc_mpz
 (
-    // TODO what does "It should be initialized but unused yet" mean??
-    SLIP_sparse *A,     // It should be initialized but unused yet
+    SLIP_sparse **A_handle,     // matrix to construct
     int32_t *p,         // The set of column pointers
     int32_t *I,         // set of row indices
     mpz_t *x,           // Set of values in full precision int.
@@ -30,13 +33,23 @@ SLIP_info SLIP_build_sparse_csc_mpz
     int32_t nz          // number of nonzeros in A (size of x and I vectors)
 )
 {
+
     SLIP_info ok;
-    if (!p || !I || !x || !A ||!A->scale)
+    if (!p || !I || !x || !A_handle)
     {
         return SLIP_INCORRECT_INPUT;
     }
 
+    SLIP_sparse *A = slip_create_sparse ( ) ;
+    if (A == NULL)
+    {
+        return (SLIP_OUT_OF_MEMORY) ;
+    }
+
     SLIP_CHECK(slip_mpz_populate_mat(A, I, p, x, n, nz));
+
     SLIP_CHECK(SLIP_mpq_set_ui(A->scale, 1, 1));
+
+    (*A_handle) = A ;
     return SLIP_OK;
 }

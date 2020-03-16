@@ -288,15 +288,19 @@ void SLIP_show_usage() //display the usage of the code
 
 SLIP_info SLIP_tripread
 (
-    SLIP_sparse* A,     // Matrix to be populated
-    FILE* file          // file to read from (must already be open)
+    SLIP_sparse **A_handle,     // Matrix to be constructed
+    FILE* file                  // file to read from (must already be open)
 )
 {
+
     SLIP_info ok;
-    if (A == NULL || file == NULL)
+    if (A_handle == NULL || file == NULL)
     {
+        printf ("invalid input\n") ;
         return SLIP_INCORRECT_INPUT;
     }
+
+    (*A_handle) = NULL ;
 
     int32_t m, n, nz;
 
@@ -304,6 +308,7 @@ SLIP_info SLIP_tripread
     ok = fscanf(file, "%d %d %d\n", &m, &n, &nz);
     if (feof(file) || ok < 3)
     {
+        printf ("premature end-of-file\n") ;
         return SLIP_INCORRECT_INPUT;
     }
     // Initialize i and j vectors
@@ -325,6 +330,7 @@ SLIP_info SLIP_tripread
     ok = SLIP_gmp_fscanf(file, "%d %d %Zd\n", &i[0], &j[0], &x_mpz[0]);
     if (feof(file) || ok < 3)
     {
+        printf ("premature end-of-file\n") ;
         SLIP_FREE(i);
         SLIP_FREE(j);
         SLIP_delete_mpz_array(&x_mpz, nz);
@@ -348,6 +354,7 @@ SLIP_info SLIP_tripread
         ok = SLIP_gmp_fscanf(file, "%d %d %Zd\n", &i[p], &j[p], &x_mpz[p]);
         if ((feof(file) && p != nz-1) || ok < 3)
         {
+            printf ("premature end-of-file\n") ;
             SLIP_FREE(i);
             SLIP_FREE(j);
             SLIP_delete_mpz_array(&x_mpz, nz);
@@ -364,7 +371,7 @@ SLIP_info SLIP_tripread
     // int32_t and x is stored as a mpz_array. We conclude by using the
     // appropriate SLIP_build_* to construct our input matrix A
     //------------------------------------------------------------------
-    ok = SLIP_build_sparse_trip_mpz(A, i, j, x_mpz, n, nz);
+    ok = SLIP_build_sparse_trip_mpz(A_handle, i, j, x_mpz, n, nz);
 
     // A now contains our input matrix. Free memory for i, j, and x
 
@@ -391,16 +398,20 @@ SLIP_info SLIP_tripread
 
 SLIP_info SLIP_tripread_double
 (
-    SLIP_sparse* A,         // Matrix to be populated
-    FILE* file,             // file to read from (must already be open)
+    SLIP_sparse **A_handle,     // Matrix to be populated
+    FILE* file,                 // file to read from (must already be open)
     SLIP_options* option
 )
 {
+
     SLIP_info ok;
-    if (A == NULL || file == NULL)
+    if (A_handle == NULL || file == NULL)
     {
+        printf ("invalid input\n") ;
         return SLIP_INCORRECT_INPUT;
     }
+    (*A_handle) = NULL ;
+
     // Read in triplet form first
     int32_t m, n, nz;
 
@@ -408,6 +419,7 @@ SLIP_info SLIP_tripread_double
     ok = fscanf(file, "%d %d %d\n", &m, &n, &nz);
     if (feof(file) || ok < 3)
     {
+        printf ("premature end-of-file\n") ;
         return SLIP_INCORRECT_INPUT;
     }
 
@@ -427,6 +439,7 @@ SLIP_info SLIP_tripread_double
     ok = fscanf(file, "%d %d %lf\n", &(i[0]), &(j[0]), &(x_doub[0]));
     if (feof(file) || ok < 3)
     {
+        printf ("premature end-of-file\n") ;
         SLIP_FREE(i);
         SLIP_FREE(j);
         SLIP_FREE(x_doub);
@@ -450,6 +463,7 @@ SLIP_info SLIP_tripread_double
         ok = fscanf(file, "%d %d %lf\n", &(i[k]), &(j[k]), &(x_doub[k]));
         if ((feof(file) && k != nz-1) || ok < 3)
         {
+            printf ("premature end-of-file\n") ;
             SLIP_FREE(i);
             SLIP_FREE(j);
             SLIP_FREE(x_doub);
@@ -467,7 +481,7 @@ SLIP_info SLIP_tripread_double
     // appropriate SLIP_build_* to construct our input matrix A
     //------------------------------------------------------------------
 
-    ok = SLIP_build_sparse_trip_double(A, i, j, x_doub, n, nz, option);
+    ok = SLIP_build_sparse_trip_double(A_handle, i, j, x_doub, n, nz, option);
     // Now, A contains the input matrix
     SLIP_FREE(i);
     SLIP_FREE(j);
@@ -498,6 +512,7 @@ SLIP_info SLIP_read_dense
 
     if (b == NULL || file == NULL)
     {
+        printf ("invalid inputs\n") ;
         return SLIP_INCORRECT_INPUT;
     }
     int32_t nrows, ncols;
@@ -507,6 +522,7 @@ SLIP_info SLIP_read_dense
     ok = fscanf(file, "%d %d", &nrows, &ncols);
     if (feof(file) || ok < 2)
     {
+        printf ("premature end-of-file\n") ;
         return SLIP_INCORRECT_INPUT;
     }
 
@@ -525,8 +541,7 @@ SLIP_info SLIP_read_dense
             ok = SLIP_gmp_fscanf(file, "%Zd", &(b_orig[i][j]));
             if (ok < 0) // return from this function can be a nonzero
             {
-                        printf("\n\nhere at i = %d and j = %d", i, j);
-
+                printf("\n\nhere at i = %d and j = %d", i, j);
                 return SLIP_INCORRECT_INPUT;
             }
         }
@@ -572,6 +587,7 @@ SLIP_info SLIP_print_stats_mpq
     SLIP_info ok = SLIP_OK;
     if (option == NULL)
     {
+        printf ("invalid inputs\n") ;
         return SLIP_INCORRECT_INPUT;
     }
 
@@ -580,6 +596,7 @@ SLIP_info SLIP_print_stats_mpq
     {
         if (x_mpq == NULL)
         {
+            printf ("invalid inputs\n") ;
             return SLIP_INCORRECT_INPUT;
         }
         fprintf(out_file,
@@ -616,6 +633,7 @@ SLIP_info SLIP_print_stats_double
 {
     if (option == NULL)
     {
+        printf ("invalid inputs\n") ;
         return SLIP_INCORRECT_INPUT;
     }
 
@@ -624,6 +642,7 @@ SLIP_info SLIP_print_stats_double
     {
         if (x_doub == NULL)
         {
+            printf ("invalid inputs\n") ;
             return SLIP_INCORRECT_INPUT;
         }
         fprintf(out_file, "\nSolution output in double precision\n");
@@ -657,6 +676,7 @@ SLIP_info SLIP_print_stats_mpfr
     SLIP_info ok = SLIP_OK;
     if (option == NULL)
     {
+        printf ("invalid inputs\n") ;
         return SLIP_INCORRECT_INPUT;
     }
 
@@ -665,6 +685,7 @@ SLIP_info SLIP_print_stats_mpfr
     {
         if (x_mpfr == NULL)
         {
+            printf ("invalid inputs\n") ;
             return SLIP_INCORRECT_INPUT;
         }
         fprintf(out_file, "\nSolution output in fixed precision of size:"

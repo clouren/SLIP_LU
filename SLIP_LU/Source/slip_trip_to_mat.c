@@ -29,6 +29,7 @@ SLIP_info slip_trip_to_mat
     int32_t nz          // Number of nonzeros in the matrix
 )
 {
+
     // inputs have been validated in SLIP_build_sparse_trip_*.c
     int32_t k, p;
     SLIP_info ok;

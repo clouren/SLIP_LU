@@ -94,8 +94,8 @@ SLIP_info SLIP_LU_factorize
     SLIP_info ok = SLIP_OK;
     int32_t n = A->n ;
 
-    L = SLIP_create_sparse ( ) ;
-    U = SLIP_create_sparse ( ) ;
+    L = slip_create_sparse ( ) ;
+    U = slip_create_sparse ( ) ;
     pinv = (int32_t *) SLIP_malloc (n * sizeof (int32_t)) ;
     rhos = SLIP_create_mpz_array (n) ;
     if (!L || !U || !pinv || !rhos)

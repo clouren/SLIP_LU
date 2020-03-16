@@ -38,7 +38,7 @@ SLIP_create_mpq_mat.c
 slip_create_mpz_array2.c
 SLIP_create_mpz_array.c
 SLIP_create_mpz_mat.c
-SLIP_create_sparse.c
+slip_create_sparse.c
 slip_cumsum.c
 SLIP_delete_dense.c
 SLIP_delete_double_mat.c

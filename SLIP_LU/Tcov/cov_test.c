@@ -12,13 +12,11 @@
  * When the test is run without input argument, brutal test is used and simple
  * test otherwise. Read the following for detailed instruction and information
  *
-  TODO "rat" is a misleading variable name.  Call it x_type?
- *
  * For simple test, the test needs to be run with command
- * ./cov_test Ab_type rat N list1[0] ... list1[N-1] M list2[0] ... list2[M-1]
+ * ./cov_test Ab_type xtype N list1[0] ... list1[N-1] M list2[0] ... list2[M-1]
  * Ab_type: type of Matrix A and vector b: 0 mpz, 1 double, 2 int, 3 mpq, 4 mpfr
  *                                         5 for miscellaneous test
- * rat: type of solution: 1: full precision rational arithmetic,
+ * xtype: type of solution: 1: full precision rational arithmetic,
  *                        2: double, 3:  user specified precision.
  * N and list1 specify the test list for slip_gmp_ntrials (in SLIP_gmp.h)
  * M and list2 specify the test list for malloc_count (in tcov_malloc_test.h)
@@ -28,7 +26,7 @@
  * For brutal test, the test is run with command
  * ./cov_test
  * the test will run through all cases
- * (specifically, [Ab_type rat]={[0 1], [1 1], [2 2], [3 3], [4 3], [5 3]})
+ * (specifically, [Ab_type xtype]={[0 1], [1 1], [2 2], [3 3], [4 3], [5 3]})
  * each case run from malloc_count = 0 to a number that can guarantee
  * malloc_count > 0 when the case finishes
  */
@@ -98,29 +96,6 @@
     }                                            \
 }
 
-#if 0
-#define CLEAR_SLIP_MAT_A                         \
-{                                                \
-    if (A != NULL)                               \
-    {                                            \
-        SLIP_delete_mpz_array(&(A->x), A->nzmax);\
-        SLIP_FREE (A->i);                        \
-        SLIP_FREE (A->p);                        \
-        /*SLIP_mpq_set_ui(A->scale, 1, 1);*/     \
-        A -> n     = 0;                          \
-        A -> m     = 0;                          \
-        A -> nzmax = 0;                          \
-        A -> nz    = 0;                          \
-    }                                            \
-}
-#else
-#define CLEAR_SLIP_MAT_A                        \
-{                                               \
-    SLIP_delete_sparse (&A) ;                   \
-    A = SLIP_create_sparse ( ) ;                \
-}
-#endif
-
 #define CLEAR_SLIP_MAT_B                         \
 {                                                \
     if (b != NULL)                               \
@@ -147,7 +122,7 @@ int main( int argc, char* argv[])
 {
     bool IS_SIMPLE_TEST = true;
     int rat_list[6] = {1, 1, 2, 3, 3, 3};  // only used in brutal test
-    int Ab_type = 0, rat = 1, NUM_OF_TRIALS = 0, NUM_OF_MALLOC_T = 0;
+    int Ab_type = 0, xtype = 1, NUM_OF_TRIALS = 0, NUM_OF_MALLOC_T = 0;
     int64_t *gmp_ntrial_list=NULL;         // only used in simple test
     int *malloc_trials_list=NULL;          // only used in simple test
 
@@ -174,7 +149,7 @@ int main( int argc, char* argv[])
         Ab_type = atoi(argv[++arg_count]);
         //type of solution: 1: full precision rational arithmetic,
         //                  2: double, 3:  user specified precision.
-        rat=atoi(argv[++arg_count]);
+        xtype=atoi(argv[++arg_count]);
         if (!argv[++arg_count])
         {
             NUM_OF_TRIALS=1;
@@ -250,7 +225,7 @@ int main( int argc, char* argv[])
     // malloc_count initialized from list2 (input for cov_test).
     //
     // For non SIMPLE_TEST, outter loop iterates for Ab_type from 0 to 5, and
-    // set rat correspondingly, and inner loop iterates for malloc_count
+    // set xtype correspondingly, and inner loop iterates for malloc_count
     // initialized from 0 to 1000, break when malloc_count>0 at the end of
     // inner loop.
 
@@ -268,7 +243,7 @@ int main( int argc, char* argv[])
         {
             Ab_type = k;
             //if(k == 1){return 0;} Ab_type = 4;
-            rat = rat_list[Ab_type];
+            xtype = rat_list[Ab_type];
             NUM_OF_MALLOC_T = 1000;
         }
 
@@ -285,8 +260,8 @@ int main( int argc, char* argv[])
             else
             {
                 malloc_count = kk;
-                printf("[Ab_type rat malloc_count] = [%d %d %d]\n", Ab_type,
-                    rat, malloc_count);
+                printf("[Ab_type xtype malloc_count] = [%d %d %d]\n", Ab_type,
+                    xtype, malloc_count);
             }
 
             //------------------------------------------------------------------
@@ -331,20 +306,20 @@ int main( int argc, char* argv[])
             mpfr_t *x_mpfr = NULL;
             double *x_doub = NULL;
 
-            // used in rat = 1, 2, 3 correspondingly
+            // used in xtype = 1, 2, 3 correspondingly
             mpq_t   **sol_mpq  = NULL;
             double  **sol_doub = NULL;
             mpfr_t  **sol_mpfr = NULL;
 
             // Allocate A
-            SLIP_sparse *A = SLIP_create_sparse();
+            SLIP_sparse *A = NULL ;
             SLIP_dense *b = SLIP_create_dense();
 
             // for Column ordering
             SLIP_LU_analysis* S = NULL ;
             option->print_level = 0;
 
-            if (!A || !b) {SLIP_FREE_WORKSPACE; continue;}
+            if (!b) {SLIP_FREE_WORKSPACE; continue;}
 
             if (Ab_type==0)
             {
@@ -369,11 +344,12 @@ int main( int argc, char* argv[])
                 //failure due to invalid input
                 TEST_CHECK_FAILURE(SLIP_build_dense_mpz(b, NULL, n, numRHS));
                 TEST_CHECK_FAILURE(SLIP_build_dense_mpz(b, B_mpz, 0, numRHS));
-                TEST_CHECK_FAILURE(SLIP_build_sparse_csc_mpz(A, Ap, Ai, NULL,
+                TEST_CHECK_FAILURE(SLIP_build_sparse_csc_mpz(&A, Ap, Ai, NULL,
                     n, nz));
 
                 // successful case
-                TEST_CHECK(SLIP_build_sparse_csc_mpz(A, Ap, Ai, Ax_mpz, n, nz));
+                TEST_CHECK(SLIP_build_sparse_csc_mpz(&A, Ap, Ai, Ax_mpz, n,
+                    nz));
                 TEST_CHECK (SLIP_spok (A, option)) ;
                 TEST_CHECK(SLIP_build_dense_mpz(b, B_mpz, n, numRHS));
                 option->pivot = SLIP_DIAGONAL;
@@ -389,17 +365,18 @@ int main( int argc, char* argv[])
                 //failure due to NULL input
                 TEST_CHECK_FAILURE(SLIP_build_dense_double(b, NULL, n, numRHS,
                     option));
-                TEST_CHECK_FAILURE(SLIP_build_sparse_csc_double(A, Ap, Ai, NULL,
-                    n, nz, option));
+                TEST_CHECK_FAILURE(SLIP_build_sparse_csc_double(&A, Ap, Ai,
+                    NULL, n, nz, option));
 
                 Ax_doub = (double*) SLIP_calloc(nz, sizeof(double));
                 B_doub = SLIP_create_double_mat(n, numRHS);
                 if (!B_doub || !Ax_doub) {SLIP_FREE_WORKSPACE; continue;}
 
                 // create empty A and b using uninitialized double mat/array
-                TEST_CHECK(SLIP_build_sparse_csc_double(A, Ap, Ai,
+                TEST_CHECK(SLIP_build_sparse_csc_double(&A, Ap, Ai,
                     Ax_doub, n, nz, option));
-                CLEAR_SLIP_MAT_A;                //free the memory alloc'd in A
+                SLIP_delete_sparse (&A) ;
+
                 TEST_CHECK(SLIP_build_dense_double(b, B_doub, n,
                     numRHS, option));
                 CLEAR_SLIP_MAT_B;
@@ -425,7 +402,7 @@ int main( int argc, char* argv[])
                 {
                     Ax_doub[j] = Axnum[j]/Axden[j];
                 }
-                TEST_CHECK(SLIP_build_sparse_csc_double(A, Ap, Ai, Ax_doub, n,
+                TEST_CHECK(SLIP_build_sparse_csc_double(&A, Ap, Ai, Ax_doub, n,
                     nz, option));
                 TEST_CHECK (SLIP_spok (A, option)) ;
                 option->pivot = SLIP_SMALLEST;
@@ -440,7 +417,7 @@ int main( int argc, char* argv[])
 
                 //failure due to NULL input
                 TEST_CHECK_FAILURE(SLIP_build_dense_int(b, NULL, n, numRHS));
-                TEST_CHECK_FAILURE(SLIP_build_sparse_csc_int(A, Ap, Ai, NULL,
+                TEST_CHECK_FAILURE(SLIP_build_sparse_csc_int(&A, Ap, Ai, NULL,
                     n, nz));
 
                 B_int = SLIP_create_int_mat(n, numRHS);
@@ -456,7 +433,8 @@ int main( int argc, char* argv[])
                     Ax_int[j]=Axnum3[j];
                 }
 
-                TEST_CHECK(SLIP_build_sparse_csc_int(A, Ap, Ai, Ax_int, n, nz));
+                TEST_CHECK(SLIP_build_sparse_csc_int(&A, Ap, Ai, Ax_int, n,
+                    nz));
                 TEST_CHECK (SLIP_spok (A, option)) ;
                 TEST_CHECK(SLIP_build_dense_int(b, B_int, n, numRHS));
 
@@ -469,7 +447,7 @@ int main( int argc, char* argv[])
                 //--------------------------------------------------------------
 
                 TEST_CHECK_FAILURE(SLIP_build_dense_mpq(b, NULL, n, numRHS));
-                TEST_CHECK_FAILURE(SLIP_build_sparse_csc_mpq(A, Ap, Ai, NULL,
+                TEST_CHECK_FAILURE(SLIP_build_sparse_csc_mpq(&A, Ap, Ai, NULL,
                     n, nz));
 
                 B_mpq = SLIP_create_mpq_mat(n, numRHS);
@@ -486,7 +464,8 @@ int main( int argc, char* argv[])
                     TEST_CHECK(SLIP_mpq_set_ui(Ax_mpq [j],Axnum3[j],Axden3[j]));
                 }
 
-                TEST_CHECK(SLIP_build_sparse_csc_mpq(A, Ap, Ai, Ax_mpq, n, nz));
+                TEST_CHECK(SLIP_build_sparse_csc_mpq(&A, Ap, Ai, Ax_mpq, n,
+                    nz));
                 TEST_CHECK (SLIP_spok (A, option)) ;
                 TEST_CHECK(SLIP_build_dense_mpq(b, B_mpq, n, numRHS));
 
@@ -501,7 +480,7 @@ int main( int argc, char* argv[])
                 //failure due to NULL input
                 TEST_CHECK_FAILURE(SLIP_build_dense_mpfr(b, NULL, n, numRHS,
                     option));
-                TEST_CHECK_FAILURE(SLIP_build_sparse_csc_mpfr(A, Ap, Ai, NULL,
+                TEST_CHECK_FAILURE(SLIP_build_sparse_csc_mpfr(&A, Ap, Ai, NULL,
                     n, nz, option));
 
                 B_mpfr = SLIP_create_mpfr_mat(n, numRHS, option);
@@ -509,7 +488,7 @@ int main( int argc, char* argv[])
                 if (!B_mpfr|| !Ax_mpfr) {SLIP_FREE_WORKSPACE; continue;}
 
                 // create empty A and b using uninitialized double mat/array
-                TEST_CHECK(SLIP_build_sparse_csc_mpfr(A, Ap, Ai,
+                TEST_CHECK(SLIP_build_sparse_csc_mpfr(&A, Ap, Ai,
                     Ax_mpfr, n, nz, option));
                 TEST_CHECK(SLIP_build_dense_mpfr(b, B_mpfr, n,
                     numRHS, option));
@@ -524,7 +503,7 @@ int main( int argc, char* argv[])
                 //free the memory alloc'd
                 SLIP_delete_mpq_mat(&sol_mpq, n, numRHS);
                 SLIP_delete_LU_analysis(&S) ;
-                CLEAR_SLIP_MAT_A;
+                SLIP_delete_sparse (&A) ;
                 CLEAR_SLIP_MAT_B;
 
                 // trigger gcd == 1
@@ -543,10 +522,11 @@ int main( int argc, char* argv[])
                         MPFR_RNDN));
                 }
                 TEST_CHECK(SLIP_build_dense_mpfr(b, B_mpfr, n, numRHS, option));
-                TEST_CHECK(SLIP_build_sparse_csc_mpfr(A, Ap, Ai, Ax_mpfr,
+                TEST_CHECK(SLIP_build_sparse_csc_mpfr(&A, Ap, Ai, Ax_mpfr,
                     n, nz, option));
-                CLEAR_SLIP_MAT_A;
+                SLIP_delete_sparse (&A) ;
                 CLEAR_SLIP_MAT_B;
+
                 option->prec = prec;
 
                 // trigger gcd != 1
@@ -563,7 +543,7 @@ int main( int argc, char* argv[])
                     TEST_CHECK(SLIP_mpfr_div_d(Ax_mpfr[j], Ax_mpfr[j], Axden[j],
                         MPFR_RNDN));
                 }
-                TEST_CHECK(SLIP_build_sparse_csc_mpfr(A, Ap, Ai, Ax_mpfr,
+                TEST_CHECK(SLIP_build_sparse_csc_mpfr(&A, Ap, Ai, Ax_mpfr,
                     n, nz, option));
                 TEST_CHECK (SLIP_spok (A, option)) ;
                 TEST_CHECK(SLIP_build_dense_mpfr(b, B_mpfr, n, numRHS, option));
@@ -607,43 +587,48 @@ int main( int argc, char* argv[])
                 // failure case: incorrect index array input
                 int I1[11]={0, -1, -2, 2, 3, 1, 2, 3, 0, 1, 2};
                 int P1[11]={0, 3, 5, 8, 11};
-                TEST_CHECK_FAILURE(SLIP_build_sparse_trip_mpz(A, I1, J, x_mpz,
+                TEST_CHECK_FAILURE(SLIP_build_sparse_trip_mpz(&A, I1, J, x_mpz,
                     n, nz));
-                CLEAR_SLIP_MAT_A;                //free the memory alloc'd in A
-                TEST_CHECK_FAILURE(SLIP_build_sparse_csc_mpz(A, P1, I1, x_mpz,
+                SLIP_delete_sparse (&A) ;
+
+                TEST_CHECK_FAILURE(SLIP_build_sparse_csc_mpz(&A, P1, I1, x_mpz,
                     n, nz));
-                CLEAR_SLIP_MAT_A;                //free the memory alloc'd in A
+                SLIP_delete_sparse (&A) ;
 
                 // failure cases: input NULL pointer
-                TEST_CHECK_FAILURE(SLIP_build_sparse_trip_mpz   (A, I, J, NULL,
+                TEST_CHECK_FAILURE(SLIP_build_sparse_trip_mpz (&A, I, J, NULL,
                     n, nz));
-                TEST_CHECK_FAILURE(SLIP_build_sparse_trip_double(A, I, J, NULL,
+                TEST_CHECK_FAILURE(SLIP_build_sparse_trip_double(&A, I, J, NULL,
                     n, nz, option));
-                TEST_CHECK_FAILURE(SLIP_build_sparse_trip_int   (A, I, J, NULL,
+                TEST_CHECK_FAILURE(SLIP_build_sparse_trip_int   (&A, I, J, NULL,
                     n, nz));
-                TEST_CHECK_FAILURE(SLIP_build_sparse_trip_mpq   (A, I, J, NULL,
+                TEST_CHECK_FAILURE(SLIP_build_sparse_trip_mpq   (&A, I, J, NULL,
                     n, nz));
-                TEST_CHECK_FAILURE(SLIP_build_sparse_trip_mpfr  (A, I, J, NULL,
+                TEST_CHECK_FAILURE(SLIP_build_sparse_trip_mpfr  (&A, I, J, NULL,
                     n, nz, option));
 
                 // successful cases
-                TEST_CHECK(SLIP_build_sparse_trip_mpz(A, I, J, x_mpz, n, nz));
-                CLEAR_SLIP_MAT_A;                //free the memory alloc'd in A
-                TEST_CHECK(SLIP_build_sparse_trip_double(A, I, J, x_doub, n,
+                TEST_CHECK(SLIP_build_sparse_trip_mpz(&A, I, J, x_mpz, n, nz));
+                SLIP_delete_sparse (&A) ;
+
+                TEST_CHECK(SLIP_build_sparse_trip_double(&A, I, J, x_doub, n,
                     nz, option));
-                CLEAR_SLIP_MAT_A;                //free the memory alloc'd in A
-                TEST_CHECK(SLIP_build_sparse_trip_int(A, I, J, x_int, n, nz));
+                SLIP_delete_sparse (&A) ;
+
+                TEST_CHECK(SLIP_build_sparse_trip_int(&A, I, J, x_int, n, nz));
                 ok = SLIP_gmp_printf("scale = %Qd\n",A->scale);
                 if (ok < 0) {TEST_CHECK(ok);}
                 option->print_level = 3;
                 TEST_CHECK(SLIP_spok (A, option));
-                CLEAR_SLIP_MAT_A;                //free the memory alloc'd in A
-                TEST_CHECK(SLIP_build_sparse_trip_mpq(A, I, J, x_mpq, n, nz));
+                SLIP_delete_sparse (&A) ;
+
+                TEST_CHECK(SLIP_build_sparse_trip_mpq(&A, I, J, x_mpq, n, nz));
                 ok = SLIP_gmp_printf("scale = %Qd\n",A->scale);
                 if (ok < 0) {TEST_CHECK(ok);}
                 TEST_CHECK(SLIP_spok (A, option));
-                CLEAR_SLIP_MAT_A;                //free the memory alloc'd in A
-                TEST_CHECK(SLIP_build_sparse_trip_mpfr(A, I, J, x_mpfr, n, nz,
+                SLIP_delete_sparse (&A) ;
+
+                TEST_CHECK(SLIP_build_sparse_trip_mpfr(&A, I, J, x_mpfr, n, nz,
                     option));
                 ok = SLIP_gmp_printf("scale = %Qd\n",A->scale);
                 if (ok < 0) {TEST_CHECK(ok);}
@@ -666,7 +651,7 @@ int main( int argc, char* argv[])
                 TEST_CHECK_FAILURE(SLIP_spok(A, option));
                 A->m = -1;
                 TEST_CHECK_FAILURE(SLIP_spok(A, option));
-                CLEAR_SLIP_MAT_A;                //free the memory alloc'd in A
+                SLIP_delete_sparse (&A) ;
 
                 //test coverage for slip_gmp_reallocate()
                 void *p_new = NULL;
@@ -718,7 +703,7 @@ int main( int argc, char* argv[])
             // SLIP LU Factorization, Solve and verification
             //------------------------------------------------------------------
 
-            if (rat==1)
+            if (xtype==1)
             {
 
                 //--------------------------------------------------------------
@@ -760,7 +745,7 @@ int main( int argc, char* argv[])
                 }
 
             }
-            else if (rat==2)
+            else if (xtype==2)
             {
 
                 //--------------------------------------------------------------

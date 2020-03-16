@@ -57,11 +57,11 @@ int main (void) // (int argc, char **argv)
     int* i = NULL;
     int* p = NULL;
     double** soln = NULL;
-    SLIP_sparse* A = SLIP_create_sparse();
+    SLIP_sparse* A = NULL ;
     SLIP_dense *b = SLIP_create_dense();
     SLIP_LU_analysis *S = NULL ;
     SLIP_options* option = SLIP_create_default_options();
-    if (!A || !b || !option)
+    if (!b || !option)
     {
         fprintf (stderr, "Error! OUT of MEMORY!\n");
         FREE_WORKSPACE;
@@ -96,7 +96,7 @@ int main (void) // (int argc, char **argv)
     //--------------------------------------------------------------------------
     // Build A and b
     //--------------------------------------------------------------------------
-    OK(SLIP_build_sparse_csc_double(A, p, i, x, n, nz, option));
+    OK(SLIP_build_sparse_csc_double(&A, p, i, x, n, nz, option));
     OK(SLIP_build_dense_double(b, b_doub, n, numRHS, option));
 
     //--------------------------------------------------------------------------

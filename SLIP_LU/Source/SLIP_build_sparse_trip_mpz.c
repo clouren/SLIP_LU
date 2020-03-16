@@ -16,12 +16,15 @@
  * On output, the SLIP_sparse* A contains the user's matrix.
  */
 
+#define SLIP_FREE_WORKSPACE                 \
+    (*A_handle) = NULL ;                    \
+    SLIP_delete_sparse (&A) ;               \
+
 #include "SLIP_LU_internal.h"
 
 SLIP_info SLIP_build_sparse_trip_mpz
 (
-    // TODO what does "It should be initialized but unused yet" mean??
-    SLIP_sparse *A,     // It should be initialized but unused yet
+    SLIP_sparse **A_handle,     // matrix to construct
     int32_t *I,         // set of row indices
     int32_t *J,         // set of column indices
     mpz_t *x,           // Set of values in full precision int
@@ -30,14 +33,21 @@ SLIP_info SLIP_build_sparse_trip_mpz
 )
 {
     SLIP_info ok;
-    if (!I || !J || !A || !x || n <= 0 || nz <= 0 || !A->scale)
+    if (!I || !J || !A_handle || !x || n <= 0 || nz <= 0)
     {
         return SLIP_INCORRECT_INPUT;
+    }
+
+    SLIP_sparse *A = slip_create_sparse ( ) ;
+    if (A == NULL)
+    {
+        return (SLIP_OUT_OF_MEMORY) ;
     }
 
     SLIP_CHECK(SLIP_mpq_set_ui(A->scale, 1, 1));
 
     SLIP_CHECK(slip_trip_to_mat(A, I, J, x, n, nz));
 
+    (*A_handle) = A ;
     return SLIP_OK;
 }
