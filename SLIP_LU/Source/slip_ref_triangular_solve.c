@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/slip_REF_triangular_solve: sparse REF triangular solve
+// SLIP_LU/slip_ref_triangular_solve: sparse REF triangular solve
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -68,7 +68,7 @@
 
 #include "SLIP_LU_internal.h"
 
-SLIP_info slip_REF_triangular_solve // performs the sparse REF triangular solve
+SLIP_info slip_ref_triangular_solve // performs the sparse REF triangular solve
 (
     int32_t *top_output,      // Output the beginning of nonzero pattern
     SLIP_sparse* L,           // partial L matrix

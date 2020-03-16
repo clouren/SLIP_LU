@@ -711,7 +711,7 @@ void slip_sort_xi
  * to reduce the overall cost of the operations and minimize operations as much
  * as possible.
  */
-SLIP_info slip_REF_triangular_solve // performs the sparse REF triangular solve
+SLIP_info slip_ref_triangular_solve // performs the sparse REF triangular solve
 (
     int32_t *top_output,      // Output the beginning of nonzero pattern
     SLIP_sparse* L,           // partial L matrix

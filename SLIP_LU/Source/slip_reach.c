@@ -26,7 +26,7 @@ void slip_reach    // compute the reach of column k of A on the graph of L
     const int32_t* pinv     // row permutation
 )
 {
-    // inputs have been checked in slip_REF_triangular_solve
+    // inputs have been checked in slip_ref_triangular_solve
     int32_t p, n = L->n;
     *top = n;
 

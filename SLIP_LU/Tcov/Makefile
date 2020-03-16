@@ -56,7 +56,7 @@ CS =slip_array_div.o slip_array_mul.o slip_back_sub.o SLIP_build_dense_mpz.o \
     slip_get_largest_pivot.o SLIP_get_mpfr_soln.o slip_get_nonzero_pivot.o \
     slip_get_pivot.o slip_get_smallest_pivot.o SLIP_gmp.o SLIP_initialize.o \
     SLIP_LU_analyze.o SLIP_LU_factorize.o slip_lu_info.o \
-    SLIP_LU_solve.o slip_REF_triangular_solve.o \
+    SLIP_LU_solve.o slip_ref_triangular_solve.o \
     slip_mpz_populate_mat.o SLIP_permute_x.o slip_reach.o \
     slip_reset_int_array2.o slip_reset_int_array.o \
     slip_reset_mpz_array.o SLIP_scale_x.o SLIP_solve_double.o \

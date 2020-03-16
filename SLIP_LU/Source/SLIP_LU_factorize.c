@@ -255,7 +255,7 @@ SLIP_info SLIP_LU_factorize
         }
 
         // LDx = A(:,k)
-        SLIP_CHECK(slip_REF_triangular_solve(&top, L, A, k, xi,
+        SLIP_CHECK(slip_ref_triangular_solve(&top, L, A, k, xi,
             (const int32_t *) (S->q),
             (const mpz_t   *) rhos,
             (const int32_t *) pinv,

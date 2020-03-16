@@ -81,7 +81,7 @@ SLIP_permute_x.c
 SLIP_print_stats.c
 slip_reach.c
 SLIP_read_dense.c
-slip_REF_triangular_solve.c
+slip_ref_triangular_solve.c
 slip_reset_int_array2.c
 slip_reset_int_array.c
 slip_reset_mpz_array.c
