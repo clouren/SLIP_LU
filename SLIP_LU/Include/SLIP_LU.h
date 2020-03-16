@@ -293,7 +293,6 @@ void SLIP_delete_dense
     SLIP_dense **A
 );
 
-
 //------------------------------------------------------------------------------
 // SLIP_LU_analysis: symbolic pre-analysis
 //------------------------------------------------------------------------------
@@ -395,7 +394,6 @@ void SLIP_free
  */
 
 /* Purpose: Build a SLIP_sparse from mpz_t stored CSC matrix */
-
 SLIP_info SLIP_build_sparse_csc_mpz
 (
     SLIP_sparse **A_handle,     // matrix to construct
@@ -407,7 +405,6 @@ SLIP_info SLIP_build_sparse_csc_mpz
 );
 
 /* Purpose: Build a SLIP_sparse from double stored CSC matrix */
-
 SLIP_info SLIP_build_sparse_csc_double
 (
     SLIP_sparse **A_handle,     // matrix to construct
@@ -420,7 +417,6 @@ SLIP_info SLIP_build_sparse_csc_double
 );
 
 /* Purpose: Build a SLIP_sparse from int stored CSC matrix */
-
 SLIP_info SLIP_build_sparse_csc_int
 (
     SLIP_sparse **A_handle,     // matrix to construct
@@ -432,7 +428,6 @@ SLIP_info SLIP_build_sparse_csc_int
 );
 
 /* Purpose: Build a SLIP_sparse from mpq_t stored CSC matrix */
-
 SLIP_info SLIP_build_sparse_csc_mpq
 (
     SLIP_sparse **A_handle,     // matrix to construct
@@ -444,7 +439,6 @@ SLIP_info SLIP_build_sparse_csc_mpq
 );
 
 /* Purpose: Build a SLIP_sparse from int stored CSC matrix */
-
 SLIP_info SLIP_build_sparse_csc_mpfr
 (
     SLIP_sparse **A_handle,     // matrix to construct
@@ -487,7 +481,7 @@ SLIP_info SLIP_build_sparse_trip_double
     int32_t *J,         // set of column indices
     double *x,          // Set of values in double
     int32_t n,          // dimension of the matrix
-    int32_t nz,          // number of nonzeros in A (size of x, I, and J vectors)
+    int32_t nz,         // number of nonzeros in A (size of x, I, and J vectors)
     SLIP_options* option
 );
 
@@ -497,7 +491,7 @@ SLIP_info SLIP_build_sparse_trip_int
     SLIP_sparse **A_handle,     // matrix to construct
     int32_t *I,         // set of row indices
     int32_t *J,         // set of column indices
-    int32_t *x,             // Set of values in int
+    int32_t *x,         // Set of values in int
     int32_t n,          // dimension of the matrix
     int32_t nz          // number of nonzeros in A (size of x, I, and J vectors)
 );
@@ -529,61 +523,64 @@ SLIP_info SLIP_build_sparse_trip_mpfr
 //---------------------------Build a dense matrix-------------------------------
 //------------------------------------------------------------------------------
 
-/* SLIP_build_dense_[type] will allow the user to take a rhs matrix of their
- * defined type (either double, mpfr_t, mpz_t, or mpq_t) and convert it from
- * their form to mpz. The integrity of the user defined arrays are maintained
- * (therefore, one would need to delete these arrays).
- *
- * On output, the SLIP_dense *A contains the user's matrix
- *
- */
+// SLIP_build_dense_TYPE functions.
+//
+// The input is an m-by-n matrix B, held in (TYPE **) format.  That is, B
+// is a pointer to an array of size m, containing (TYPE *) pointers.
+// B[i] is a pointer to an array of size n, so that (i,j)th entry in B can
+// be accessed as B[i][j].
+//
+// The output &C is a handle, or a pointer to the matrix C of size m-by-n.  The
+// SLIP_dense matrix C is a pointer to a SLIP_dense struct, containing values
+// C->x of type mpz_t, dimensions C->m and C->n, and a scale factor C->scale.
 
-/* Purpose: Build a dense matrix from mpz input */
+// Purpose: Build a SLIP_dense matrix C from mpz input B.
 SLIP_info SLIP_build_dense_mpz
 (
     SLIP_dense **A_handle,      // Dense matrix to construct
     // inputs, not modified:
-    mpz_t **b,                  // Set of values in full precision int.
+    mpz_t **b,                  // Set of values in full precision mpz integers
     int32_t m,                  // number of rows
     int32_t n                   // number of columns
 ) ;
 
-/* Purpose: Build a dense matrix from double input */
+// Purpose: Build a SLIP_dense matrix C from double input B.
 SLIP_info SLIP_build_dense_double
 (
-    SLIP_dense **A_handle,      // Dense matrix to construct
-    double **b,                 // Set of values as doubles
+    SLIP_dense **C_handle,      // Dense matrix to construct
+    // inputs, not modified:
+    double **B,                 // Set of values as doubles
     int32_t m,                  // number of rows
     int32_t n,                  // number of columns
     SLIP_options* option
 ) ;
 
-/* Purpose: Build a dense matrix from int input */
+// Purpose: Build a SLIP_dense matrix C from int32_t input B.
 SLIP_info SLIP_build_dense_int
 (
-    SLIP_dense **A_handle,      // Dense matrix to construct
+    SLIP_dense **C_handle,      // Dense matrix to construct
     // inputs, not modified:
-    int32_t **b,                // Set of values as ints
+    int32_t **B,                // Set of values as 32-bit integers
     int32_t m,                  // number of rows
     int32_t n                   // number of columns
 ) ;
 
-/* Purpose: Build a dense matrix from mpq_t input */
+// Purpose: Build a SLIP_dense matrix C from mpq_t input B.
 SLIP_info SLIP_build_dense_mpq
 (
-    SLIP_dense **A_handle,      // Dense matrix to construct
+    SLIP_dense **C_handle,      // Dense matrix to construct
     // inputs, not modified:
-    mpq_t **b,                  // set of values as mpq_t
+    mpq_t **B,                  // set of values as mpq_t
     int32_t m,                  // number of rows
     int32_t n                   // number of columns
 ) ;
 
-/* Purpose: Build a dense matrix from mpfr_t input */
+// Purpose: Build a SLIP_dense matrix C from mpfr_t input B.
 SLIP_info SLIP_build_dense_mpfr
 (
-    SLIP_dense **A_handle,      // Dense matrix to construct
+    SLIP_dense **C_handle,      // Dense matrix to construct
     // inputs, not modified:
-    mpfr_t **b,             // Set of values as mpfr_t
+    mpfr_t **B,             // Set of values as mpfr_t
     int32_t m,              // number of rows
     int32_t n,              // number of columns
     SLIP_options *option    // command options with precision for mpfr

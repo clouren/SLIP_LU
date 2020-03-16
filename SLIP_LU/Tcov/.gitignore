@@ -78,7 +78,6 @@ slip_lu_info.c
 SLIP_LU_solve.c
 slip_mpz_populate_mat.c
 SLIP_permute_x.c
-SLIP_print_stats.c
 slip_reach.c
 SLIP_read_dense.c
 slip_ref_triangular_solve.c

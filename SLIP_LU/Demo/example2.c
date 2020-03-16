@@ -99,7 +99,7 @@ int main (int argc, char **argv)
         FREE_WORKSPACE;
         return 0;
     }
-    n = A->m;       // Set n    TODO A->m ??  Should be A->n.
+    n = A->n;
     numRHS = b->n;
     x = SLIP_create_mpq_mat(n,numRHS);
     if (!x)

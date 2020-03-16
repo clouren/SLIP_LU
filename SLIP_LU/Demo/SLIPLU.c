@@ -320,22 +320,21 @@ int main( int argc, char* argv[])
 
     if (rat == 1)
     {
-        OK(SLIP_print_stats_mpq(stdout, x, nrows, numRHS, check, option));
+        OK(SLIP_print_stats_mpq(x, nrows, numRHS, check, option));
     }
     else if (rat == 2)
     {
         x_doub = SLIP_create_double_mat(nrows, numRHS);
         if (x_doub == NULL) {OK(SLIP_OUT_OF_MEMORY);}
         OK(SLIP_get_double_soln(x_doub, x, nrows, numRHS));
-        OK(SLIP_print_stats_double(stdout, x_doub, nrows, numRHS, check,
-            option));
+        OK(SLIP_print_stats_double(x_doub, nrows, numRHS, check, option));
     }
     else
     {
         x_mpfr = SLIP_create_mpfr_mat(nrows, numRHS, option);
         if (x_mpfr == NULL) {OK(SLIP_OUT_OF_MEMORY);}
         OK(SLIP_get_mpfr_soln(x_mpfr, x, nrows, numRHS, option));
-        OK(SLIP_print_stats_mpfr(stdout, x_mpfr, nrows, numRHS, check, option));
+        OK(SLIP_print_stats_mpfr(x_mpfr, nrows, numRHS, check, option));
     }
 
     double t_sym = (double) (end_col-start_col)/CLOCKS_PER_SEC;

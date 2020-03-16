@@ -1,3 +1,13 @@
+#-------------------------------------------------------------------------------
+# SLIP_LU/Demo/Makefile: compile and run the demos
+#-------------------------------------------------------------------------------
+
+# SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+# Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+# SLIP_LU/License for the license.
+
+#-------------------------------------------------------------------------------
+
 default: all
 
 include ../../SuiteSparse_config/SuiteSparse_config.mk

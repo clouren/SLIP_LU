@@ -36,6 +36,7 @@ void SLIP_print_options // display specified/default options to user
     SLIP_options* option // struct containing all of the options
 )
 {
+
     char *piv, *order;
     if (option->order == SLIP_COLAMD)
     {
@@ -558,30 +559,11 @@ SLIP_info SLIP_read_dense
 }
 
 //------------------------------------------------------------------------------
-// SLIP_PRINT: print to stdout or to a given output file
-//------------------------------------------------------------------------------
-
-// TODO why is this not used below??
-
-#define SLIP_PRINT(...)      \
-{                            \
-    if (out_file == NULL )   \
-    {                        \
-        printf(__VA_ARGS__); \
-    }                        \
-    else                     \
-    {                        \
-        fprintf(out_file, __VA_ARGS__); \
-    }                        \
-}
-
-//------------------------------------------------------------------------------
 // SLIP_print_stats_mpq: prints the solution vector(s) as a set of mpq_t entries
 //------------------------------------------------------------------------------
 
 SLIP_info SLIP_print_stats_mpq
 (
-    FILE *out_file,         // file to print to (if NULL: print to stdout)
     mpq_t **x_mpq,          // solution vector in mpq, pass NULL if unused
     int32_t n,              // dimension of A
     int32_t numRHS,         // number of RHS vectors
@@ -589,6 +571,7 @@ SLIP_info SLIP_print_stats_mpq
     SLIP_options *option    // option struct telling how much info to print
 )
 {
+
     SLIP_info ok = SLIP_OK;
     if (option == NULL)
     {
@@ -597,26 +580,25 @@ SLIP_info SLIP_print_stats_mpq
     }
 
     // Info about output file
-    if (option->print_level >= 2 && out_file != NULL)
+    if (option->print_level >= 2)
     {
         if (x_mpq == NULL)
         {
             printf ("invalid inputs\n") ;
             return SLIP_INCORRECT_INPUT;
         }
-        fprintf(out_file,
-            "\nSolution output in full precision rational arithmetic\n");
+        printf ("\nSolution in full precision rational arithmetic:\n");
         for (int32_t i = 0; i < n; i++)
         {
             for (int32_t j = 0; j < numRHS; j++)
             {
-                ok = SLIP_gmp_fprintf(out_file, "%Qd ", x_mpq[i][j]);
+                ok = SLIP_gmp_fprintf (stdout, "%Qd ", x_mpq[i][j]) ;
                 if (ok < 0)
                 {
                     return ok;
                 }
             }
-            fprintf(out_file, "\n");
+            printf ("\n") ;
         }
     }
     return SLIP_OK;
@@ -628,7 +610,6 @@ SLIP_info SLIP_print_stats_mpq
 
 SLIP_info SLIP_print_stats_double
 (
-    FILE *out_file,         // file to print to (if NULL: print to stdout)
     double **x_doub,        // solution vector in double, pass NULL if unused
     int32_t n,              // dimension of A
     int32_t numRHS,         // number of RHS vectors
@@ -636,29 +617,29 @@ SLIP_info SLIP_print_stats_double
     SLIP_options *option    // option struct telling how much info to print
 )
 {
+
     if (option == NULL)
     {
         printf ("invalid inputs\n") ;
         return SLIP_INCORRECT_INPUT;
     }
 
-    // Info about output file
-    if (option->print_level >= 2 && out_file != NULL)
+    if (option->print_level >= 2)
     {
         if (x_doub == NULL)
         {
             printf ("invalid inputs\n") ;
             return SLIP_INCORRECT_INPUT;
         }
-        fprintf(out_file, "\nSolution output in double precision\n");
+        printf("\nSolution in double precision\n");
         for (int32_t i = 0; i < n; i++)
         {
             for (int32_t j = 0; j < numRHS; j++)
             {
                 // Output the solution in double precision
-                fprintf(out_file, "%lf ", x_doub[i][j]);
+                printf ("%lf ", x_doub[i][j]);
             }
-            fprintf(out_file,"\n");
+            printf ("\n") ;
         }
     }
     return SLIP_OK;
@@ -670,7 +651,6 @@ SLIP_info SLIP_print_stats_double
 
 SLIP_info SLIP_print_stats_mpfr
 (
-    FILE *out_file,         // file to print to (if NULL: print to stdout)
     mpfr_t **x_mpfr,        // solution vector in mpfr, pass NULL if unused
     int32_t n,              // dimension of A
     int32_t numRHS,         // number of RHS vectors
@@ -678,6 +658,7 @@ SLIP_info SLIP_print_stats_mpfr
     SLIP_options *option    // option struct telling how much info to print
 )
 {
+
     SLIP_info ok = SLIP_OK;
     if (option == NULL)
     {
@@ -685,28 +666,27 @@ SLIP_info SLIP_print_stats_mpfr
         return SLIP_INCORRECT_INPUT;
     }
 
-    // Info about output file
-    if (option->print_level >= 2 && out_file != NULL)
+    if (option->print_level >= 2)
     {
         if (x_mpfr == NULL)
         {
             printf ("invalid inputs\n") ;
             return SLIP_INCORRECT_INPUT;
         }
-        fprintf(out_file, "\nSolution output in fixed precision of size:"
-            " %ld bits\n", option->prec);
+        printf ("\nSolution in fixed precision of size: %ld bits\n",
+            option->prec);
         for (int32_t i = 0; i < n; i++)
         {
             for (int32_t j = 0; j < numRHS; j++)
             {
-                ok = SLIP_mpfr_fprintf(out_file, "%.*Rf",
+                ok = SLIP_mpfr_fprintf (stdout, "%.*Rf",
                     option->prec, x_mpfr[i][j]);
                 if (ok < 0)
                 {
                     return ok;
                 }
             }
-            fprintf(out_file, "\n");
+            printf ("\n");
         }
     }
     return SLIP_OK;

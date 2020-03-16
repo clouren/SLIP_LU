@@ -711,8 +711,8 @@ int main( int argc, char* argv[])
 
                     TEST_CHECK(SLIP_check_solution(A, sol_mpq, b));
                     check2 = ok;  // track the status of SLIP_check_solution
-                    TEST_CHECK(SLIP_print_stats_mpq(stdout, sol_mpq, n, numRHS,
-                        check2,option));
+                    TEST_CHECK(SLIP_print_stats_mpq(sol_mpq, n, numRHS,
+                        check2, option));
                     option->print_level = 3;
                     TEST_CHECK(SLIP_spok (A, option));
 
@@ -722,8 +722,7 @@ int main( int argc, char* argv[])
 
                     // Print result using SLIP_print_stats, which should return
                     // SLIP_INCORRECT since check2 == SLIP_INCORRECT
-                    ok=SLIP_print_stats_mpq(stdout, sol_mpq, n, numRHS, check2,
-                        option);
+                    ok=SLIP_print_stats_mpq(sol_mpq, n, numRHS, check2, option);
                     if (ok!=SLIP_INCORRECT)
                     {
                         SLIP_PRINT_OK(ok);
@@ -753,7 +752,7 @@ int main( int argc, char* argv[])
 
                 sol_mpfr = SLIP_create_mpfr_mat(n, numRHS, option);
                 TEST_CHECK(SLIP_solve_mpfr(sol_mpfr, A, S, b, option));
-                TEST_CHECK(SLIP_print_stats_mpfr(stdout, sol_mpfr, n, numRHS,
+                TEST_CHECK(SLIP_print_stats_mpfr(sol_mpfr, n, numRHS,
                     SLIP_OK, option));
             }
 

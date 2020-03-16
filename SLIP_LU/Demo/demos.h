@@ -34,7 +34,6 @@ SLIP_info SLIP_process_command_line //processes the command line
     char** rhs_name,        // Name of the RHS vector to be read in
     int32_t *rat            // data type of output solution.
                             // 1: mpz, 2: double, 3: mpfr
-
 );
 
 /* Purpose: This function prints out the user specified/default options*/
@@ -49,7 +48,6 @@ void SLIP_show_usage(void);
 /* Purpose: This function reads in a matrix stored in a triplet format.
  * This format used can be seen in any of the example mat files.
  */
-
 SLIP_info SLIP_tripread
 (
     SLIP_sparse **A_handle,     // Matrix to be constructed
@@ -74,10 +72,8 @@ SLIP_info SLIP_read_dense
 ) ;
 
 /* Purpose: prints the solution vector(s) as a set of mpq_t entries */
-
 SLIP_info SLIP_print_stats_mpq
 (
-    FILE *out_file,         // file to print to
     mpq_t **x_mpq,          // solution vector in mpq, pass NULL if unused
     int32_t n,              // dimension of A
     int32_t numRHS,         // number of RHS vectors
@@ -86,10 +82,8 @@ SLIP_info SLIP_print_stats_mpq
 );
 
 /* Purpose: prints the solution vector(s) as a set of double entries */
-
 SLIP_info SLIP_print_stats_double
 (
-    FILE *out_file,         // file to print to
     double **x_doub,        // solution vector in double, pass NULL if unused
     int32_t n,              // dimension of A
     int32_t numRHS,         // number of RHS vectors
@@ -98,13 +92,12 @@ SLIP_info SLIP_print_stats_double
 );
 
 /* Purpose: prints the solution vector(s) as a set of mpfr_t entries */
-
 SLIP_info SLIP_print_stats_mpfr
 (
-    FILE *out_file,         // file to print to
     mpfr_t **x_mpfr,        // solution vector in mpfr, pass NULL if unused
     int32_t n,              // dimension of A
     int32_t numRHS,         // number of RHS vectors
     SLIP_info check,        // whether the solution is correct or not
     SLIP_options *option    // option struct telling how much info to print
 );
+

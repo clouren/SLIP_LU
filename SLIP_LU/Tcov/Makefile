@@ -1,11 +1,16 @@
+#-------------------------------------------------------------------------------
+# SLIP_LU/Tcov/Makefile: compile and run SLIP_LU test coverage
+#-------------------------------------------------------------------------------
+
+# SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+# Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+# SLIP_LU/License for the license.
+
+#-------------------------------------------------------------------------------
 
 default: run
 
 include ../../SuiteSparse_config/SuiteSparse_config.mk
-
-# To run with valgrind:
-V =
-V = valgrind #-q
 
 # Linux test coverage
 CC = gcc
@@ -18,15 +23,14 @@ CFLAGS = -g -fprofile-arcs -ftest-coverage \
 
 LDLIBS += -lm -lgmp -lmpfr -lcolamd -lamd
 
-#--------------------------------------------------------------------
-# Applications
-#---------------------------------------------------------------------
-run: all runlu runtest
+# run all statement coverage tests, and then check for 100% coverage
+run: runtests
 	./covall
 
 all: test SLIPLU
 
-CS =slip_array_div.o slip_array_mul.o slip_back_sub.o \
+CS = \
+    slip_array_div.o slip_array_mul.o slip_back_sub.o \
     SLIP_build_dense_mpz.o \
     SLIP_build_dense_mpq.o \
     SLIP_build_dense_mpfr.o \
@@ -89,23 +93,34 @@ test: $(CS) cov_test.c demos.c
 SLIPLU: $(CS) SLIPLU.c demos.c
 	$(CC) $(LDFLAGS) SLIPLU.c demos.c $(CFLAGS) -o SLIPLU $(CS) $(LDLIBS)
 
-runlu: all
+# run all statement coverage tests
+runtests: all
+	- ./SLIPLU p 2 q 0
+	- ./SLIPLU p 3 q 1 o2 1
+	- ./SLIPLU p 4 q 2 o2 1 f ../ExampleMats/test_mat.txt ../ExampleMats/test_rhs.txt
+	- ./SLIPLU p 5
+	- ./cov_test
+	- ./cov_test 0 1 1 1
+
+# To run with valgrind:
+V = valgrind -q
+
+# run all statement coverage tests but with valgrind
+vtests: all
 	- $(V) ./SLIPLU p 2 q 0
 	- $(V) ./SLIPLU p 3 q 1 o2 1
 	- $(V) ./SLIPLU p 4 q 2 o2 1 f ../ExampleMats/test_mat.txt ../ExampleMats/test_rhs.txt
 	- $(V) ./SLIPLU p 5
-
-runtest: all
 	- $(V) ./cov_test
-	- $(V) ./cov_test 0 1 1 1 # to trigger SLIP_gmp.c:72
+	- $(V) ./cov_test 0 1 1 1
 
+# remove all files not in the original distribution, including symbolic links
 clean:
 	- $(RM) *.o *.bbg *.da *.gcov *.gcda *gcno
+	- $(RM) cov_test SLIPLU *.out *.a cov.sort out
+	- $(RM) -r SLIP_*.c slip_*.c *.dSYM SLIPLU.c demos.c
 
 purge: distclean
 
-# remove everything for distribution, including all symbolic links
 distclean: clean
-	- $(RM) cov_test SLIPLU *.out *.a cov.sort out
-	- $(RM) -r SLIP_*.c slip_*.c *.dSYM SLIPLU.c demos.c
 
