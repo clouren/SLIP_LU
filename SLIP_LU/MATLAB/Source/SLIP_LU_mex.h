@@ -94,11 +94,10 @@ void slip_mex_check_for_inf
 void slip_mex_get_A_and_b
 (
     SLIP_sparse **A_handle,  // Internal SLIP Mat stored in CSC
-    SLIP_dense *b,           // mpz matrix used internally
+    SLIP_dense **b_handle,   // mpz matrix used internally
     const mxArray* pargin[], // The input A matrix and options
     int32_t nargin           // Number of input to the mexFunction
 ) ;
-
 
 /* Purpose: Output the solution to the linear system Ax=b to matlab
  */

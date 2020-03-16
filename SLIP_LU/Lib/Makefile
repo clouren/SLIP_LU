@@ -27,8 +27,11 @@ C = $(CC) $(CF) -I../Include -I../../COLAMD/Include -I../../AMD/Include -I../../
 all: install
 
 OBJ = \
-    slip_array_div.o slip_array_mul.o slip_back_sub.o SLIP_build_dense_mpz.o \
-    SLIP_build_dense_mpq.o SLIP_build_dense_mpfr.o SLIP_build_dense_int.o \
+    slip_array_div.o slip_array_mul.o slip_back_sub.o \
+    SLIP_build_dense_mpz.o \
+    SLIP_build_dense_mpq.o \
+    SLIP_build_dense_mpfr.o  \
+    SLIP_build_dense_int.o \
     SLIP_build_dense_double.o \
     SLIP_build_sparse_trip_mpz.o \
     SLIP_build_sparse_trip_mpq.o \
@@ -41,7 +44,7 @@ OBJ = \
     SLIP_build_sparse_csc_double.o \
     SLIP_build_sparse_csc_int.o \
     SLIP_calloc.o SLIP_check_solution.o slip_create_LU_analysis.o \
-    SLIP_create_dense.o SLIP_create_double_mat.o SLIP_delete_int_mat.o \
+    slip_create_dense.o SLIP_create_double_mat.o SLIP_delete_int_mat.o \
     SLIP_create_int_mat.o SLIP_create_mpfr_array.o SLIP_create_mpfr_mat.o \
     SLIP_create_mpq_array.o SLIP_create_mpq_mat.o slip_create_mpz_array2.o \
     SLIP_create_mpz_array.o SLIP_create_mpz_mat.o \

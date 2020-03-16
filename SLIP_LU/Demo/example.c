@@ -29,17 +29,20 @@
     SLIP_FREE(option);                         \
     SLIP_finalize() ;
 
-int main (void) // (int argc, char **argv)
+int main (void)
 {
+
     //--------------------------------------------------------------------------
     // Prior to using SLIP LU, its environment must be initialized. This is done
     // by calling the SLIP_initialize() function.
     //--------------------------------------------------------------------------
+
     SLIP_initialize();
 
     //--------------------------------------------------------------------------
     // Declare and initialize essential variables
     //--------------------------------------------------------------------------
+
     SLIP_info ok;
     int n = 50, nz = 2500, num = 0;
     int *i = NULL;
@@ -48,18 +51,20 @@ int main (void) // (int argc, char **argv)
     double **b_doub = NULL;
     double **soln = NULL;                       // Solution vector
     SLIP_sparse *A = NULL ;                     // input matrix
-    SLIP_dense *b = SLIP_create_dense();        // Right hand side vector
+    SLIP_dense *b = NULL ;                      // Right hand side vector
     SLIP_LU_analysis *S = NULL ;                // Column permutation
     SLIP_options *option = SLIP_create_default_options();
-    if (!b || !option)
+    if (!option)
     {
         fprintf (stderr, "Error! OUT of MEMORY!\n");
         FREE_WORKSPACE;
         return 0;
     }
+
     //--------------------------------------------------------------------------
     // Generate a random dense 50*50 matrix
     //--------------------------------------------------------------------------
+
     i = (int*) SLIP_malloc(nz* sizeof(int));
     j = (int*) SLIP_malloc(nz* sizeof(int));
     x = (double*) SLIP_malloc(nz* sizeof(double));
@@ -89,11 +94,12 @@ int main (void) // (int argc, char **argv)
     //--------------------------------------------------------------------------
     // Build A and b
     //--------------------------------------------------------------------------
-    OK(SLIP_build_sparse_trip_double(&A, i, j, x, n, nz, option));
-    OK(SLIP_build_dense_double(b, b_doub, n, 1, option));
+
+    OK (SLIP_build_sparse_trip_double (&A, i, j, x, n, nz, option));
+    OK (SLIP_build_dense_double (&b, b_doub, n, 1, option));
 
     //--------------------------------------------------------------------------
-    // Factorize & solve
+    // analyze and solve
     //--------------------------------------------------------------------------
 
     clock_t start_sym = clock();
@@ -120,6 +126,7 @@ int main (void) // (int argc, char **argv)
     //--------------------------------------------------------------------------
     // Free memory
     //--------------------------------------------------------------------------
+
     FREE_WORKSPACE;
     printf ("\n%s: all tests passed\n\n", __FILE__) ;
     return 0;

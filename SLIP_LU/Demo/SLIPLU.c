@@ -124,17 +124,10 @@ int main( int argc, char* argv[])
     //  A, L, U: Sparse integer matrices. This is the default struct used
     //          within SLIP LU to perform most internal routines.  Note that
     //          the numeric entries within these matrices are integral mpz_t
-    //          data types. If the input matrix contains non integral entries,
-    //          it must be appropriately scaled using one of the
-    //          SLIP_build_sparse_* functions.
+    //          data types.
     //
     //  b: Dense right hand side vector(s). Currently SLIP LU assumes that the
-    //     RHS is always dense. All dense matrices must be initialized with the
-    //     function SLIP_create_dense(); Note that dense matrices are subject
-    //     to the same caveat as the sparse matrices, namely that their entries
-    //     are assumed to be integral thus if they are not they must be
-    //     appropraite scaled using the appropriate SLIP_build_dense_*
-    //     function.
+    //     RHS is always dense.  All entries in b are integers.
     //
     //  option: The SLIP_options struct contains various command parameters for
     //          the factorization which are highlighed both above and in the
@@ -157,9 +150,9 @@ int main( int argc, char* argv[])
     SLIP_sparse *A = NULL ;
     SLIP_sparse *L = NULL ;
     SLIP_sparse *U = NULL ;
-    SLIP_dense *b  = SLIP_create_dense();
+    SLIP_dense *b = NULL ;
     SLIP_options *option = SLIP_create_default_options();
-    if (!b || !option)
+    if (!option)
     {
         fprintf (stderr, "Error! OUT of MEMORY!\n");
         SLIP_finalize();
@@ -201,7 +194,7 @@ int main( int argc, char* argv[])
         FREE_WORKSPACE;
         return 0;
     }
-    OK(SLIP_read_dense(b, rhs_file));
+    OK(SLIP_read_dense(&b, rhs_file));
     fclose(rhs_file);
 
     // Check if the size of A matches b
@@ -216,9 +209,9 @@ int main( int argc, char* argv[])
 
     //--------------------------------------------------------------------------
     // Now that we have read in the input matrix, we allocate memory for the
-    // pivots, inverse row permutation, solution to the system, and the
-    // analysis struct.
+    // solution to the system.
     //--------------------------------------------------------------------------
+
     x = SLIP_create_mpq_mat(nrows, numRHS);
     if (!x)
     {
@@ -253,6 +246,7 @@ int main( int argc, char* argv[])
     // files) it is not necessary to utilize the L and U matrices nor split the
     // solution process into factorization and solve.
     //--------------------------------------------------------------------------
+
     clock_t start_factor = clock();
 
     OK(SLIP_LU_factorize(&L, &U, &rhos, &pinv, A, S, option));
@@ -264,6 +258,7 @@ int main( int argc, char* argv[])
     // After we obtain the solution, we permute it with respect to the column
     // permutation (x_final = Q x).
     //--------------------------------------------------------------------------
+
     clock_t start_solve = clock();
 
     // Solve LDU x = b
@@ -281,10 +276,12 @@ int main( int argc, char* argv[])
     // SLIP LU has an optional check step which can verify that the solution
     // vector x satisfies Ax=b in perfect precision.
     //
-    // Note that this is entirely OPTIONAL and NOT NECESSARY. The solution
-    // returned is guaranteed to be exact. Also, note that this function can be
-    // quite time consuming; thus it is not recommended to be used in
-    // general.
+    // Note that this is entirely optional and not necessary. The solution
+    // returned is guaranteed to be exact.   It appears here just as a
+    // verification that SLIP LU is computing its expected result.  This test
+    // can fail only if it runs out of memory, or if there is a bug in the
+    // code.  Also, note that this function can be quite time consuming; thus
+    // it is not recommended to be used in general.
     //
     // This function returns the status SLIP_OK if it is successfully verified
     // to be correct.
@@ -298,8 +295,10 @@ int main( int argc, char* argv[])
     }
     else if (check == SLIP_INCORRECT)
     {
-        // This should never happen.
-        printf ("ERROR! Solution is wrong.\n") ;
+        // This can never happen.
+        printf ("ERROR! Solution is wrong. This is a bug; please"
+            "contact the authors of SLIP LU.\n") ;
+        abort ( ) ;
     }
     else
     {
@@ -312,11 +311,13 @@ int main( int argc, char* argv[])
     // The x vector is now scaled. This consists of accounting for any scaling
     // done to A and b to make these entries integral.
     //--------------------------------------------------------------------------
+
     OK(SLIP_scale_x(x, A, b));
 
     //--------------------------------------------------------------------------
     // Output timing statistics. This also prints to a file if desired.
     //--------------------------------------------------------------------------
+
     if (rat == 1)
     {
         OK(SLIP_print_stats_mpq(stdout, x, nrows, numRHS, check, option));
@@ -350,6 +351,7 @@ int main( int argc, char* argv[])
     //--------------------------------------------------------------------------
     // Free Memory
     //--------------------------------------------------------------------------
+
     FREE_WORKSPACE;
     printf ("\n%s: all tests passed\n\n", __FILE__) ;
     return 0;

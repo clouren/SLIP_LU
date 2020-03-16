@@ -28,15 +28,18 @@
 
 int main (int argc, char **argv)
 {
+
     //--------------------------------------------------------------------------
     // Prior to using SLIP LU, its environment must be initialized. This is done
     // by calling the SLIP_initialize() function.
     //--------------------------------------------------------------------------
+
     SLIP_initialize();
 
     //--------------------------------------------------------------------------
     // Get matrix file names
     //--------------------------------------------------------------------------
+
     char *mat_name;
     if (argc > 1)
     {
@@ -50,15 +53,16 @@ int main (int argc, char **argv)
     //--------------------------------------------------------------------------
     // Declare and initialize essential variables
     //--------------------------------------------------------------------------
+
     SLIP_info ok;
     int n = 177, numRHS = 500;
     double **b_doub = NULL;
     double **soln = NULL;
     SLIP_sparse *A = NULL ;
-    SLIP_dense *b = SLIP_create_dense();
+    SLIP_dense *b = NULL ;
     SLIP_LU_analysis *S = NULL ;
     SLIP_options* option = SLIP_create_default_options();
-    if (!b || !option)
+    if (!option)
     {
         fprintf (stderr, "Error! OUT of MEMORY!\n");
         FREE_WORKSPACE;
@@ -68,6 +72,7 @@ int main (int argc, char **argv)
     //--------------------------------------------------------------------------
     // Generate random b_doub
     //--------------------------------------------------------------------------
+
     b_doub = SLIP_create_double_mat(n, numRHS);;
     soln = SLIP_create_double_mat(n, numRHS);
     if (!b_doub || !soln)
@@ -89,6 +94,7 @@ int main (int argc, char **argv)
     //--------------------------------------------------------------------------
     // Read in the matrix specified by mat_name and store it in A
     //--------------------------------------------------------------------------
+
     FILE* mat_file = fopen(mat_name,"r");
     if( mat_file == NULL )
     {
@@ -102,10 +108,11 @@ int main (int argc, char **argv)
     //--------------------------------------------------------------------------
     // Build b
     //--------------------------------------------------------------------------
-    OK(SLIP_build_dense_double(b, b_doub, n, numRHS, option));
+
+    OK(SLIP_build_dense_double (&b, b_doub, n, numRHS, option));
 
     //--------------------------------------------------------------------------
-    // Factorize
+    // analyze
     //--------------------------------------------------------------------------
 
     clock_t start_sym = clock();
@@ -114,6 +121,10 @@ int main (int argc, char **argv)
     OK(SLIP_LU_analyze(&S, A, option));
 
     clock_t end_sym = clock();
+
+    //--------------------------------------------------------------------------
+    // solve Ax=b
+    //--------------------------------------------------------------------------
 
     clock_t start_f = clock();
 
@@ -133,6 +144,7 @@ int main (int argc, char **argv)
     //--------------------------------------------------------------------------
     // Free memory
     //--------------------------------------------------------------------------
+
     FREE_WORKSPACE;
     printf ("\n%s: all tests passed\n\n", __FILE__) ;
     return 0;

@@ -96,17 +96,6 @@
     }                                            \
 }
 
-#define CLEAR_SLIP_MAT_B                         \
-{                                                \
-    if (b != NULL)                               \
-    {                                            \
-        SLIP_delete_mpz_mat(&(b->x), b->m, b->n);\
-        /*SLIP_mpq_set_ui(b->scale, 1, 1);*/     \
-        b -> n     = 0;                          \
-        b -> m     = 0;                          \
-    }                                            \
-}
-
 int Ap[5] = {0, 3, 5, 8, 11};
 int Ai[11]       = {0, 1, 2, 2, 3, 1, 2, 3, 0, 1,  2};
 double Axnum[11] = {1, 2, 7, 1, 2, 4, 1, 3, 1, 12, 1};  // Numerator of x
@@ -311,15 +300,12 @@ int main( int argc, char* argv[])
             double  **sol_doub = NULL;
             mpfr_t  **sol_mpfr = NULL;
 
-            // Allocate A
             SLIP_sparse *A = NULL ;
-            SLIP_dense *b = SLIP_create_dense();
+            SLIP_dense *b = NULL ;
 
             // for Column ordering
             SLIP_LU_analysis* S = NULL ;
             option->print_level = 0;
-
-            if (!b) {SLIP_FREE_WORKSPACE; continue;}
 
             if (Ab_type==0)
             {
@@ -342,8 +328,8 @@ int main( int argc, char* argv[])
                 }
 
                 //failure due to invalid input
-                TEST_CHECK_FAILURE(SLIP_build_dense_mpz(b, NULL, n, numRHS));
-                TEST_CHECK_FAILURE(SLIP_build_dense_mpz(b, B_mpz, 0, numRHS));
+                TEST_CHECK_FAILURE(SLIP_build_dense_mpz(&b, NULL, n, numRHS));
+                TEST_CHECK_FAILURE(SLIP_build_dense_mpz(&b, B_mpz, 0, numRHS));
                 TEST_CHECK_FAILURE(SLIP_build_sparse_csc_mpz(&A, Ap, Ai, NULL,
                     n, nz));
 
@@ -351,7 +337,7 @@ int main( int argc, char* argv[])
                 TEST_CHECK(SLIP_build_sparse_csc_mpz(&A, Ap, Ai, Ax_mpz, n,
                     nz));
                 TEST_CHECK (SLIP_spok (A, option)) ;
-                TEST_CHECK(SLIP_build_dense_mpz(b, B_mpz, n, numRHS));
+                TEST_CHECK(SLIP_build_dense_mpz(&b, B_mpz, n, numRHS));
                 option->pivot = SLIP_DIAGONAL;
 
             }
@@ -363,7 +349,7 @@ int main( int argc, char* argv[])
                 //--------------------------------------------------------------
 
                 //failure due to NULL input
-                TEST_CHECK_FAILURE(SLIP_build_dense_double(b, NULL, n, numRHS,
+                TEST_CHECK_FAILURE(SLIP_build_dense_double(&b, NULL, n, numRHS,
                     option));
                 TEST_CHECK_FAILURE(SLIP_build_sparse_csc_double(&A, Ap, Ai,
                     NULL, n, nz, option));
@@ -377,25 +363,25 @@ int main( int argc, char* argv[])
                     Ax_doub, n, nz, option));
                 SLIP_delete_sparse (&A) ;
 
-                TEST_CHECK(SLIP_build_dense_double(b, B_doub, n,
+                TEST_CHECK(SLIP_build_dense_double(&b, B_doub, n,
                     numRHS, option));
-                CLEAR_SLIP_MAT_B;
+                SLIP_delete_dense (&b) ;
 
                 // trigger gcd == 1
                 for (j = 0; j < n; j++)                           // Get b
                 {
                     B_doub[j][0] = bxnum[j]/1e17;
                 }
-                TEST_CHECK(SLIP_build_dense_double(b, B_doub, n, numRHS,
+                TEST_CHECK(SLIP_build_dense_double(&b, B_doub, n, numRHS,
                     option));
-                CLEAR_SLIP_MAT_B;
+                SLIP_delete_dense (&b) ;
 
                 // trigger gcd != 1
                 for (j = 0; j < n; j++)                           // Get b
                 {
                     B_doub[j][0] = bxnum[j];
                 }
-                TEST_CHECK(SLIP_build_dense_double(b, B_doub, n, numRHS,
+                TEST_CHECK(SLIP_build_dense_double(&b, B_doub, n, numRHS,
                     option));
                 //B_doub[0][0] = 0;
                 for (j = 0; j < nz; j++)                          // Get Ax
@@ -416,7 +402,7 @@ int main( int argc, char* argv[])
                 //--------------------------------------------------------------
 
                 //failure due to NULL input
-                TEST_CHECK_FAILURE(SLIP_build_dense_int(b, NULL, n, numRHS));
+                TEST_CHECK_FAILURE(SLIP_build_dense_int(&b, NULL, n, numRHS));
                 TEST_CHECK_FAILURE(SLIP_build_sparse_csc_int(&A, Ap, Ai, NULL,
                     n, nz));
 
@@ -436,7 +422,7 @@ int main( int argc, char* argv[])
                 TEST_CHECK(SLIP_build_sparse_csc_int(&A, Ap, Ai, Ax_int, n,
                     nz));
                 TEST_CHECK (SLIP_spok (A, option)) ;
-                TEST_CHECK(SLIP_build_dense_int(b, B_int, n, numRHS));
+                TEST_CHECK(SLIP_build_dense_int(&b, B_int, n, numRHS));
 
             }
             else if (Ab_type==3)
@@ -446,7 +432,7 @@ int main( int argc, char* argv[])
                 // create A and b from mpq entries
                 //--------------------------------------------------------------
 
-                TEST_CHECK_FAILURE(SLIP_build_dense_mpq(b, NULL, n, numRHS));
+                TEST_CHECK_FAILURE(SLIP_build_dense_mpq(&b, NULL, n, numRHS));
                 TEST_CHECK_FAILURE(SLIP_build_sparse_csc_mpq(&A, Ap, Ai, NULL,
                     n, nz));
 
@@ -467,7 +453,7 @@ int main( int argc, char* argv[])
                 TEST_CHECK(SLIP_build_sparse_csc_mpq(&A, Ap, Ai, Ax_mpq, n,
                     nz));
                 TEST_CHECK (SLIP_spok (A, option)) ;
-                TEST_CHECK(SLIP_build_dense_mpq(b, B_mpq, n, numRHS));
+                TEST_CHECK(SLIP_build_dense_mpq(&b, B_mpq, n, numRHS));
 
             }
             else if (Ab_type==4)
@@ -478,7 +464,7 @@ int main( int argc, char* argv[])
                 //--------------------------------------------------------------
 
                 //failure due to NULL input
-                TEST_CHECK_FAILURE(SLIP_build_dense_mpfr(b, NULL, n, numRHS,
+                TEST_CHECK_FAILURE(SLIP_build_dense_mpfr(&b, NULL, n, numRHS,
                     option));
                 TEST_CHECK_FAILURE(SLIP_build_sparse_csc_mpfr(&A, Ap, Ai, NULL,
                     n, nz, option));
@@ -490,7 +476,7 @@ int main( int argc, char* argv[])
                 // create empty A and b using uninitialized double mat/array
                 TEST_CHECK(SLIP_build_sparse_csc_mpfr(&A, Ap, Ai,
                     Ax_mpfr, n, nz, option));
-                TEST_CHECK(SLIP_build_dense_mpfr(b, B_mpfr, n,
+                TEST_CHECK(SLIP_build_dense_mpfr(&b, B_mpfr, n,
                     numRHS, option));
                 // to trigger SLIP_SINGULAR
                 TEST_CHECK(SLIP_LU_analyze(&S, A, option));
@@ -504,7 +490,7 @@ int main( int argc, char* argv[])
                 SLIP_delete_mpq_mat(&sol_mpq, n, numRHS);
                 SLIP_delete_LU_analysis(&S) ;
                 SLIP_delete_sparse (&A) ;
-                CLEAR_SLIP_MAT_B;
+                SLIP_delete_dense (&b) ;
 
                 // trigger gcd == 1
                 int prec = option->prec;
@@ -521,11 +507,12 @@ int main( int argc, char* argv[])
                     TEST_CHECK(SLIP_mpfr_div_d(Ax_mpfr[j], Ax_mpfr[j], Axden[j],
                         MPFR_RNDN));
                 }
-                TEST_CHECK(SLIP_build_dense_mpfr(b, B_mpfr, n, numRHS, option));
+                TEST_CHECK(SLIP_build_dense_mpfr(&b, B_mpfr, n, numRHS,
+                    option));
                 TEST_CHECK(SLIP_build_sparse_csc_mpfr(&A, Ap, Ai, Ax_mpfr,
                     n, nz, option));
                 SLIP_delete_sparse (&A) ;
-                CLEAR_SLIP_MAT_B;
+                SLIP_delete_dense (&b) ;
 
                 option->prec = prec;
 
@@ -546,7 +533,8 @@ int main( int argc, char* argv[])
                 TEST_CHECK(SLIP_build_sparse_csc_mpfr(&A, Ap, Ai, Ax_mpfr,
                     n, nz, option));
                 TEST_CHECK (SLIP_spok (A, option)) ;
-                TEST_CHECK(SLIP_build_dense_mpfr(b, B_mpfr, n, numRHS, option));
+                TEST_CHECK(SLIP_build_dense_mpfr(&b, B_mpfr, n, numRHS,
+                    option));
 
             }
             else

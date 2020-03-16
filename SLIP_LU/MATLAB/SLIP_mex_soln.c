@@ -47,11 +47,11 @@ void mexFunction
     int32_t *pinv = NULL ;
     mpz_t *rhos = NULL ;
     SLIP_LU_analysis* S = NULL;
+    SLIP_dense *b = NULL ;
 
-    SLIP_dense *b = SLIP_create_dense();
     //Set defaults for options
     SLIP_options* option = SLIP_create_default_options();
-    if (!b || !option)
+    if (!option)
     {
         slip_mex_error (SLIP_OUT_OF_MEMORY);
     }
@@ -63,7 +63,7 @@ void mexFunction
     slip_get_matlab_options(option, pargin[2]);
 
     // Read in A and b
-    slip_mex_get_A_and_b(&A, b, pargin, nargin);
+    slip_mex_get_A_and_b(&A, &b, pargin, nargin);
 
     // Create arrays based on the size of input matrix
 

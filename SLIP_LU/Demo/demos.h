@@ -66,13 +66,12 @@ SLIP_info SLIP_tripread_double
     SLIP_options* option
 ) ;
 
-/* Purpose: Read a dense matrix. This is for demo purposes only */
-
+/* Purpose: SLIP_read_dense: read a dense matrix. */
 SLIP_info SLIP_read_dense
 (
-    SLIP_dense *b,
-    FILE* file          // file to read from (must already be open)
-);
+    SLIP_dense **b_handle,      // Matrix to be constructed
+    FILE* file                  // file to read from (must already be open)
+) ;
 
 /* Purpose: prints the solution vector(s) as a set of mpq_t entries */
 

@@ -37,17 +37,20 @@ double bxden[4] = {15,  3,   6,  7};                      // Denominator of b
     SLIP_FREE(option);                       \
     SLIP_finalize();
 
-int main (void) // (int argc, char **argv)
+int main (void)
 {
+
     //--------------------------------------------------------------------------
     // Prior to using SLIP LU, its environment must be initialized. This is done
     // by calling the SLIP_initialize() function.
     //--------------------------------------------------------------------------
+
     SLIP_initialize();
 
     //--------------------------------------------------------------------------
     // Declare and initialize essential variables
     //--------------------------------------------------------------------------
+
     SLIP_info ok;
     int n = 4, nz = 11, j;
     mpfr_t ** b_mpfr = NULL;
@@ -56,10 +59,10 @@ int main (void) // (int argc, char **argv)
     mpfr_t* x_mpfr = NULL;
     double** soln = NULL;
     SLIP_sparse* A = NULL ;
-    SLIP_dense *b = SLIP_create_dense();
+    SLIP_dense *b = NULL ;
     SLIP_LU_analysis *S = NULL ;
     SLIP_options* option = SLIP_create_default_options();
-    if (!b || !option)
+    if (!option)
     {
         fprintf (stderr, "Error! OUT of MEMORY!\n");
         FREE_WORKSPACE;
@@ -69,6 +72,7 @@ int main (void) // (int argc, char **argv)
     //--------------------------------------------------------------------------
     // Get matrix
     //--------------------------------------------------------------------------
+
     b_mpfr = SLIP_create_mpfr_mat(n, 1, option);
     i = (int*) SLIP_malloc(nz* sizeof(int));
     p = (int*) SLIP_malloc((n+1)* sizeof(int));
@@ -94,14 +98,16 @@ int main (void) // (int argc, char **argv)
         mpfr_set_d(x_mpfr[j], Axnum[j], MPFR_RNDN);
         mpfr_div_d(x_mpfr[j], x_mpfr[j], Axden[j], MPFR_RNDN);
     }
+
     //--------------------------------------------------------------------------
     // Build A and b
     //--------------------------------------------------------------------------
+
     OK(SLIP_build_sparse_csc_mpfr(&A, p, i, x_mpfr, n, nz, option));
-    OK(SLIP_build_dense_mpfr(b, b_mpfr, n, 1, option));
+    OK(SLIP_build_dense_mpfr(&b, b_mpfr, n, 1, option));
 
     //--------------------------------------------------------------------------
-    // Factorize
+    // analyze
     //--------------------------------------------------------------------------
 
     clock_t start_sym = clock();
@@ -112,6 +118,10 @@ int main (void) // (int argc, char **argv)
     clock_t end_sym = clock();
 
     clock_t start_f = clock();
+
+    //--------------------------------------------------------------------------
+    // solve
+    //--------------------------------------------------------------------------
 
     // Solve the linear system using SLIP LU. The keyword double below indicates
     // that the final solution vector will be given as double**
@@ -128,7 +138,9 @@ int main (void) // (int argc, char **argv)
     //--------------------------------------------------------------------------
     // Free memory
     //--------------------------------------------------------------------------
+
     FREE_WORKSPACE;
     printf ("\n%s: all tests passed\n\n", __FILE__) ;
     return 0;
 }
+

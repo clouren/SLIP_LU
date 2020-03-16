@@ -287,9 +287,6 @@ typedef struct
 
 } SLIP_dense ;
 
-/* Purpose: This function creates an empty SLIP_dense matrix */
-SLIP_dense *SLIP_create_dense( void );
-
 /* Purpose: This function deletes the dense matrix A */
 void SLIP_delete_dense
 (
@@ -544,49 +541,53 @@ SLIP_info SLIP_build_sparse_trip_mpfr
 /* Purpose: Build a dense matrix from mpz input */
 SLIP_info SLIP_build_dense_mpz
 (
-    SLIP_dense *A_output, // Dense matrix, allocated but unused TODO ??
-    mpz_t **b,            // Set of values in full precision int.
-    int32_t m,            // number of rows
-    int32_t n             // number of columns
-);
+    SLIP_dense **A_handle,      // Dense matrix to construct
+    // inputs, not modified:
+    mpz_t **b,                  // Set of values in full precision int.
+    int32_t m,                  // number of rows
+    int32_t n                   // number of columns
+) ;
 
 /* Purpose: Build a dense matrix from double input */
 SLIP_info SLIP_build_dense_double
 (
-    SLIP_dense *A_output, // Dense matrix, allocated but unused TODO ??
-    double **b,           // Set of values as doubles
-    int32_t m,            // number of rows
-    int32_t n,             // number of columns
+    SLIP_dense **A_handle,      // Dense matrix to construct
+    double **b,                 // Set of values as doubles
+    int32_t m,                  // number of rows
+    int32_t n,                  // number of columns
     SLIP_options* option
-);
+) ;
 
 /* Purpose: Build a dense matrix from int input */
 SLIP_info SLIP_build_dense_int
 (
-    SLIP_dense *A_output, // Dense matrix, allocated but unused TODO ??
-    int32_t **b,          // Set of values as ints
-    int32_t m,            // number of rows
-    int32_t n             // number of columns
-);
+    SLIP_dense **A_handle,      // Dense matrix to construct
+    // inputs, not modified:
+    int32_t **b,                // Set of values as ints
+    int32_t m,                  // number of rows
+    int32_t n                   // number of columns
+) ;
 
 /* Purpose: Build a dense matrix from mpq_t input */
 SLIP_info SLIP_build_dense_mpq
 (
-    SLIP_dense *A_output, // dense matrix, allocated but unused TODO ??
-    mpq_t **b,            // set of values as mpq_t
-    int32_t m,            // number of rows
-    int32_t n             // number of columns
-);
+    SLIP_dense **A_handle,      // Dense matrix to construct
+    // inputs, not modified:
+    mpq_t **b,                  // set of values as mpq_t
+    int32_t m,                  // number of rows
+    int32_t n                   // number of columns
+) ;
 
 /* Purpose: Build a dense matrix from mpfr_t input */
 SLIP_info SLIP_build_dense_mpfr
 (
-    SLIP_dense *A_output, // Dense matrix, allocated but unused TODO ??
-    mpfr_t **b,           // Set of values as mpfr_t
-    int32_t m,            // number of rows
-    int32_t n,            // number of columns
-    SLIP_options *option  // command options containing the prec for mpfr
-);
+    SLIP_dense **A_handle,      // Dense matrix to construct
+    // inputs, not modified:
+    mpfr_t **b,             // Set of values as mpfr_t
+    int32_t m,              // number of rows
+    int32_t n,              // number of columns
+    SLIP_options *option    // command options with precision for mpfr
+) ;
 
 //------------------------------------------------------------------------------
 // double_mat: 2D double matrix

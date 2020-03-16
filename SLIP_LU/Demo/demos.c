@@ -494,23 +494,22 @@ SLIP_info SLIP_tripread_double
 // SLIP_read_dense
 //------------------------------------------------------------------------------
 
-/* Purpose: Read a dense matrix. This is for demo purposes only */
+/* Purpose: Read a dense matrix. */
 
 SLIP_info SLIP_read_dense
 (
-    SLIP_dense *b,
-    FILE* file          // file to read from (must already be open)
+    SLIP_dense **b_handle,      // Matrix to be constructed
+    FILE* file                  // file to read from (must already be open)
 )
 {
 
     //------------------------------------------------------------------
     // We read in a dense matrix and then utilize the appropriate
     // SLIP_build_dense_*. Here, we assume that the input is read in
-    // as a dense mpz_t** matrix. The main component of this code is
-    // reading in said matrix.
+    // as a dense mpz_t** matrix.
     //------------------------------------------------------------------
 
-    if (b == NULL || file == NULL)
+    if (file == NULL)
     {
         printf ("invalid inputs\n") ;
         return SLIP_INCORRECT_INPUT;
@@ -553,10 +552,16 @@ SLIP_info SLIP_read_dense
     // to form our internal SLIP_dense structure.
     //------------------------------------------------------------------
 
-    ok = SLIP_build_dense_mpz(b, b_orig, nrows, ncols);
+    ok = SLIP_build_dense_mpz(b_handle, b_orig, nrows, ncols);
     SLIP_delete_mpz_mat(&b_orig, nrows, ncols);
     return SLIP_OK;
 }
+
+//------------------------------------------------------------------------------
+// SLIP_PRINT: print to stdout or to a given output file
+//------------------------------------------------------------------------------
+
+// TODO why is this not used below??
 
 #define SLIP_PRINT(...)      \
 {                            \
@@ -576,7 +581,7 @@ SLIP_info SLIP_read_dense
 
 SLIP_info SLIP_print_stats_mpq
 (
-    FILE *out_file,         // file to print to
+    FILE *out_file,         // file to print to (if NULL: print to stdout)
     mpq_t **x_mpq,          // solution vector in mpq, pass NULL if unused
     int32_t n,              // dimension of A
     int32_t numRHS,         // number of RHS vectors
@@ -623,7 +628,7 @@ SLIP_info SLIP_print_stats_mpq
 
 SLIP_info SLIP_print_stats_double
 (
-    FILE *out_file,         // file to print to
+    FILE *out_file,         // file to print to (if NULL: print to stdout)
     double **x_doub,        // solution vector in double, pass NULL if unused
     int32_t n,              // dimension of A
     int32_t numRHS,         // number of RHS vectors
@@ -665,7 +670,7 @@ SLIP_info SLIP_print_stats_double
 
 SLIP_info SLIP_print_stats_mpfr
 (
-    FILE *out_file,         // file to print to
+    FILE *out_file,         // file to print to (if NULL: print to stdout)
     mpfr_t **x_mpfr,        // solution vector in mpfr, pass NULL if unused
     int32_t n,              // dimension of A
     int32_t numRHS,         // number of RHS vectors

@@ -635,10 +635,6 @@ LU dense matrix, \verb|SLIP_dense|, described in the following table:
 \hline
 function name & description & section \\
 \hline
-\verb|SLIP_create_dense|
-    & create empty dense matrix
-    & \ref{ss:create_dense} \\
-\hline
 \verb|SLIP_build_dense_double|
     & build dense matrix from 2D \verb|double| array
     & \ref{s:user:build_dense_double} \\
@@ -995,32 +991,8 @@ which are discussed in Section \ref{ss:SLIP_options}.  To safely free the
 \end{verbatim}
 } \end{mdframed}
 
-\verb|SLIP_delete_sparse| deletes the sparse matrix \verb|A|. Note that the
-input of the function is the pointer to the pointer of a \verb|SLIP_sparse|
-structure. This is because this function internally sets the pointer of a
-\verb|SLIP_sparse| to be \verb|NULL| to prevent potential segmentation fault
-that could be caused by double \verb|free|.
-
-%-------------------------------------------------------------------------------
-\cprotect\subsubsection{\verb|SLIP_create_dense|: create empty dense matrix}
-\label{ss:create_dense}
-%-------------------------------------------------------------------------------
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-    SLIP_dense *SLIP_create_dense
-    (
-        void
-    );
-\end{verbatim}
-} \end{mdframed}
-
-\verb|SLIP_create_dense| allocates a new empty dense matrix and returns a
-\verb|SLIP_dense| pointer to this matrix upon successful allocation. The
-returned matrix has size of $0$-by-$0$ and scale parameter of $1$. For methods
-to build the created dense matrix, users can refer to the table in Section
-\ref{ss:SLIP_dense}.
+\verb|SLIP_delete_sparse| deletes the sparse matrix \verb|A|,
+which is then set to \verb|NULL|.
 
 %-------------------------------------------------------------------------------
 \cprotect\subsubsection{\verb|SLIP_delete_dense|: delete dense matrix}
@@ -1037,11 +1009,8 @@ to build the created dense matrix, users can refer to the table in Section
 \end{verbatim}
 } \end{mdframed}
 
-\verb|SLIP_delete_dense| deletes the dense matrix \verb|A|. Note that the input
-of the function is the pointer to the pointer of a \verb|SLIP_dense| structure.
-This is because this function internally sets the pointer of a
-\verb|SLIP_dense| to be \verb|NULL| to prevent potential segmentation fault
-that could be caused by double \verb|free|.
+\verb|SLIP_delete_dense| deletes the dense matrix \verb|A|,
+which is then set to \verb|NULL|.
 
 %-------------------------------------------------------------------------------
 \cprotect\subsubsection{\verb|SLIP_delete_LU_analysis|: delete \verb|SLIP_LU_analysis| structure}
@@ -1314,25 +1283,23 @@ inputs, where the entry values are \verb|mpz_t| type.
 \label{s:user:build_dense_double}
 %-------------------------------------------------------------------------------
 
+% TODO: describe in more detail.  Rename A and b (this is not A and b for Ax=b)
+
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
     SLIP_info SLIP_build_dense_double
     (
-        SLIP_dense *A,      // Dense matrix, allocated but unused
-        double **b,         // Set of values as doubles
-        int32_t m,          // number of rows
-        int32_t n           // number of columns
+        SLIP_dense **A_handle,      // Dense matrix to construct
+        double **b,                 // Matrix of values as doubles
+        int32_t m,                  // number of rows
+        int32_t n                   // number of columns
     );
 \end{verbatim}
 } \end{mdframed}
 
 \verb|SLIP_build_dense_double| builds a dense matrix using 2D \verb|double|
-array. The input dense matrix \verb|A| should be a created empty matrix.
-The best practice is to use the one returned from \verb|SLIP_create_dense| (in
-Section \ref{ss:create_dense}). WARNING: Using dense matrix that has been built
-with \verb|SLIP_build_dense_*| as input would cause memory leak.
-{\bf TODO: why a leak???} % TODO I don't understand this.
+array.
 
 %-------------------------------------------------------------------------------
 \cprotect\subsubsection{\verb|SLIP_build_dense_int|: build dense matrix using 2D \verb|int32_t| array}
@@ -1344,20 +1311,16 @@ with \verb|SLIP_build_dense_*| as input would cause memory leak.
 \begin{verbatim}
     SLIP_info SLIP_build_dense_int
     (
-        SLIP_dense *A,      // Dense matrix, allocated but unused
-        int32_t **b,        // Set of values as ints
-        int32_t m,          // number of rows
-        int32_t n           // number of columns
+        SLIP_dense **A_handle,      // Dense matrix to construct
+        int32_t **b,                // Matrix of values as ints
+        int32_t m,                  // number of rows
+        int32_t n                   // number of columns
     );
 \end{verbatim}
 } \end{mdframed}
 
 \verb|SLIP_build_dense_int| builds a dense matrix using 2D \verb|int32_t|
-array. The input dense matrix \verb|A| should be a created empty matrix.
-The best practice is to use the one returned from \verb|SLIP_create_dense| (in
-Section \ref{ss:create_dense}). WARNING: Using dense matrix that has been built
-with \verb|SLIP_build_dense_*| as input would cause memory leak.
-{\bf TODO: why a leak???} % TODO I don't understand this.
+array.
 
 %-------------------------------------------------------------------------------
 \cprotect\subsubsection{\verb|SLIP_build_dense_mpq|: build dense matrix using 2D \verb|mpq_t| array}
@@ -1369,20 +1332,15 @@ with \verb|SLIP_build_dense_*| as input would cause memory leak.
 \begin{verbatim}
     SLIP_info SLIP_build_dense_mpq
     (
-        SLIP_dense *A,      // dense matrix, allocated but unused
-        mpq_t **b,          // set of values as mpq_t
-        int32_t m,          // number of rows
-        int32_t n           // number of columns
+        SLIP_dense **A_handle,      // Dense matrix to construct
+        mpq_t **b,                  // matrix of values as mpq_t
+        int32_t m,                  // number of rows
+        int32_t n                   // number of columns
     );
 \end{verbatim}
 } \end{mdframed}
 
 \verb|SLIP_build_dense_mpq| builds a dense matrix using 2D \verb|mpq_t| array.
-The input dense matrix \verb|A| should be a created empty matrix. The
-best practice is to use the one returned from \verb|SLIP_create_dense| (in
-Section \ref{ss:create_dense}). WARNING: Using dense matrix that has been built
-with \verb|SLIP_build_dense_*| as input would cause memory leak.
-{\bf TODO: why a leak???} % TODO I don't understand this.
 
 %-------------------------------------------------------------------------------
 \cprotect\subsubsection{\verb|SLIP_build_dense_mpfr|: build dense matrix using 2D \verb|mpfr_t| array}
@@ -1394,21 +1352,17 @@ with \verb|SLIP_build_dense_*| as input would cause memory leak.
 \begin{verbatim}
     SLIP_info SLIP_build_dense_mpfr
     (
-        SLIP_dense *A,        // Dense matrix, allocated but unused
-        mpfr_t **b,           // Set of values as mpfr_t
-        int32_t m,            // number of rows
-        int32_t n,            // number of columns
-        SLIP_options *option  // command options containing the prec for mpfr
+        SLIP_dense **A_handle,      // Dense matrix to construct
+        mpfr_t **b,                 // Set of values as mpfr_t
+        int32_t m,                  // number of rows
+        int32_t n,                  // number of columns
+        SLIP_options *option        // options with precision for mpfr
     );
 \end{verbatim}
 } \end{mdframed}
 
 \verb|SLIP_build_dense_mpfr| builds a dense matrix using 2D \verb|mpfr_t|
-array. The input dense matrix \verb|A| should be a created empty matrix.
-The best practice is to use the one returned from \verb|SLIP_create_dense| (in
-Section \ref{ss:create_dense}). WARNING: Using dense matrix that has been built
-with \verb|SLIP_build_dense_*| as input would cause memory leak.
-{\bf TODO: why a leak???} % TODO I don't understand this.
+array.
 
 %-------------------------------------------------------------------------------
 \cprotect\subsubsection{\verb|SLIP_build_dense_mpz|: build dense matrix using 2D \verb|mpz_t| array}
@@ -1420,20 +1374,15 @@ with \verb|SLIP_build_dense_*| as input would cause memory leak.
 \begin{verbatim}
     SLIP_info SLIP_build_dense_mpz
     (
-        SLIP_dense *A,      // Dense matrix, allocated but unused
-        mpz_t **b,          // Set of values in full precision int.
-        int32_t m,          // number of rows
-        int32_t n           // number of columns
+        SLIP_dense **A_handle,      // Dense matrix to construct
+        mpz_t **b,                  // Set of values in full precision int.
+        int32_t m,                  // number of rows
+        int32_t n                   // number of columns
     );
 \end{verbatim}
 } \end{mdframed}
 
 \verb|SLIP_build_dense_mpz| builds a dense matrix using 2D \verb|mpz_t| array.
-The input dense matrix \verb|A| should be a created empty matrix. The
-best practice is to use the one returned from \verb|SLIP_create_dense| (in
-Section \ref{ss:create_dense}). WARNING: Using dense matrix that has been built
-with \verb|SLIP_build_dense_*| as input would cause memory leak.
-{\bf TODO: why a leak???} % TODO I don't understand this.
 
 %-------------------------------------------------------------------------------
 \subsection{Primary Computational Routines}
@@ -2666,23 +2615,23 @@ want to use and delete the surrounding if statements).
     \begin{verbatim}
     if (b2 IS mpz_t)
     {
-        SLIP_build_dense_mpz(b, b2, n, numRHS);
+        SLIP_build_dense_mpz(&b, b2, n, numRHS);
     }
     else if (b2 IS double)
     {
-        SLIP_build_dense_double(b, b2, n, numRHS);
+        SLIP_build_dense_double(&b, b2, n, numRHS);
     }
     else if (b2 IS int32_t)
     {
-        SLIP_build_dense_int(b, b2, n, numRHS);
+        SLIP_build_dense_int(&b, b2, n, numRHS);
     }
     else if (b2 IS mpq_t)
     {
-        SLIP_build_dense_mpq(b, b2, n, numRHS);
+        SLIP_build_dense_mpq(&b, b2, n, numRHS);
     }
     else if (b2 IS mpfr_t)
     {
-        SLIP_build_dense_mpfr(b, b2, n, numRHS, option);
+        SLIP_build_dense_mpfr(&b, b2, n, numRHS, option);
     } \end{verbatim} }
 
 %-------------------------------------------------------------------------------

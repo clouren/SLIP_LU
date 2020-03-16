@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/SLIP_create_dense: create an empty dense matrix
+// SLIP_LU/slip_create_dense: create an empty dense matrix
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -22,11 +22,15 @@
     }                           \
 }
 
-SLIP_dense *SLIP_create_dense( void )
+SLIP_dense *slip_create_dense( void )
 {
+
     SLIP_dense *A = SLIP_malloc(sizeof(SLIP_dense));
     // Check for out of memory
-    if (A == NULL) { return NULL; }
+    if (A == NULL)
+    {
+        return (NULL);
+    }
 
     // Set m, n, and scale
     A->m = 0;
@@ -38,6 +42,6 @@ SLIP_dense *SLIP_create_dense( void )
     // Initial scale is 1
     CHECK_RESULT (SLIP_mpq_set_ui(A->scale, 1, 1));
 
-    return A;
+    return (A) ;
 }
 

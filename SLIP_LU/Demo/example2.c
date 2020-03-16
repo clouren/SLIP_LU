@@ -56,10 +56,10 @@ int main (int argc, char **argv)
     //--------------------------------------------------------------------------
     mpq_t** x = NULL;
     SLIP_sparse *A = NULL ;
-    SLIP_dense *b = SLIP_create_dense();
+    SLIP_dense *b = NULL ;
     SLIP_options* option = SLIP_create_default_options();
     SLIP_LU_analysis* S = NULL;
-    if (!b || !option)
+    if (!option)
     {
         fprintf (stderr, "Error! OUT of MEMORY!\n");
         FREE_WORKSPACE;
@@ -88,7 +88,7 @@ int main (int argc, char **argv)
         FREE_WORKSPACE;
         return 0;
     }
-    OK(SLIP_read_dense(b, rhs_file));
+    OK(SLIP_read_dense(&b, rhs_file));
     fclose(rhs_file);
 
     // Check if the size of A matches b
@@ -110,7 +110,7 @@ int main (int argc, char **argv)
     }
 
     //--------------------------------------------------------------------------
-    // Symbolic Ordering and Factorization
+    // analysis
     //--------------------------------------------------------------------------
 
     clock_t start_sym = clock();
@@ -121,6 +121,10 @@ int main (int argc, char **argv)
     clock_t end_sym = clock();
 
     clock_t start_f = clock();
+
+    //--------------------------------------------------------------------------
+    // factorize and solve
+    //--------------------------------------------------------------------------
 
     // Solve the linear system using SLIP LU. The keyword mpq below indicates
     // that the final solution vector x will be given as a mpq_t**
@@ -137,8 +141,10 @@ int main (int argc, char **argv)
     //--------------------------------------------------------------------------
     // Free memory
     //--------------------------------------------------------------------------
+
     FREE_WORKSPACE;
 
     printf ("\n%s: all tests passed\n\n", __FILE__) ;
     return 0;
 }
+

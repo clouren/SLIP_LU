@@ -15,7 +15,7 @@
 void slip_mex_get_A_and_b
 (
     SLIP_sparse **A_handle,  // Internal SLIP Mat stored in CSC
-    SLIP_dense *b,           // mpz matrix used internally
+    SLIP_dense **b_handle,   // mpz matrix used internally
     const mxArray* pargin[], // The input A matrix and options
     int32_t nargin           // Number of input to the mexFunction
 )
@@ -106,7 +106,7 @@ void slip_mex_get_A_and_b
     if (nargin == 3)
     {
         bx =  mxGetDoubles(pargin[1]);
-        if (!bx || !b)
+        if (!bx)
         {
             slip_mex_error (SLIP_INCORRECT_INPUT);
         }
@@ -143,7 +143,7 @@ void slip_mex_get_A_and_b
             }
 
             // Create b
-            status = SLIP_build_dense_int(b, bx_int, (int32_t) mb,
+            status = SLIP_build_dense_int(b_handle, bx_int, (int32_t) mb,
                 (int32_t) nb);
             SLIP_delete_int_mat(&bx_int, (int32_t) mb, (int32_t) nb);
         }
@@ -165,7 +165,7 @@ void slip_mex_get_A_and_b
             }
 
             // Create b
-            status = SLIP_build_dense_double(b, bx_doub, (int32_t) mb,
+            status = SLIP_build_dense_double(b_handle, bx_doub, (int32_t) mb,
                 (int32_t) nb, option);
             SLIP_delete_double_mat(&bx_doub, (int32_t) mb, (int32_t) nb);
         }

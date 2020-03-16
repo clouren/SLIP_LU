@@ -27,7 +27,7 @@ SLIP_build_sparse_trip_mpq.c
 SLIP_build_sparse_trip_mpz.c
 SLIP_check_solution.c
 SLIP_create_default_options.c
-SLIP_create_dense.c
+slip_create_dense.c
 SLIP_create_double_mat.c
 SLIP_create_int_mat.c
 slip_create_LU_analysis.c

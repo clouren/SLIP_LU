@@ -41,15 +41,18 @@ double bxden2[4] = {15, 3, 6, 7};                         // Denominator of b2
 
 int main (void) // (int argc, char **argv)
 {
+
     //--------------------------------------------------------------------------
     // Prior to using SLIP LU, its environment must be initialized. This is done
     // by calling the SLIP_initialize() function.
     //--------------------------------------------------------------------------
+
     SLIP_initialize();
 
     //--------------------------------------------------------------------------
     // Declare and initialize essential variables
     //--------------------------------------------------------------------------
+
     SLIP_info ok;
     int n = 4, nz = 11, numRHS = 2;
     double* x = NULL;
@@ -58,24 +61,20 @@ int main (void) // (int argc, char **argv)
     int* p = NULL;
     double** soln = NULL;
     SLIP_sparse* A = NULL ;
-    SLIP_dense *b = SLIP_create_dense();
+    SLIP_dense *b = NULL ;
     SLIP_LU_analysis *S = NULL ;
     SLIP_options* option = SLIP_create_default_options();
-    if (!b || !option)
-    {
-        fprintf (stderr, "Error! OUT of MEMORY!\n");
-        FREE_WORKSPACE;
-        return 0;
-    }
+
     //--------------------------------------------------------------------------
     // Get matrix
     //--------------------------------------------------------------------------
+
     x = (double*) SLIP_malloc(nz* sizeof(double));
     b_doub = SLIP_create_double_mat(n, numRHS);
     i = (int*) SLIP_malloc(nz* sizeof(int));
     p = (int*) SLIP_malloc((n+1)* sizeof(int));
     soln = SLIP_create_double_mat(n, numRHS);;
-    if (!x || !b_doub || !i || !p || !soln)
+    if (!x || !b_doub || !i || !p || !soln || !option)
     {
         fprintf (stderr, "Error! OUT of MEMORY!\n");
         FREE_WORKSPACE;
@@ -93,11 +92,13 @@ int main (void) // (int argc, char **argv)
         i[j] = Ai[j];
         x[j] = Axnum[j]/Axden[j];
     }
+
     //--------------------------------------------------------------------------
     // Build A and b
     //--------------------------------------------------------------------------
+
     OK(SLIP_build_sparse_csc_double(&A, p, i, x, n, nz, option));
-    OK(SLIP_build_dense_double(b, b_doub, n, numRHS, option));
+    OK(SLIP_build_dense_double(&b, b_doub, n, numRHS, option));
 
     //--------------------------------------------------------------------------
     // Factorize
@@ -127,6 +128,7 @@ int main (void) // (int argc, char **argv)
     //--------------------------------------------------------------------------
     // Free memory
     //--------------------------------------------------------------------------
+
     FREE_WORKSPACE;
     printf ("\n%s: all tests passed\n\n", __FILE__) ;
     return 0;
