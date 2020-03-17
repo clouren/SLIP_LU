@@ -139,8 +139,8 @@ SLIP_info SLIP_LU_factorize
     }
     // Initialize pivs and h; that is set pivs[i] = -1 and
     // h[i] = -1 for all i
-    slip_reset_int_array(pivs,n);
-    slip_reset_int_array(h,n);
+    slip_reset_int32_array(pivs,n);
+    slip_reset_int32_array(h,n);
 
     //--------------------------------------------------------------------------
     // This section of the code computes a bound for the worst case bit-length

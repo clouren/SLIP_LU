@@ -44,9 +44,9 @@ int main (void)
     //--------------------------------------------------------------------------
 
     SLIP_info ok;
-    int n = 50, nz = 2500, num = 0;
-    int *i = NULL;
-    int *j = NULL;
+    int32_t n = 50, nz = 2500, num = 0;
+    int32_t *i = NULL;
+    int32_t *j = NULL;
     double *x = NULL;
     double **b_doub = NULL;
     double **soln = NULL;                       // Solution vector
@@ -65,8 +65,8 @@ int main (void)
     // Generate a random dense 50*50 matrix
     //--------------------------------------------------------------------------
 
-    i = (int*) SLIP_malloc(nz* sizeof(int));
-    j = (int*) SLIP_malloc(nz* sizeof(int));
+    i = (int32_t*) SLIP_malloc(nz* sizeof(int32_t));
+    j = (int32_t*) SLIP_malloc(nz* sizeof(int32_t));
     x = (double*) SLIP_malloc(nz* sizeof(double));
     b_doub = SLIP_create_double_mat(n,1);
     soln = SLIP_create_double_mat(n,1);
@@ -77,12 +77,12 @@ int main (void)
         return 0;
     }
 
-    int seed = 10;
+    int32_t seed = 10;
     srand(seed);
-    for (int k = 0; k < n; k++)
+    for (int32_t k = 0; k < n; k++)
     {
         b_doub[k][0] = rand();
-        for (int p = 0; p < n; p++)
+        for (int32_t p = 0; p < n; p++)
         {
             i[num] = k;
             j[num] = p;

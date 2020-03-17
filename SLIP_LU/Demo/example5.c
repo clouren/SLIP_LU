@@ -55,7 +55,7 @@ int main (int argc, char **argv)
     //--------------------------------------------------------------------------
 
     SLIP_info ok;
-    int n = 177, numRHS = 500;
+    int32_t n = 177, numRHS = 500;
     double **b_doub = NULL;
     double **soln = NULL;
     SLIP_sparse *A = NULL ;
@@ -81,11 +81,11 @@ int main (int argc, char **argv)
         FREE_WORKSPACE;
         return 0;
     }
-    int seed = 12;      // Just an arbitrary random seed
+    int32_t seed = 12;      // Just an arbitrary random seed
     srand (seed);
-    for (int i = 0; i < n; i++)
+    for (int32_t i = 0; i < n; i++)
     {
-        for (int j = 0; j < n; j++)
+        for (int32_t j = 0; j < n; j++)
         {
             b_doub[i][j] = rand();
         }

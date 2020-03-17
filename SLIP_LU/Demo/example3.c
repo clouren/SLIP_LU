@@ -18,8 +18,8 @@
 // example3 > out
 // out is file for output calculated result
 
-int Ap[5] = {0, 3, 5, 8, 11};
-int Ai[11]       = {0, 1, 2, 2, 3, 1, 2, 3, 0, 1,  2};
+int32_t Ap[5] = {0, 3, 5, 8, 11};
+int32_t Ai[11]       = {0, 1, 2, 2, 3, 1, 2, 3, 0, 1,  2};
 double Axnum[11] = {1, 2, 7, 1, 2, 4, 1, 3, 1, 12, 1};    // Numerator of x
 double Axden[11] = {3, 3, 6, 1, 7, 1, 1, 1, 5, 1,  1};    // Denominator of x
 double bxnum[4] = {17, 182, 61, 67};                      // Numerator of b
@@ -52,10 +52,10 @@ int main (void)
     //--------------------------------------------------------------------------
 
     SLIP_info ok;
-    int n = 4, nz = 11, j;
+    int32_t n = 4, nz = 11, j;
     mpfr_t ** b_mpfr = NULL;
-    int* i = NULL;
-    int* p = NULL;
+    int32_t* i = NULL;
+    int32_t* p = NULL;
     mpfr_t* x_mpfr = NULL;
     double** soln = NULL;
     SLIP_sparse* A = NULL ;
@@ -74,8 +74,8 @@ int main (void)
     //--------------------------------------------------------------------------
 
     b_mpfr = SLIP_create_mpfr_mat(n, 1, option);
-    i = (int*) SLIP_malloc(nz* sizeof(int));
-    p = (int*) SLIP_malloc((n+1)* sizeof(int));
+    i = (int32_t*) SLIP_malloc(nz* sizeof(int32_t));
+    p = (int32_t*) SLIP_malloc((n+1)* sizeof(int32_t));
     x_mpfr = SLIP_create_mpfr_array(nz, option);
     soln = SLIP_create_double_mat(n,1);
     if (!b_mpfr || !i || !p || !x_mpfr || !soln)

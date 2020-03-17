@@ -49,6 +49,7 @@ SLIP_info slip_expand_mpq_mat
     //--------------------------------------------------------------------------
     // x3 = denominators of x
     //--------------------------------------------------------------------------
+
     for (i = 0; i < m; i++)
     {
         for (j = 0; j < n; j++)
@@ -61,6 +62,7 @@ SLIP_info slip_expand_mpq_mat
     //--------------------------------------------------------------------------
     // Find LCM of denominators of x
     //--------------------------------------------------------------------------
+
     for (i = 0; i < m; i++)
     {
         for (j = 0; j < n; j++)
@@ -71,8 +73,9 @@ SLIP_info slip_expand_mpq_mat
     SLIP_CHECK(SLIP_mpq_set_z(scale, temp));
 
     //--------------------------------------------------------------------------
-    // Make x integral
+    // Make x integral mpz_t
     //--------------------------------------------------------------------------
+
     for (i = 0; i < m; i++)
     {
         for (j = 0; j < n; j++)
@@ -84,6 +87,7 @@ SLIP_info slip_expand_mpq_mat
             SLIP_CHECK(SLIP_mpz_set_q(x_out[i][j], x4[i][j]));
         }
     }
+
     SLIP_FREE_WORKSPACE;
     return SLIP_OK;
 }

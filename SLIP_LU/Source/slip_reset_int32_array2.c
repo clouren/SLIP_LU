@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/slip_reset_int_array2: clear the used parts of an int workspace
+// SLIP_LU/slip_reset_int32_array2: clear the used parts of an int32_t workspace
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -15,7 +15,7 @@
 
 #include "SLIP_LU_internal.h"
 
-SLIP_info slip_reset_int_array2
+SLIP_info slip_reset_int32_array2
 (
     int32_t *h,    // int32_t vector to be reset
     int32_t n,     // size of h

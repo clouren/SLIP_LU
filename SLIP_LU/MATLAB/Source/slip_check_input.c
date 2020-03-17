@@ -18,6 +18,7 @@ void slip_check_input
     int32_t nargin
 )
 {
+
     if (nargin != 2 && nargin != 3)
     {
         mexErrMsgTxt ("incorrect number of inputs") ;
@@ -26,6 +27,7 @@ void slip_check_input
     //--------------------------------------------------------------------------
     // Check matrix A
     //--------------------------------------------------------------------------
+
     if (mxIsComplex (input[0]))        // Is the matrix real valued?
     {
         mexErrMsgTxt ("Matrix must be real; try backslash instead") ;
@@ -38,19 +40,16 @@ void slip_check_input
     //--------------------------------------------------------------------------
     // Check option
     //--------------------------------------------------------------------------
+
     if (!mxIsStruct (input[nargin-1]))        // Is third argument the struct?
     {
         mexErrMsgTxt ("Third argument must be the options struct") ;
-    }
-    if (mxGetNumberOfFields(input[nargin-1]) != 5)
-    {
-        mexErrMsgTxt("Error! The options struct must have 5 elements. Please "
-            "reset it with option = SLIP_get_options;");
     }
 
     //--------------------------------------------------------------------------
     // Check option
     //--------------------------------------------------------------------------
+
     if (nargin == 3)
     {
         if (mxIsSparse (input[1]))         // Is b sparse?

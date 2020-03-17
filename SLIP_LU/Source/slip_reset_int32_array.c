@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/slip_reset_int_array: clear all of an int workspace array
+// SLIP_LU/slip_reset_int32_array: clear all of an int32_t workspace array
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -8,13 +8,13 @@
 
 //------------------------------------------------------------------------------
 
-/* Purpose: This function initializes an int vector of size n and sets the
+/* Purpose: This function initializes an int32_t vector of size n and sets the
  * value equal to -1. This function is used for the history and pivot vectors.
  */
 
 #include "SLIP_LU_internal.h"
 
-SLIP_info slip_reset_int_array
+SLIP_info slip_reset_int32_array
 (
     int32_t *h,    // int32_t vector to be reset
     int32_t n      // size of the int32_t vector

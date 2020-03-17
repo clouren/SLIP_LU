@@ -28,7 +28,7 @@ SLIP_info SLIP_build_sparse_csc_mpz
     SLIP_sparse **A_handle,     // matrix to construct
     int32_t *p,         // The set of column pointers
     int32_t *I,         // set of row indices
-    mpz_t *x,           // Set of values in full precision int.
+    mpz_t *x,           // Set of values in full precision integer
     int32_t n,          // dimension of the matrix
     int32_t nz          // number of nonzeros in A (size of x and I vectors)
 )

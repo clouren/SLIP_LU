@@ -29,7 +29,7 @@ SLIP_info SLIP_build_dense_mpz
 (
     SLIP_dense **C_handle,      // Dense matrix to construct
     // inputs, not modified:
-    mpz_t **B,                  // Set of values in full precision int.
+    mpz_t **B,                  // Set of values in full precision integer
     int32_t m,                  // number of rows
     int32_t n                   // number of columns
 )

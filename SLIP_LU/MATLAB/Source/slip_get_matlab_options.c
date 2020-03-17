@@ -21,37 +21,49 @@ void slip_get_matlab_options
     mxArray* tmp;
 
     // Get the column ordering
-    tmp = mxGetField(input, 0, "column");
-    if (tmp == NULL)
+    int32_t order = 1 ;     // default: COLAMD ordering
+    tmp = mxGetField(input, 0, "order");
+    if (tmp != NULL)
     {
-        mexErrMsgTxt("Error for column ordering");
+        order = (int32_t) mxGetScalar(tmp);
     }
-    int32_t order = (int32_t) mxGetScalar(tmp);
 
-    // Get the pivoting scheme
+    // Get the row pivoting scheme
+    int32_t piv = 3 ;       // default: diag pivoting with tolerance
     tmp = mxGetField(input, 0, "pivot");
-    if (tmp == NULL)
+    if (tmp != NULL)
     {
-        mexErrMsgTxt("Error at getting pivot");
+        piv = (int32_t) mxGetScalar(tmp);
     }
-    int32_t piv = (int32_t) mxGetScalar(tmp);
 
-    // Tolerance if some form of tolerance partial pivoting is used
+    // tolerance for row partial pivoting
+    option->tol = 0.1 ;     // default tolerance is 0.1
     if (piv == 3 || piv == 4)
     {
         tmp = mxGetField(input, 0, "tol");
-        if (tmp == NULL)
+        if (tmp != NULL)
         {
-            mexErrMsgTxt("Error at getting the tolerance parameter");
+            option->tol = mxGetScalar(tmp);
         }
-        option->tol = mxGetScalar(tmp);
     }
 
     //--------------------------------------------------------------------------
-    // Verify that the parameters are correct
+    // Verify that the parameters are correct (use defaults if out of range)
     //--------------------------------------------------------------------------
-    if (order <= 2 && order >= 0) {option->order = (SLIP_col_order) order;}
-    if (piv <= 5 && piv >= 0) {option->pivot = (SLIP_pivot) piv;}
-    if (option->tol > 1 || option->tol <= 0) {option->tol = 0.1;}
+
+    if (order <= 2 && order >= 0)
+    {
+        option->order = (SLIP_col_order) order;
+    }
+
+    if (piv <= 5 && piv >= 0)
+    {
+        option->pivot = (SLIP_pivot) piv ;
+    }
+
+    if (option->tol > 1 || option->tol <= 0)
+    {
+        option->tol = 0.1 ;
+    }
 }
 

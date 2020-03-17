@@ -297,22 +297,22 @@ SLIP_info slip_reset_mpz_array
 );
 
 
-/* Purpose: This function initializes an int vector of size n and sets the
+/* Purpose: This function initializes an int32_t vector of size n and sets the
  * value equal to -1. This function is used for the history and pivot vectors.
  */
-SLIP_info slip_reset_int_array
+SLIP_info slip_reset_int32_array
 (
-    int32_t* h,           // int vector to be reset
-    int32_t n             // size of the int vector
+    int32_t* h,           // int32_t vector to be reset
+    int32_t n             // size of the int32_t vector
 );
 
-/* Purpose: This function resets an int vector of size n and sets each term
+/* Purpose: This function resets an int32_t vector of size n and sets each term
  * equal to -1 with nonzero pattern given. This is more efficient than
  * resetting each term individually.
  */
-SLIP_info slip_reset_int_array2
+SLIP_info slip_reset_int32_array2
 (
-    int32_t* h,    // int vector to be reset
+    int32_t* h,    // int32_t vector to be reset
     int32_t n,     // size of h
     int32_t top,   // beginning of nonzero pattern
     int32_t* xi    // nonzero pattern
@@ -403,10 +403,10 @@ void slip_dfs // performs a dfs of the graph of the matrix starting at node j
  */
 SLIP_info slip_expand_double_array
 (
-    mpz_t *x_out,//integral final array
-    double* x,  //double array that needs to be made integral
-    mpq_t scale,//the scaling factor used (x_out = scale * x)
-    int32_t n,   //size of x
+    mpz_t *x_out,   // integral final array
+    double* x,      // double array that needs to be made integral
+    mpq_t scale,    // the scaling factor used (x_out = scale * x)
+    int32_t n,      // size of x
     SLIP_options* option
 );
 
@@ -418,11 +418,11 @@ SLIP_info slip_expand_double_array
  */
 SLIP_info slip_expand_double_mat
 (
-    mpz_t **x_out,   //integral final mat
+    mpz_t **x_out,  // integral final mat
     double** x,     // double matrix that needs to be made integral
     mpq_t scale,    // the scaling factor used (x_out = scale * x)
     int32_t m,      // row number of x
-    int32_t n,       // column number of x
+    int32_t n,      // column number of x
     SLIP_options* option
 );
 
@@ -434,11 +434,11 @@ SLIP_info slip_expand_double_mat
  */
 SLIP_info slip_expand_mpfr_array
 (
-    mpz_t *x_out,   //integral final array
+    mpz_t *x_out,   // integral final array
     mpfr_t* x,      // mpfr array to be expanded
     mpq_t scale,    // scaling factor used (x_out = scale*x)
     int32_t n,      // size of x
-    SLIP_options *option// command options containing the prec for mpfr
+    SLIP_options *option // command options containing the prec for mpfr
 );
 
 /* Purpose: This function converts a mpfr matrix of size m*n and precision prec
@@ -463,10 +463,10 @@ SLIP_info slip_expand_mpfr_mat
  */
 SLIP_info slip_expand_mpq_array
 (
-    mpz_t *x_out, //integral final array
-    mpq_t* x,     //mpq array that needs to be converted
-    mpq_t scale,  //scaling factor. x_out = scale*x
-    int32_t n     //size of x
+    mpz_t *x_out, // integral final array
+    mpq_t* x,     // mpq array that needs to be converted
+    mpq_t scale,  // scaling factor. x_out = scale*x
+    int32_t n     // size of x
 );
 
 /* Purpose: This function converts a mpq matrix of size m*n into an appropriate
@@ -476,7 +476,7 @@ SLIP_info slip_expand_mpq_array
  */
 SLIP_info slip_expand_mpq_mat
 (
-    mpz_t **x_out,//integral final mat
+    mpz_t **x_out,// integral final mat
     mpq_t **x,    // mpq mat that needs to be converted
     mpq_t scale,  // scaling factor. x_out = scale*x
     int32_t m,    // number of rows of x

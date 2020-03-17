@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/SLIP_delete_int_mat: delete a dense int matrix
+// SLIP_LU/SLIP_delete_int32_mat: delete a dense int32_t matrix
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -8,9 +8,9 @@
 
 //------------------------------------------------------------------------------
 
-/* Purpose: This function deletes a dense int matrix.
+/* Purpose: This function deletes a dense int32_t matrix.
  *
- * Input is a int*** mat and its dimensions.
+ * Input is a int32_t*** mat and its dimensions.
  * Input mat is destroyed on function completion
  */
 
@@ -19,7 +19,7 @@
 // ignore warnings about unused parameters in this file
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
-void SLIP_delete_int_mat
+void SLIP_delete_int32_mat
 (
     int32_t ***A,  // dense matrix
     int32_t m,     // number of rows

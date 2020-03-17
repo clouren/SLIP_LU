@@ -1,4 +1,4 @@
-function x = SLIP_get_options
+function option = SLIP_get_options
 %SLIP_GET_OPTIONS: set defaults for SLIP_LU factorization.
 %
 % Usage:
@@ -6,22 +6,25 @@ function x = SLIP_get_options
 %   option = SLIP_get_options;
 %
 % Each element of the option struct has the following possible values:
-% option.column: Column ordering used.
-%        0: None: Not recommended for sparse matrices
-%        1: COLAMD: Default
+% option.order: Column ordering used.
+%        0: None: not recommended unless you know the matrix already has a
+%           good column ordering.
+%        1: COLAMD (the default ordering)
 %        2: AMD
 %
-% option.pivot: Pivoting scheme used.
+% option.pivot: Row pivoting scheme used.
 %        0: Smallest pivot
 %        1: Diagonal pivoting
 %        2: First nonzero per column chosen as pivot
-%        3: Diagonal pivoting with tolerance for smallest pivot, Default
+%        3: Diagonal pivoting with tolerance for smallest pivot (default)
 %        4: Diagonal pivoting with tolerance for largest pivot
 %        5: Largest pivot
 %
-% option.int: Set equal to 1 if input mat is already integral
-% option.intb: set equal to 1 if input RHS vector(s) are already integral
-% option.tol: tolerance (0,1) which is used if some threshold pivoting is used
+% option.tol: tolerance (0,1) which is used if some threshold pivoting is used.
+%       default is TODO.
+%
+% If any fields are not present in the options struct, the defaults are used
+% for that parameter.
 %
 % See also SLIP_LU, SLIP_install, SLIP_test.
 
@@ -29,9 +32,11 @@ function x = SLIP_get_options
 % Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 % SLIP_LU/License for the license.
 
-x.column = 1;
-x.pivot = 3;
-x.int = 0;
-x.intb = 0;
-x.tol = 0.1;
+option.order = 1 ;               % type of column ordering used
+option.pivot = 3 ;               % type of row pivoting scheme
+option.tol = 0.1 ;               % tolerance for row pivoting scheme
+option.A_is_integer = false ;    % true if A known to be integral
+option.b_is_integer = false ;    % true if b known to be integral
+
+% TODO: if struct fields empty, use the defaults
 

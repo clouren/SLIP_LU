@@ -91,7 +91,7 @@
     SLIP_FREE(option);                           \
     SLIP_finalize( ) ;
 
-int main( int argc, char* argv[])
+int main (int argc, char* argv[])
 {
 
     //--------------------------------------------------------------------------
@@ -134,8 +134,8 @@ int main( int argc, char* argv[])
     //          user guide. Much like a sparse and dense matrix, it must be
     //          created with a call to SLIP_create_default_options();
     //--------------------------------------------------------------------------
-    int nrows = 0, numRHS = 0;
-    int rat = 1;
+    int32_t nrows = 0, numRHS = 0;
+    int32_t rat = 1;
     SLIP_info ok, check = SLIP_OK ;
     char *mat_name, *rhs_name;
     mat_name = "../ExampleMats/10teams_mat.txt";// Set demo matrix and RHS name
@@ -143,7 +143,7 @@ int main( int argc, char* argv[])
 
     mpz_t* rhos = NULL;
     mpq_t** x = NULL;
-    int* pinv = NULL;
+    int32_t* pinv = NULL;
     SLIP_LU_analysis* S = NULL;
     double **x_doub = NULL;
     mpfr_t **x_mpfr = NULL;
@@ -309,7 +309,7 @@ int main( int argc, char* argv[])
 
     //--------------------------------------------------------------------------
     // The x vector is now scaled. This consists of accounting for any scaling
-    // done to A and b to make these entries integral.
+    // done to A and b to make these entries integral mpz_t values.
     //--------------------------------------------------------------------------
 
     OK(SLIP_scale_x(x, A, b));

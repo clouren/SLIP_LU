@@ -14,8 +14,8 @@
  *
  * For simple test, the test needs to be run with command
  * ./cov_test Ab_type xtype N list1[0] ... list1[N-1] M list2[0] ... list2[M-1]
- * Ab_type: type of Matrix A and vector b: 0 mpz, 1 double, 2 int, 3 mpq, 4 mpfr
- *                                         5 for miscellaneous test
+ * Ab_type: type of Matrix A and vector b: 0 mpz, 1 double, 2 int32, 3 mpq,
+ *      4 mpfr, 5 for miscellaneous test.
  * xtype: type of solution: 1: full precision rational arithmetic,
  *                        2: double, 3:  user specified precision.
  * N and list1 specify the test list for slip_gmp_ntrials (in SLIP_gmp.h)
@@ -51,8 +51,8 @@
     SLIP_delete_mpz_array(&Ax_mpz,nz);           \
     SLIP_FREE(Ax_doub);                          \
     SLIP_delete_double_mat(&B_doub, n, numRHS);  \
-    SLIP_delete_int_mat(&B_int, n, numRHS);      \
-    SLIP_FREE(Ax_int);                           \
+    SLIP_delete_int32_mat(&B_int32, n, numRHS);  \
+    SLIP_FREE(Ax_int32);                         \
     SLIP_delete_mpq_mat(&B_mpq , n, numRHS);     \
     SLIP_delete_mpq_array(&Ax_mpq ,nz);          \
     SLIP_delete_mpfr_mat(&B_mpfr, n, numRHS);    \
@@ -96,24 +96,24 @@
     }                                            \
 }
 
-int Ap[5] = {0, 3, 5, 8, 11};
-int Ai[11]       = {0, 1, 2, 2, 3, 1, 2, 3, 0, 1,  2};
+int32_t Ap[5] = {0, 3, 5, 8, 11};
+int32_t Ai[11]       = {0, 1, 2, 2, 3, 1, 2, 3, 0, 1,  2};
 double Axnum[11] = {1, 2, 7, 1, 2, 4, 1, 3, 1, 12, 1};  // Numerator of x
 double Axden[11] = {3, 3, 6, 1, 7, 1, 1, 1, 5, 1,  1};  // Denominator of x
 double bxnum[4] = {170, 1820, 61, 670};                // Numerator of b
 double bxden[4] = {15,  3,   6,  7};                    // Denominator of b
-int Axnum3[11] = {1, 2, 7, 1, 2, 4, 1, 3, 1, 12, 1};    // Numerator of x
-int Axden3[11] = {3, 3, 6, 1, 7, 1, 1, 1, 5, 1,  1};    // Denominator of x
-int bxnum3[4] = {17, 182, 61, 67};                      // Numerator of b
-int bxden3[4] = {15,  3,   6,  7};                      // Denominator of b
+int32_t Axnum3[11] = {1, 2, 7, 1, 2, 4, 1, 3, 1, 12, 1};    // Numerator of x
+int32_t Axden3[11] = {3, 3, 6, 1, 7, 1, 1, 1, 5, 1,  1};    // Denominator of x
+int32_t bxnum3[4] = {17, 182, 61, 67};                      // Numerator of b
+int32_t bxden3[4] = {15,  3,   6,  7};                      // Denominator of b
 
 int main( int argc, char* argv[])
 {
     bool IS_SIMPLE_TEST = true;
-    int rat_list[6] = {1, 1, 2, 3, 3, 3};  // only used in brutal test
-    int Ab_type = 0, xtype = 1, NUM_OF_TRIALS = 0, NUM_OF_MALLOC_T = 0;
+    int32_t rat_list[6] = {1, 1, 2, 3, 3, 3};  // only used in brutal test
+    int32_t Ab_type = 0, xtype = 1, NUM_OF_TRIALS = 0, NUM_OF_MALLOC_T = 0;
     int64_t *gmp_ntrial_list=NULL;         // only used in simple test
-    int *malloc_trials_list=NULL;          // only used in simple test
+    int32_t *malloc_trials_list=NULL;          // only used in simple test
 
     //--------------------------------------------------------------------------
     // parse input arguments
@@ -133,8 +133,9 @@ int main( int argc, char* argv[])
     {
         IS_SIMPLE_TEST = true;
 
-        int arg_count = 0;
-        //type of Matrix A and vector b: 0 mpz, 1 double, 2 int, 3 mpq, 4 mpfr
+        int32_t arg_count = 0;
+        // type of Matrix A and vector b:
+        // 0 mpz, 1 double, 2 int32_t, 3 mpq, 4 mpfr
         Ab_type = atoi(argv[++arg_count]);
         //type of solution: 1: full precision rational arithmetic,
         //                  2: double, 3:  user specified precision.
@@ -150,7 +151,7 @@ int main( int argc, char* argv[])
         {
             NUM_OF_TRIALS=atoi(argv[arg_count]);
             gmp_ntrial_list=SLIP_malloc(NUM_OF_TRIALS* sizeof(int64_t));
-            for (int k=0; k<NUM_OF_TRIALS; k++)
+            for (int32_t k=0; k<NUM_OF_TRIALS; k++)
             {
                 if (argv[++arg_count])
                 {
@@ -168,14 +169,14 @@ int main( int argc, char* argv[])
         if (!argv[++arg_count])
         {
             NUM_OF_MALLOC_T=1;
-            malloc_trials_list=SLIP_malloc(NUM_OF_MALLOC_T* sizeof(int));
+            malloc_trials_list=SLIP_malloc(NUM_OF_MALLOC_T* sizeof(int32_t));
             malloc_trials_list[0]=1000;//INT_MAX;
         }
         else
         {
             NUM_OF_MALLOC_T=atoi(argv[arg_count]);
-            malloc_trials_list=SLIP_malloc(NUM_OF_MALLOC_T* sizeof(int));
-            for (int k=0; k<NUM_OF_MALLOC_T; k++)
+            malloc_trials_list=SLIP_malloc(NUM_OF_MALLOC_T* sizeof(int32_t));
+            for (int32_t k=0; k<NUM_OF_MALLOC_T; k++)
             {
                 if (argv[++arg_count])
                 {
@@ -192,12 +193,12 @@ int main( int argc, char* argv[])
 
         #ifdef SLIP_TCOV_SHOW_LIST
         printf ("gmp ntrials list is: ");
-        for (int k=0; k<NUM_OF_TRIALS; k++)
+        for (int32_t k=0; k<NUM_OF_TRIALS; k++)
         {
             printf("%ld   ",gmp_ntrial_list[k]);
         }
         printf("\nmalloc trial list is: ");
-        for (int k=0; k<NUM_OF_MALLOC_T; k++)
+        for (int32_t k=0; k<NUM_OF_MALLOC_T; k++)
         {
             printf("%d   ",malloc_trials_list[k]);
         }
@@ -218,7 +219,7 @@ int main( int argc, char* argv[])
     // initialized from 0 to 1000, break when malloc_count>0 at the end of
     // inner loop.
 
-    for (int k=0; k<NUM_OF_TRIALS; k++)
+    for (int32_t k=0; k<NUM_OF_TRIALS; k++)
     {
         if (IS_SIMPLE_TEST)
         {
@@ -236,7 +237,7 @@ int main( int argc, char* argv[])
             NUM_OF_MALLOC_T = 1000;
         }
 
-        for (int kk=0; kk<NUM_OF_MALLOC_T; kk++)
+        for (int32_t kk=0; kk<NUM_OF_MALLOC_T; kk++)
         {
             if (IS_SIMPLE_TEST)
             {
@@ -263,7 +264,7 @@ int main( int argc, char* argv[])
             // Allocate memory
             //------------------------------------------------------------------
 
-            int n=4, numRHS=1, j, nz=11;
+            int32_t n=4, numRHS=1, j, nz=11;
             SLIP_info ok;
             SLIP_options* option = SLIP_create_default_options();
             if (!option) {continue;}
@@ -278,8 +279,8 @@ int main( int argc, char* argv[])
             double  *Ax_doub   = NULL;
 
             // used in Ab_type = 2
-            int     **B_int    = NULL;
-            int     *Ax_int    = NULL;
+            int32_t **B_int32    = NULL;
+            int32_t *Ax_int32    = NULL;
 
             // used in Ab_type = 3
             mpq_t   **B_mpq    = NULL;
@@ -402,27 +403,27 @@ int main( int argc, char* argv[])
                 //--------------------------------------------------------------
 
                 //failure due to NULL input
-                TEST_CHECK_FAILURE(SLIP_build_dense_int(&b, NULL, n, numRHS));
-                TEST_CHECK_FAILURE(SLIP_build_sparse_csc_int(&A, Ap, Ai, NULL,
+                TEST_CHECK_FAILURE(SLIP_build_dense_int32(&b, NULL, n, numRHS));
+                TEST_CHECK_FAILURE(SLIP_build_sparse_csc_int32(&A, Ap, Ai, NULL,
                     n, nz));
 
-                B_int = SLIP_create_int_mat(n, numRHS);
-                Ax_int = (int32_t*) SLIP_calloc(nz, sizeof(int32_t));
-                if (!B_int || !Ax_int) {SLIP_FREE_WORKSPACE; continue;}
+                B_int32 = SLIP_create_int32_mat(n, numRHS);
+                Ax_int32 = (int32_t*) SLIP_calloc(nz, sizeof(int32_t));
+                if (!B_int32 || !Ax_int32) {SLIP_FREE_WORKSPACE; continue;}
 
                 for (j = 0; j < n; j++)                           // Get b
                 {
-                    B_int[j][0]=bxnum3[j];
+                    B_int32[j][0]=bxnum3[j];
                 }
                 for (j = 0; j < nz; j++)                          // Get Ax
                 {
-                    Ax_int[j]=Axnum3[j];
+                    Ax_int32[j]=Axnum3[j];
                 }
 
-                TEST_CHECK(SLIP_build_sparse_csc_int(&A, Ap, Ai, Ax_int, n,
+                TEST_CHECK(SLIP_build_sparse_csc_int32(&A, Ap, Ai, Ax_int32, n,
                     nz));
                 TEST_CHECK (SLIP_spok (A, option)) ;
-                TEST_CHECK(SLIP_build_dense_int(&b, B_int, n, numRHS));
+                TEST_CHECK(SLIP_build_dense_int32(&b, B_int32, n, numRHS));
 
             }
             else if (Ab_type==3)
@@ -493,7 +494,7 @@ int main( int argc, char* argv[])
                 SLIP_delete_dense (&b) ;
 
                 // trigger gcd == 1
-                int prec = option->prec;
+                uint64_t prec = option->prec;
                 option->prec = 17;
                 for (j = 0; j < n; j++)                               // Get B
                 {
@@ -547,11 +548,11 @@ int main( int argc, char* argv[])
                 // test for SLIP_build_sparse_trip*
                 // and failure of some functions
                 n = 4, nz = 11;
-                int I[11]={0, 1, 2, 2, 3, 1, 2, 3, 0, 1, 2};
-                int J[11]={0, 0, 0, 1, 1, 2, 2, 2, 3, 3, 3};
+                int32_t I[11]={0, 1, 2, 2, 3, 1, 2, 3, 0, 1, 2};
+                int32_t J[11]={0, 0, 0, 1, 1, 2, 2, 2, 3, 3, 3};
 
                 double x_doub2[11] = {1, 1, 1, 2, 2, 3, 3, 3, 4, 4, 4};
-                int x_int[11] = {1, 1, 1, 2, 2, 3, 3, 3, 4, 4, 4};
+                int32_t x_int32[11] = {1, 1, 1, 2, 2, 3, 3, 3, 4, 4, 4};
                 x_mpz  = SLIP_create_mpz_array(nz);
                 x_mpq  = SLIP_create_mpq_array(nz);
                 x_mpfr = SLIP_create_mpfr_array(nz, option);
@@ -564,17 +565,17 @@ int main( int argc, char* argv[])
 
                 for (j = 0; j < nz; j++)
                 {
-                    TEST_CHECK(SLIP_mpq_set_ui(x_mpq[j],2*x_int[j],2));
+                    TEST_CHECK(SLIP_mpq_set_ui(x_mpq[j],2*x_int32[j],2));
                     TEST_CHECK(SLIP_mpfr_set_d(x_mpfr[j],x_doub2[j],MPFR_RNDN));
                     TEST_CHECK(SLIP_mpfr_div_d(x_mpfr[j], x_mpfr[j], 1,
                         MPFR_RNDN));
                     x_doub[j] = x_doub2[j];
-                    TEST_CHECK(SLIP_mpz_set_si(x_mpz[j], x_int[j]));
+                    TEST_CHECK(SLIP_mpz_set_si(x_mpz[j], x_int32[j]));
                 }
 
                 // failure case: incorrect index array input
-                int I1[11]={0, -1, -2, 2, 3, 1, 2, 3, 0, 1, 2};
-                int P1[11]={0, 3, 5, 8, 11};
+                int32_t I1[11]={0, -1, -2, 2, 3, 1, 2, 3, 0, 1, 2};
+                int32_t P1[11]={0, 3, 5, 8, 11};
                 TEST_CHECK_FAILURE(SLIP_build_sparse_trip_mpz(&A, I1, J, x_mpz,
                     n, nz));
                 SLIP_delete_sparse (&A) ;
@@ -588,7 +589,7 @@ int main( int argc, char* argv[])
                     n, nz));
                 TEST_CHECK_FAILURE(SLIP_build_sparse_trip_double(&A, I, J, NULL,
                     n, nz, option));
-                TEST_CHECK_FAILURE(SLIP_build_sparse_trip_int   (&A, I, J, NULL,
+                TEST_CHECK_FAILURE(SLIP_build_sparse_trip_int32 (&A, I, J, NULL,
                     n, nz));
                 TEST_CHECK_FAILURE(SLIP_build_sparse_trip_mpq   (&A, I, J, NULL,
                     n, nz));
@@ -603,7 +604,8 @@ int main( int argc, char* argv[])
                     nz, option));
                 SLIP_delete_sparse (&A) ;
 
-                TEST_CHECK(SLIP_build_sparse_trip_int(&A, I, J, x_int, n, nz));
+                TEST_CHECK(SLIP_build_sparse_trip_int32(&A, I, J, x_int32, n,
+                    nz));
                 ok = SLIP_gmp_printf("scale = %Qd\n",A->scale);
                 if (ok < 0) {TEST_CHECK(ok);}
                 option->print_level = 3;
@@ -685,7 +687,7 @@ int main( int argc, char* argv[])
             // Column ordering using either AMD, COLAMD or nothing
             TEST_CHECK(SLIP_LU_analyze(&S, A, option));
             option->print_level = 3;
-            int check2;
+            int32_t check2;
 
             //------------------------------------------------------------------
             // SLIP LU Factorization, Solve and verification

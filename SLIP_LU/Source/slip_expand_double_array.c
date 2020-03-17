@@ -26,18 +26,19 @@
 
 SLIP_info slip_expand_double_array
 (
-    mpz_t* x_out,//integral final array
-    double* x,  //double array that needs to be made integral
-    mpq_t scale,//the scaling factor used (x_out = scale * x)
-    int32_t n,   //size of x
+    mpz_t* x_out,   // integral final array
+    double* x,      // double array that needs to be made integral
+    mpq_t scale,    // the scaling factor used (x_out = scale * x)
+    int32_t n,      // size of x
     SLIP_options* option
 )
 {
-    // int to store the comparison result
+
     int32_t i, k, r1, r2 = 1;
     bool nz_found = false;
     SLIP_info ok;
-    // Double precision accurate ~17 decimals
+    // Double precision accurate ~17 decimals.  TODO: No, closer to 2e-16.
+    // TODO: But shouldn't this use a power of two?
     double expon = pow(10, 17);
     // Quad precision in case input is huge
     mpfr_t* x3 = NULL;

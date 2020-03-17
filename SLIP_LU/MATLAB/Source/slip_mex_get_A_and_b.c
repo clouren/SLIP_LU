@@ -53,51 +53,61 @@ void slip_mex_get_A_and_b
     Anz = (mwSize) Ap[nA];
     if (nA != mA)
     {
-        mexErrMsgTxt("Error! A has to be square!");
+        mexErrMsgTxt ("A must be square") ;
     }
 
-    int32_t* Ai_int = (int32_t*) SLIP_malloc(Anz* sizeof(int32_t));
-    int32_t* Ap_int = (int32_t*) SLIP_malloc((nA+1)* sizeof(int32_t));
-    if (!Ai_int || !Ap_int) {slip_mex_error(SLIP_OUT_OF_MEMORY);}
+    int32_t* Ai_int32 = (int32_t*) SLIP_malloc(Anz* sizeof(int32_t));
+    int32_t* Ap_int32 = (int32_t*) SLIP_malloc((nA+1)* sizeof(int32_t));
+    if (!Ai_int32 || !Ap_int32) {slip_mex_error(SLIP_OUT_OF_MEMORY);}
+
+    // TODO: slip_mex_check_for_inf can also check if all entries in Ax
+    // are integers in the range INT32_MIN to INT32_MAX.  Then there is no
+    // need for the awkward option.A_is_integral and option.b_is_integral
+    // options.
 
     // Does x have inf?
     slip_mex_check_for_inf(Ax, Anz);
-    slip_mwIndex_to_int32(Ai_int, Ai, Anz);
-    slip_mwIndex_to_int32(Ap_int, Ap, nA+1);
+    slip_mwIndex_to_int32(Ai_int32, Ai, Anz);
+    slip_mwIndex_to_int32(Ap_int32, Ap, nA+1);
 
     // Input is already integral
-    tmp = mxGetField(pargin[nargin-1], 0, "int");
-    if (tmp == NULL)
+    bool A_is_integral = false ;
+    tmp = mxGetField (pargin [nargin-1], 0, "A_is_integral") ;
+    if (tmp != NULL)
     {
-        mexErrMsgTxt("Error at getting the int parameter");
+        A_is_integral = (mxGetScalar (tmp) != 0) ;
     }
-    if (mxGetScalar(tmp) > 0)
+
+    if (A_is_integral)
     {
+        // A is known to be integral.
         // Declare memory
-        int32_t* Ax_int = (int32_t*) SLIP_malloc(Anz* sizeof(int32_t));
-        if (!Ax_int) {slip_mex_error(SLIP_OUT_OF_MEMORY);}
+        int32_t *Ax_int32 = (int32_t*) SLIP_malloc(Anz* sizeof(int32_t)) ;
+        if (!Ax_int32) {slip_mex_error(SLIP_OUT_OF_MEMORY);}
         for (k = 0; k < Anz; k++)
         {
-            Ax_int[k] = (int32_t) Ax[k];
+            // TODO error check here!!
+            Ax_int32[k] = (int32_t) Ax[k];
         }
         // Create A with no scaling
-        status = SLIP_build_sparse_csc_int(A_handle, Ap_int, Ai_int, Ax_int,
-            (int32_t) nA, (int32_t) Anz);
-        SLIP_FREE(Ax_int);
+        status = SLIP_build_sparse_csc_int32 (A_handle, Ap_int32, Ai_int32,
+            Ax_int32, (int32_t) nA, (int32_t) Anz);
+        SLIP_FREE(Ax_int32);
     }
     else
     {
+        // A is not known to be integral.
         // Create A with scaling
-        status = SLIP_build_sparse_csc_double(A_handle, Ap_int, Ai_int, Ax,
-            (int32_t) nA, (int32_t) Anz, option);
+        status = SLIP_build_sparse_csc_double (A_handle, Ap_int32, Ai_int32,
+            Ax, (int32_t) nA, (int32_t) Anz, option);
     }
+
     if (status != SLIP_OK)
     {
-        mexErrMsgTxt("Issue reading in A. Please ensure matrix is correct "
-            "and try again");
+        mexErrMsgTxt ("A matrix invalid") ;
     }
-    SLIP_FREE(Ai_int);
-    SLIP_FREE(Ap_int);
+    SLIP_FREE(Ai_int32);
+    SLIP_FREE(Ap_int32);
 
     //--------------------------------------------------------------------------
     // Read in b
@@ -115,37 +125,41 @@ void slip_mex_get_A_and_b
         mb = mxGetM(pargin[1]);
         if (mb != mA)
         {
-            mexErrMsgTxt("Error! Dimensions of A and B does not match!");
+            mexErrMsgTxt ("dimension mismatch") ;
         }
 
         // Does b have inf?
         slip_mex_check_for_inf(bx, nb*mb);
 
         // Is b integral?
-        tmp = mxGetField(pargin[nargin-1], 0, "intb");
+        bool b_is_integral = false ;
+        tmp = mxGetField(pargin[nargin-1], 0, "b_is_integral") ;
         if (tmp == NULL)
         {
-            mexErrMsgTxt("Error at getting the intb parameter");
+            b_is_integral = (mxGetScalar (tmp) != 0) ;
         }
         int32_t count = 0;
-        if (mxGetScalar(tmp) > 0)
+
+        if (b_is_integral)
         {
-            // populate bx to a int mat
-            int32_t** bx_int = SLIP_create_int_mat((int32_t) mb, (int32_t) nb);
-            if (!bx_int) {slip_mex_error(SLIP_OUT_OF_MEMORY);}
+            // populate bx to a int32_t mat
+            int32_t** bx_int32 = SLIP_create_int32_mat ((int32_t) mb,
+                (int32_t) nb);
+            if (!bx_int32) {slip_mex_error(SLIP_OUT_OF_MEMORY);}
             for (k = 0; k < nb; k++)
             {
                 for (j = 0; j < mb; j++)
                 {
-                    bx_int[j][k] = (int32_t) bx[count];
+                    bx_int32[j][k] = (int32_t) bx[count];
+                    // TODO error check here!!
                     count++;
                 }
             }
 
             // Create b
-            status = SLIP_build_dense_int(b_handle, bx_int, (int32_t) mb,
+            status = SLIP_build_dense_int32(b_handle, bx_int32, (int32_t) mb,
                 (int32_t) nb);
-            SLIP_delete_int_mat(&bx_int, (int32_t) mb, (int32_t) nb);
+            SLIP_delete_int32_mat(&bx_int32, (int32_t) mb, (int32_t) nb);
         }
         else
         {

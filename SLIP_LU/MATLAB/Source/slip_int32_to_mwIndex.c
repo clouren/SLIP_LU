@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/MATLAB/slip_int32_to_mwindex: Convert int* array to mwIndex*
+// SLIP_LU/MATLAB/slip_int32_to_mwindex: Convert int32_t* array to mwIndex*
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -8,7 +8,7 @@
 
 //------------------------------------------------------------------------------
 
-/* Purpose: This function converts an int to an mwIndex */
+/* Purpose: This function converts an int32_t to an mwIndex */
 
 #include "SLIP_LU_mex.h"
 

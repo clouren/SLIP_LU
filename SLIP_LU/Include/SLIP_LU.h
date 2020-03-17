@@ -399,7 +399,7 @@ SLIP_info SLIP_build_sparse_csc_mpz
     SLIP_sparse **A_handle,     // matrix to construct
     int32_t *p,           // The set of column pointers
     int32_t *I,           // set of row indices
-    mpz_t *x,             // Set of values in full precision int.
+    mpz_t *x,             // Set of values in full precision integer
     int32_t n,            // dimension of the matrix
     int32_t nz            // number of nonzeros in A (size of x and I vectors)
 );
@@ -416,8 +416,8 @@ SLIP_info SLIP_build_sparse_csc_double
     SLIP_options* option
 );
 
-/* Purpose: Build a SLIP_sparse from int stored CSC matrix */
-SLIP_info SLIP_build_sparse_csc_int
+/* Purpose: Build a SLIP_sparse from int32_t stored CSC matrix */
+SLIP_info SLIP_build_sparse_csc_int32
 (
     SLIP_sparse **A_handle,     // matrix to construct
     int32_t *p,           // The set of column pointers
@@ -438,7 +438,7 @@ SLIP_info SLIP_build_sparse_csc_mpq
     int32_t nz            // number of nonzeros in A (size of x and I vectors)
 );
 
-/* Purpose: Build a SLIP_sparse from int stored CSC matrix */
+/* Purpose: Build a SLIP_sparse from int32_t stored CSC matrix */
 SLIP_info SLIP_build_sparse_csc_mpfr
 (
     SLIP_sparse **A_handle,     // matrix to construct
@@ -468,7 +468,7 @@ SLIP_info SLIP_build_sparse_trip_mpz
     SLIP_sparse **A_handle,     // matrix to construct
     int32_t *I,         // set of row indices
     int32_t *J,         // set of column indices
-    mpz_t *x,           // Set of values in full precision int
+    mpz_t *x,           // Set of values in full precision integer
     int32_t n,          // dimension of the matrix
     int32_t nz          // number of nonzeros in A (size of x, I, and J vectors)
 );
@@ -485,13 +485,13 @@ SLIP_info SLIP_build_sparse_trip_double
     SLIP_options* option
 );
 
-/* Purpose: Build a sparse matrix from triplet form where input is int */
-SLIP_info SLIP_build_sparse_trip_int
+/* Purpose: Build a sparse matrix from triplet form where input is int32_t */
+SLIP_info SLIP_build_sparse_trip_int32
 (
     SLIP_sparse **A_handle,     // matrix to construct
     int32_t *I,         // set of row indices
     int32_t *J,         // set of column indices
-    int32_t *x,         // Set of values in int
+    int32_t *x,         // Set of values in int32_t
     int32_t n,          // dimension of the matrix
     int32_t nz          // number of nonzeros in A (size of x, I, and J vectors)
 );
@@ -556,7 +556,7 @@ SLIP_info SLIP_build_dense_double
 ) ;
 
 // Purpose: Build a SLIP_dense matrix C from int32_t input B.
-SLIP_info SLIP_build_dense_int
+SLIP_info SLIP_build_dense_int32
 (
     SLIP_dense **C_handle,      // Dense matrix to construct
     // inputs, not modified:
@@ -618,19 +618,19 @@ void SLIP_delete_double_mat
 // Creates a 2D int32 matrix, where A[i][j] is the (i,j)th entry.
 // A[i] is a pointer to row i, of size n.
 
-/* Purpose: This function creates an int matrix of size m*n. */
-int32_t** SLIP_create_int_mat
+/* Purpose: This function creates an int32_t matrix of size m*n. */
+int32_t** SLIP_create_int32_mat
 (
     int32_t m,     // number of rows
     int32_t n      // number of columns
 );
 
-/* Purpose: This function deletes a dense int matrix.
+/* Purpose: This function deletes a dense int32_t matrix.
  *
- * Input is a int*** mat and its dimensions.
+ * Input is a int32_t*** mat and its dimensions.
  * Input mat is destroyed on function completion
  */
-void SLIP_delete_int_mat
+void SLIP_delete_int32_mat
 (
     int32_t*** A,  // dense matrix
     int32_t m,     // number of rows

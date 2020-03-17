@@ -18,8 +18,8 @@
 // example4 > out
 // out is file for output calculated result
 
-int Ap[5] = {0, 3, 5, 8, 11};
-int Ai[11]       = {0, 1, 2, 2, 3, 1, 2, 3, 0, 1,  2};
+int32_t Ap[5] = {0, 3, 5, 8, 11};
+int32_t Ai[11]       = {0, 1, 2, 2, 3, 1, 2, 3, 0, 1,  2};
 double Axnum[11] = {1, 2, 7, 1, 2, 4, 1, 3, 1, 12, 1};    // Numerator of x
 double Axden[11] = {3, 3, 6, 1, 7, 1, 1, 1, 5, 1,  1};    // Denominator of x
 double bxnum[4] = {17, 182, 61, 67};                      // Numerator of b
@@ -39,7 +39,7 @@ double bxden2[4] = {15, 3, 6, 7};                         // Denominator of b2
     SLIP_FREE(option);                          \
     SLIP_finalize( ) ;
 
-int main (void) // (int argc, char **argv)
+int main (void)
 {
 
     //--------------------------------------------------------------------------
@@ -54,11 +54,11 @@ int main (void) // (int argc, char **argv)
     //--------------------------------------------------------------------------
 
     SLIP_info ok;
-    int n = 4, nz = 11, numRHS = 2;
+    int32_t n = 4, nz = 11, numRHS = 2;
     double* x = NULL;
     double **b_doub = NULL;
-    int* i = NULL;
-    int* p = NULL;
+    int32_t* i = NULL;
+    int32_t* p = NULL;
     double** soln = NULL;
     SLIP_sparse* A = NULL ;
     SLIP_dense *b = NULL ;
@@ -71,8 +71,8 @@ int main (void) // (int argc, char **argv)
 
     x = (double*) SLIP_malloc(nz* sizeof(double));
     b_doub = SLIP_create_double_mat(n, numRHS);
-    i = (int*) SLIP_malloc(nz* sizeof(int));
-    p = (int*) SLIP_malloc((n+1)* sizeof(int));
+    i = (int32_t*) SLIP_malloc(nz* sizeof(int32_t));
+    p = (int32_t*) SLIP_malloc((n+1)* sizeof(int32_t));
     soln = SLIP_create_double_mat(n, numRHS);;
     if (!x || !b_doub || !i || !p || !soln || !option)
     {
@@ -80,14 +80,14 @@ int main (void) // (int argc, char **argv)
         FREE_WORKSPACE;
         return 0;
     }
-    for (int j = 0; j < n; j++)                           // Get b & p
+    for (int32_t j = 0; j < n; j++)                           // Get b & p
     {
         p[j] = Ap[j];
         b_doub[j][0] = bxnum[j]/bxden[j];
         b_doub[j][1] = bxnum2[j]/bxden2[j];
     }
     p[n] = Ap[n];
-    for (int j = 0; j < nz; j++)                          // Get i and x
+    for (int32_t j = 0; j < nz; j++)                          // Get i and x
     {
         i[j] = Ai[j];
         x[j] = Axnum[j]/Axden[j];

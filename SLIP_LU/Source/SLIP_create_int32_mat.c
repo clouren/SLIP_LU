@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/SLIP_create_int_mat: create dense int matrix
+// SLIP_LU/SLIP_create_int32_mat: create dense int32_t matrix
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -8,11 +8,11 @@
 
 //------------------------------------------------------------------------------
 
-/* Purpose: This function creates an int matrix of size m*n. */
+/* Purpose: This function creates an int32_t matrix of size m*n. */
 
 #include "SLIP_LU_internal.h"
 
-int32_t** SLIP_create_int_mat
+int32_t** SLIP_create_int32_mat
 (
     int32_t m,     // number of rows (must be > 0)
     int32_t n      // number of columns (must be > 0)
@@ -28,7 +28,7 @@ int32_t** SLIP_create_int_mat
         if (x[i] == NULL)
         {
             // Out of memory
-            SLIP_delete_int_mat(&x, m, n);
+            SLIP_delete_int32_mat(&x, m, n);
             return NULL;
         }
     }

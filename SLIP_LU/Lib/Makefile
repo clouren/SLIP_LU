@@ -31,21 +31,21 @@ OBJ = \
     SLIP_build_dense_mpz.o \
     SLIP_build_dense_mpq.o \
     SLIP_build_dense_mpfr.o  \
-    SLIP_build_dense_int.o \
+    SLIP_build_dense_int32.o \
     SLIP_build_dense_double.o \
     SLIP_build_sparse_trip_mpz.o \
     SLIP_build_sparse_trip_mpq.o \
     SLIP_build_sparse_trip_mpfr.o \
-    SLIP_build_sparse_trip_int.o \
+    SLIP_build_sparse_trip_int32.o \
     SLIP_build_sparse_trip_double.o \
     SLIP_build_sparse_csc_mpz.o \
     SLIP_build_sparse_csc_mpq.o \
     SLIP_build_sparse_csc_mpfr.o \
     SLIP_build_sparse_csc_double.o \
-    SLIP_build_sparse_csc_int.o \
+    SLIP_build_sparse_csc_int32.o \
     SLIP_calloc.o SLIP_check_solution.o slip_create_LU_analysis.o \
-    slip_create_dense.o SLIP_create_double_mat.o SLIP_delete_int_mat.o \
-    SLIP_create_int_mat.o SLIP_create_mpfr_array.o SLIP_create_mpfr_mat.o \
+    slip_create_dense.o SLIP_create_double_mat.o SLIP_delete_int32_mat.o \
+    SLIP_create_int32_mat.o SLIP_create_mpfr_array.o SLIP_create_mpfr_mat.o \
     SLIP_create_mpq_array.o SLIP_create_mpq_mat.o slip_create_mpz_array2.o \
     SLIP_create_mpz_array.o SLIP_create_mpz_mat.o \
     slip_create_sparse.o slip_cumsum.o SLIP_delete_dense.o \
@@ -63,8 +63,8 @@ OBJ = \
     slip_lu_info.o \
     SLIP_LU_solve.o SLIP_malloc.o slip_mpz_populate_mat.o SLIP_permute_x.o \
     slip_reach.o SLIP_realloc.o slip_ref_triangular_solve.o \
-    slip_reset_int_array2.o \
-    slip_reset_int_array.o slip_reset_mpz_array.o SLIP_scale_x.o \
+    slip_reset_int32_array2.o \
+    slip_reset_int32_array.o slip_reset_mpz_array.o SLIP_scale_x.o \
     SLIP_solve_double.o \
     SLIP_solve_mpq.o slip_sort_xi.o slip_sparse_alloc2.o slip_sparse_alloc.o \
     slip_sparse_collapse.o slip_sparse_realloc.o SLIP_spok.o \

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/SLIP_build_dense_int: build dense int matrix
+// SLIP_LU/SLIP_build_dense_int32: build dense int32_t matrix
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -26,7 +26,7 @@
 
 #include "SLIP_LU_internal.h"
 
-SLIP_info SLIP_build_dense_int
+SLIP_info SLIP_build_dense_int32
 (
     SLIP_dense **C_handle,      // Dense matrix to construct
     // inputs, not modified:

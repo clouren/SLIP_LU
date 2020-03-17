@@ -37,7 +37,7 @@ int main (int argc, char **argv)
     //--------------------------------------------------------------------------
     SLIP_initialize();
     SLIP_info ok;
-    int n = 0, numRHS = 0;
+    int32_t n = 0, numRHS = 0;
 
     //--------------------------------------------------------------------------
     // Get matrix and right hand side file names

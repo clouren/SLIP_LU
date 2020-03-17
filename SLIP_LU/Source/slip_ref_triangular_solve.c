@@ -13,25 +13,25 @@
  * (LD) x = A(:,k). The algorithm is described in the paper; however in essence
  * it computes the nonzero pattern xi, then performs a sequence of IPGE
  * operations on the nonzeros to obtain their final value. All operations are
- * gauranteed to be integral. There are various enhancements in this code used
- * to reduce the overall cost of the operations and minimize operations as much
- * as possible.
+ * guaranteed to be integral (mpz_t). There are various enhancements in this
+ * code used to reduce the overall cost of the operations and minimize
+ * operations as much as possible.
  */
 
 /* Description of input/output
  *
- *  top_output: An int which on input is uninitialized. On output contains the
- *              contains the beginning of the nonzero pattern. That is the
- *              nonzero pattern is contained in xi[top_output...n-1].
+ *  top_output: An int32_t scalar which on input is uninitialized. On output
+ *              contains the contains the beginning of the nonzero pattern.
+ *              The nonzero pattern is contained in xi[top_output...n-1].
  *
  *  L:          The partial L matrix. On input contains columns 1:k-1 of L.
  *              Unmodified on on output.
  *
  *  A:          The input matrix. Unmodified on input/output
  *
- *  k:          Unmodified int which indicates which column of L and U is being
- *              computed.  That is, this triangular solve computes L(:,k) and
- *              U(:,k).
+ *  k:          Unmodified int32_t which indicates which column of L and U is
+ *              being computed.  That is, this triangular solve computes L(:,k)
+ *              and U(:,k).
  *
  *  xi:         A worspace array of size 2n, unitialized on input. On output,
  *              xi[top...n-1] contains the nonzero pattern of L(:,k) and U(:,k)
@@ -119,7 +119,7 @@ SLIP_info slip_ref_triangular_solve // performs the sparse REF triangular solve
     SLIP_CHECK(SLIP_mpz_set_ui(x[col], 0));
 
     // Reset h[i] = -1 for all i in nonzero pattern xi [top..n-1]
-    SLIP_CHECK(slip_reset_int_array2(h, n, top, xi));
+    SLIP_CHECK(slip_reset_int32_array2(h, n, top, xi));
 
     // Set x = A(:,q(k))
     SLIP_CHECK(slip_get_column(x, A, col));

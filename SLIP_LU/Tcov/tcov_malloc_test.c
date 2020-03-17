@@ -10,7 +10,7 @@
 
 #include "tcov_malloc_test.h"
 
-int malloc_count = INT_MAX ;
+int32_t malloc_count = INT32_MAX ;
 
 // Note that only the ANSI C memory manager is used here
 // (malloc, calloc, realloc, free)
@@ -125,11 +125,11 @@ SLIP_info slip_gmp_realloc_test
     size_t new_size
 )
 {
-    int slip_gmp_status = setjmp (slip_gmp_environment);
-    if (slip_gmp_status != 0)
+    if (setjmp (slip_gmp_environment) != 0)
     {
         return SLIP_OUT_OF_MEMORY;
     }
     *p_new = slip_gmp_reallocate(p_old, old_size, new_size);
     return SLIP_OK;
 }
+
