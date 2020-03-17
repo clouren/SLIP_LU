@@ -28,44 +28,10 @@ if (nargin < 3)
     option = SLIP_get_options ;   % Set defaults
 end
 
-% Check for integer overflow. If the max value of A or b exceeds this value
-% the internal routines can not expect integer input.
-
-% TODO what is this magic number 2000000000000 ??
-% It's 2e12, which is a lot bigger than 2^31.
-
-if (max(max(abs(A))) > 2000000000000)
-    option.A_is_integral = false ;
-end
-if (max(abs(A)) > 2000000000000)
-    option.b_is_integral = false ;
-end
-
 % Check if the input matrix is stored as sparse. If not, SLIP LU expects
 % sparse input, so convert to sparse.
 if (~issparse (A))
     A = sparse (A) ;
-end
-
-% If the user indicates that the input is integral, check if it is actually
-% integral.  TODO: do this inside the mexFunction.
-
-if (option.A_is_integral)
-    A2 = floor(A);
-    % TODO: so if it is < 1e-12, then the matrix can be treated as 'integeral'?
-    % Doesn't that introduce some error?  Why not an exact check?
-    if (normest(A2-A) > 1e-12)
-        option.A_is_integral = false ;
-    end
-    clear A2;
-end
-
-if (option.b_is_integral)
-    b2 = floor(b);
-    if (normest(b2-b) > 1e-12)
-        option.b_is_integral = false ;
-    end
-    clear b2;
 end
 
 % Preprocessing complete. Now use SLIP LU to solve Ax=b.

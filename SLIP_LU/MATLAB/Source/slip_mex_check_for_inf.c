@@ -8,24 +8,52 @@
 
 //------------------------------------------------------------------------------
 
-/* Purpose: This function checks if the input matrix or RHS has numbers too
- * large for double. */
+// Purpose: This function checks if the array x contains Inf's, NaN's, or
+// if its values can be represented as int32_t values.
 
 #include "SLIP_LU_mex.h"
 
-void slip_mex_check_for_inf
+bool slip_mex_check_for_inf     // true if x can be represented as int32_t
 (
     double* x, // The array of numeric values
     mwSize n   // size of array
 )
 {
+    
+    bool x_is_int32 = true ;
+
     for (mwSize k = 0; k < n; k++)
     {
-        if (mxIsInf(x[k]))
+        double xk = x [k] ;
+
+        if (mxIsInf (xk))
         {
-            mexErrMsgTxt("Numbers are too large for double. Please try the C "
-                "code with mpfr, mpq, or mpz");
+            mexErrMsgTxt ("A must not have any Inf values") ;
+        }
+
+        if (mxIsNaN (xk))
+        {
+            mexErrMsgTxt ("A must not have any NaN values") ;
+        }
+
+        if (x_is_int32)
+        {
+
+            if (xk < INT32_MIN || xk > INT32_MAX)
+            {
+                x_is_int32 = false ;
+            }
+            else
+            {
+                int32_t xi = (int32_t) xk ;
+                if ((double) xi != xk)
+                {
+                    x_is_int32 = false ;
+                }
+            }
         }
     }
+
+    return (x_is_int32) ;
 }
 

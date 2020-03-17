@@ -3,7 +3,9 @@ function option = SLIP_get_options
 %
 % Usage:
 %
-%   option = SLIP_get_options;
+%   option = SLIP_get_options ;
+%   option.tol = 1e-6 ;
+%   x = SLIP_LU (A, b, option) ;
 %
 % Each element of the option struct has the following possible values:
 % option.order: Column ordering used.
@@ -23,8 +25,8 @@ function option = SLIP_get_options
 % option.tol: tolerance (0,1) which is used if some threshold pivoting is used.
 %       default is 0.1.
 %
-% If any fields are not present in the options struct, the defaults are used
-% for that parameter.
+% If a field is not present in the options struct, or if the options
+% struct is not passed to SLIP_LU, the defaults are used.
 %
 % See also SLIP_LU, SLIP_install, SLIP_test.
 
@@ -36,15 +38,9 @@ option.order = 1 ;               % type of column ordering used
 option.pivot = 3 ;               % type of row pivoting scheme
 option.tol = 0.1 ;               % tolerance for row pivoting scheme
 
-% TODO: if struct fields empty, use the defaults
-
-% TODO: delete this function.
+% TODO: delete this function; not needed
 
 % TODO: use strings, not integers for:
 % option.order = 'none', 'colamd', or 'amd'
 % option.pivot = 'smallest' , etc
-
-% TODO: delete these options:
-option.A_is_integral = false ;   % true if A known to be integral
-option.b_is_integral = false ;   % true if b known to be integral
 

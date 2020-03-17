@@ -81,14 +81,13 @@ void slip_mwIndex_to_int32
     mwSize n
 ) ;
 
-/* Purpose: Check the input x array for numbers too large for
- * double precision.
- */
-void slip_mex_check_for_inf
+// Purpose: This function checks if the array x contains Inf's, NaN's, or
+// if its values can be represented as int32_t values.
+bool slip_mex_check_for_inf     // true if x can be represented as int32_t
 (
     double* x, // The array of numeric values
     mwSize n   // size of array
-);
+) ;
 
 /* Purpose: This function reads in the A matrix and right hand side vectors. */
 void slip_mex_get_A_and_b

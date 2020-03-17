@@ -2910,7 +2910,7 @@ if you want to use them in a different directory please add the
 Much like the C routines described throughout, the SLIP LU MATLAB interface has
 various parameters that the user can modify to control the factorization. In
 MATLAB, these are stored in a struct (hereafter referred to as the ``options"
-struct) which contains 9 elements. Notice that this struct is optional for the
+struct). Notice that this struct is optional for the
 user to use and can be avoided if one wishes to use only default options. The
 options struct can be accessed by typing the following into the MATLAB command
 window:
@@ -2921,6 +2921,7 @@ The elements of the options struct are as follows:
 
 \begin{itemize}
 
+% TODO make option.pivot a string
 \item \verb|option.pivot|: This parameter controls the pivoting scheme used.
 The factorization selects a pivot element in each column as follows:
 
@@ -2928,8 +2929,10 @@ The factorization selects a pivot element in each column as follows:
     \item 0: smallest pivot,
     \item 1: diagonal pivot if possible, otherwise smallest pivot,
     \item 2: first nonzero pivot in each column,
-    \item 3: (default) diagonal pivot with a tolerance for the smallest pivot,
-    \item 4: diagonal pivot with a tolerance for the largest pivot,
+    \item 3: (default) diagonal pivot with a tolerance (\verb|option.tol|)
+        for the smallest pivot,
+    \item 4: diagonal pivot with a tolerance (\verb|option.tol|)
+        for the largest pivot,
     \item 5: largest pivot.
     \end{itemize}
 
@@ -2937,38 +2940,14 @@ It is recommended that the user always selects either 3 or 1 for this parameter
 UNLESS they are trying to extract the Doolittle factors, then 5 may be
 appropriate (due to the size of numbers in Doolittle).
 
-% TODO: This is not the set of enums that SLIP_get_options.m says.
-% It says 0:none, 1:colamd, 2:amd.  FIXME.
-\item \verb|option.order|: This parameter controls the column ordering used. 0
-(default): COLAMD, 1: AMD, 2: no column ordering. It is usually recommended
-that the user keep this at COLAMD unless they already have a good column
-permutation.
+% TODO make option.order a string
+\item \verb|option.order|: This parameter controls the column ordering used.
+0: none, 1: COLAMD, 2: AMD. It is usually recommended that the user keep this
+at COLAMD unless they already have a good column permutation.
 
 \item \verb|option.tol|: This parameter determines the tolerance used if one of
 the threshold pivoting schemes is chosen. The default value is 0.1 and this
 parameter can take any value in the range (0,1).
-
-% TODO why have A_is_integral and b_is_integral anyway?  Can the function
-% check this itself?
-
-\item \verb|option.A_is_integral|: Set this parameter equal to 1 if the input
-matrix \verb|A| is already integral.
-% TODO do not say "integral".  Elsewhere in SLIP_LU the term is used for mpz_t.
-Otherwise, if the input matrix has any
-decimal entries, scaling must be performed to obtain an integral input matrix.
-\import If the input matrix is not integral and this parameter is set equal to
-1, the values will be truncated.
-% TODO truncated???  No.  Typecasted to int32_t, which may be undefined if the
-% entries in A are outside the range -2^31 to 2^31.
-
-% TODO: what does "integral" mean?  slip_mex_get_A_and_b assumes the entries in
-% A can be int32.  So "integral" is too strong.  Should be "All entries in A
-% are integers in the range -2^31 to 2^31."  Likewise for b.
-
-\item \verb|option.b_is_integral|: Set this parameter equal to 1 if the input
-right hand side vector(s) are already integral. Like the input matrix \verb|A|,
-if $\mathbf{b}$ contains any fractional entries, scaling must be performed to
-ensure integrality.
 
 \end{itemize}
 

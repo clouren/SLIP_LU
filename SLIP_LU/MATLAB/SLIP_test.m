@@ -23,6 +23,13 @@ if (exist ('ssget') ~= 0)
     err = norm(x-x2)/norm(x);
     maxerr = max (maxerr, err) ;
 
+    % now convert to an integer problem (x will not be integer)
+    A = floor (2^20 * A) ;
+    b = floor (2^20 * b) ;
+    x = SLIP_LU (A, b) ;
+    x2 = A\b;
+    err = norm(x-x2)/norm(x);
+    maxerr = max (maxerr, err) ;
 end
 
 for n = [1 10 100]
@@ -39,6 +46,15 @@ for n = [1 10 100]
         x2 = A\b;
         err = norm(x-x2)/norm(x);
         maxerr = max (maxerr, err) ;
+
+        % now convert to an integer problem (x will not be integer)
+        A = floor (2^20 * A) ;
+        b = floor (2^20 * b) ;
+        x = SLIP_LU(A,b);
+        x2 = A\b;
+        err = norm(x-x2)/norm(x);
+        maxerr = max (maxerr, err) ;
+
     end
 end
 
