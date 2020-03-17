@@ -6,6 +6,7 @@ function SLIP_test
 % See also SLIP_install, SLIP_get_options, SLIP_LU.
 
 maxerr = 0 ;
+rng ('default') ;
 
 fprintf ('Testing SLIP_LU: ') ;
 

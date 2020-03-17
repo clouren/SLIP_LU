@@ -21,7 +21,7 @@ function option = SLIP_get_options
 %        5: Largest pivot
 %
 % option.tol: tolerance (0,1) which is used if some threshold pivoting is used.
-%       default is TODO.
+%       default is 0.1.
 %
 % If any fields are not present in the options struct, the defaults are used
 % for that parameter.
@@ -35,8 +35,16 @@ function option = SLIP_get_options
 option.order = 1 ;               % type of column ordering used
 option.pivot = 3 ;               % type of row pivoting scheme
 option.tol = 0.1 ;               % tolerance for row pivoting scheme
-option.A_is_integer = false ;    % true if A known to be integral
-option.b_is_integer = false ;    % true if b known to be integral
 
 % TODO: if struct fields empty, use the defaults
+
+% TODO: delete this function.
+
+% TODO: use strings, not integers for:
+% option.order = 'none', 'colamd', or 'amd'
+% option.pivot = 'smallest' , etc
+
+% TODO: delete these options:
+option.A_is_integral = false ;   % true if A known to be integral
+option.b_is_integral = false ;   % true if b known to be integral
 
