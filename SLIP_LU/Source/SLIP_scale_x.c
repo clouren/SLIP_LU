@@ -12,6 +12,15 @@
 
 #include "SLIP_LU_internal.h"
 
+/*
+SLIP_info SLIP_scale_x
+(
+    SLIP_matrix *x,         // Solution matrix
+    SLIP_matrix *A,         // matrix A
+    SLIP_matrix *b          // right hand side
+)
+*/
+
 SLIP_info SLIP_scale_x
 (
     mpq_t **x,              // Solution matrix
@@ -19,6 +28,7 @@ SLIP_info SLIP_scale_x
     SLIP_dense *b           // right hand side
 )
 {
+
     // inputs have been validated in SLIP_solve_*.c
     int32_t r, s, n, numRHS;
     SLIP_info ok;
