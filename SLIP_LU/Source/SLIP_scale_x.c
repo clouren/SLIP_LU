@@ -30,8 +30,8 @@ SLIP_info SLIP_scale_x
 {
 
     // inputs have been validated in SLIP_solve_*.c
+    SLIP_info info ;
     int32_t r, s, n, numRHS;
-    SLIP_info ok;
     n = A->m;
     numRHS = b->n;
 

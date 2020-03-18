@@ -17,7 +17,7 @@ default: library
 include ../../SuiteSparse_config/SuiteSparse_config.mk
 
 # uncomment for extra error checking:
-# CFLAGS += -Wall -Wextra -Wpedantic -Werror
+CFLAGS += -Wall -Wextra -Wpedantic -Werror
 
 # SLIP_LU depends on SuiteSparse_config, AMD, COLAMD, M, GMP, and MPFR
 LDLIBS += -lsuitesparseconfig -lamd -lcolamd -lm -lgmp -lmpfr
@@ -27,6 +27,9 @@ C = $(CC) $(CF) -I../Include -I../../COLAMD/Include -I../../AMD/Include -I../../
 all: install
 
 OBJ = \
+    SLIP_matrix_allocate.o \
+    SLIP_matrix_free.o \
+    slip_cast_array.o \
     slip_array_div.o slip_array_mul.o slip_back_sub.o \
     SLIP_build_dense_mpz.o \
     SLIP_build_dense_mpq.o \

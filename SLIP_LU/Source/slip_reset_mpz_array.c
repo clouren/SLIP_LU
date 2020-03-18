@@ -24,13 +24,15 @@ SLIP_info slip_reset_mpz_array
 )
 {
     // Check input
+    SLIP_info info;
     if (!x || n <= 0 || top < 0 || !xi) {return SLIP_INCORRECT_INPUT;}
+
     // Access the nonzero pattern located in xi[top..n-1]
     // and set nonzero x[i] = 0
-    SLIP_info ok;
     for (int32_t i = top; i < n; i++)
     {
         SLIP_CHECK(SLIP_mpz_set_ui(x[xi[i]], 0));
     }
+
     return SLIP_OK;
 }

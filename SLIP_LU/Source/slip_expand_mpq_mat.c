@@ -15,7 +15,7 @@
  * On output, x_out is modified.
  */
 
-#define SLIP_FREE_WORKSPACE          \
+#define SLIP_FREE_ALL          \
     SLIP_delete_mpq_mat(&x4, m, n);  \
     SLIP_delete_mpz_mat(&x3, m, n);  \
     SLIP_MPZ_CLEAR(temp);
@@ -31,18 +31,21 @@ SLIP_info slip_expand_mpq_mat
     int32_t n     // number of columns of x
 )
 {
+
+    SLIP_info info ;
     int32_t i, j;
-    SLIP_info ok;
     mpq_t **x4 = NULL;
     mpz_t **x3 = NULL;
-    mpz_t temp; SLIP_MPZ_SET_NULL(temp);
+    mpz_t temp ;
+
+    SLIP_MPZ_SET_NULL(temp);
     x4 = SLIP_create_mpq_mat(m, n);
     x3 = SLIP_create_mpz_mat(m, n);
-    ok = SLIP_mpz_init(temp);
-    if (!x3 || !x4 || ok != SLIP_OK)
+    SLIP_CHECK (SLIP_mpz_init(temp)) ;
+    if (!x3 || !x4)
     {
         // Out of memory
-        SLIP_FREE_WORKSPACE;
+        SLIP_FREE_ALL;
         return SLIP_OUT_OF_MEMORY;
     }
 
@@ -88,7 +91,7 @@ SLIP_info slip_expand_mpq_mat
         }
     }
 
-    SLIP_FREE_WORKSPACE;
+    SLIP_FREE_ALL;
     return SLIP_OK;
 }
 

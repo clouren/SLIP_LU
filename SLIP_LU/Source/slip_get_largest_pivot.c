@@ -17,7 +17,7 @@
  * On output, the index of the largest pivot is returned.
  */
 
-#define SLIP_FREE_WORKSPACE   \
+#define SLIP_FREE_ALL   \
     SLIP_MPZ_CLEAR(big);
 
 #include "SLIP_LU_internal.h"
@@ -32,9 +32,9 @@ SLIP_info slip_get_largest_pivot
     int32_t* xi      // nonzero pattern of x
 )
 {
+    SLIP_info info ;
     if (!x || !pivs || !xi) {return SLIP_INCORRECT_INPUT;}
     int32_t i, inew, r;
-    SLIP_info ok;
     *pivot = -1;
     mpz_t big; SLIP_MPZ_SET_NULL(big);
     SLIP_CHECK(SLIP_mpz_init(big));
@@ -58,7 +58,7 @@ SLIP_info slip_get_largest_pivot
     }
 
     // Frees the memory occupied by the pivot value
-    SLIP_FREE_WORKSPACE;
+    SLIP_FREE_ALL;
     if (*pivot == -1)
     {
         return SLIP_SINGULAR;

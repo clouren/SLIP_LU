@@ -19,7 +19,7 @@
 // SLIP_dense matrix C is a pointer to a SLIP_dense struct, containing values
 // C->x of type mpz_t, dimensions C->m and C->n, and a scale factor C->scale.
 
-#define SLIP_FREE_WORKSPACE                 \
+#define SLIP_FREE_ALL                  \
     (*C_handle) = NULL ;                    \
     SLIP_delete_dense (&C) ;
 
@@ -36,7 +36,7 @@ SLIP_info SLIP_build_dense_mpfr
 )
 {
 
-    SLIP_info ok;
+    SLIP_info info ;
     if (!B || !C_handle || !option)
     {
         return (SLIP_INCORRECT_INPUT) ;
@@ -45,7 +45,7 @@ SLIP_info SLIP_build_dense_mpfr
     SLIP_dense *C = slip_create_dense ( ) ;
     if (C == NULL)
     {
-        SLIP_FREE_WORKSPACE ;
+        SLIP_FREE_ALL ;
         return (SLIP_OUT_OF_MEMORY) ;
     }
 

@@ -66,27 +66,26 @@
 #define SLIP_MARKED(Ap,j) (Ap [j] < 0)
 #define SLIP_MARK(Ap,j) { Ap [j] = SLIP_FLIP (Ap [j]) ; }
 
-// SLIP_CHECK(method) is a macro that calls a slip method and checks the
-// status; if a failure occurs, it prints the detailed error message, frees all
-// allocated workspace and returns the error status to the caller.
-// To use SLIP_CHECK, the #include'ing file must declare a SLIP_info ok,
-// and must define SLIP_FREE_WORKSPACE as a macro that frees all workspace
-// if an error occurs. The method can be a scalar ok as well, so that
-// SLIP_CHECK(ok) works.
+// SLIP_CHECK(method) is a macro that calls a SLIP LU method and checks the
+// status; if a failure occurs, it frees all allocated workspace and returns
+// the error status to the caller.  To use SLIP_CHECK, the #include'ing file
+// must declare a SLIP_info info, and must define SLIP_FREE_ALL as a macro that
+// frees all workspace if an error occurs. The method can be a scalar as well,
+// so that SLIP_CHECK(info) works.
 
 // the default is to free nothing
-#ifndef SLIP_FREE_WORKSPACE
-#define SLIP_FREE_WORKSPACE
+#ifndef SLIP_FREE_ALL
+#define SLIP_FREE_ALL
 #endif
 
-#define SLIP_CHECK(method)                                              \
-{                                                                       \
-    ok = method ;                                                       \
-    if (ok != SLIP_OK)                                                  \
-    {                                                                   \
-        SLIP_FREE_WORKSPACE ;                                           \
-        return (ok) ;                                                   \
-    }                                                                   \
+#define SLIP_CHECK(method)      \
+{                               \
+    info = (method) ;           \
+    if (info != SLIP_OK)        \
+    {                           \
+        SLIP_FREE_ALL ;         \
+        return (info) ;         \
+    }                           \
 }
 
 #include "SLIP_LU.h"
@@ -513,7 +512,7 @@ SLIP_info slip_get_pivot
     int32_t n,      // dimension of the problem
     int32_t top,    // nonzero pattern is located in xi[top..n-1]
     int32_t* xi,    // nonzero pattern of x
-    SLIP_pivot order,  // what kind of pivoting to use (see above description)
+    SLIP_pivot order,  // pivoting method to use (see above description)
     int32_t col,    // current column of A (real kth column i.e., q[k])
     int32_t k,      // iteration of the algorithm
     mpz_t* rhos,    // vector of pivots
@@ -702,5 +701,20 @@ SLIP_info slip_trip_to_mat
     int32_t n,          // Dimension of the matrix
     int32_t nz          // Number of nonzeros in the matrix
 );
+
+////////////////////////////////////////////////////////////////////////////////
+// new functions
+////////////////////////////////////////////////////////////////////////////////
+
+SLIP_info slip_cast_array
+(
+    void *Y,                // output array, of size n
+    SLIP_type ytype,        // type of Y
+    void *X,                // input array, of size n
+    SLIP_type xtype,        // type of X
+    int32_t n,              // size of Y and X
+    mpq_t scale,            // scale factor applied if X is mpz_t
+    SLIP_options *option
+) ;
 
 #endif

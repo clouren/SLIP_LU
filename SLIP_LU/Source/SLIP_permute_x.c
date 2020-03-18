@@ -12,7 +12,7 @@
  * That is, x = Q*x.
  */
 
-#define SLIP_FREE_WORKSPACE                 \
+#define SLIP_FREE_ALL                 \
     SLIP_delete_mpq_mat(&x2,n,numRHS);
 
 #include "SLIP_LU_internal.h"
@@ -25,12 +25,13 @@ SLIP_info SLIP_permute_x
     SLIP_LU_analysis *S   // symbolic analysis with the column ordering Q
 )
 {
+
+    SLIP_info info ;
     if (!x || !S || !S->q) {return SLIP_INCORRECT_INPUT;}
     int32_t *q = S->q;     // column permutation
     // Declare temp x
     mpq_t** x2 = SLIP_create_mpq_mat(n, numRHS);
     if (!x2) {return SLIP_OUT_OF_MEMORY;}
-    SLIP_info ok = SLIP_OK;
     // Set x2 = Q*x
     for (int32_t i = 0; i < n; i++)
     {
@@ -48,7 +49,8 @@ SLIP_info SLIP_permute_x
             SLIP_CHECK(SLIP_mpq_set(x[i][j], x2[i][j]));
         }
     }
-    SLIP_FREE_WORKSPACE;
+
+    SLIP_FREE_ALL;
     return SLIP_OK;
 }
 

@@ -31,7 +31,7 @@
  *
  */
 
-#define SLIP_FREE_WORKSPACE                 \
+#define SLIP_FREE_ALL                 \
     SLIP_delete_mpq_mat(&x_mpq, n, numRHS); \
     SLIP_delete_sparse(&L);                 \
     SLIP_delete_sparse(&U);                 \
@@ -54,6 +54,7 @@ SLIP_info SLIP_solve_double
     // check inputs
     //-------------------------------------------------------------------------
 
+    SLIP_info info ;
     if (!x_doub || !A || !A->p || !A->i || !A->x ||
         !S || !S->q || !b || !b->x || !option)
     {
@@ -70,11 +71,10 @@ SLIP_info SLIP_solve_double
     //--------------------------------------------------------------------------
 
     int32_t n = A->n, numRHS = b->n;
-    SLIP_info ok;
     mpq_t **x_mpq = SLIP_create_mpq_mat(n, numRHS);
     if (!x_mpq)
     {
-        SLIP_FREE_WORKSPACE;
+        SLIP_FREE_ALL;
         return SLIP_OUT_OF_MEMORY;
     }
 
@@ -112,7 +112,7 @@ SLIP_info SLIP_solve_double
     //--------------------------------------------------------------------------
     SLIP_CHECK(SLIP_get_double_soln(x_doub, x_mpq, n, numRHS));
 
-    SLIP_FREE_WORKSPACE;
-    return ok;
+    SLIP_FREE_ALL;
+    return (SLIP_OK) ;
 }
 

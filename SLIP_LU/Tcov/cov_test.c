@@ -41,7 +41,7 @@
  * to properly use this code
  */
 
-#define SLIP_FREE_WORKSPACE                      \
+#define SLIP_FREE_ALL                      \
 {                                                \
     SLIP_delete_LU_analysis(&S);                 \
     SLIP_delete_sparse(&A);                      \
@@ -72,23 +72,23 @@
 
 #define TEST_CHECK(method)                       \
 {                                                \
-    ok = method;                                 \
-    if (ok!=SLIP_OK)                             \
+    info = (method) ;                            \
+    if (info != SLIP_OK)                         \
     {                                            \
-        SLIP_PRINT_OK(ok);                       \
-        SLIP_FREE_WORKSPACE;                     \
+        SLIP_PRINT_INFO (info) ;                 \
+        SLIP_FREE_ALL;                     \
         continue;                                \
     }                                            \
 }
 
 #define TEST_CHECK_FAILURE(method)               \
 {                                                \
-    ok = method;                                 \
-    if (ok!=SLIP_INCORRECT_INPUT && ok!=SLIP_SINGULAR)\
+    info = (method) ;                            \
+    if (info != SLIP_INCORRECT_INPUT && info != SLIP_SINGULAR) \
     {                                            \
-        SLIP_PRINT_OK(ok);                       \
-        SLIP_FREE_WORKSPACE;                     \
-        continue;                                \
+        SLIP_PRINT_INFO (info) ;                 \
+        SLIP_FREE_ALL ;                    \
+        continue ;                               \
     }                                            \
     else                                         \
     {                                            \
@@ -265,7 +265,7 @@ int main( int argc, char* argv[])
             //------------------------------------------------------------------
 
             int32_t n=4, numRHS=1, j, nz=11;
-            SLIP_info ok;
+            SLIP_info info ;
             SLIP_options* option = SLIP_create_default_options();
             if (!option) {continue;}
             FILE* mat_file = NULL;
@@ -317,7 +317,7 @@ int main( int argc, char* argv[])
 
                 B_mpz = SLIP_create_mpz_mat(n, numRHS);
                 Ax_mpz = SLIP_create_mpz_array(nz);
-                if (!B_mpz || !Ax_mpz) {SLIP_FREE_WORKSPACE; continue;}
+                if (!B_mpz || !Ax_mpz) {SLIP_FREE_ALL; continue;}
 
                 for (j = 0; j < n; j++)                           // Get b
                 {
@@ -357,7 +357,7 @@ int main( int argc, char* argv[])
 
                 Ax_doub = (double*) SLIP_calloc(nz, sizeof(double));
                 B_doub = SLIP_create_double_mat(n, numRHS);
-                if (!B_doub || !Ax_doub) {SLIP_FREE_WORKSPACE; continue;}
+                if (!B_doub || !Ax_doub) {SLIP_FREE_ALL; continue;}
 
                 // create empty A and b using uninitialized double mat/array
                 TEST_CHECK(SLIP_build_sparse_csc_double(&A, Ap, Ai,
@@ -409,7 +409,7 @@ int main( int argc, char* argv[])
 
                 B_int32 = SLIP_create_int32_mat(n, numRHS);
                 Ax_int32 = (int32_t*) SLIP_calloc(nz, sizeof(int32_t));
-                if (!B_int32 || !Ax_int32) {SLIP_FREE_WORKSPACE; continue;}
+                if (!B_int32 || !Ax_int32) {SLIP_FREE_ALL; continue;}
 
                 for (j = 0; j < n; j++)                           // Get b
                 {
@@ -439,7 +439,7 @@ int main( int argc, char* argv[])
 
                 B_mpq = SLIP_create_mpq_mat(n, numRHS);
                 Ax_mpq = SLIP_create_mpq_array(nz);
-                if (!B_mpq || !Ax_mpq) {SLIP_FREE_WORKSPACE; continue;}
+                if (!B_mpq || !Ax_mpq) {SLIP_FREE_ALL; continue;}
 
                 for (j = 0; j < n; j++)                           // Get b
                 {
@@ -472,7 +472,7 @@ int main( int argc, char* argv[])
 
                 B_mpfr = SLIP_create_mpfr_mat(n, numRHS, option);
                 Ax_mpfr = SLIP_create_mpfr_array(nz, option);
-                if (!B_mpfr|| !Ax_mpfr) {SLIP_FREE_WORKSPACE; continue;}
+                if (!B_mpfr|| !Ax_mpfr) {SLIP_FREE_ALL; continue;}
 
                 // create empty A and b using uninitialized double mat/array
                 TEST_CHECK(SLIP_build_sparse_csc_mpfr(&A, Ap, Ai,
@@ -559,7 +559,7 @@ int main( int argc, char* argv[])
                 x_doub = (double*) SLIP_calloc(nz, sizeof(double));
                 if (!x_mpz || !x_mpq || !x_mpfr || !x_doub)
                 {
-                    SLIP_FREE_WORKSPACE;
+                    SLIP_FREE_ALL;
                     continue;
                 }
 
@@ -606,22 +606,22 @@ int main( int argc, char* argv[])
 
                 TEST_CHECK(SLIP_build_sparse_trip_int32(&A, I, J, x_int32, n,
                     nz));
-                ok = SLIP_gmp_printf("scale = %Qd\n",A->scale);
-                if (ok < 0) {TEST_CHECK(ok);}
+                info  = SLIP_gmp_printf("scale = %Qd\n",A->scale);
+                if (info  < 0) {TEST_CHECK(info );}
                 option->print_level = 3;
                 TEST_CHECK(SLIP_spok (A, option));
                 SLIP_delete_sparse (&A) ;
 
                 TEST_CHECK(SLIP_build_sparse_trip_mpq(&A, I, J, x_mpq, n, nz));
-                ok = SLIP_gmp_printf("scale = %Qd\n",A->scale);
-                if (ok < 0) {TEST_CHECK(ok);}
+                info  = SLIP_gmp_printf("scale = %Qd\n",A->scale);
+                if (info  < 0) {TEST_CHECK(info );}
                 TEST_CHECK(SLIP_spok (A, option));
                 SLIP_delete_sparse (&A) ;
 
                 TEST_CHECK(SLIP_build_sparse_trip_mpfr(&A, I, J, x_mpfr, n, nz,
                     option));
-                ok = SLIP_gmp_printf("scale = %Qd\n",A->scale);
-                if (ok < 0) {TEST_CHECK(ok);}
+                info  = SLIP_gmp_printf("scale = %Qd\n",A->scale);
+                if (info  < 0) {TEST_CHECK(info );}
                 TEST_CHECK(SLIP_spok (A, option));
 
                 //test coverage for SLIP_spok()
@@ -662,7 +662,7 @@ int main( int argc, char* argv[])
                 TEST_CHECK_FAILURE(SLIP_LU_solve(NULL, NULL, NULL, NULL, NULL,
                     NULL));
 
-                SLIP_FREE_WORKSPACE;
+                SLIP_FREE_ALL;
 
                 // for miscellaneous test, continue to next loop directly
                 if (!IS_SIMPLE_TEST)
@@ -712,7 +712,7 @@ int main( int argc, char* argv[])
                         numRHS, option));
 
                     TEST_CHECK(SLIP_check_solution(A, sol_mpq, b));
-                    check2 = ok;  // track the status of SLIP_check_solution
+                    check2 = info ;  // track the status of SLIP_check_solution
                     TEST_CHECK(SLIP_print_stats_mpq(sol_mpq, n, numRHS,
                         check2, option));
                     option->print_level = 3;
@@ -724,11 +724,12 @@ int main( int argc, char* argv[])
 
                     // Print result using SLIP_print_stats, which should return
                     // SLIP_INCORRECT since check2 == SLIP_INCORRECT
-                    ok=SLIP_print_stats_mpq(sol_mpq, n, numRHS, check2, option);
-                    if (ok!=SLIP_INCORRECT)
+                    info = SLIP_print_stats_mpq (sol_mpq, n, numRHS, check2,
+                        option);
+                    if (info != SLIP_INCORRECT)
                     {
-                        SLIP_PRINT_OK(ok);
-                        SLIP_FREE_WORKSPACE;
+                        SLIP_PRINT_INFO (info);
+                        SLIP_FREE_ALL;
                         continue;
                     }
                 }
@@ -762,7 +763,7 @@ int main( int argc, char* argv[])
             // Free Memory
             //------------------------------------------------------------------
 
-            SLIP_FREE_WORKSPACE;
+            SLIP_FREE_ALL;
             if(!IS_SIMPLE_TEST)
             {
                 if (malloc_count > 0)

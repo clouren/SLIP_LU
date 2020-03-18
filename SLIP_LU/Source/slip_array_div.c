@@ -15,7 +15,7 @@
  * On output, the contents of the array x2 are modified
  */
 
-#define SLIP_FREE_WORKSPACE       \
+#define SLIP_FREE_ALL             \
     SLIP_MPQ_CLEAR(det2);
 
 #include "SLIP_LU_internal.h"
@@ -30,7 +30,7 @@ SLIP_info slip_array_div // divides the x vector by the determinant
 )
 {
     if (!x2 || !x) {return SLIP_INCORRECT_INPUT;}
-    SLIP_info ok;
+    SLIP_info info ;
     // Set det2 = det
     mpq_t det2; SLIP_MPQ_SET_NULL(det2);
     SLIP_CHECK(SLIP_mpq_init(det2));
@@ -53,7 +53,7 @@ SLIP_info slip_array_div // divides the x vector by the determinant
     //--------------------------------------------------------------------------
     // Free memory associated with det2
     //--------------------------------------------------------------------------
-    SLIP_FREE_WORKSPACE;
+    SLIP_FREE_ALL ;
     return SLIP_OK;
 }
 

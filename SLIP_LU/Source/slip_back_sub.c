@@ -24,11 +24,13 @@ SLIP_info slip_back_sub  // performs sparse REF backward substitution
     int32_t numRHS          // number of columns in bx
 )
 {
+
+    SLIP_info info ;
     int32_t sgn;
     mpz_t *Ux = U->x;
     int32_t *Ui = U->i;
     int32_t *Up = U->p;
-    SLIP_info ok;
+
     for (int32_t k = 0; k < numRHS; k++)
     {
         // Start at bx[n]
@@ -49,6 +51,7 @@ SLIP_info slip_back_sub  // performs sparse REF backward substitution
             }
         }
     }
-    return SLIP_OK;
+
+    return (SLIP_OK) ;
 }
 

@@ -14,7 +14,7 @@
  * function allows mpfr arrays to be used within SLIP LU.
  */
 
-#define SLIP_FREE_WORKSPACE          \
+#define SLIP_FREE_ALL          \
     SLIP_delete_mpfr_mat(&x3, m, n); \
     SLIP_MPFR_CLEAR(expon);          \
     SLIP_MPZ_CLEAR(temp_expon);      \
@@ -36,7 +36,7 @@ SLIP_info slip_expand_mpfr_mat
 {
     int32_t i, j, k, l, r1, r2 = 1;
     bool nz_found = false;
-    SLIP_info ok;
+    SLIP_info info ;
     mpfr_t expon, **x3 = NULL; SLIP_MPFR_SET_NULL(expon);
     mpz_t temp_expon, gcd, one;
     SLIP_MPZ_SET_NULL(temp_expon);
@@ -51,7 +51,7 @@ SLIP_info slip_expand_mpfr_mat
     x3 = SLIP_create_mpfr_mat(m, n, option);
     if (!x3)
     {
-        SLIP_FREE_WORKSPACE;
+        SLIP_FREE_ALL;
         return SLIP_OUT_OF_MEMORY;
     }
 
@@ -114,7 +114,7 @@ SLIP_info slip_expand_mpfr_mat
 
     if (!nz_found) // Entire matrix is zeros
     {
-        SLIP_FREE_WORKSPACE;
+        SLIP_FREE_ALL;
         SLIP_mpq_set_z(scale, one);
         return SLIP_OK;
     }
@@ -137,7 +137,7 @@ SLIP_info slip_expand_mpfr_mat
         SLIP_CHECK(SLIP_mpq_set_z(temp, gcd));
         SLIP_CHECK(SLIP_mpq_div(scale, scale, temp));
     }
-    SLIP_FREE_WORKSPACE;
+    SLIP_FREE_ALL;
     return SLIP_OK;
 }
 

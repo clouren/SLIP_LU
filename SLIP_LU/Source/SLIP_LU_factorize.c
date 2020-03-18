@@ -32,7 +32,7 @@
     SLIP_MPFR_CLEAR(temp);          \
     SLIP_MPZ_CLEAR(sigma);
 
-#define SLIP_FREE_WORKSPACE         \
+#define SLIP_FREE_ALL               \
     SLIP_FREE_WORK                  \
     SLIP_delete_sparse(&L);         \
     SLIP_delete_sparse(&U);         \
@@ -91,7 +91,7 @@ SLIP_info SLIP_LU_factorize
     // Declare and initialize workspace
     //--------------------------------------------------------------------------
 
-    SLIP_info ok = SLIP_OK;
+    SLIP_info info ;
     int32_t n = A->n ;
 
     L = slip_create_sparse ( ) ;
@@ -101,7 +101,7 @@ SLIP_info SLIP_LU_factorize
     if (!L || !U || !pinv || !rhos)
     {
         // out of memory: free everything and return
-        SLIP_FREE_WORKSPACE;
+        SLIP_FREE_ALL ;
         return SLIP_OUT_OF_MEMORY;
     }
 
@@ -134,7 +134,7 @@ SLIP_info SLIP_LU_factorize
     if (!pivs || !h || !xi || !row_perm)
     {
         // out of memory: free everything and return
-        SLIP_FREE_WORKSPACE ;
+        SLIP_FREE_ALL  ;
         return SLIP_OUT_OF_MEMORY;
     }
     // Initialize pivs and h; that is set pivs[i] = -1 and
@@ -214,7 +214,7 @@ SLIP_info SLIP_LU_factorize
     x = slip_create_mpz_array2(n,bound);
     if (!x)
     {
-        SLIP_FREE_WORKSPACE;
+        SLIP_FREE_ALL ;
         return SLIP_OUT_OF_MEMORY;
     }
     // Initialize location based vectors

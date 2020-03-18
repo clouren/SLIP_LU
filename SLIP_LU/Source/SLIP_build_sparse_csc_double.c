@@ -10,7 +10,7 @@
 
 /* Purpose: build sparse matrix from double values */
 
-#define SLIP_FREE_WORKSPACE                 \
+#define SLIP_FREE_ALL                 \
     (*A_handle) = NULL ;                    \
     SLIP_delete_sparse (&A) ;               \
     SLIP_delete_mpz_array(&x_new, nz);
@@ -29,7 +29,7 @@ SLIP_info SLIP_build_sparse_csc_double
 )
 {
 
-    SLIP_info ok;
+    SLIP_info info ;
     if (!p || !I || !x || !A_handle)
     {
         return SLIP_INCORRECT_INPUT;
@@ -39,7 +39,7 @@ SLIP_info SLIP_build_sparse_csc_double
     mpz_t* x_new = SLIP_create_mpz_array(nz);
     if (A == NULL || x_new == NULL)
     {
-        SLIP_FREE_WORKSPACE ;
+        SLIP_FREE_ALL ;
         return (SLIP_OUT_OF_MEMORY) ;
     }
 

@@ -16,7 +16,7 @@
  * See also slip_expand_double_array, which converts length n vector.
  */
 
-#define SLIP_FREE_WORKSPACE              \
+#define SLIP_FREE_ALL              \
     SLIP_delete_mpfr_mat(&x3, m, n);\
     SLIP_MPZ_CLEAR(gcd);            \
     SLIP_MPZ_CLEAR(one);            \
@@ -36,7 +36,7 @@ SLIP_info slip_expand_double_mat
 {
     int32_t i, j, k, l, r1, r2 = 1;
     bool nz_found = false;
-    SLIP_info ok;
+    SLIP_info info ;
     mpfr_t **x3 = NULL;
     mpz_t gcd, one;
     SLIP_MPZ_SET_NULL(gcd); SLIP_MPZ_SET_NULL(one);
@@ -49,7 +49,7 @@ SLIP_info slip_expand_double_mat
 
     if (!x3)
     {
-        SLIP_FREE_WORKSPACE;
+        SLIP_FREE_ALL;
         return SLIP_OUT_OF_MEMORY;
     }
     double expon = pow(10,17);                          // expon = 10^17
@@ -110,7 +110,7 @@ SLIP_info slip_expand_double_mat
 
     if (!nz_found) // Entire matrix is zeros
     {
-        SLIP_FREE_WORKSPACE;
+        SLIP_FREE_ALL;
         SLIP_mpq_set_z(scale, one);
         return SLIP_OK;
     }
@@ -132,7 +132,7 @@ SLIP_info slip_expand_double_mat
         SLIP_CHECK(SLIP_mpq_set_z(temp, gcd));
         SLIP_CHECK(SLIP_mpq_div(scale, scale, temp));
     }
-    SLIP_FREE_WORKSPACE;
+    SLIP_FREE_ALL;
     return SLIP_OK;
 }
 

@@ -18,7 +18,7 @@
  * On output, the mpz_t** x structure is modified.
  */
 
-#define SLIP_FREE_WORKSPACE            \
+#define SLIP_FREE_ALL            \
 {                                      \
     for (i = 0; i < n; i++)            \
     {                                  \
@@ -37,12 +37,13 @@ SLIP_info slip_forward_sub
     int32_t numRHS          // number of columns in x
 )
 {
-    SLIP_info ok;
+
+    SLIP_info info ;
     int32_t i, j, p, k, n, m, mnew, sgn, **h;
     // Size of x vector
     n = L->n;
 
-    // calloc is used, so that h is initialized for SLIP_FREE_WORKSPACE
+    // calloc is used, so that h is initialized for SLIP_FREE_ALL
     h = (int32_t**) SLIP_calloc(n, sizeof(int32_t*));
     if (!h)
     {
@@ -53,7 +54,7 @@ SLIP_info slip_forward_sub
         h[i] = (int32_t*) SLIP_malloc(numRHS* sizeof(int32_t));
         if (!h[i])
         {
-            SLIP_FREE_WORKSPACE;
+            SLIP_FREE_ALL;
             return SLIP_OUT_OF_MEMORY;
         }
         for (j = 0; j < numRHS; j++)
@@ -158,7 +159,7 @@ SLIP_info slip_forward_sub
     //--------------------------------------------------------------------------
     // Free h memory
     //--------------------------------------------------------------------------
-    SLIP_FREE_WORKSPACE;
+    SLIP_FREE_ALL;
     return SLIP_OK;
 }
 

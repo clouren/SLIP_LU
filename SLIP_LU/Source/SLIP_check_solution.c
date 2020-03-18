@@ -18,7 +18,7 @@
  * refer to Demo/SLIPLU.c for the proper usage of this function.
  */
 
-#define SLIP_FREE_WORKSPACE                 \
+#define SLIP_FREE_ALL                       \
     SLIP_MPQ_CLEAR(temp);                   \
     SLIP_delete_mpq_mat(&b2, n, numRHS);
 
@@ -43,7 +43,7 @@ SLIP_info SLIP_check_solution
     int32_t p, j, i, r;
     int32_t n = A->n, numRHS = b->n;
     mpz_t** bx = b->x;
-    SLIP_info ok;
+    SLIP_info info ;
     mpq_t** b2 = NULL;
     mpq_t temp; SLIP_MPQ_SET_NULL(temp);
     SLIP_CHECK(SLIP_mpq_init(temp));
@@ -52,7 +52,7 @@ SLIP_info SLIP_check_solution
     b2 = SLIP_create_mpq_mat(n, numRHS);
     if (!b2)
     {
-        SLIP_FREE_WORKSPACE;
+        SLIP_FREE_ALL;
         return SLIP_OUT_OF_MEMORY;
     }
 
@@ -93,7 +93,7 @@ SLIP_info SLIP_check_solution
             SLIP_CHECK(SLIP_mpq_equal(&r, temp, b2[i][j]));
             if (r == 0)
             {
-                SLIP_FREE_WORKSPACE;
+                SLIP_FREE_ALL;
                 return SLIP_INCORRECT;
             }
         }
@@ -103,7 +103,7 @@ SLIP_info SLIP_check_solution
     // Free memory
     //--------------------------------------------------------------------------
 
-    SLIP_FREE_WORKSPACE;
+    SLIP_FREE_ALL;
     return SLIP_OK;
 }
 

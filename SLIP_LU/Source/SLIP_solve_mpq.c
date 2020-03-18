@@ -30,7 +30,7 @@
  * option:  Struct containing various command parameters for the factorization.
  */
 
-# define SLIP_FREE_WORKSPACE        \
+# define SLIP_FREE_ALL        \
     SLIP_delete_sparse(&L);         \
     SLIP_delete_sparse(&U);         \
     SLIP_FREE(pinv);                \
@@ -59,7 +59,7 @@ SLIP_info SLIP_solve_mpq
     }
 
     int32_t n = A->n, numRHS = b->n;
-    SLIP_info ok;
+    SLIP_info info ;
     SLIP_sparse *L = NULL ;
     SLIP_sparse *U = NULL ;
     int32_t *pinv = NULL ;
@@ -96,7 +96,7 @@ SLIP_info SLIP_solve_mpq
     //--------------------------------------------------------------------------
     // Free memory
     //--------------------------------------------------------------------------
-    SLIP_FREE_WORKSPACE;
-    return ok;
+    SLIP_FREE_ALL;
+    return (SLIP_OK) ;
 }
 

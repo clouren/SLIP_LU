@@ -15,7 +15,7 @@
  * On output, the index of kth pivot is returned.
  */
 
-#define SLIP_FREE_WORKSPACE        \
+#define SLIP_FREE_ALL        \
     SLIP_MPZ_CLEAR(small);
 
 #include "SLIP_LU_internal.h"
@@ -30,12 +30,14 @@ SLIP_info slip_get_smallest_pivot
     int32_t* xi     // nonzero pattern of x
 )
 {
+
     // Check input
+    SLIP_info info ;
     if (!x || !pivs || !xi) {return SLIP_INCORRECT_INPUT;}
-    // Flag is non-negative until we have an initial starting value for small
     int32_t i, inew, j, flag, sgn, r;
+
+    // Flag is non-negative until we have an initial starting value for small
     *pivot = -1;
-    SLIP_info ok;
     j = n;
     flag = top;
     mpz_t small; SLIP_MPZ_SET_NULL(small);
@@ -87,7 +89,7 @@ SLIP_info slip_get_smallest_pivot
         }
     }
     // Clear memory for small
-    SLIP_FREE_WORKSPACE;
+    SLIP_FREE_ALL;
     if (*pivot == -1)
     {
         return SLIP_SINGULAR;

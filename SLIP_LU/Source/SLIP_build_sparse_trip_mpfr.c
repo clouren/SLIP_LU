@@ -16,7 +16,7 @@
  * On output, the SLIP_sparse* A contains the user's matrix.
  */
 
-#define SLIP_FREE_WORKSPACE                 \
+#define SLIP_FREE_ALL                       \
     (*A_handle) = NULL ;                    \
     SLIP_delete_sparse (&A) ;               \
     SLIP_delete_mpz_array(&x_new, nz);
@@ -35,7 +35,7 @@ SLIP_info SLIP_build_sparse_trip_mpfr
 )
 {
 
-    SLIP_info ok;
+    SLIP_info info ;
     if (!I || !J || !A_handle || !x || n <= 0 || nz <= 0 || !option)
     {
         return SLIP_INCORRECT_INPUT;
@@ -46,7 +46,7 @@ SLIP_info SLIP_build_sparse_trip_mpfr
 
     if (A == NULL || x_new == NULL)
     {
-        SLIP_FREE_WORKSPACE ;
+        SLIP_FREE_ALL ;
         return (SLIP_OUT_OF_MEMORY) ;
     }
 

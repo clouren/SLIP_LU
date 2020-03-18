@@ -14,7 +14,7 @@
  * The values of the triplet matrix must be stored as mpz_t values.
  */
 
-#define SLIP_FREE_WORKSPACE              \
+#define SLIP_FREE_ALL              \
     SLIP_FREE(w);
 
 #include "SLIP_LU_internal.h"
@@ -32,11 +32,10 @@ SLIP_info slip_trip_to_mat
 
     // inputs have been validated in SLIP_build_sparse_trip_*.c
     int32_t k, p;
-    SLIP_info ok;
+    SLIP_info info ;
     int32_t* w = (int32_t*) SLIP_calloc(n, sizeof(int32_t));
     if (!w)
     {
-        SLIP_FREE_WORKSPACE;
         return SLIP_OUT_OF_MEMORY;
     }
 
@@ -57,7 +56,7 @@ SLIP_info slip_trip_to_mat
         // Place values of x
         if (A->i[p] < 0)
         {
-            SLIP_FREE_WORKSPACE;
+            SLIP_FREE_ALL ;
             return SLIP_INCORRECT_INPUT;
         }
         SLIP_CHECK(SLIP_mpz_set(A->x[p], x[k]));
@@ -65,7 +64,7 @@ SLIP_info slip_trip_to_mat
     // Number of nonzeros in A
     A->nz = A->nzmax;
     // Delete w
-    SLIP_FREE_WORKSPACE;
+    SLIP_FREE_ALL ;
     return SLIP_OK;
 }
 

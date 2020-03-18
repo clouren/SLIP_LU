@@ -36,6 +36,8 @@ SLIP_info SLIP_get_double_soln
     int32_t numRHS        // Number of right hand side vectors
 )
 {
+
+    SLIP_info info ;
     if (x_doub  == NULL)
     {
         return SLIP_INCORRECT_INPUT;
@@ -44,8 +46,7 @@ SLIP_info SLIP_get_double_soln
     {
         for (int32_t j = 0; j < numRHS; j++)
         {
-            SLIP_info ok = SLIP_mpq_get_d(&(x_doub[i][j]), x_mpq[i][j]);
-            if (ok != SLIP_OK) { return ok; }
+            SLIP_CHECK (SLIP_mpq_get_d (&(x_doub[i][j]), x_mpq[i][j])) ;
         }
     }
     return SLIP_OK;

@@ -17,7 +17,7 @@
  * On output, the SLIP_sparse* A structure contains the input matrix
  */
 
-#define SLIP_FREE_WORKSPACE                 \
+#define SLIP_FREE_ALL                 \
     (*A_handle) = NULL ;                    \
     SLIP_delete_sparse (&A) ;
 
@@ -34,7 +34,7 @@ SLIP_info SLIP_build_sparse_csc_mpz
 )
 {
 
-    SLIP_info ok;
+    SLIP_info info ;
     if (!p || !I || !x || !A_handle)
     {
         return SLIP_INCORRECT_INPUT;

@@ -16,7 +16,7 @@
  * On output, the SLIP_sparse* A contains the user's matrix.
  */
 
-#define SLIP_FREE_WORKSPACE                 \
+#define SLIP_FREE_ALL                       \
     (*A_handle) = NULL ;                    \
     SLIP_delete_sparse (&A) ;               \
 
@@ -32,7 +32,7 @@ SLIP_info SLIP_build_sparse_trip_mpz
     int32_t nz          // number of nonzeros in A (size of x, I, and J vectors)
 )
 {
-    SLIP_info ok;
+    SLIP_info info ;
     if (!I || !J || !A_handle || !x || n <= 0 || nz <= 0)
     {
         return SLIP_INCORRECT_INPUT;

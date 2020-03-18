@@ -19,6 +19,7 @@ mpz_t* SLIP_create_mpz_array
     int32_t n      // Size of x
 )
 {
+
     // Check inputs
     if (n <= 0) {return NULL;}
 

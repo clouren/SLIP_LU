@@ -14,7 +14,7 @@
  * arrays to be used within SLIP LU.
  */
 
-#define SLIP_FREE_WORKSPACE              \
+#define SLIP_FREE_ALL               \
     SLIP_MPFR_CLEAR(expon);         \
     SLIP_delete_mpfr_array(&x3, n); \
     SLIP_MPZ_CLEAR(temp_expon);     \
@@ -33,11 +33,20 @@ SLIP_info slip_expand_mpfr_array
     SLIP_options *option  // command options containing the prec for mpfr
 )
 {
-    // Check input
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    SLIP_info info ;
     if (!x || !x_out || !scale || n <= 0) {return SLIP_INCORRECT_INPUT;}
+
+    //--------------------------------------------------------------------------
+    // initializations
+    //--------------------------------------------------------------------------
+
     int32_t i, k, r1, r2 = 1;
     bool nz_found = false;
-    SLIP_info ok;
     mpfr_t expon, *x3 = NULL; SLIP_MPFR_SET_NULL(expon);
     mpz_t temp_expon, gcd, one;
     SLIP_MPZ_SET_NULL(temp_expon);
@@ -52,7 +61,7 @@ SLIP_info slip_expand_mpfr_array
     x3 = SLIP_create_mpfr_array(n, option);// Create the new x array
     if (!x3)
     {
-        SLIP_FREE_WORKSPACE;
+        SLIP_FREE_ALL;
         return SLIP_OUT_OF_MEMORY;
     }
 
@@ -103,7 +112,7 @@ SLIP_info slip_expand_mpfr_array
 
     if (!nz_found)     // Array is all zeros
     {
-        SLIP_FREE_WORKSPACE;
+        SLIP_FREE_ALL;
         SLIP_mpq_set_z(scale, one);
         return SLIP_OK;
     }
@@ -120,7 +129,7 @@ SLIP_info slip_expand_mpfr_array
         SLIP_CHECK(SLIP_mpq_set_z(temp,gcd));
         SLIP_CHECK(SLIP_mpq_div(scale,scale,temp));
     }
-    SLIP_FREE_WORKSPACE;
+    SLIP_FREE_ALL;
     return SLIP_OK;
 }
 

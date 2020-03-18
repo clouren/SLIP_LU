@@ -23,7 +23,7 @@
  * On output, the pivs, rhos, pinv, and row_perm arrays are all modified.
  */
 
-#define SLIP_FREE_WORKSPACE         \
+#define SLIP_FREE_ALL         \
     SLIP_MPQ_CLEAR(tol);            \
     SLIP_MPQ_CLEAR(ratio);
 
@@ -37,7 +37,7 @@ SLIP_info slip_get_pivot
     int32_t n,      // dimension of the problem
     int32_t top,    // nonzero pattern is located in xi[top..n-1]
     int32_t* xi,    // nonzero pattern of x
-    SLIP_pivot order,  // what kind of pivoting to use (see above description)
+    SLIP_pivot order,  // pivoting method to use (see above description)
     int32_t col,    // current column of A (real kth column i.e., q[k])
     int32_t k,      // iteration of the algorithm
     mpz_t* rhos,    // vector of pivots
@@ -46,15 +46,18 @@ SLIP_info slip_get_pivot
     double tolerance// tolerance used if some tolerance based pivoting is used
 )
 {
-    // all input were checked in the only caller SLIP_LU_factorize.c
+
+    SLIP_info info ;
+    // all inputs were checked in the only caller SLIP_LU_factorize.c
     int32_t sgn, r;
-    SLIP_info ok;
     mpq_t tol, ratio;
     SLIP_MPQ_SET_NULL(tol);
     SLIP_MPQ_SET_NULL(ratio);
+
     //--------------------------------------------------------------------------
     // Smallest pivot
     //--------------------------------------------------------------------------
+
     if (order == SLIP_SMALLEST)
     {
         SLIP_CHECK (slip_get_smallest_pivot(pivot, x, pivs, n, top, xi));
@@ -180,7 +183,7 @@ SLIP_info slip_get_pivot
     SLIP_CHECK (SLIP_mpz_set(rhos[k], x[*pivot]));
 
     // Free memory
-    SLIP_FREE_WORKSPACE;
+    SLIP_FREE_ALL;
     return SLIP_OK;
 }
 

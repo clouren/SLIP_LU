@@ -26,7 +26,8 @@ SLIP_info slip_mpz_populate_mat
 {
 
     // inputs have been validated in SLIP_build_sparse_csc_*.c
-    SLIP_info ok;
+    SLIP_info info ;
+
     SLIP_CHECK(slip_sparse_alloc(A, n, n, nz));// Allocate the matrix A
     A->nz = nz;
     for (int32_t k = 0; k <= n; k++)              // Set A->p
@@ -42,6 +43,7 @@ SLIP_info slip_mpz_populate_mat
         }
         SLIP_CHECK(SLIP_mpz_set(A->x[k],x[k]));
     }
-    return ok;
+
+    return (SLIP_OK) ;
 }
 

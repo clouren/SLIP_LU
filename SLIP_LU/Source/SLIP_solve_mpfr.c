@@ -30,7 +30,7 @@
  * option:  Struct containing various command parameters for the factorization.
  */
 
-# define SLIP_FREE_WORKSPACE                \
+# define SLIP_FREE_ALL                \
     SLIP_delete_sparse(&L);                 \
     SLIP_delete_sparse(&U);                 \
     SLIP_FREE(pinv);                        \
@@ -53,6 +53,7 @@ SLIP_info SLIP_solve_mpfr
     // check inputs
     //-------------------------------------------------------------------------
 
+    SLIP_info info ;
     if (!x_mpfr || !A || !A->p || !A->i || !A->x ||
         !S || !S->q || !b || !b->x || !option)
     {
@@ -69,11 +70,10 @@ SLIP_info SLIP_solve_mpfr
     //--------------------------------------------------------------------------
 
     int32_t n = A->n, numRHS = b->n;
-    SLIP_info ok;
     mpq_t **x_mpq = SLIP_create_mpq_mat(n, numRHS);
     if (!x_mpq)
     {
-        SLIP_FREE_WORKSPACE;
+        SLIP_FREE_ALL;
         return SLIP_OUT_OF_MEMORY;
     }
 
@@ -111,7 +111,7 @@ SLIP_info SLIP_solve_mpfr
     //--------------------------------------------------------------------------
     SLIP_CHECK(SLIP_get_mpfr_soln(x_mpfr, x_mpq, n, numRHS, option));
 
-    SLIP_FREE_WORKSPACE;
-    return ok;
+    SLIP_FREE_ALL;
+    return (SLIP_OK) ;
 }
 

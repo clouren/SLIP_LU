@@ -41,6 +41,8 @@ SLIP_info SLIP_get_mpfr_soln
     SLIP_options* option  // Contains mpfr command parameters
 )
 {
+
+    SLIP_info info ;
     if (x_mpfr  == NULL)
     {
         return SLIP_INCORRECT_INPUT;
@@ -50,11 +52,11 @@ SLIP_info SLIP_get_mpfr_soln
     {
         for (int32_t j = 0; j < numRHS; j++)
         {
-            SLIP_info ok = SLIP_mpfr_set_q(x_mpfr[i][j], x_mpq[i][j],
-                option->SLIP_MPFR_ROUND);
-            if (ok != SLIP_OK)         {  return ok;  }
+            SLIP_CHECK (SLIP_mpfr_set_q (x_mpfr[i][j], x_mpq[i][j],
+                option->SLIP_MPFR_ROUND)) ;
         }
     }
+
     return SLIP_OK;
 }
 

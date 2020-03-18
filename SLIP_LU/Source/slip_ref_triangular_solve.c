@@ -84,8 +84,8 @@ SLIP_info slip_ref_triangular_solve // performs the sparse REF triangular solve
 )
 {
     // inputs have been validated in SLIP_LU_factorize.c
+    SLIP_info info ;
     int32_t j, jnew, i, inew, p, m, n, col, sgn, top ;
-    SLIP_info ok;
 
     //--------------------------------------------------------------------------
     // Begin the REF triangular solve by obtaining the nonzero pattern, and

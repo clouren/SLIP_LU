@@ -29,10 +29,11 @@ int32_t slip_get_nonzero_pivot // find the first eligible nonzero pivot
     int32_t* xi       // nonzero pattern of x
 )
 {
+
+    SLIP_info info ;
     if (!x || !pivs || !xi) {return SLIP_INCORRECT_INPUT;}
     int32_t inew, sgn;
     *pivot = -1; // used later to check for singular matrix
-    SLIP_info ok;
 
     //--------------------------------------------------------------------------
     // Iterate accross the nonzeros in x
@@ -42,8 +43,7 @@ int32_t slip_get_nonzero_pivot // find the first eligible nonzero pivot
         // inew is the location of the ith nonzero
         inew = xi[i];
         // check if x[inew] is an eligible pivot
-        ok = SLIP_mpz_sgn(&sgn, x[inew]);
-        if (ok != SLIP_OK) {return ok;}
+        SLIP_CHECK (SLIP_mpz_sgn (&sgn, x[inew])) ;
         if (sgn != 0 && pivs [inew] < 0)
         {
             *pivot = inew;

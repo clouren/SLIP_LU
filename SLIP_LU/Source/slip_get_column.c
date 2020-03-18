@@ -14,7 +14,7 @@
  * On exit, x either contains the kth column of A or is NULL
  */
 
-#define SLIP_FREE_WORKSPACE                \
+#define SLIP_FREE_ALL                \
     SLIP_delete_mpz_array(&x, A->n);
 
 #include "SLIP_LU_internal.h"
@@ -27,7 +27,7 @@ SLIP_info slip_get_column //extract k-th column from A, i.e., x=A(:,k)
 )
 {
     if (!A || !x || !A->x || !A->p || !A->i) {return SLIP_INCORRECT_INPUT;}
-    SLIP_info ok = SLIP_OK;
+    SLIP_info info ;
     // Iterating accross the nonzeros in column k
     for (int32_t i = A->p[k]; i < A->p[k + 1]; i++)
     {

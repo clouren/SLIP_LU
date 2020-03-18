@@ -33,7 +33,7 @@
  *           unmodified on input/output.
  */
 
-#define SLIP_FREE_WORKSPACE                        \
+#define SLIP_FREE_ALL                        \
     SLIP_delete_mpz_mat(&b2, n, numRHS);
 
 #include "SLIP_LU_internal.h"
@@ -55,6 +55,7 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     // check inputs
     //--------------------------------------------------------------------------
 
+    SLIP_info info ;
     if (!x || !b || !rhos || !pinv || !L || !U || !b->x
         || !L->p || !L->i || !L->x || !U->p || !U->i || !U->x)
     {
@@ -62,7 +63,6 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     }
     int32_t i, k, n = L->n, numRHS = b->n;
     mpz_t **bx = b->x;
-    SLIP_info ok;
 
     //--------------------------------------------------------------------------
     // create the permuted b
@@ -114,7 +114,7 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    SLIP_FREE_WORKSPACE;
+    SLIP_FREE_ALL;
     return SLIP_OK;
 }
 

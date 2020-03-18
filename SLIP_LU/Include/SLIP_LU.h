@@ -237,6 +237,224 @@ typedef struct SLIP_options
  */
 SLIP_options* SLIP_create_default_options(void);
 
+////////////////////////////////////////////////////////////////////////////////
+// new SLIP_matrix-based methods
+////////////////////////////////////////////////////////////////////////////////
+
+//------------------------------------------------------------------------------
+// SLIP_matrix: a sparse CSC, sparse triplet, or dense matrix
+//------------------------------------------------------------------------------
+
+// SLIP LU uses a single matrix data type, SLIP_matrix, which can be held in
+// one of three kinds of formats:  sparse CSC (compressed sparse column),
+// sparse triplet, and dense:
+
+typedef enum
+{
+    SLIP_CSC = 0,           // matrix is in compressed sparse column format
+    SLIP_TRIPLET = 1,       // matrix is in triplet format
+    SLIP_DENSE = 2          // matrix is in dense format
+}
+SLIP_kind ;
+
+// Each of the three formats can have values of 5 different data types: mpz_t,
+// mpq_t, mpfr_t, int32_t, and double:
+
+typedef enum
+{
+    SLIP_MPZ = 0,           // matrix of mpz_t integers
+    SLIP_MPQ = 1,           // matrix of mpq_t rational numbers
+    SLIP_MPFR = 2,          // matrix of mpfr_t
+    SLIP_INT32 = 3,         // matrix of int32_t integers
+    SLIP_FP64 = 4           // matrix of doubles
+}
+SLIP_type ;
+
+// This gives a total of 15 different matrix types.  Not all functions accept
+// all 15 matrices types, however.
+
+// Suppose A is an m-by-n matrix with nz <= nzmax entries.  These terms are
+// A->m A->n A->nz and A->nzmax.  The p, i, j, and x components are defined as:
+
+// (0) SLIP_CSC:  A sparse matrix in CSC (compressed sparse column) format.
+//      A->p is an int32_t array of size n+1, A->i is an int32_t array of size
+//      nzmax (with nz <= nzmax), and A->x.type is an array of size nzmax of
+//      matrix entries ('type' is one of mpz, mpq, mpfr, int32, or fp64).  The
+//      row indices of column j appear in A->i [A->p [j] ... A->p [j+1]-1], and
+//      the values appear in the same locations in A->x.type.  The A->j array
+//      is NULL.
+
+// (1) SLIP_TRIPLET:  A sparse matrix in triplet format.  A->i and A->j are
+//      both int32_t arrays of size nzmax, and A->x.type is an array of values
+//      of the same size.  The kth tuple has row index A->i [k], column index
+//      A->j [k], and value A->x.type [k], with 0 <= k < nz.  The A->p array
+//      is NULL.
+
+// (2) SLIP_DENSE:  A dense matrix.  The integer arrays A->p, A->i, and A->j
+//      are all NULL.  A->x.type is a pointer to an array of size m*n, stored
+//      in column-oriented format.  The value of A(i,j) is A->x.type [p]
+//      with p = i + j*A->m.
+
+// The SLIP_matrix may contain 'shallow' components, A->p, A->i, A->j, and
+// A->x.  For example, if A->p_shallow is true, then a non-NULL A->p is a
+// pointer to a read-only array, and the A->p array is not freed by
+// SLIP_matrix_free.  If A->p is NULL (for a triplet or dense matrix), then
+// A->p_shallow has no effect.
+
+// Note that all integer arrays are int32_t, which limits a SLIP_matrix to
+// having dimensions and nzmax less than 2^31.  Since a SLIP_LU factorization
+// is much more costly in time and memory than a regular LU factorization, this
+// is not a serious limitation.  TODO: should we use int64_t anyway?
+
+typedef struct
+{
+    int32_t m ;         // number of rows
+    int32_t n ;         // number of columns
+    int32_t nzmax ;     // size of A->i, A->j, and A->x
+    int32_t nz ;        // # nonzeros in the matrix (TODO for triplet only??)
+    SLIP_kind kind ;    // CSC, triplet, or dense
+    SLIP_type type ;    // mpz, mpq, mpfr, int32, or double
+
+    int32_t *p ;        // if CSC: column pointers, an array size is n+1.
+                        // if triplet or dense: A->p is NULL.
+    bool p_shallow ;    // if true, A->p is shallow.
+
+    int32_t *i ;        // if CSC or triplet: row indices, of size nzmax.
+                        // if dense: A->i is NULL.
+    bool i_shallow ;    // if true, A->i is shallow.
+
+    int32_t *j ;        // if triplet: column indices, of size nzmax.
+                        // if CSC or dense: A->j is NULL.
+    bool j_shallow ;    // if true, A->j is shallow.
+
+    union               // A->x.type has size nzmax.
+    {
+        mpz_t *mpz ;            // A->x.mpz
+        mpq_t *mpq ;            // A->x.mpq
+        mpfr_t *mpfr ;          // A->x.mpfr
+        int32_t *int32 ;        // A->x.int32
+        double *fp64 ;          // A->x.fp64
+    } x ;
+    bool x_shallow ;    // if true, A->x.type is shallow.
+
+    mpq_t scale ;       // scale factor for the matrix (never shallow)
+
+} SLIP_matrix ;
+
+//------------------------------------------------------------------------------
+// SLIP_matrix_allocate: allocate an m-by-n SLIP_matrix
+//------------------------------------------------------------------------------
+
+// if shallow is false: All components (p,j,i,x) are allocated and set to zero,
+//                      and then shallow flags are all false.
+// if shallow is true:  All components (p,j,i,x) are NULL, and their shallow
+//                      flags are all true.
+
+SLIP_info SLIP_matrix_allocate
+(
+    SLIP_matrix **A_handle, // matrix to allocate
+    int32_t m,              // # of rows
+    int32_t n,              // # of columns
+    int32_t nzmax,          // max # of entries
+    SLIP_kind kind,         // CSC, triplet, or dense
+    SLIP_type type,         // mpz, mpq, mpfr, int32, or double
+    bool shallow,           // if true, matrix is shallow.  A->p, A->i, A->j,
+                            // A->x are all returned as NULL and must be set
+                            // by the caller.  All A->*_shallow are returned
+                            // as true.
+    SLIP_options *option
+) ;
+
+//------------------------------------------------------------------------------
+// SLIP_matrix_free: free a SLIP_matrix
+//------------------------------------------------------------------------------
+
+SLIP_info SLIP_matrix_free
+(
+    SLIP_matrix **A_handle, // matrix to free
+    SLIP_options *option
+) ;
+
+//------------------------------------------------------------------------------
+// SLIP_matrix_copy: makes a copy of a matrix
+//------------------------------------------------------------------------------
+
+// (C not shallow, A might be)
+
+    // 15x15
+    // 3x3 functions (CSC, triplet, dense) <-> (CSC, triplet, dense)
+    //  all 9 do any [5x5 typecasts]
+    //      typecast function:  2 pointers, 2 SLIP_type, all 5x5, # entries
+
+//  C->scale ?
+//  A (double) to C (in mpz).  C->scale = ... ?
+//  A (mpz) to C (in double).  use A->scale
+
+SLIP_info SLIP_matrix_copy
+(
+    SLIP_matrix **C,        // matrix to create (never shallow)
+    // inputs, not modified:
+    SLIP_kind kind,         // CSC, triplet, or dense
+    SLIP_type type,         // mpz_t, mpq_t, mprf_t, int32_t, or double
+    SLIP_matrix *A,         // matrix to make a copy of (may be shallow)
+    SLIP_options *option
+) ;
+
+#if 0
+
+// convert x in mpz (came from SLIP_solve ...)
+SLIP_matrix *my_x, *x_soln ;
+SLIP_solve (x_soln, ...) ;
+SLIP_matrix_copy (&my_x, SLIP_SPARSE, SLIP_MPQ, x_soln, option) ;
+
+// To access the value of the kth entry in any SLIP_matrix:
+    SLIP_ENTRY (A, p, fp64) = x ;
+    A->x.fp64 [p] = x
+
+// To access a single entry in a dense SLIP_matrix:
+#define INDEX(i,j,m) (i + j*A->m)
+
+#define SLIPX(A,i,j,type)  A->x.type [i + j*(A->m)]
+#define SLIPS(A,k,type)    A->x.type [k]
+
+SLIPX (A, i, j, fp64)
+SLIPXD (A, i, j)
+
+#define SLIPXD(A,i,j)  SLIPX (A, i, j, fp64)
+#define SLIPXZ(A,i,j)  SLIPX (A, i, j, mpz)
+#define SLIPXQ(A,i,j)  SLIPX (A, i, j, mpq)
+#define SLIPXR(A,i,j)  SLIPX (A, i, j, mpfr)
+
+#define SLIPSD(A,k)  SLIPS (A, k, fp64)
+#define SLIPSZ(A,k)  SLIPS (A, k, mpz)
+#define SLIPSQ(A,k)  SLIPS (A, k, mpq)
+#define SLIPSR(A,k)  SLIPS (A, k, mpfr)
+
+    // A(i,j) = x
+    SLIP_ENTRY (A, i, j, fp64) = x ;
+
+    mpf (A->x [i][j]  ... )
+
+    mpfr_set (A->x [i][j],  ... )
+    mpfr_set (SLIPX (A,i,j,mpfr),  ... )
+
+    mpfr_set (A->x [p],  ... )
+    mpfr_set (A->x.mpfr [p],  ... )
+    mpfr_set (SLIPS (A,p,mpfr),  ... )
+
+    // A(i,j) = x
+    SLIP (A, i, j, fp64) = x ;
+    A->x.fp64 [i+j*(A->m)] = x
+
+    // x = A(i,j) 
+    x = SLIP (A, i, j, fp64) ;
+
+#endif
+
+////////////////////////////////////////////////////////////////////////////////
+// old SLIP_sparse, SLIP_dense, etc methods:
+////////////////////////////////////////////////////////////////////////////////
+
 //------------------------------------------------------------------------------
 // SLIP_sparse: a sparse matrix in CSC form, of mpz_t entries
 //------------------------------------------------------------------------------

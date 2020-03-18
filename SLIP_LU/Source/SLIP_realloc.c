@@ -14,13 +14,12 @@
 // previously allocated object of size old_size * size_of_item.  The object is
 // reallocated to be of size new_size * size_of_item.  If p is NULL on input,
 // then a new object of that size is allocated.  On success, a pointer to the
-// new object is returned, and ok is returned as true.  If the allocation
-// fails, ok is set to false and a pointer to the old (unmodified) object is
+// new object is returned.  If the allocation fails, p is freed and NULL is
 // returned.
 
-void* SLIP_realloc
+void *SLIP_realloc
 (
-    void* p,            // Pointer to be realloced
+    void *p,            // Pointer to be realloced
     size_t old_size,    // Old size of this pointer
     size_t new_size     // New size of this pointer
 )

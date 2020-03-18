@@ -23,8 +23,13 @@ SLIP_info slip_array_mul // multiplies vector x by the determinant of matrix
     int32_t numRHS      // number of RHS vectors
 )
 {
-    SLIP_info ok = SLIP_OK;
-    if (!x) {return SLIP_INCORRECT_INPUT;}
+
+    SLIP_info info ;
+    if (!x)
+    {
+        return (SLIP_INCORRECT_INPUT) ;
+    }
+
     for (int32_t i = 0; i < n; i++)
     {
         for (int32_t k = 0; k < numRHS; k++)
@@ -33,6 +38,7 @@ SLIP_info slip_array_mul // multiplies vector x by the determinant of matrix
             SLIP_CHECK(SLIP_mpz_mul(x[i][k], x[i][k], det));
         }
     }
-    return ok;
+
+    return (SLIP_OK) ;
 }
 

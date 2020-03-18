@@ -16,7 +16,7 @@
  * See also slip_expand_double_mat, which converts an m-by-n matrix.
  */
 
-#define SLIP_FREE_WORKSPACE              \
+#define SLIP_FREE_ALL              \
     SLIP_delete_mpfr_array(&x3, n); \
     SLIP_MPZ_CLEAR(gcd);            \
     SLIP_MPZ_CLEAR(one);            \
@@ -36,7 +36,7 @@ SLIP_info slip_expand_double_array
 
     int32_t i, k, r1, r2 = 1;
     bool nz_found = false;
-    SLIP_info ok;
+    SLIP_info info ;
     // Double precision accurate ~17 decimals.  TODO: No, closer to 2e-16.
     // TODO: But shouldn't this use a power of two?
     double expon = pow(10, 17);
@@ -50,7 +50,7 @@ SLIP_info slip_expand_double_array
     x3 = SLIP_create_mpfr_array(n, option);
     if (!x3)
     {
-        SLIP_FREE_WORKSPACE;
+        SLIP_FREE_ALL;
         return SLIP_OUT_OF_MEMORY;
     }
 
@@ -99,7 +99,7 @@ SLIP_info slip_expand_double_array
 
     if (!nz_found)     // Array is all zeros
     {
-        SLIP_FREE_WORKSPACE;
+        SLIP_FREE_ALL;
         SLIP_mpq_set_z(scale, one);
         return SLIP_OK;
     }
@@ -117,7 +117,7 @@ SLIP_info slip_expand_double_array
         SLIP_CHECK(SLIP_mpq_set_z(temp, gcd));
         SLIP_CHECK(SLIP_mpq_div(scale, scale, temp));
     }
-    SLIP_FREE_WORKSPACE;
+    SLIP_FREE_ALL;
     return SLIP_OK;
 }
 

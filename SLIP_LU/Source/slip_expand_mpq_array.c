@@ -13,7 +13,7 @@
  * scaling factor. This function allows mpq arrays to be used in SLIP LU.
  */
 
-#define SLIP_FREE_WORKSPACE              \
+#define SLIP_FREE_ALL              \
     SLIP_delete_mpz_array(&x3, n);  \
     SLIP_delete_mpq_array(&x4, n);  \
     SLIP_MPZ_CLEAR(temp);
@@ -28,15 +28,18 @@ SLIP_info slip_expand_mpq_array
     int32_t n       // size of x
 )
 {
-    SLIP_info ok;
+    SLIP_info info ;
     mpz_t temp;
+    mpz_t *x3 = NULL ;
+    mpq_t *x4 = NULL ;
+
     SLIP_MPZ_SET_NULL(temp);
-    ok = SLIP_mpz_init(temp);
-    mpz_t* x3 = SLIP_create_mpz_array(n);    // Initialize arrays
-    mpq_t* x4 = SLIP_create_mpq_array(n);
-    if (!x3 || !x4 || ok != SLIP_OK)
+    SLIP_CHECK (SLIP_mpz_init(temp)) ;
+    x3 = SLIP_create_mpz_array(n);    // Initialize arrays
+    x4 = SLIP_create_mpq_array(n);
+    if (!x3 || !x4)
     {
-        SLIP_FREE_WORKSPACE;
+        SLIP_FREE_ALL;
         return SLIP_OUT_OF_MEMORY;
     }
 
@@ -61,7 +64,7 @@ SLIP_info slip_expand_mpq_array
         // x_out[i] = x4[i]
         SLIP_CHECK(SLIP_mpz_set_q(x_out[i], x4[i]));
     }
-    SLIP_FREE_WORKSPACE;
+    SLIP_FREE_ALL;
     return SLIP_OK;
 }
 
