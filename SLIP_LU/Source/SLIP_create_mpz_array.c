@@ -20,12 +20,20 @@ mpz_t* SLIP_create_mpz_array
 )
 {
 
-    // Check inputs
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    // TODO: use SLIP_matrix_allocate (&A, SLIP_DENSE, SLIP_MPZ, ...)
+
     if (n <= 0) {return NULL;}
+
+    //--------------------------------------------------------------------------
 
     // Malloc memory
     mpz_t* x = (mpz_t*) SLIP_calloc(n, sizeof(mpz_t));
     if (!x) {return NULL;}
+
     for (int32_t i = 0; i < n; i++)
     {
         if (SLIP_mpz_init(x[i]) != SLIP_OK)

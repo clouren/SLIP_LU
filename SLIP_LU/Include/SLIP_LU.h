@@ -353,11 +353,11 @@ typedef struct
 SLIP_info SLIP_matrix_allocate
 (
     SLIP_matrix **A_handle, // matrix to allocate
+    SLIP_kind kind,         // CSC, triplet, or dense
+    SLIP_type type,         // mpz, mpq, mpfr, int32, or double
     int32_t m,              // # of rows
     int32_t n,              // # of columns
     int32_t nzmax,          // max # of entries
-    SLIP_kind kind,         // CSC, triplet, or dense
-    SLIP_type type,         // mpz, mpq, mpfr, int32, or double
     bool shallow,           // if true, matrix is shallow.  A->p, A->i, A->j,
                             // A->x are all returned as NULL and must be set
                             // by the caller.  All A->*_shallow are returned

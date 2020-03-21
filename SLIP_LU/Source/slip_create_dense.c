@@ -25,12 +25,20 @@
 SLIP_dense *slip_create_dense( void )
 {
 
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    // TODO: replace with SLIP_matrix_allocate (&A, SLIP_DENSE, ...)
+
     SLIP_dense *A = SLIP_malloc(sizeof(SLIP_dense));
     // Check for out of memory
     if (A == NULL)
     {
         return (NULL);
     }
+
+    //--------------------------------------------------------------------------
 
     // Set m, n, and scale
     A->m = 0;

@@ -42,11 +42,20 @@ SLIP_info SLIP_get_mpfr_soln
 )
 {
 
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    // TODO: use SLIP_matrix_copy (&X_mpfr, SLIP_DENSE, SLIP_MPQ, X_mpq, ...)
+    // Delete this function and move this functionality into SLIP_matrix_copy.
+
     SLIP_info info ;
     if (x_mpfr  == NULL)
     {
         return SLIP_INCORRECT_INPUT;
     }
+
+    //--------------------------------------------------------------------------
 
     for (int32_t i = 0; i < n; i++)
     {

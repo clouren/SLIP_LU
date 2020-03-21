@@ -23,9 +23,9 @@
  * On output, the pivs, rhos, pinv, and row_perm arrays are all modified.
  */
 
-#define SLIP_FREE_ALL         \
-    SLIP_MPQ_CLEAR(tol);            \
-    SLIP_MPQ_CLEAR(ratio);
+#define SLIP_FREE_ALL           \
+    SLIP_MPQ_CLEAR (tol) ;      \
+    SLIP_MPQ_CLEAR (ratio) ; 
 
 #include "SLIP_LU_internal.h"
 
@@ -47,8 +47,17 @@ SLIP_info slip_get_pivot
 )
 {
 
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
     SLIP_info info ;
-    // all inputs were checked in the only caller SLIP_LU_factorize.c
+    ASSERT (rhos != NULL && rhos->kind == SLIP_DENSE && rhos->type == SLIP_MPZ);
+
+    //--------------------------------------------------------------------------
+    // allocate workspace
+    //--------------------------------------------------------------------------
+
     int32_t sgn, r;
     mpq_t tol, ratio;
     SLIP_MPQ_SET_NULL(tol);

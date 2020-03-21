@@ -12,7 +12,7 @@
 
 #include "SLIP_LU_internal.h"
 
-/*
+/* TODO:
 SLIP_info SLIP_scale_x
 (
     SLIP_matrix *x,         // Solution matrix
@@ -29,8 +29,17 @@ SLIP_info SLIP_scale_x
 )
 {
 
-    // inputs have been validated in SLIP_solve_*.c
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
     SLIP_info info ;
+    SLIP_REQUIRE (A, SLIP_CSC,   SLIP_MPZ) ;
+    SLIP_REQUIRE (b, SLIP_DENSE, SLIP_MPZ) ;
+    SLIP_REQUIRE (x, SLIP_DENSE, SLIP_MPQ) ;
+
+    //--------------------------------------------------------------------------
+
     int32_t r, s, n, numRHS;
     n = A->m;
     numRHS = b->n;

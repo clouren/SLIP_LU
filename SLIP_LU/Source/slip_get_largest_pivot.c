@@ -32,16 +32,28 @@ SLIP_info slip_get_largest_pivot
     int32_t* xi      // nonzero pattern of x
 )
 {
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
     SLIP_info info ;
-    if (!x || !pivs || !xi) {return SLIP_INCORRECT_INPUT;}
-    int32_t i, inew, r;
-    *pivot = -1;
-    mpz_t big; SLIP_MPZ_SET_NULL(big);
-    SLIP_CHECK(SLIP_mpz_init(big));
+    if (!x || !pivs || !xi || !pivot) {return SLIP_INCORRECT_INPUT;}
+
+    //--------------------------------------------------------------------------
+    // allocate workspace
+    //--------------------------------------------------------------------------
+
+    int32_t i, inew, r ;
+    (*pivot) = -1 ;
+    mpz_t big ;
+    SLIP_MPZ_SET_NULL (big) ;
+    SLIP_CHECK (SLIP_mpz_init (big)) ;
 
     //--------------------------------------------------------------------------
     // Iterate accross the nonzeros in x
     //--------------------------------------------------------------------------
+
     for (i = top; i < n; i++)
     {
         // Location of the ith nonzero
@@ -51,15 +63,18 @@ SLIP_info slip_get_largest_pivot
         if (pivs[inew] < 0 && r < 0)
         {
             // Current largest pivot location
-            *pivot = inew;
+            (*pivot) = inew;
             // Current largest pivot value
             SLIP_CHECK(SLIP_mpz_set(big, x[inew]));
         }
     }
 
-    // Frees the memory occupied by the pivot value
+    //--------------------------------------------------------------------------
+    // free workspace and return result
+    //--------------------------------------------------------------------------
+
     SLIP_FREE_ALL;
-    if (*pivot == -1)
+    if ((*pivot) == -1)
     {
         return SLIP_SINGULAR;
     }

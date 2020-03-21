@@ -54,6 +54,11 @@ SLIP_info SLIP_solve_mpfr
     //-------------------------------------------------------------------------
 
     SLIP_info info ;
+    SLIP_REQUIRE (A, SLIP_CSC,   SLIP_MPZ) ;
+    SLIP_REQUIRE (b, SLIP_DENSE, SLIP_MPZ) ;
+    // TODO: change x_doub to SLIP_matrix: SLIP_DENSE, SLIP_MPFR,
+    // and create it on output
+
     if (!x_mpfr || !A || !A->p || !A->i || !A->x ||
         !S || !S->q || !b || !b->x || !option)
     {

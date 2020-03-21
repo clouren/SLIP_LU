@@ -19,6 +19,9 @@
 
 #include "SLIP_LU_internal.h"
 
+// TODO: this is used only by slip_ref_triangular_solve.
+// Remove this function and put the code in that function.
+
 static inline int32_t compare (const void * a, const void * b)
 {
     return ( *(int32_t*)a - *(int32_t*)b );
@@ -34,16 +37,20 @@ void slip_sort_xi
                               //    then row_perm[k] = j
 )
 {
+
     // Convert xi vector with respect to pinv
     for (int32_t j = top; j < n; j++)
     {
         xi[j] = pinv[xi[j]];
     }
+
     // Sort xi[top..n-1]
     qsort(&xi[top], n-top, sizeof(int32_t), compare);
+
     // Place xi back in original value
     for (int32_t j = top; j < n; j++)
     {
         xi[j] = row_perm[xi[j]];
     }
 }
+

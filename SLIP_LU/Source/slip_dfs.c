@@ -25,7 +25,16 @@ void slip_dfs // performs a dfs of the graph of the matrix starting at node j
     const int32_t* pinv    // row permutation
 )
 {
-    // No check here, input is checked in slip_reach.c
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    ASSERT (type != NULL && xi != NULL && pstack != NULL && pinv != NULL) ;
+    ASSERT (L != NULL && L->kind == SLIP_CSC) ;
+
+    //--------------------------------------------------------------------------
+
     int32_t i, p, p2, done, jnew, head = 0;
 
     // Initialize the recursion stack

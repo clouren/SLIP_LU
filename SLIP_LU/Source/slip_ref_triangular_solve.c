@@ -83,8 +83,17 @@ SLIP_info slip_ref_triangular_solve // performs the sparse REF triangular solve
     mpz_t* x                  // solution of system ==> kth column of L and U
 )
 {
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
     // inputs have been validated in SLIP_LU_factorize.c
     SLIP_info info ;
+    ASSERT (L != NULL && L->kind == SLIP_CSC && L->type == SLIP_MPZ) ;
+    ASSERT (A != NULL && A->kind == SLIP_CSC && A->type == SLIP_MPZ) ;
+    ASSERT (rhos != NULL && rhos->kind == SLIP_DENSE && rhos->type == SLIP_MPZ);
+
     int32_t j, jnew, i, inew, p, m, n, col, sgn, top ;
 
     //--------------------------------------------------------------------------

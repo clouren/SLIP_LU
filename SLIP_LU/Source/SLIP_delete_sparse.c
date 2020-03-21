@@ -17,6 +17,10 @@ void SLIP_delete_sparse
     SLIP_sparse ** A // matrix to be deleted
 )
 {
+
+    // TODO: use SLIP_matrix_free (&A, option) ;
+    // Move this functionality into SLIP_matrix_free.
+
     if (A == NULL || (*A) == NULL) {return ;}
     SLIP_delete_mpz_array(&((*A)->x), (*A)->nzmax);
     SLIP_FREE ((*A)->i);

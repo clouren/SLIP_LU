@@ -22,7 +22,6 @@
 
 // Standard C libraries
 #include <setjmp.h>
-#include <assert.h>
 #include <math.h>
 #include <stdarg.h>
 
@@ -32,9 +31,37 @@
 #include "amd.h"
 
 //------------------------------------------------------------------------------
+// debugging
+//------------------------------------------------------------------------------
+
+#ifdef SLIP_DEBUG
+
+#ifdef MATLAB_MEX_FILE
+
+#define ASSERT(x)                                                             \
+{                                                                             \
+    if (!(x))                                                                 \
+    {                                                                         \
+        mexErrMsgTxt ("assertion failed: %s line %d\n", __FILE__, __LINE__) ; \
+    }                                                                         \
+}
+
+#else
+
+#include <assert.h>
+#define ASSERT(x) assert (x)
+
+#endif
+
+#else
+
+// debugging disabled
+#define ASSERT(x)
+
+#endif
+
 //------------------------------------------------------------------------------
 //-------------------------Common Macros----------------------------------------
-//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 
@@ -717,4 +744,31 @@ SLIP_info slip_cast_array
     SLIP_options *option
 ) ;
 
+#if 0
+
+// return an error if A->kind (CSC, triplet, or dense) is wrong
+#define SLIP_REQUIRE_KIND(A,required_kind) \
+    if (A == NULL || A->kind != required_kind) return (SLIP_INCORRECT_INPUT) ;
+
+// return an error if A->type (mpz, mpq, mpfr, int32, or double) is wrong
+#define SLIP_REQUIRE_TYPE(A,required_type) \
+    if (A == NULL || A->type == required_type) return (SLIP_INCORRECT_INPUT) ;
+
+#else
+
+// disabled for now
+#define SLIP_REQUIRE_KIND(A,required_kind) \
+    if (A == NULL) return (SLIP_INCORRECT_INPUT) ;
+
+#define SLIP_REQUIRE_TYPE(A,required_type) \
+    if (A == NULL) return (SLIP_INCORRECT_INPUT) ;
+
 #endif
+
+// return an error if A->kind or A->type is wrong
+#define SLIP_REQUIRE(A,required_kind,required_type)     \
+    SLIP_REQUIRE_KIND (A,required_kind) ;              \
+    SLIP_REQUIRE_TYPE (A,required_type) ;
+
+#endif
+

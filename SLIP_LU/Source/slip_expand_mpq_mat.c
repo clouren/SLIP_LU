@@ -32,6 +32,8 @@ SLIP_info slip_expand_mpq_mat
 )
 {
 
+    // TODO: delete this since *_mat will no longer be used.
+
     SLIP_info info ;
     int32_t i, j;
     mpq_t **x4 = NULL;

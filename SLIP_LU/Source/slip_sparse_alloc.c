@@ -15,8 +15,12 @@
  * immediately ready to be operated on. This is less efficient but more user
  * friendly.
  *
+ * TODO: more user friendly?  It's not user-callable.  Rephrase this.
+ *
  * See also slip_sparse_alloc2.
  */
+
+// TODO: delete this function; use SLIP_matrix_allocate instead
 
 SLIP_info slip_sparse_alloc
 (
@@ -26,8 +30,15 @@ SLIP_info slip_sparse_alloc
     int32_t nzmax  // size of allocated i and x arrays
 )
 {
-    // Check input
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
     if (n <= 0 || m <= 0 || nzmax <= 0 || !A) {return SLIP_INCORRECT_INPUT;}
+
+    //--------------------------------------------------------------------------
+
     A->m = m;                                    // Rows of the matrix
     A->n = n;                                    // Columns of the matrix
     A->nz = 0;                                   // Currently 0 nonzeros

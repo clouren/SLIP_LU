@@ -20,11 +20,22 @@ mpz_t** SLIP_create_mpz_mat
     int32_t n      // number of columns
 )
 {
-    // Check input
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    // TODO: use SLIP_matrix_allocate (&A, SLIP_DENSE, SLIP_MPZ, ...)
+    // Delete this function since *_mat is no longer needed.
+
     if (m <= 0 || n <= 0) {return NULL;}
+
+    //--------------------------------------------------------------------------
+
     // Calloc space
     mpz_t **x = (mpz_t**) SLIP_calloc(m, sizeof(mpz_t*));
     if (!x) {return NULL;}
+
     for (int32_t i = 0; i < m; i++)
     {
         x[i] = (mpz_t*) SLIP_calloc(n, sizeof(mpz_t));

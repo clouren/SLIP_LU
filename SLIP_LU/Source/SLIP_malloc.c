@@ -22,7 +22,7 @@ void* SLIP_malloc
 )
 {
     // ensure at least one byte is malloc'd
-    if (size <= 0) { size = 1 ; }
+    size = SLIP_MAX (size, 1) ;
 
     return (SLIP_MEMORY_MALLOC (size)) ;
 }

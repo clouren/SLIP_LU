@@ -21,8 +21,17 @@ mpfr_t** SLIP_create_mpfr_mat
     SLIP_options *option// command options containing the prec for mpfr
 )
 {
-    // Check input
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    // TODO: use SLIP_matrix_allocate (&A, SLIP_DENSE, SLIP_MPFR, ...)
+    // Delete this function since *_mat is no longer needed.
+
     if (m <= 0 || n <= 0) {return NULL;}
+
+    //--------------------------------------------------------------------------
 
     mpfr_t **x = (mpfr_t**) SLIP_calloc(m, sizeof(mpfr_t*));
     if (!x) {return NULL;}

@@ -31,7 +31,17 @@ SLIP_info SLIP_check_solution
     SLIP_dense *b            // right hand side
 )
 {
-    if (!A || !x || !b || !b->x || !A->p || !A->i || !A->x)
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    SLIP_info info ;
+    SLIP_REQUIRE (A, SLIP_CSC,   SLIP_MPZ) ;
+    SLIP_REQUIRE (x, SLIP_DENSE, SLIP_MPQ) ;
+    SLIP_REQUIRE (b, SLIP_DENSE, SLIP_MPZ) ;
+
+    if (!b->x || !A->p || !A->i || !A->x)
     {
         return SLIP_INCORRECT_INPUT;
     }
@@ -43,7 +53,6 @@ SLIP_info SLIP_check_solution
     int32_t p, j, i, r;
     int32_t n = A->n, numRHS = b->n;
     mpz_t** bx = b->x;
-    SLIP_info info ;
     mpq_t** b2 = NULL;
     mpq_t temp; SLIP_MPQ_SET_NULL(temp);
     SLIP_CHECK(SLIP_mpq_init(temp));

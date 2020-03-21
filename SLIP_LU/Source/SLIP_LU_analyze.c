@@ -19,7 +19,11 @@
  * A:       Input matrix, unmodified on input/output
  *
  * option:  option->order tells the function which ordering scheme to use
+ *
  */
+
+// SLIP_LU_analyze creates the SLIP_LU_analysis object S.  Use
+// SLIP_delete_LU_analysis to delete it.
 
 #include "SLIP_LU_internal.h"
 
@@ -35,6 +39,9 @@ SLIP_info SLIP_LU_analyze
     // check inputs
     //--------------------------------------------------------------------------
 
+    // A can have any data type, but must be in sparse CSC format
+    SLIP_REQUIRE_KIND (A, SLIP_CSC) ;
+
     SLIP_LU_analysis *S = NULL ;
     if (!S_handle)
     {
@@ -42,14 +49,18 @@ SLIP_info SLIP_LU_analyze
     }
     (*S_handle) = NULL ;
 
-    if (!A || !(A->i) || !(A->x) || !(A->p) || !option || A->n != A->m)
+    if (!A || !(A->i) || !(A->p) || !option || A->n != A->m)
     {
         return SLIP_INCORRECT_INPUT;
     }
-    int32_t n = A->n, nz = A->nz, i;
-    // Print info if needed
+
+    //--------------------------------------------------------------------------
+    // print info about SLIP LU
+    //--------------------------------------------------------------------------
+
     if (option->print_level > 0)
     {
+        // TODO move this to SLIP_initialize_expert?  SLIP_matrix_check?
         slip_lu_info();
     }
 
@@ -57,6 +68,7 @@ SLIP_info SLIP_LU_analyze
     // allocate symbolic analysis object
     //--------------------------------------------------------------------------
 
+    int32_t n = A->n, nz = A->nz, i;
     S = slip_create_LU_analysis (n) ;
     if (!S)
     {
@@ -69,6 +81,7 @@ SLIP_info SLIP_LU_analyze
     // in L and U is estimated to be 10 times the number of nonzeros in A. This
     // is a very crude estimate on the nnz(L) and nnz(U)
     //--------------------------------------------------------------------------
+
     if (option->order == SLIP_NO_ORDERING)
     {
         for (i = 0; i < n+1; i++)

@@ -40,6 +40,9 @@
 
 #include "SLIP_LU_internal.h"
 
+// TODO remove this function.  The user can call SLIP_solve (renamed?)
+// and then SLIP_matrix_copy to convert to double.
+
 SLIP_info SLIP_solve_double
 (
     double **x_doub,        // Solution vector stored as an double
@@ -55,6 +58,11 @@ SLIP_info SLIP_solve_double
     //-------------------------------------------------------------------------
 
     SLIP_info info ;
+    SLIP_REQUIRE (A, SLIP_CSC,   SLIP_MPZ) ;
+    SLIP_REQUIRE (b, SLIP_DENSE, SLIP_MPZ) ;
+    // TODO: change x_doub to SLIP_matrix: SLIP_DENSE, SLIP_DOUBLE,
+    // and create it on output
+
     if (!x_doub || !A || !A->p || !A->i || !A->x ||
         !S || !S->q || !b || !b->x || !option)
     {
@@ -110,6 +118,7 @@ SLIP_info SLIP_solve_double
     //--------------------------------------------------------------------------
     // Output, free memory
     //--------------------------------------------------------------------------
+
     SLIP_CHECK(SLIP_get_double_soln(x_doub, x_mpq, n, numRHS));
 
     SLIP_FREE_ALL;

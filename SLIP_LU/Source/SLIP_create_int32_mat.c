@@ -18,10 +18,20 @@ int32_t** SLIP_create_int32_mat
     int32_t n      // number of columns (must be > 0)
 )
 {
-    // Check input
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    // TODO: use SLIP_matrix_allocate (&A, SLIP_DENSE, SLIP_INT32, ...)
+
     if (m <= 0 || n <= 0) {return NULL;}
+
+    //--------------------------------------------------------------------------
+
     int32_t **x = (int32_t**) SLIP_calloc(m, sizeof(int32_t*));
     if (!x) {return NULL;}
+
     for (int32_t i = 0; i < m; i++)
     {
         x[i] = (int32_t*) SLIP_calloc(n, sizeof(int32_t));

@@ -25,8 +25,16 @@ SLIP_info slip_mpz_populate_mat
 )
 {
 
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    // TODO: delete this.  It becomes part of SLIP_matrix_copy.
+
     // inputs have been validated in SLIP_build_sparse_csc_*.c
     SLIP_info info ;
+
+    //--------------------------------------------------------------------------
 
     SLIP_CHECK(slip_sparse_alloc(A, n, n, nz));// Allocate the matrix A
     A->nz = nz;

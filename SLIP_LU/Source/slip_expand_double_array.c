@@ -34,6 +34,17 @@ SLIP_info slip_expand_double_array
 )
 {
 
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    // TODO: this functionality becomes part of SLIP_matrix_copy.
+    // TODO: move this functionality into slip_cast_array.
+    // The scale factored is computed below, but it must have already been
+    // created on input as an empty mpq_t variable.
+
+    //--------------------------------------------------------------------------
+
     int32_t i, k, r1, r2 = 1;
     bool nz_found = false;
     SLIP_info info ;

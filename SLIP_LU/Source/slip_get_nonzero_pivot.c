@@ -30,14 +30,24 @@ int32_t slip_get_nonzero_pivot // find the first eligible nonzero pivot
 )
 {
 
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
     SLIP_info info ;
     if (!x || !pivs || !xi) {return SLIP_INCORRECT_INPUT;}
-    int32_t inew, sgn;
-    *pivot = -1; // used later to check for singular matrix
 
     //--------------------------------------------------------------------------
-    // Iterate accross the nonzeros in x
+    // initializations
     //--------------------------------------------------------------------------
+
+    int32_t inew, sgn;
+    (*pivot) = -1; // used later to check for singular matrix
+
+    //--------------------------------------------------------------------------
+    // Iterate across the nonzeros in x
+    //--------------------------------------------------------------------------
+
     for (int32_t i = top; i < n; i++)
     {
         // inew is the location of the ith nonzero
@@ -46,12 +56,17 @@ int32_t slip_get_nonzero_pivot // find the first eligible nonzero pivot
         SLIP_CHECK (SLIP_mpz_sgn (&sgn, x[inew])) ;
         if (sgn != 0 && pivs [inew] < 0)
         {
-            *pivot = inew;
+            (*pivot) = inew;
             // End the loop
             break;
         }
     }
-    if (*pivot == -1)
+
+    //--------------------------------------------------------------------------
+    // return result
+    //--------------------------------------------------------------------------
+
+    if ((*pivot) == -1)
     {
         return SLIP_SINGULAR;
     }

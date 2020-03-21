@@ -13,6 +13,9 @@
  * vector x.
  */
 
+// TODO this is only needed in slip_ref_triangular_solve and doesn't need to
+// be its own function.
+
 #include "SLIP_LU_internal.h"
 
 SLIP_info slip_reset_mpz_array
@@ -23,15 +26,23 @@ SLIP_info slip_reset_mpz_array
     int32_t *xi    // nonzero pattern
 )
 {
-    // Check input
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
     SLIP_info info;
     if (!x || n <= 0 || top < 0 || !xi) {return SLIP_INCORRECT_INPUT;}
+
+    //--------------------------------------------------------------------------
+    // clear x
+    //--------------------------------------------------------------------------
 
     // Access the nonzero pattern located in xi[top..n-1]
     // and set nonzero x[i] = 0
     for (int32_t i = top; i < n; i++)
     {
-        SLIP_CHECK(SLIP_mpz_set_ui(x[xi[i]], 0));
+        SLIP_CHECK (SLIP_mpz_set_ui (x [xi [i]], 0)) ;
     }
 
     return SLIP_OK;

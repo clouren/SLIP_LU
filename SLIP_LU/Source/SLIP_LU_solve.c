@@ -56,11 +56,24 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     //--------------------------------------------------------------------------
 
     SLIP_info info ;
+    SLIP_REQUIRE (L,    SLIP_CSC,   SLIP_MPZ) ;
+    SLIP_REQUIRE (U,    SLIP_CSC,   SLIP_MPZ) ;
+    SLIP_REQUIRE (rhos, SLIP_DENSE, SLIP_MPZ) ;
+    SLIP_REQUIRE (b,    SLIP_DENSE, SLIP_MPZ) ;
+
+    // TODO: change X to SLIP_matrix, and allocate it here
+    // with SLIP_matrix_allocate (&X, SLIP_DENSE, SLIP_MPZ, ...).
+
     if (!x || !b || !rhos || !pinv || !L || !U || !b->x
         || !L->p || !L->i || !L->x || !U->p || !U->i || !U->x)
     {
         return SLIP_INCORRECT_INPUT;
     }
+
+    //--------------------------------------------------------------------------
+    // initializations
+    //--------------------------------------------------------------------------
+
     int32_t i, k, n = L->n, numRHS = b->n;
     mpz_t **bx = b->x;
 

@@ -28,11 +28,21 @@ SLIP_info SLIP_build_sparse_csc_mpfr
     SLIP_options *option    // command options containing the prec for mpfr
 )
 {
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    // TODO: use SLIP_matrix_copy (&A, SLIP_CSC, SLIP_MPZ, B, option)
+    // instead, and remove this function (or at least make non-user-callable).
+
     SLIP_info info ;
     if (!p || !I || !x || !A_handle || !option)
     {
         return SLIP_INCORRECT_INPUT;
     }
+
+    //--------------------------------------------------------------------------
 
     SLIP_sparse *A = slip_create_sparse ( ) ;
     mpz_t* x_new = SLIP_create_mpz_array(nz);

@@ -14,6 +14,8 @@
  * The values of the triplet matrix must be stored as mpz_t values.
  */
 
+// TODO replace with SLIP_matrix_copy
+
 #define SLIP_FREE_ALL              \
     SLIP_FREE(w);
 

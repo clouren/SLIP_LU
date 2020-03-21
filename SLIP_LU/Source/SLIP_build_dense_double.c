@@ -36,11 +36,20 @@ SLIP_info SLIP_build_dense_double
 )
 {
 
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    // TODO: use SLIP_matrix_copy (&C, SLIP_DENSE, SLIP_MPZ, B, option)
+    // instead, and remove this function (or at least make non-user-callable).
+
     SLIP_info info ;
     if (!B || !C_handle)
     {
         return (SLIP_INCORRECT_INPUT) ;
     }
+
+    //--------------------------------------------------------------------------
 
     SLIP_dense *C = slip_create_dense ( ) ;
     if (C == NULL)

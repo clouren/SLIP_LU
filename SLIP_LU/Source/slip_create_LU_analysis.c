@@ -11,6 +11,9 @@
 /* Purpose: This function allocates memory for the symbolic analysis struct
  */
 
+// TODO: this is only used by SLIP_LU_analyze.c, so move all this code
+// into that function.  This does not need to be a stand-alone function.
+
 #include "SLIP_LU_internal.h"
 
 SLIP_LU_analysis *slip_create_LU_analysis

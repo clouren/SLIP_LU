@@ -8,8 +8,8 @@
 
 //------------------------------------------------------------------------------
 
-/* Purpose: This function obtains column k from matrix A and stores it in the
- * dense vector x.
+/* Purpose: This function obtains column k from matrix A and scatters it into
+ * the dense vector x.
  *
  * On exit, x either contains the kth column of A or is NULL
  */
@@ -26,8 +26,22 @@ SLIP_info slip_get_column //extract k-th column from A, i.e., x=A(:,k)
     int32_t k       // column to extract
 )
 {
-    if (!A || !x || !A->x || !A->p || !A->i) {return SLIP_INCORRECT_INPUT;}
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    // TODO: this function is only used in slip_ref_triangular_solve.
+    // Just delete this function and move the functionality there.
+
     SLIP_info info ;
+    ASSERT (A != NULL && A->kind == SLIP_CSC && A->type == SLIP_MPZ) ;
+    ASSERT (x != NULL) ;        // TODO make x a SLIP_matrix?
+
+    if (!A || !x || !A->x || !A->p || !A->i) {return SLIP_INCORRECT_INPUT;}
+
+    //--------------------------------------------------------------------------
+
     // Iterating accross the nonzeros in column k
     for (int32_t i = A->p[k]; i < A->p[k + 1]; i++)
     {

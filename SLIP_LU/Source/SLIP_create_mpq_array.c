@@ -19,8 +19,17 @@ mpq_t* SLIP_create_mpq_array
     int32_t n      // size of the array
 )
 {
-    // Check input
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    // TODO: use SLIP_matrix_allocate (&A, SLIP_DENSE, SLIP_MPQ, ...)
+
     if (n <= 0) {return NULL;}
+
+    //--------------------------------------------------------------------------
+
     // Malloc space
     mpq_t* x = (mpq_t*) SLIP_calloc(n, sizeof(mpq_t));
     if (!x) {return NULL;}

@@ -12,6 +12,9 @@
  * version merely expands x and i and does not initialize/allocate the values!
  */
 
+// TODO: rename this SLIP_matrix_reallocate, and extend to all matrix kinds
+// and types?
+
 #include "SLIP_LU_internal.h"
 
 SLIP_info slip_sparse_realloc
@@ -19,24 +22,46 @@ SLIP_info slip_sparse_realloc
     SLIP_sparse* A // the matrix to be expanded
 )
 {
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    // TODO could extend this to any data type, but it's only needed for
+    // L and U, in SLIP_LU_factorize.
+
+    ASSERT (A != NULL && A->kind = SLIP_CSC && A->type == SLIP_MPZ) ;
+
     if (!A || !A->p || !A->i || !A->x){return SLIP_INCORRECT_INPUT;}
+
+    //--------------------------------------------------------------------------
+
     int32_t nzmax = A->nzmax;
+
     // Double size of A->x and A->i without initializing the new entries in A->x
     // cannot use SLIP_realloc here, since it frees its input on failure.
-    mpz_t *Ax_new = (mpz_t*) SLIP_MEMORY_REALLOC(A->x, 2*nzmax*sizeof(mpz_t));
+    mpz_t *Ax_new = (mpz_t*) SLIP_MEMORY_REALLOC (A->x, 2*nzmax*sizeof(mpz_t));
+    if (!Ax_new)
+    {
+        return (SLIP_OUT_OF_MEMORY) ;
+    }
 
-    if (!Ax_new) {return SLIP_OUT_OF_MEMORY;}
     A->x = Ax_new;
-    // set newly allocated mpz entries be NULL to avoid potential issue
+
+    // set newly allocated mpz entries to NULL
     for (int32_t i = nzmax; i < 2*nzmax; i++)
     {
-        SLIP_MPZ_SET_NULL(A->x[i]);
+        SLIP_MPZ_SET_NULL (A->x[i]) ;
     }
+
+    A->i = (int32_t*) SLIP_realloc (A->i, nzmax*sizeof(int32_t),
+        2*nzmax*sizeof(int32_t)) ;
+    if (!A->i)
+    {
+        return (SLIP_OUT_OF_MEMORY) ;
+    }
+
     A->nzmax = nzmax*2;
-
-    A->i = (int32_t*) SLIP_realloc(A->i, nzmax*sizeof(int32_t),
-        2*nzmax*sizeof(int32_t));
-    if (!A->i) {return SLIP_OUT_OF_MEMORY;}
-
-    return SLIP_OK;
+    return (SLIP_OK) ;
 }
+

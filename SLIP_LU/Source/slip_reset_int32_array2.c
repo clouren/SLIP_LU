@@ -13,6 +13,9 @@
  * resetting each term individually.
  */
 
+// TODO this is only needed in slip_ref_triangular_solve and doesn't need to
+// be its own function.
+
 #include "SLIP_LU_internal.h"
 
 SLIP_info slip_reset_int32_array2
@@ -23,9 +26,20 @@ SLIP_info slip_reset_int32_array2
     int32_t *xi    // nonzero pattern
 )
 {
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
     if (!h || !xi || n <= 0 || top < 0) {return SLIP_INCORRECT_INPUT;}
-    // Access the nonzero pattern located in xin[top..n-1]
-    // and set Each "nonzero" h[i] = -1
+
+    //--------------------------------------------------------------------------
+    // clear the h array
+    //--------------------------------------------------------------------------
+
+    // Access the nonzero pattern located in xi [top..n-1]
+    // and set each h[i] = -1, for each i in the list xi [top..n-1].
+
     for (int32_t i = top; i < n; i++)
     {
         h[xi[i]] = -1;

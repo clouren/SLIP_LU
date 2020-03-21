@@ -21,8 +21,21 @@ mpz_t* slip_create_mpz_array2
     int32_t size   // Relative size of numbers
 )
 {
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    // TODO: use SLIP_matrix_allocate (&A, SLIP_DENSE, SLIP_MPZ, ...)?
+    // or keep this as an internal function?  This function is only used
+    // in SLIP_LU_factorize.  Whatever it does, it should return a dense
+    // mpz SLIP_matrix.
+
     // Check input
     if (n <= 0 || size <= 0) {return NULL;}
+
+    //--------------------------------------------------------------------------
+
     // Malloc space
     mpz_t* x = (mpz_t*) SLIP_calloc(n, sizeof(mpz_t));
     if (!x) {return NULL;}
@@ -39,3 +52,4 @@ mpz_t* slip_create_mpz_array2
     }
     return x;
 }
+

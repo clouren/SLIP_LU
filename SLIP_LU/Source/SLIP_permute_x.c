@@ -26,8 +26,22 @@ SLIP_info SLIP_permute_x
 )
 {
 
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    // TODO: change this to create a new SLIP_dense matrix on output?
+    // It would be faster, since the copy x = x2 could be skipped.
+
     SLIP_info info ;
+    SLIP_REQUIRE (x, SLIP_DENSE, SLIP_MPQ) ;
+
     if (!x || !S || !S->q) {return SLIP_INCORRECT_INPUT;}
+
+    //--------------------------------------------------------------------------
+    // x2 (q) = x
+    //--------------------------------------------------------------------------
+
     int32_t *q = S->q;     // column permutation
     // Declare temp x
     mpq_t** x2 = SLIP_create_mpq_mat(n, numRHS);
@@ -41,7 +55,10 @@ SLIP_info SLIP_permute_x
         }
     }
 
-    // Return x = x2
+    //--------------------------------------------------------------------------
+    // x = x2
+    //--------------------------------------------------------------------------
+
     for (int32_t i = 0; i < n; i++)
     {
         for (int32_t j = 0; j < numRHS; j++)
@@ -49,6 +66,10 @@ SLIP_info SLIP_permute_x
             SLIP_CHECK(SLIP_mpq_set(x[i][j], x2[i][j]));
         }
     }
+
+    //--------------------------------------------------------------------------
+    // free workspace and return result
+    //--------------------------------------------------------------------------
 
     SLIP_FREE_ALL;
     return SLIP_OK;

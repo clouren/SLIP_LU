@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/slip_create_sparse: create an empty sparse mpq matrix
+// SLIP_LU/slip_create_sparse: create an empty sparse matrix
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -25,8 +25,18 @@
 
 SLIP_sparse *slip_create_sparse( void )
 {
+
+    // TODO: use SLIP_matrix_allocate (&A, SLIP_CSC, ...)
+
+    //--------------------------------------------------------------------------
+
     SLIP_sparse *A = (SLIP_sparse*) SLIP_malloc(sizeof(SLIP_sparse));
-    if (A == NULL) {return NULL;}
+    if (A == NULL)
+    {
+        // out of memory
+        return NULL ;
+    }
+
     A -> n     = 0;
     A -> m     = 0;
     A -> nzmax = 0;
@@ -35,11 +45,11 @@ SLIP_sparse *slip_create_sparse( void )
     A -> i     = NULL;
     A -> x     = NULL;
 
-    SLIP_MPQ_SET_NULL(A->scale);
-    CHECK_RESULT (SLIP_mpq_init(A->scale));
+    // A->scale = 1
+    SLIP_MPQ_SET_NULL (A->scale) ;
+    CHECK_RESULT (SLIP_mpq_init (A->scale)) ;
+    CHECK_RESULT (SLIP_mpq_set_ui (A->scale, 1, 1)) ;
 
-    // Initial scale is 1
-    CHECK_RESULT (SLIP_mpq_set_ui(A->scale, 1, 1));
-
-    return A;
+    return (A) ;
 }
+

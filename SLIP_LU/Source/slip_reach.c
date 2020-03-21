@@ -26,13 +26,21 @@ void slip_reach    // compute the reach of column k of A on the graph of L
     const int32_t* pinv     // row permutation
 )
 {
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //-------------------------------------------------------------------------- 
+
     // inputs have been checked in slip_ref_triangular_solve
+    ASSERT (L != NULL && L->kind == SLIP_CSC && L->type == SLIP_MPZ) ;
+    ASSERT (A != NULL && A->kind == SLIP_CSC && A->type == SLIP_MPZ) ;
     int32_t p, n = L->n;
     *top = n;
 
     //--------------------------------------------------------------------------
     // Iterating across number of nonzero in column k
     //--------------------------------------------------------------------------
+
     for (p = A->p[k]; p < A->p[k + 1]; p++)
     {
         // DFS at unmarked node i
@@ -47,5 +55,5 @@ void slip_reach    // compute the reach of column k of A on the graph of L
     {
         SLIP_MARK(L->p, xi[p]);
     }
-    return;
 }
+

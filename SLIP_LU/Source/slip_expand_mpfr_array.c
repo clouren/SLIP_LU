@@ -38,6 +38,8 @@ SLIP_info slip_expand_mpfr_array
     // check inputs
     //--------------------------------------------------------------------------
 
+    // TODO: move this functionality into slip_cast_array
+
     SLIP_info info ;
     if (!x || !x_out || !scale || n <= 0) {return SLIP_INCORRECT_INPUT;}
 

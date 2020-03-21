@@ -8,12 +8,13 @@
 
 //------------------------------------------------------------------------------
 
-/* Purpose: This function performs sparse REF forward substitution This is
- * essentially the same as the sparse REF triangular solve applied to each
- * column of the right hand side vectors. Like the normal one, this function
- * expects that the vector x is dense. As a result,the nonzero pattern is not
- * computed and each nonzero in x is iterated across.  The system to solve is
- * L*D*x_output = x_input, overwriting the right-hand-side with the solution.
+/* Purpose: This function performs sparse roundoff-error-free (REF) forward
+ * substitution This is essentially the same as the sparse REF triangular solve
+ * applied to each column of the right hand side vectors. Like the normal one,
+ * this function expects that the vector x is dense. As a result,the nonzero
+ * pattern is not computed and each nonzero in x is iterated across.  The
+ * system to solve is L*D*x_output = x_input, overwriting the right-hand-side
+ * with the solution.
  *
  * On output, the mpz_t** x structure is modified.
  */
@@ -38,7 +39,18 @@ SLIP_info slip_forward_sub
 )
 {
 
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
     SLIP_info info ;
+    ASSERT (L != NULL && L->kind == SLIP_CSC) ;
+    ASSERT (x != NULL && x->kind == SLIP_DENSE && x->type == SLIP_MPZ) ;
+    ASSERT (rhos != NULL) ;
+    ASSERT (rhos->kind == SLIP_DENSE && rhos->type == SLIP_MPZ) ;
+
+    //--------------------------------------------------------------------------
+
     int32_t i, j, p, k, n, m, mnew, sgn, **h;
     // Size of x vector
     n = L->n;

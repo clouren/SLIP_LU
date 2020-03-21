@@ -31,13 +31,20 @@ SLIP_info slip_get_smallest_pivot
 )
 {
 
-    // Check input
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
     SLIP_info info ;
     if (!x || !pivs || !xi) {return SLIP_INCORRECT_INPUT;}
-    int32_t i, inew, j, flag, sgn, r;
 
+    //--------------------------------------------------------------------------
+    // allocate workspace
+    //--------------------------------------------------------------------------
+
+    int32_t i, inew, j, flag, sgn, r;
     // Flag is non-negative until we have an initial starting value for small
-    *pivot = -1;
+    (*pivot) = -1;
     j = n;
     flag = top;
     mpz_t small; SLIP_MPZ_SET_NULL(small);
@@ -46,6 +53,7 @@ SLIP_info slip_get_smallest_pivot
     //--------------------------------------------------------------------------
     // Find an initial pivot. Fails if all terms are 0 in array x
     //--------------------------------------------------------------------------
+
     while (flag > -1 && flag < n)
     {
         // i location of first nonzero
@@ -71,6 +79,7 @@ SLIP_info slip_get_smallest_pivot
     //--------------------------------------------------------------------------
     // Iterate across remaining nonzeros
     //--------------------------------------------------------------------------
+
     for (i = j; i < n; i++)
     {
         inew = xi[i];
@@ -88,7 +97,11 @@ SLIP_info slip_get_smallest_pivot
             }
         }
     }
-    // Clear memory for small
+
+    //--------------------------------------------------------------------------
+    // free workspace and return result
+    //--------------------------------------------------------------------------
+
     SLIP_FREE_ALL;
     if (*pivot == -1)
     {

@@ -18,10 +18,20 @@ double** SLIP_create_double_mat
     int32_t n      // number of columns (must be > 0)
 )
 {
-    // Check input
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    // TODO: use SLIP_matrix_allocate (&A, SLIP_DENSE, SLIP_DOUBLE, ...)
+
     if (m <= 0 || n <= 0) {return NULL;}
+
+    //--------------------------------------------------------------------------
+
     double **x = (double**) SLIP_calloc(m, sizeof(double*));
     if (!x) {return NULL;}
+
     for (int32_t i = 0; i < m; i++)
     {
         x[i] = (double*) SLIP_calloc(n, sizeof(double));

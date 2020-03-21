@@ -212,7 +212,7 @@ void *slip_gmp_allocate
     #endif
 
     // return p to SLIP_gmp_function (NEVER return a NULL pointer to GMP!)
-    assert (p != NULL) ;
+    ASSERT (p != NULL) ;
     return (p) ;
 }
 

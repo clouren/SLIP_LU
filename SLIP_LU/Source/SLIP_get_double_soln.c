@@ -37,11 +37,21 @@ SLIP_info SLIP_get_double_soln
 )
 {
 
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    // TODO: use SLIP_matrix_copy (&X_double, SLIP_DENSE, SLIP_DOUBLE, X_mpq...)
+    // and delete this function.
+
     SLIP_info info ;
     if (x_doub  == NULL)
     {
         return SLIP_INCORRECT_INPUT;
     }
+
+    //--------------------------------------------------------------------------
+
     for (int32_t i = 0; i < n; i++)
     {
         for (int32_t j = 0; j < numRHS; j++)

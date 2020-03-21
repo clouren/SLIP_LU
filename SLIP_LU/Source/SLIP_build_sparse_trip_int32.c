@@ -8,12 +8,7 @@
 
 //------------------------------------------------------------------------------
 
-/* Purpose: This function will allow the user to take a matrix of their defined
- * type (in this case int32) and convert it from their triplet form to our data
- * structure. The integrity of the user defined arrays are maintained
- * (therefore, one would need to delete these arrays).
- *
- * On output, the SLIP_sparse* A contains the user's matrix.
+/* Purpose:  build a sparse mpz matrix from int32 triplets
  */
 
 #define SLIP_FREE_ALL                       \
@@ -33,11 +28,21 @@ SLIP_info SLIP_build_sparse_trip_int32
     int32_t nz          // number of nonzeros in A (size of x, I, and J vectors)
 )
 {
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    // TODO: use SLIP_matrix_copy (&C, SLIP_CSC, SLIP_MPZ, B, option)
+    // instead, and remove this function (or at least make non-user-callable).
+
     SLIP_info info ;
     if (!I || !J || !A_handle || !x || n <= 0 || nz <= 0)
     {
         return SLIP_INCORRECT_INPUT;
     }
+
+    //--------------------------------------------------------------------------
 
     SLIP_sparse *A = slip_create_sparse ( ) ;
     mpz_t* x_new = SLIP_create_mpz_array(nz);

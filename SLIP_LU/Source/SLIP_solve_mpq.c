@@ -38,6 +38,8 @@
 
 #include "SLIP_LU_internal.h"
 
+// TODO: rename this function?  Take off "_mpq", at least.
+
 SLIP_info SLIP_solve_mpq
 (
     mpq_t **x_mpq,          // Solution vector stored as an mpq_t array
@@ -52,6 +54,12 @@ SLIP_info SLIP_solve_mpq
     // check inputs
     //-------------------------------------------------------------------------
 
+    SLIP_info info ;
+    SLIP_REQUIRE (A, SLIP_CSC,   SLIP_MPZ) ;
+    SLIP_REQUIRE (b, SLIP_DENSE, SLIP_MPZ) ;
+    // TODO: change x_doub to SLIP_matrix: SLIP_DENSE, SLIP_MPFR,
+    // and create it on output
+
     if (!x_mpq || !A || !A->p || !A->i || !A->x ||
         !S || !S->q || !b || !b->x || !option)
     {
@@ -59,7 +67,6 @@ SLIP_info SLIP_solve_mpq
     }
 
     int32_t n = A->n, numRHS = b->n;
-    SLIP_info info ;
     SLIP_sparse *L = NULL ;
     SLIP_sparse *U = NULL ;
     int32_t *pinv = NULL ;
@@ -74,6 +81,7 @@ SLIP_info SLIP_solve_mpq
     //--------------------------------------------------------------------------
     // FB Substitution
     //--------------------------------------------------------------------------
+
     SLIP_CHECK(SLIP_LU_solve(x_mpq, b,
         (const SLIP_sparse *) L,
         (const SLIP_sparse *) U,
@@ -96,6 +104,7 @@ SLIP_info SLIP_solve_mpq
     //--------------------------------------------------------------------------
     // Free memory
     //--------------------------------------------------------------------------
+
     SLIP_FREE_ALL;
     return (SLIP_OK) ;
 }

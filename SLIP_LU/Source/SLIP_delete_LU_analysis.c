@@ -14,6 +14,8 @@
  * termination.
  */
 
+// TODO: keep this function but rename SLIP_LU_analysis_free
+
 #include "SLIP_LU_internal.h"
 
 void SLIP_delete_LU_analysis

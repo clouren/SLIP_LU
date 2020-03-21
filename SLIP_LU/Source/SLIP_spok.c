@@ -8,6 +8,9 @@
 
 //------------------------------------------------------------------------------
 
+// TODO: rename this SLIP_matrix_check, and extend to all kinds (triplet,
+// dense, and any type).
+
 #include "SLIP_LU_internal.h"
 
 /* check the validity of a SLIP_sparse sparse matrix in compressed-
@@ -26,12 +29,29 @@ SLIP_info SLIP_spok     // returns a SLIP_LU status code
 )
 {
 
-    int32_t i, j, p, pend ;
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
 
+    if (option == NULL)
+    {
+        return (SLIP_INCORRECT_INPUT) ;
+    }
     int32_t print_level = option->print_level;
+    if (A == NULL)
+    {
+        if (print_level >= 1)
+        {
+            printf ("A is NULL.\n") ;
+        }
+        return (SLIP_INCORRECT_INPUT) ;
+    }
+
     //--------------------------------------------------------------------------
     // get the input matrix
     //--------------------------------------------------------------------------
+
+    int32_t i, j, p, pend ;
 
     int32_t m = A->m ;
     int32_t n = A->n ;
@@ -50,17 +70,17 @@ SLIP_info SLIP_spok     // returns a SLIP_LU status code
     // check the dimensions
     //--------------------------------------------------------------------------
 
-    if (m < 0)
+    if (m < 0)      // or (m <= 0) ?
     {
         if (print_level > 0) printf ("m invalid\n") ;
         return (SLIP_INCORRECT_INPUT) ;
     }
-    if (n < 0)
+    if (n < 0)      // or (n <= 0) ?
     {
         if (print_level > 0) printf ("n invalid\n") ;
         return (SLIP_INCORRECT_INPUT) ;
     }
-    if (nzmax < 0)
+    if (nzmax < 0)      // or (nzmax <= 0) ?
     {
         if (print_level > 0) printf ("nzmax invalid\n") ;
         return (SLIP_INCORRECT_INPUT) ;

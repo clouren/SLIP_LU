@@ -22,8 +22,12 @@ void SLIP_delete_mpz_mat
     int32_t n       // number of columns of A
 )
 {
-    // Iterate accross all entries and clear the individual memory
+
+    // TODO: use SLIP_matrix_free (&A, option) ;
+    // Delete this since *_mat will no longer be used.
+
     if (A == NULL || (*A) == NULL) {return ;}
+
     for (int32_t i = 0; i < m; i++)
     {
         SLIP_delete_mpz_array(&((*A)[i]), n);

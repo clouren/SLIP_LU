@@ -87,8 +87,8 @@ SLIP_info SLIP_matrix_copy
                 {
                     // allocate C
                     int32_t nz = A->p [n] ;
-                    SLIP_CHECK (SLIP_matrix_allocate (&C, m, n, nz,
-                        kind, type, false, option)) ;
+                    SLIP_CHECK (SLIP_matrix_allocate (&C, kind, type, m, n, nz,
+                        false, option)) ;
                     // copy the pattern of A into C
                     memcpy (C->p, A->p, (n+1) * sizeof (int32)) ;
                     memcpy (C->i, A->i, nz * sizeof (int32)) ;
@@ -117,8 +117,8 @@ SLIP_info SLIP_matrix_copy
                         return (SLIP_OUT_OF_MEMORY) ;
                     }
                     // allocate C
-                    SLIP_CHECK (SLIP_matrix_allocate (&C, m, n, nz,
-                        kind, type, false, option)) ;
+                    SLIP_CHECK (SLIP_matrix_allocate (&C, kind, type, m, n, nz,
+                        , false, option)) ;
                     C->scale = scale ; // TODO
                     // count the # of entries in each column
                     for (int32_t k = 0 ; k < nz ; k++)
@@ -161,8 +161,8 @@ SLIP_info SLIP_matrix_copy
                         }
                     }
                     // allocate C
-                    SLIP_CHECK (SLIP_matrix_allocate (&C, m, n, nz,
-                        kind, type, false, option)) ;
+                    SLIP_CHECK (SLIP_matrix_allocate (&C, kind, type, m, n, nz,
+                        false, option)) ;
                     C->scale = scale ; // TODO
                     // Construct C
                     int32_t nz = 0 ;
@@ -207,8 +207,8 @@ SLIP_info SLIP_matrix_copy
                 {
                     // allocate C
                     int32_t nz = A->p [n] ;
-                    SLIP_CHECK (SLIP_matrix_allocate (&C, m, n, nz,
-                        kind, type, false, option)) ;
+                    SLIP_CHECK (SLIP_matrix_allocate (&C, kind, type, m, n, nz,
+                        false, option)) ;
                     // copy and typecast A->x into C->x
                     SLIP_CHECK (slip_cast_array (C->x, type, A->x, A->type,
                         nz, C->scale, option)) ;
@@ -233,8 +233,8 @@ SLIP_info SLIP_matrix_copy
                 {
                     // allocate C
                     int32_t nz = A->nz ;
-                    SLIP_CHECK (SLIP_matrix_allocate (&C, m, n, nz,
-                        kind, type, false, option)) ;
+                    SLIP_CHECK (SLIP_matrix_allocate (&C, kind, type, m, n, nz,
+                        false, option)) ;
                     // copy the pattern of A into C
                     memcpy (C->j, A->j, nz * sizeof (int32)) ;
                     memcpy (C->i, A->i, nz * sizeof (int32)) ;
@@ -265,8 +265,8 @@ SLIP_info SLIP_matrix_copy
                         }
                     }
                     // allocate C
-                    SLIP_CHECK (SLIP_matrix_allocate (&C, m, n, nz,
-                        kind, type, false, option)) ;
+                    SLIP_CHECK (SLIP_matrix_allocate (&C, kind, type, m, n, nz,
+                        false, option)) ;
                     C->scale = scale ; // TODO
                     // Construct C
                     int32_t nz = 0 ;
@@ -301,8 +301,8 @@ SLIP_info SLIP_matrix_copy
 
             // allocate C
             int32_t nzmax = m*n ;
-            SLIP_CHECK (SLIP_matrix_allocate (&C, m, n, nzmax,
-                kind, type, false, option)) ;
+            SLIP_CHECK (SLIP_matrix_allocate (&C, kind, type, m, n, nzmax,
+                false, option)) ;
 
             switch (A->kind)
             {

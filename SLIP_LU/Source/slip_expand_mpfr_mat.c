@@ -34,6 +34,9 @@ SLIP_info slip_expand_mpfr_mat
     SLIP_options *option// command options containing the prec for mpfr
 )
 {
+
+    // TODO: delete this since *_mat will no longer be used
+
     int32_t i, j, k, l, r1, r2 = 1;
     bool nz_found = false;
     SLIP_info info ;

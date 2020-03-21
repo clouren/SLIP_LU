@@ -8,11 +8,15 @@
 
 //------------------------------------------------------------------------------
 
-/* Purpose: This function performs sparse REF backward substitution. In essense
- * it solves the sysem Ux = x. Note that prior to this, we expect x to be
- * multiplied by the determinant of A.
+/* Purpose: This function performs sparse REF backward substitution, solving
+ * the sysem Ux = b. Note that prior to this, we expect x to be multiplied by
+ * the determinant of A.
  *
- * The input argument x is modified on output
+ * U is a sparse mpz matrix, and bx is a dense mpz matrix.  The diagonal entry
+ * of U must appear as the last entry in each column.
+ *
+ * The input argument bx contains b on input, and it is overwritten on output
+ * by the solution x.
  */
 
 #include "SLIP_LU_internal.h"
@@ -25,7 +29,16 @@ SLIP_info slip_back_sub  // performs sparse REF backward substitution
 )
 {
 
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
     SLIP_info info ;
+    SLIP_REQUIRE (U,  SLIP_CSC,   SLIP_MPZ) ;
+    SLIP_REQUIRE (bx, SLIP_DENSE, SLIP_MPZ) ;
+
+    //--------------------------------------------------------------------------
+
     int32_t sgn;
     mpz_t *Ux = U->x;
     int32_t *Ui = U->i;

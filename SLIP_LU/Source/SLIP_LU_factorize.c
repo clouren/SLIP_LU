@@ -59,15 +59,15 @@ SLIP_info SLIP_LU_factorize
     // check inputs
     //--------------------------------------------------------------------------
 
-    SLIP_sparse *L = NULL ;
-    SLIP_sparse *U = NULL ;
-    mpz_t *rhos = NULL ;
+    SLIP_sparse *L = NULL ;     // TODO change to SLIP_matrix (csc, mpz)
+    SLIP_sparse *U = NULL ;     // TODO change to SLIP_matrix (csc, mpz)
+    mpz_t *rhos = NULL ;        // TODO change to SLIP_matrix (dense, mpz)
     int32_t *pinv = NULL ;
     int32_t *xi = NULL ;
     int32_t *h = NULL ;
     int32_t *pivs = NULL ;
     int32_t *row_perm = NULL ;
-    mpz_t* x = NULL ;
+    mpz_t* x = NULL ;           // TODO change to SLIP_matrix (dense, mpz)?
 
     mpz_t sigma; SLIP_MPZ_SET_NULL(sigma);
     mpfr_t temp; SLIP_MPFR_SET_NULL(temp);
@@ -81,6 +81,8 @@ SLIP_info SLIP_LU_factorize
     (*U_handle) = NULL ;
     (*rhos_handle) = NULL ;
     (*pinv_handle) = NULL ;
+
+    SLIP_REQUIRE (A, SLIP_CSC, SLIP_MPZ) ;
 
     if (!A || !S || !option || !A->p || !A->x || !A->i)
     {

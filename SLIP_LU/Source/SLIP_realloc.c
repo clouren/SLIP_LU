@@ -24,6 +24,7 @@ void *SLIP_realloc
     size_t new_size     // New size of this pointer
 )
 {
+
     #ifdef MATLAB_MEX_FILE
         return mxRealloc(p, new_size);
     #else

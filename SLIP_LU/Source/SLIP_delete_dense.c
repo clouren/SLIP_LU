@@ -17,6 +17,9 @@ void SLIP_delete_dense
     SLIP_dense **A   // Struct to be destroyed
 )
 {
+
+    // TODO: use SLIP_matrix_free (&A, option) ;
+
     if (A == NULL || (*A) == NULL){ return;}
 
     // Delete A->x

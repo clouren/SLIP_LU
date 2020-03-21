@@ -8,8 +8,7 @@
 
 //------------------------------------------------------------------------------
 
-/* Purpose: This function frees the working evironment for SLIP LU library.
- */
+// Purpose: SLIP_finalize frees the working environment for SLIP LU library.
 
 #include "SLIP_LU_internal.h"
 
@@ -18,7 +17,7 @@ void SLIP_finalize
     void
 )
 {
-    SLIP_mpfr_free_cache();       // Free mpfr internal cache
-    slip_gmp_finalize();          // Reset GMP memory variables
+    SLIP_mpfr_free_cache ( ) ;    // Free mpfr internal cache
+    slip_gmp_finalize ( ) ;       // Reset GMP memory variables
 }
 

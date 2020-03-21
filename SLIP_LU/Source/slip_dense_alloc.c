@@ -22,10 +22,20 @@ SLIP_info slip_dense_alloc
     int32_t n      // number of columns
 )
 {
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    // TODO: use SLIP_matrix_allocate (&A, SLIP_DENSE, SLIP_MPZ, ...) ;
+
     if (n <= 0 || m <= 0)
     {
         return SLIP_INCORRECT_INPUT;
     }
+
+    //--------------------------------------------------------------------------
+
     A->m = m;                                    // Rows of the matrix
     A->n = n;                                    // Columns of the matrix
     A->x = SLIP_create_mpz_mat(m, n);            // Initialize the mpz mat x

@@ -28,7 +28,17 @@ SLIP_info slip_expand_mpq_array
     int32_t n       // size of x
 )
 {
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+    
+    // TODO: move this functionality into slip_cast_array
+
     SLIP_info info ;
+
+    //--------------------------------------------------------------------------
+
     mpz_t temp;
     mpz_t *x3 = NULL ;
     mpq_t *x4 = NULL ;

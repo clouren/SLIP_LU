@@ -14,6 +14,9 @@
  * size 1000, so this function shrinks them to size 500.
  */
 
+// TODO: rename this SLIP_matrix_reallocate, and extend to all matrix kinds
+// and types?
+
 #include "SLIP_LU_internal.h"
 
 SLIP_info slip_sparse_collapse
@@ -21,7 +24,15 @@ SLIP_info slip_sparse_collapse
     SLIP_sparse* A // matrix to be shrunk
 )
 {
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
     if (!A || !A->p || !A->i || !A->x) {return SLIP_INCORRECT_INPUT;}
+
+    //--------------------------------------------------------------------------
+
     int32_t nz = A->nz;
     // Shrink A->i and A->x such that they're of size nz.  These calls to
     // SLIP_realloc cannot fail since the space is shrinking.

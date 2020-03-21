@@ -8,20 +8,19 @@
 
 //------------------------------------------------------------------------------
 
-/* Purpose: calloc space of size n*size.
- * on failure, NULL is returned
- */
+// Purpose: calloc space of size n*size.  Returns NULL on failure.
 
 #include "SLIP_LU_internal.h"
 
 void* SLIP_calloc
 (
     size_t n,          // Size of array
-    size_t size        // Size to alloc
+    size_t size        // Size of each entry
 )
 {
     // ensure at least one byte is calloc'd
-    if (n <= 0) {n = 1 ;}
-    if (size <= 0) {size = 1 ;}
+    n = SLIP_MAX (n, 1) ;
+    size = SLIP_MAX (size, 1) ;
     return (SLIP_MEMORY_CALLOC (n, size)) ;
 }
+
