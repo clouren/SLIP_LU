@@ -103,7 +103,7 @@ runtests: all
 	- ./cov_test 0 1 1 1
 
 # To run with valgrind:
-V = valgrind -q
+V = valgrind
 
 # run all statement coverage tests but with valgrind
 vtests: all
