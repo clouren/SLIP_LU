@@ -68,7 +68,7 @@ SLIP_info SLIP_LU_analyze
     // allocate symbolic analysis object
     //--------------------------------------------------------------------------
 
-    int32_t n = A->n, nz = A->nz, i;
+    int64_t n = A->n, nz = A->nz, i;
     S = slip_create_LU_analysis (n) ;
     if (!S)
     {
@@ -102,7 +102,7 @@ SLIP_info SLIP_LU_analyze
         double Control [AMD_CONTROL];           // Declare AMD control
         amd_defaults(Control);                  // Set AMD defaults
         double Info [AMD_INFO];
-        amd_order(n, A->p, A->i, S->q, Control, Info); // Perform AMD
+        amd_l_order(n, A->p, A->i, S->q, Control, Info); // Perform AMD
         S->lnz = S->unz = Info[AMD_LNZ];        // Guess for unz and lnz
         if (option->print_level > 0)            // Output AMD info if desired
         {
@@ -120,8 +120,8 @@ SLIP_info SLIP_LU_analyze
     else
     {
         // Declared as per COLAMD documentation
-        int32_t Alen = 2*A->nz + 6 *(n+1) + 6*(n+1) + n;
-        int32_t* A2 = (int32_t*) SLIP_malloc(Alen* sizeof(int32_t));
+        int64_t Alen = 2*A->nz + 6 *(n+1) + 6*(n+1) + n;
+        int64_t* A2 = (int64_t*) SLIP_malloc(Alen* sizeof(int64_t));
         if (!A2)
         {
             // out of memory
@@ -138,8 +138,8 @@ SLIP_info SLIP_LU_analyze
         {
             A2[i] = A->i[i];
         }
-        int32_t stats [COLAMD_STATS];
-        colamd(n, n, Alen, A2, S->q, (double *) NULL, stats);
+        int64_t stats [COLAMD_STATS];
+        colamd_l (n, n, Alen, A2, S->q, (double *) NULL, stats);
         // Guess for lnz and unz
         S->lnz = S->unz = 10*A->nz;
 
@@ -147,8 +147,8 @@ SLIP_info SLIP_LU_analyze
         if (option->print_level > 0)
         {
             printf("\n****Column Ordering Information****\n");
-            colamd_report(stats);
-            printf("\nEstimated L and U nonzeros: %d", S->lnz);
+            colamd_l_report(stats);
+            printf ("\nEstimated L and U nonzeros: %" PRId64 "\n", S->lnz) ;
         }
         SLIP_FREE(A2);
     }
@@ -162,7 +162,7 @@ SLIP_info SLIP_LU_analyze
     // Guess exceeds max number of nnz in A
     if (S->lnz > (double) n*n)
     {
-        int32_t nnz = ceil(0.5*n*n);
+        int64_t nnz = ceil(0.5*n*n);
         S->lnz = S->unz = nnz;
     }
     // If < n, first column of triangular solve may fail

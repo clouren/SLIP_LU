@@ -27,17 +27,15 @@
  *
  * numRHS:  number of RHS vectors = number of columns in x
  *
- * option:  contains command parameters for MPFR. Specifically,
- *          option->SLIP_MPFR_ROUND contains the type of MPFR
- *          rounding used.
+ * option:  option->round is the type of MPFR rounding used.
  */
 
 SLIP_info SLIP_get_mpfr_soln
 (
     mpfr_t **x_mpfr,      // mpfr solution of size n*numRHS to Ax = b
     mpq_t  **x_mpq,       // mpq solution of size n*numRHS to Ax = b.
-    int32_t n,            // Dimension of A, number of rows of x
-    int32_t numRHS,       // Number of right hand side vectors
+    int64_t n,            // Dimension of A, number of rows of x
+    int64_t numRHS,       // Number of right hand side vectors
     SLIP_options* option  // Contains mpfr command parameters
 )
 {
@@ -57,12 +55,12 @@ SLIP_info SLIP_get_mpfr_soln
 
     //--------------------------------------------------------------------------
 
-    for (int32_t i = 0; i < n; i++)
+    for (int64_t i = 0; i < n; i++)
     {
-        for (int32_t j = 0; j < numRHS; j++)
+        for (int64_t j = 0; j < numRHS; j++)
         {
             SLIP_CHECK (SLIP_mpfr_set_q (x_mpfr[i][j], x_mpq[i][j],
-                option->SLIP_MPFR_ROUND)) ;
+                option->round)) ;
         }
     }
 

@@ -18,8 +18,8 @@
 void SLIP_delete_mpfr_mat
 (
     mpfr_t ***A,   // Dense mpfr matrix
-    int32_t m,     // number of rows of A
-    int32_t n      // number of columns of A
+    int64_t m,     // number of rows of A
+    int64_t n      // number of columns of A
 )
 {
 
@@ -27,7 +27,7 @@ void SLIP_delete_mpfr_mat
     // Delete this functionality since *_mat will no longer be used.
 
     if (A == NULL || (*A) == NULL) {return;}
-    for (int32_t i = 0; i < m; i++)
+    for (int64_t i = 0; i < m; i++)
     {
         SLIP_delete_mpfr_array(&((*A)[i]), n);
     }

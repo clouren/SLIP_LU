@@ -17,12 +17,12 @@
 
 void slip_dfs // performs a dfs of the graph of the matrix starting at node j
 (
-    int32_t *top,          // beginning of stack
-    int32_t j,             // What node to start DFS at
+    int64_t *top,          // beginning of stack
+    int64_t j,             // What node to start DFS at
     SLIP_sparse* L,        // matrix which represents the Graph of L
-    int32_t* xi,           // the nonzero pattern
-    int32_t* pstack,       // workspace vector
-    const int32_t* pinv    // row permutation
+    int64_t* xi,           // the nonzero pattern
+    int64_t* pstack,       // workspace vector
+    const int64_t* pinv    // row permutation
 )
 {
 
@@ -35,7 +35,7 @@ void slip_dfs // performs a dfs of the graph of the matrix starting at node j
 
     //--------------------------------------------------------------------------
 
-    int32_t i, p, p2, done, jnew, head = 0;
+    int64_t i, p, p2, done, jnew, head = 0;
 
     // Initialize the recursion stack
     xi[0] = j;

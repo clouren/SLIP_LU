@@ -22,33 +22,45 @@
 // TODO: this is used only by slip_ref_triangular_solve.
 // Remove this function and put the code in that function.
 
-static inline int32_t compare (const void * a, const void * b)
+static inline int compare (const void * a, const void * b)
 {
-    return ( *(int32_t*)a - *(int32_t*)b );
+    int64_t delta = ( *(int64_t*)a - *(int64_t*)b ) ;
+    if (delta < 0)
+    {
+        return (-1) ;
+    }
+    else if (delta > 0)
+    {
+        return (1) ;
+    }
+    else
+    {
+        return (0) ;
+    }
 }
 
 void slip_sort_xi
 (
-    int32_t* xi,              // nonzero pattern
-    int32_t top,              // nonzeros are stored in xi[top..n-1]
-    int32_t n,                // size of problem
-    const int32_t* pinv,      // inverse row permutation
-    const int32_t* row_perm   // opposite of pinv. if pinv[j] = k,
+    int64_t* xi,              // nonzero pattern
+    int64_t top,              // nonzeros are stored in xi[top..n-1]
+    int64_t n,                // size of problem
+    const int64_t* pinv,      // inverse row permutation
+    const int64_t* row_perm   // opposite of pinv. if pinv[j] = k,
                               //    then row_perm[k] = j
 )
 {
 
     // Convert xi vector with respect to pinv
-    for (int32_t j = top; j < n; j++)
+    for (int64_t j = top; j < n; j++)
     {
         xi[j] = pinv[xi[j]];
     }
 
     // Sort xi[top..n-1]
-    qsort(&xi[top], n-top, sizeof(int32_t), compare);
+    qsort(&xi[top], n-top, sizeof(int64_t), compare);
 
     // Place xi back in original value
-    for (int32_t j = top; j < n; j++)
+    for (int64_t j = top; j < n; j++)
     {
         xi[j] = row_perm[xi[j]];
     }

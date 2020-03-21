@@ -23,7 +23,7 @@ SLIP_info slip_get_column //extract k-th column from A, i.e., x=A(:,k)
 (
     mpz_t* x,       // A(:,k)
     SLIP_sparse* A, // input matrix
-    int32_t k       // column to extract
+    int64_t k       // column to extract
 )
 {
 
@@ -43,7 +43,7 @@ SLIP_info slip_get_column //extract k-th column from A, i.e., x=A(:,k)
     //--------------------------------------------------------------------------
 
     // Iterating accross the nonzeros in column k
-    for (int32_t i = A->p[k]; i < A->p[k + 1]; i++)
+    for (int64_t i = A->p[k]; i < A->p[k + 1]; i++)
     {
         // Value of the ith nonzero
         SLIP_CHECK(SLIP_mpz_set(x[A->i[i]], A->x[i]));

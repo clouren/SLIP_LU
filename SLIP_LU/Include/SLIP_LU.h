@@ -224,11 +224,11 @@ typedef struct SLIP_options
     SLIP_col_order order; // Type of column ordering scheme used
     double tol;           // User specified tolerance for SLIP_TOL_SMALLEST and
                           // SLIP_TOL_LARGEST
-    int32_t print_level;  // 0: print nothing, 1: just errors,
+    int print_level;      // 0: print nothing, 1: just errors,
                           // 2: terse, with basic stats from COLAMD/AMD and SLIP
                           // 3: all, with matrices and results
     uint64_t prec;        // Precision used to output file if MPFR is chosen
-    mpfr_rnd_t SLIP_MPFR_ROUND; // Type of MPFR rounding used
+    mpfr_rnd_t round;     // Type of MPFR rounding used
 } SLIP_options;
 
 /* Purpose: Create and return SLIP_options pointer with default parameters
@@ -258,14 +258,14 @@ typedef enum
 SLIP_kind ;
 
 // Each of the three formats can have values of 5 different data types: mpz_t,
-// mpq_t, mpfr_t, int32_t, and double:
+// mpq_t, mpfr_t, int64_t, and double:
 
 typedef enum
 {
     SLIP_MPZ = 0,           // matrix of mpz_t integers
     SLIP_MPQ = 1,           // matrix of mpq_t rational numbers
     SLIP_MPFR = 2,          // matrix of mpfr_t
-    SLIP_INT32 = 3,         // matrix of int32_t integers
+    SLIP_INT64 = 3,         // matrix of int64_t integers
     SLIP_FP64 = 4           // matrix of doubles
 }
 SLIP_type ;
@@ -277,15 +277,15 @@ SLIP_type ;
 // A->m A->n A->nz and A->nzmax.  The p, i, j, and x components are defined as:
 
 // (0) SLIP_CSC:  A sparse matrix in CSC (compressed sparse column) format.
-//      A->p is an int32_t array of size n+1, A->i is an int32_t array of size
+//      A->p is an int64_t array of size n+1, A->i is an int64_t array of size
 //      nzmax (with nz <= nzmax), and A->x.type is an array of size nzmax of
-//      matrix entries ('type' is one of mpz, mpq, mpfr, int32, or fp64).  The
+//      matrix entries ('type' is one of mpz, mpq, mpfr, int64, or fp64).  The
 //      row indices of column j appear in A->i [A->p [j] ... A->p [j+1]-1], and
 //      the values appear in the same locations in A->x.type.  The A->j array
 //      is NULL.
 
 // (1) SLIP_TRIPLET:  A sparse matrix in triplet format.  A->i and A->j are
-//      both int32_t arrays of size nzmax, and A->x.type is an array of values
+//      both int64_t arrays of size nzmax, and A->x.type is an array of values
 //      of the same size.  The kth tuple has row index A->i [k], column index
 //      A->j [k], and value A->x.type [k], with 0 <= k < nz.  The A->p array
 //      is NULL.
@@ -301,29 +301,29 @@ SLIP_type ;
 // SLIP_matrix_free.  If A->p is NULL (for a triplet or dense matrix), then
 // A->p_shallow has no effect.
 
-// Note that all integer arrays are int32_t, which limits a SLIP_matrix to
+// Note that all integer arrays are int64_t, which limits a SLIP_matrix to
 // having dimensions and nzmax less than 2^31.  Since a SLIP_LU factorization
 // is much more costly in time and memory than a regular LU factorization, this
 // is not a serious limitation.  TODO: should we use int64_t anyway?
 
 typedef struct
 {
-    int32_t m ;         // number of rows
-    int32_t n ;         // number of columns
-    int32_t nzmax ;     // size of A->i, A->j, and A->x
-    int32_t nz ;        // # nonzeros in the matrix (TODO for triplet only??)
+    int64_t m ;         // number of rows
+    int64_t n ;         // number of columns
+    int64_t nzmax ;     // size of A->i, A->j, and A->x
+    int64_t nz ;        // # nonzeros in the matrix (TODO for triplet only??)
     SLIP_kind kind ;    // CSC, triplet, or dense
-    SLIP_type type ;    // mpz, mpq, mpfr, int32, or double
+    SLIP_type type ;    // mpz, mpq, mpfr, int64, or double
 
-    int32_t *p ;        // if CSC: column pointers, an array size is n+1.
+    int64_t *p ;        // if CSC: column pointers, an array size is n+1.
                         // if triplet or dense: A->p is NULL.
     bool p_shallow ;    // if true, A->p is shallow.
 
-    int32_t *i ;        // if CSC or triplet: row indices, of size nzmax.
+    int64_t *i ;        // if CSC or triplet: row indices, of size nzmax.
                         // if dense: A->i is NULL.
     bool i_shallow ;    // if true, A->i is shallow.
 
-    int32_t *j ;        // if triplet: column indices, of size nzmax.
+    int64_t *j ;        // if triplet: column indices, of size nzmax.
                         // if CSC or dense: A->j is NULL.
     bool j_shallow ;    // if true, A->j is shallow.
 
@@ -332,7 +332,7 @@ typedef struct
         mpz_t *mpz ;            // A->x.mpz
         mpq_t *mpq ;            // A->x.mpq
         mpfr_t *mpfr ;          // A->x.mpfr
-        int32_t *int32 ;        // A->x.int32
+        int64_t *int64 ;        // A->x.int64
         double *fp64 ;          // A->x.fp64
     } x ;
     bool x_shallow ;    // if true, A->x.type is shallow.
@@ -357,10 +357,10 @@ SLIP_info SLIP_matrix_allocate
 (
     SLIP_matrix **A_handle, // matrix to allocate
     SLIP_kind kind,         // CSC, triplet, or dense
-    SLIP_type type,         // mpz, mpq, mpfr, int32, or double
-    int32_t m,              // # of rows
-    int32_t n,              // # of columns
-    int32_t nzmax,          // max # of entries
+    SLIP_type type,         // mpz, mpq, mpfr, int64, or double
+    int64_t m,              // # of rows
+    int64_t n,              // # of columns
+    int64_t nzmax,          // max # of entries
     bool shallow,           // if true, matrix is shallow.  A->p, A->i, A->j,
                             // A->x are all returned as NULL and must be set
                             // by the caller.  All A->*_shallow are returned
@@ -379,6 +379,16 @@ SLIP_info SLIP_matrix_free
 ) ;
 
 //------------------------------------------------------------------------------
+// SLIP_matrix_nnz: # of entries in a matrix
+//------------------------------------------------------------------------------
+
+int64_t SLIP_matrix_nnz     // return # of entries in A, or -1 on error
+(
+    SLIP_matrix *A,         // matrix to query
+    SLIP_options *option
+) ;
+
+//------------------------------------------------------------------------------
 // SLIP_matrix_copy: makes a copy of a matrix
 //------------------------------------------------------------------------------
 
@@ -389,7 +399,7 @@ SLIP_info SLIP_matrix_copy
     SLIP_matrix **C,        // matrix to create (never shallow)
     // inputs, not modified:
     SLIP_kind kind,         // CSC, triplet, or dense
-    SLIP_type type,         // mpz_t, mpq_t, mprf_t, int32_t, or double
+    SLIP_type type,         // mpz_t, mpq_t, mprf_t, int64_t, or double
     SLIP_matrix *A,         // matrix to make a copy of (may be shallow)
     SLIP_options *option
 ) ;
@@ -399,7 +409,7 @@ SLIP_info SLIP_matrix_copy
 //------------------------------------------------------------------------------
 
 // These macros simplify the access to entries in a SLIP_matrix.
-// The type parameter is one of: mpq, mpz, mpfr, int32, or fp64.
+// The type parameter is one of: mpq, mpz, mpfr, int64, or fp64.
 
 // To access the kth entry in a SLIP_matrix using 1D linear addressing,
 // in any matrix kind (CSC, triplet, or dense), in any type:
@@ -434,12 +444,12 @@ SLIP_info SLIP_matrix_copy
 
 typedef struct
 {
-    int32_t m;    // Number of rows. Current version always uses n == m
-    int32_t n;    // Number of columns
-    int32_t nzmax;// Allocated size of A->i and A->x
-    int32_t nz;   // Number of nonzeros in the matrix
-    int32_t *p;   // Column pointers. Array size is n+1
-    int32_t *i;   // Row indices. Array size is nzmax, # of entries = nz
+    int64_t m;    // Number of rows. Current version always uses n == m
+    int64_t n;    // Number of columns
+    int64_t nzmax;// Allocated size of A->i and A->x
+    int64_t nz;   // Number of nonzeros in the matrix
+    int64_t *p;   // Column pointers. Array size is n+1
+    int64_t *i;   // Row indices. Array size is nzmax, # of entries = nz
     mpz_t *x;     // Values in matrix with size of nzmax, # of entries = nz
     mpq_t scale ; // scale factor for the matrix
 } SLIP_sparse ;     // TODO remove
@@ -460,8 +470,8 @@ void SLIP_delete_sparse     // TODO remove
 
 typedef struct
 {
-    int32_t m;    // Number of rows
-    int32_t n;    // Number of columns
+    int64_t m;    // Number of rows
+    int64_t n;    // Number of columns
     mpz_t **x;    // Values in matrix with size of m*n
     mpq_t scale ; // scale factor for the matrix
 
@@ -482,10 +492,10 @@ void SLIP_delete_dense      // TODO remove
 
 typedef struct
 {
-    int32_t *q;     // Column permutation for LU
-    int32_t lnz;    // Approximate number of nonzeros in L.
+    int64_t *q;     // Column permutation for LU
+    int64_t lnz;    // Approximate number of nonzeros in L.
                     // i.e., initial size of L
-    int32_t unz;    // Approximate number of nonzeros in U.
+    int64_t unz;    // Approximate number of nonzeros in U.
                     // i.e., initial size of U
 } SLIP_LU_analysis;
 
@@ -579,56 +589,56 @@ void SLIP_free
 SLIP_info SLIP_build_sparse_csc_mpz
 (
     SLIP_sparse **A_handle,     // matrix to construct
-    int32_t *p,           // The set of column pointers
-    int32_t *I,           // set of row indices
+    int64_t *p,           // The set of column pointers
+    int64_t *I,           // set of row indices
     mpz_t *x,             // Set of values in full precision integer
-    int32_t n,            // dimension of the matrix
-    int32_t nz            // number of nonzeros in A (size of x and I vectors)
+    int64_t n,            // dimension of the matrix
+    int64_t nz            // number of nonzeros in A (size of x and I vectors)
 );
 
 /* Purpose: Build a SLIP_sparse from double stored CSC matrix */
 SLIP_info SLIP_build_sparse_csc_double
 (
     SLIP_sparse **A_handle,     // matrix to construct
-    int32_t *p,           // The set of column pointers
-    int32_t *I,           // set of row indices
+    int64_t *p,           // The set of column pointers
+    int64_t *I,           // set of row indices
     double *x,            // Set of values as doubles
-    int32_t n,            // dimension of the matrix
-    int32_t nz,            // number of nonzeros in A (size of x and I vectors)
+    int64_t n,            // dimension of the matrix
+    int64_t nz,            // number of nonzeros in A (size of x and I vectors)
     SLIP_options* option
 );
 
-/* Purpose: Build a SLIP_sparse from int32_t stored CSC matrix */
-SLIP_info SLIP_build_sparse_csc_int32
+/* Purpose: Build a SLIP_sparse from int64_t stored CSC matrix */
+SLIP_info SLIP_build_sparse_csc_int64
 (
     SLIP_sparse **A_handle,     // matrix to construct
-    int32_t *p,           // The set of column pointers
-    int32_t *I,           // set of row indices
-    int32_t *x,           // Set of values as doubles
-    int32_t n,            // dimension of the matrix
-    int32_t nz            // number of nonzeros in A (size of x and I vectors)
+    int64_t *p,           // The set of column pointers
+    int64_t *I,           // set of row indices
+    int64_t *x,           // Set of values as doubles
+    int64_t n,            // dimension of the matrix
+    int64_t nz            // number of nonzeros in A (size of x and I vectors)
 );
 
 /* Purpose: Build a SLIP_sparse from mpq_t stored CSC matrix */
 SLIP_info SLIP_build_sparse_csc_mpq
 (
     SLIP_sparse **A_handle,     // matrix to construct
-    int32_t *p,           // The set of column pointers
-    int32_t *I,           // set of row indices
+    int64_t *p,           // The set of column pointers
+    int64_t *I,           // set of row indices
     mpq_t *x,             // Set of values as mpq_t rational numbers
-    int32_t n,            // dimension of the matrix
-    int32_t nz            // number of nonzeros in A (size of x and I vectors)
+    int64_t n,            // dimension of the matrix
+    int64_t nz            // number of nonzeros in A (size of x and I vectors)
 );
 
-/* Purpose: Build a SLIP_sparse from int32_t stored CSC matrix */
+/* Purpose: Build a SLIP_sparse from int64_t stored CSC matrix */
 SLIP_info SLIP_build_sparse_csc_mpfr
 (
     SLIP_sparse **A_handle,     // matrix to construct
-    int32_t *p,           // The set of column pointers
-    int32_t *I,           // set of row indices
+    int64_t *p,           // The set of column pointers
+    int64_t *I,           // set of row indices
     mpfr_t *x,            // Set of values as doubles
-    int32_t n,            // dimension of the matrix
-    int32_t nz,           // number of nonzeros in A (size of x and I vectors)
+    int64_t n,            // dimension of the matrix
+    int64_t nz,           // number of nonzeros in A (size of x and I vectors)
     SLIP_options *option  // command options containing the prec for mpfr
 );
 
@@ -648,56 +658,56 @@ SLIP_info SLIP_build_sparse_csc_mpfr
 SLIP_info SLIP_build_sparse_trip_mpz
 (
     SLIP_sparse **A_handle,     // matrix to construct
-    int32_t *I,         // set of row indices
-    int32_t *J,         // set of column indices
+    int64_t *I,         // set of row indices
+    int64_t *J,         // set of column indices
     mpz_t *x,           // Set of values in full precision integer
-    int32_t n,          // dimension of the matrix
-    int32_t nz          // number of nonzeros in A (size of x, I, and J vectors)
+    int64_t n,          // dimension of the matrix
+    int64_t nz          // number of nonzeros in A (size of x, I, and J vectors)
 );
 
 /* Purpose: Build a sparse matrix from triplet form where input is double */
 SLIP_info SLIP_build_sparse_trip_double
 (
     SLIP_sparse **A_handle,     // matrix to construct
-    int32_t *I,         // set of row indices
-    int32_t *J,         // set of column indices
+    int64_t *I,         // set of row indices
+    int64_t *J,         // set of column indices
     double *x,          // Set of values in double
-    int32_t n,          // dimension of the matrix
-    int32_t nz,         // number of nonzeros in A (size of x, I, and J vectors)
+    int64_t n,          // dimension of the matrix
+    int64_t nz,         // number of nonzeros in A (size of x, I, and J vectors)
     SLIP_options* option
 );
 
-/* Purpose: Build a sparse matrix from triplet form where input is int32_t */
-SLIP_info SLIP_build_sparse_trip_int32
+/* Purpose: Build a sparse matrix from triplet form where input is int64_t */
+SLIP_info SLIP_build_sparse_trip_int64
 (
     SLIP_sparse **A_handle,     // matrix to construct
-    int32_t *I,         // set of row indices
-    int32_t *J,         // set of column indices
-    int32_t *x,         // Set of values in int32_t
-    int32_t n,          // dimension of the matrix
-    int32_t nz          // number of nonzeros in A (size of x, I, and J vectors)
+    int64_t *I,         // set of row indices
+    int64_t *J,         // set of column indices
+    int64_t *x,         // Set of values in int64_t
+    int64_t n,          // dimension of the matrix
+    int64_t nz          // number of nonzeros in A (size of x, I, and J vectors)
 );
 
 /* Purpose: Build a sparse matrix from triplet form where input is mpq_t */
 SLIP_info SLIP_build_sparse_trip_mpq
 (
     SLIP_sparse **A_handle,     // matrix to construct
-    int32_t *I,         // set of row indices
-    int32_t *J,         // set of column indices
+    int64_t *I,         // set of row indices
+    int64_t *J,         // set of column indices
     mpq_t *x,           // Set of values as rational numbers
-    int32_t n,          // dimension of the matrix
-    int32_t nz          // number of nonzeros in A (size of x, I, and J vectors)
+    int64_t n,          // dimension of the matrix
+    int64_t nz          // number of nonzeros in A (size of x, I, and J vectors)
 );
 
 /* Purpose: Build a sparse matrix from triplet form where input is mpfr_t */
 SLIP_info SLIP_build_sparse_trip_mpfr
 (
     SLIP_sparse **A_handle,     // matrix to construct
-    int32_t *I,         // set of row indices
-    int32_t *J,         // set of column indices
+    int64_t *I,         // set of row indices
+    int64_t *J,         // set of column indices
     mpfr_t *x,          // Set of values as mpfr_t
-    int32_t n,          // dimension of the matrix
-    int32_t nz,         // number of nonzeros in A (size of x, I, and J vectors)
+    int64_t n,          // dimension of the matrix
+    int64_t nz,         // number of nonzeros in A (size of x, I, and J vectors)
     SLIP_options *option// command options containing the prec for mpfr
 );
 
@@ -722,8 +732,8 @@ SLIP_info SLIP_build_dense_mpz
     SLIP_dense **A_handle,      // Dense matrix to construct
     // inputs, not modified:
     mpz_t **b,                  // Set of values in full precision mpz integers
-    int32_t m,                  // number of rows
-    int32_t n                   // number of columns
+    int64_t m,                  // number of rows
+    int64_t n                   // number of columns
 ) ;
 
 // Purpose: Build a SLIP_dense matrix C from double input B.
@@ -732,19 +742,19 @@ SLIP_info SLIP_build_dense_double
     SLIP_dense **C_handle,      // Dense matrix to construct
     // inputs, not modified:
     double **B,                 // Set of values as doubles
-    int32_t m,                  // number of rows
-    int32_t n,                  // number of columns
+    int64_t m,                  // number of rows
+    int64_t n,                  // number of columns
     SLIP_options* option
 ) ;
 
-// Purpose: Build a SLIP_dense matrix C from int32_t input B.
-SLIP_info SLIP_build_dense_int32
+// Purpose: Build a SLIP_dense matrix C from int64_t input B.
+SLIP_info SLIP_build_dense_int64
 (
     SLIP_dense **C_handle,      // Dense matrix to construct
     // inputs, not modified:
-    int32_t **B,                // Set of values as 32-bit integers
-    int32_t m,                  // number of rows
-    int32_t n                   // number of columns
+    int64_t **B,                // Set of values as 32-bit integers
+    int64_t m,                  // number of rows
+    int64_t n                   // number of columns
 ) ;
 
 // Purpose: Build a SLIP_dense matrix C from mpq_t input B.
@@ -753,8 +763,8 @@ SLIP_info SLIP_build_dense_mpq
     SLIP_dense **C_handle,      // Dense matrix to construct
     // inputs, not modified:
     mpq_t **B,                  // set of values as mpq_t
-    int32_t m,                  // number of rows
-    int32_t n                   // number of columns
+    int64_t m,                  // number of rows
+    int64_t n                   // number of columns
 ) ;
 
 // Purpose: Build a SLIP_dense matrix C from mpfr_t input B.
@@ -763,8 +773,8 @@ SLIP_info SLIP_build_dense_mpfr
     SLIP_dense **C_handle,      // Dense matrix to construct
     // inputs, not modified:
     mpfr_t **B,             // Set of values as mpfr_t
-    int32_t m,              // number of rows
-    int32_t n,              // number of columns
+    int64_t m,              // number of rows
+    int64_t n,              // number of columns
     SLIP_options *option    // command options with precision for mpfr
 ) ;
 
@@ -778,8 +788,8 @@ SLIP_info SLIP_build_dense_mpfr
 /* Purpose: This function creates a double matrix of size m*n. */
 double** SLIP_create_double_mat
 (
-    int32_t m,     // number of rows
-    int32_t n      // number of columns
+    int64_t m,     // number of rows
+    int64_t n      // number of columns
 );
 
 /* Purpose: This function frees a dense double matrix.
@@ -789,34 +799,34 @@ double** SLIP_create_double_mat
 void SLIP_delete_double_mat
 (
     double*** A,   // dense matrix
-    int32_t m,     // number of rows of A
-    int32_t n      // number of columns of A (unused parameter)
+    int64_t m,     // number of rows of A
+    int64_t n      // number of columns of A (unused parameter)
 );
 
 //------------------------------------------------------------------------------
-// int_mat: 2D int32 matrix
+// int_mat: 2D int64 matrix
 //------------------------------------------------------------------------------
 
-// Creates a 2D int32 matrix, where A[i][j] is the (i,j)th entry.
+// Creates a 2D int64 matrix, where A[i][j] is the (i,j)th entry.
 // A[i] is a pointer to row i, of size n.
 
-/* Purpose: This function creates an int32_t matrix of size m*n. */
-int32_t** SLIP_create_int32_mat
+/* Purpose: This function creates an int64_t matrix of size m*n. */
+int64_t** SLIP_create_int64_mat
 (
-    int32_t m,     // number of rows
-    int32_t n      // number of columns
+    int64_t m,     // number of rows
+    int64_t n      // number of columns
 );
 
-/* Purpose: This function deletes a dense int32_t matrix.
+/* Purpose: This function deletes a dense int64_t matrix.
  *
- * Input is a int32_t*** mat and its dimensions.
+ * Input is a int64_t*** mat and its dimensions.
  * Input mat is destroyed on function completion
  */
-void SLIP_delete_int32_mat
+void SLIP_delete_int64_mat
 (
-    int32_t*** A,  // dense matrix
-    int32_t m,     // number of rows
-    int32_t n      // number of columns (unused parameter)
+    int64_t*** A,  // dense matrix
+    int64_t m,     // number of rows
+    int64_t n      // number of columns (unused parameter)
 );
 
 //------------------------------------------------------------------------------
@@ -831,8 +841,8 @@ void SLIP_delete_int32_mat
  */
 mpfr_t** SLIP_create_mpfr_mat
 (
-    int32_t m,     // number of rows
-    int32_t n,     // number of columns
+    int64_t m,     // number of rows
+    int64_t n,     // number of columns
     SLIP_options *option  // command options containing the prec for mpfr
 );
 
@@ -843,8 +853,8 @@ mpfr_t** SLIP_create_mpfr_mat
 void SLIP_delete_mpfr_mat
 (
     mpfr_t ***A,   // Dense mpfr matrix
-    int32_t m,     // number of rows of A
-    int32_t n      // number of columns of A
+    int64_t m,     // number of rows of A
+    int64_t n      // number of columns of A
 );
 
 //------------------------------------------------------------------------------
@@ -857,8 +867,8 @@ void SLIP_delete_mpfr_mat
 /* Purpose: This function creates a mpq_t matrix of size m*n. */
 mpq_t** SLIP_create_mpq_mat
 (
-    int32_t m,     // number of rows
-    int32_t n      // number of columns
+    int64_t m,     // number of rows
+    int64_t n      // number of columns
 );
 
 /* Purpose: This function deletes a dense mpq matrix
@@ -868,8 +878,8 @@ mpq_t** SLIP_create_mpq_mat
 void SLIP_delete_mpq_mat
 (
     mpq_t***A,     // dense mpq matrix
-    int32_t m,     // number of rows of A
-    int32_t n      // number of columns of A
+    int64_t m,     // number of rows of A
+    int64_t n      // number of columns of A
 );
 
 //------------------------------------------------------------------------------
@@ -884,8 +894,8 @@ void SLIP_delete_mpq_mat
  */
 mpz_t** SLIP_create_mpz_mat
 (
-    int32_t m,     // number of rows
-    int32_t n      // number of columns
+    int64_t m,     // number of rows
+    int64_t n      // number of columns
 );
 
 /* Purpose: This function deletes a dense mpz matrix
@@ -895,8 +905,8 @@ mpz_t** SLIP_create_mpz_mat
 void SLIP_delete_mpz_mat
 (
     mpz_t ***A,     // The dense mpz matrix
-    int32_t m,      // number of rows of A
-    int32_t n       // number of columns of A
+    int64_t m,      // number of rows of A
+    int64_t n       // number of columns of A
 );
 
 //------------------------------------------------------------------------------
@@ -908,7 +918,7 @@ void SLIP_delete_mpz_mat
 /* Purpose: This function creates a MPFR array of desired precision*/
 mpfr_t* SLIP_create_mpfr_array
 (
-    int32_t n,     // size of the array
+    int64_t n,     // size of the array
     SLIP_options *option  // command options containing the prec for mpfr
 );
 
@@ -919,7 +929,7 @@ mpfr_t* SLIP_create_mpfr_array
 void SLIP_delete_mpfr_array
 (
     mpfr_t** x,    // mpfr array to be deleted
-    int32_t n      // size of x
+    int64_t n      // size of x
 );
 
 //------------------------------------------------------------------------------
@@ -933,7 +943,7 @@ void SLIP_delete_mpfr_array
  */
 mpq_t* SLIP_create_mpq_array
 (
-    int32_t n      // size of the array
+    int64_t n      // size of the array
 );
 
 /* Purpose: This function clears the memory used for an mpq vector of size n.
@@ -944,7 +954,7 @@ mpq_t* SLIP_create_mpq_array
 void SLIP_delete_mpq_array
 (
     mpq_t** x,     // mpq array to be deleted
-    int32_t n      // size of x
+    int64_t n      // size of x
 );
 
 //------------------------------------------------------------------------------
@@ -958,7 +968,7 @@ void SLIP_delete_mpq_array
  */
 mpz_t* SLIP_create_mpz_array
 (
-    int32_t n      // Size of x
+    int64_t n      // Size of x
 );
 
 /* Purpose: This function clears the memory used for an mpz vector of size n.
@@ -970,7 +980,7 @@ mpz_t* SLIP_create_mpz_array
 void SLIP_delete_mpz_array
 (
     mpz_t ** x,     // mpz array to be deleted
-    int32_t n       // Size of x
+    int64_t n       // Size of x
 );
 
 //------------------------------------------------------------------------------
@@ -1034,7 +1044,7 @@ SLIP_info SLIP_LU_factorize
     SLIP_sparse **L_handle, // lower triangular matrix
     SLIP_sparse **U_handle, // upper triangular matrix
     mpz_t **rhos_handle,    // sequence of pivots
-    int32_t **pinv_handle,  // inverse row permutation
+    int64_t **pinv_handle,  // inverse row permutation
     // input:
     SLIP_sparse *A,         // matrix to be factored
     SLIP_LU_analysis *S,    // stores guess on nnz and column permutation
@@ -1077,8 +1087,8 @@ SLIP_info SLIP_solve_mpq
 SLIP_info SLIP_permute_x
 (
     mpq_t **x,            // Solution vector
-    int32_t n,            // Size of solution vector
-    int32_t numRHS,       // number of RHS vectors
+    int64_t n,            // Size of solution vector
+    int64_t numRHS,       // number of RHS vectors
     SLIP_LU_analysis *S   // symbolic analysis with the column ordering Q
 );
 
@@ -1100,7 +1110,7 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     const SLIP_sparse *L,   // lower triangular matrix
     const SLIP_sparse *U,   // upper triangular matrix
     const mpz_t *rhos,      // sequence of pivots
-    const int32_t *pinv     // row permutation
+    const int64_t *pinv     // row permutation
 ) ;
 
 // SLIP_spok: check and print a SLIP_sparse matrix
@@ -1118,8 +1128,8 @@ SLIP_info SLIP_get_double_soln
 (
     double **x_doub,      // double soln of size n*numRHS to Ax = b
     mpq_t  **x_mpq,       // mpq solution to Ax = b. x is of size n*numRHS
-    int32_t n,            // Dimension of A, number of rows of x
-    int32_t numRHS        // Number of right hand side vectors
+    int64_t n,            // Dimension of A, number of rows of x
+    int64_t numRHS        // Number of right hand side vectors
 ) ;
 
 /* Purpose: SLIP_get_mpfr_soln converts the output mpq_t** solution vector
@@ -1130,8 +1140,8 @@ SLIP_info SLIP_get_mpfr_soln
 (
     mpfr_t **x_mpfr,      // mpfr solution of size n*numRHS to Ax = b
     mpq_t  **x_mpq,       // mpq solution of size n*numRHS to Ax = b.
-    int32_t n,            // Dimension of A, number of rows of x
-    int32_t numRHS,       // Number of right hand side vectors
+    int64_t n,            // Dimension of A, number of rows of x
+    int64_t numRHS,       // Number of right hand side vectors
     SLIP_options* option  // Contains mpfr parameters
 );
 
@@ -1190,20 +1200,17 @@ SLIP_info SLIP_mpfr_fprintf(FILE *fp, const char *format, ... );
 
 SLIP_info SLIP_mpz_init(mpz_t x) ;
 
-SLIP_info SLIP_mpz_init2(mpz_t x, const uint64_t size) ;
+SLIP_info SLIP_mpz_init2(mpz_t x, const size_t size) ;
 
 SLIP_info SLIP_mpz_set(mpz_t x, const mpz_t y);
 
 SLIP_info SLIP_mpz_set_ui(mpz_t x, const uint64_t y) ;
 
-SLIP_info SLIP_mpz_set_si(mpz_t x, const int32_t y);
+SLIP_info SLIP_mpz_set_si(mpz_t x, const int64_t y);
 
-#if 0
-/* This function is currently unused, but kept here for future reference. */
 SLIP_info SLIP_mpz_set_d(mpz_t x, const double y);
 
 SLIP_info SLIP_mpz_get_d(double *x, const mpz_t y) ;
-#endif
 
 SLIP_info SLIP_mpz_set_q(mpz_t x, const mpq_t y) ;
 
@@ -1226,15 +1233,15 @@ SLIP_info SLIP_mpz_lcm(mpz_t lcm, const mpz_t x, const mpz_t y) ;
 
 SLIP_info SLIP_mpz_abs(mpz_t x, const mpz_t y) ;
 
-SLIP_info SLIP_mpz_cmp(int32_t *r, const mpz_t x, const mpz_t y) ;
+SLIP_info SLIP_mpz_cmp(int *r, const mpz_t x, const mpz_t y) ;
 
-SLIP_info SLIP_mpz_cmpabs(int32_t *r, const mpz_t x, const mpz_t y) ;
+SLIP_info SLIP_mpz_cmpabs(int *r, const mpz_t x, const mpz_t y) ;
 
-SLIP_info SLIP_mpz_cmp_ui(int32_t *r, const mpz_t x, const uint64_t y) ;
+SLIP_info SLIP_mpz_cmp_ui(int *r, const mpz_t x, const uint64_t y) ;
 
-SLIP_info SLIP_mpz_sgn(int32_t *sgn, const mpz_t x) ;
+SLIP_info SLIP_mpz_sgn(int *sgn, const mpz_t x) ;
 
-SLIP_info SLIP_mpz_sizeinbase(size_t *size, const mpz_t x, int32_t base) ;
+SLIP_info SLIP_mpz_sizeinbase(size_t *size, const mpz_t x, int64_t base) ;
 
 SLIP_info SLIP_mpq_init(mpq_t x) ;
 
@@ -1245,6 +1252,8 @@ SLIP_info SLIP_mpq_set_z(mpq_t x, const mpz_t y);
 SLIP_info SLIP_mpq_set_d(mpq_t x, const double y) ;
 
 SLIP_info SLIP_mpq_set_ui(mpq_t x, const uint64_t y, const uint64_t z);
+
+SLIP_info SLIP_mpq_set_si (mpq_t x, const int64_t y, const uint64_t z) ;
 
 SLIP_info SLIP_mpq_set_num(mpq_t x, const mpz_t y) ;
 
@@ -1262,27 +1271,28 @@ SLIP_info SLIP_mpq_mul(mpq_t x, const mpq_t y, const mpq_t z) ;
 
 SLIP_info SLIP_mpq_div(mpq_t x, const mpq_t y, const mpq_t z) ;
 
-SLIP_info SLIP_mpq_cmp(int32_t *r, const mpq_t x, const mpq_t y) ;
+SLIP_info SLIP_mpq_cmp(int *r, const mpq_t x, const mpq_t y) ;
 
-SLIP_info SLIP_mpq_cmp_ui(int32_t *r, const mpq_t x,
+SLIP_info SLIP_mpq_cmp_ui(int *r, const mpq_t x,
                     const uint64_t num, const uint64_t den) ;
 
-SLIP_info SLIP_mpq_equal(int32_t *r, const mpq_t x, const mpq_t y) ;
+SLIP_info SLIP_mpq_sgn(int *sgn, const mpq_t x) ;
 
-SLIP_info SLIP_mpfr_init2(mpfr_t x, const uint64_t size ) ;
+SLIP_info SLIP_mpq_equal(int *r, const mpq_t x, const mpq_t y) ;
 
-#if 0
-/* This function is currently unused, but kept here for future reference. */
+SLIP_info SLIP_mpfr_init2(mpfr_t x, const uint64_t size) ;
+
 SLIP_info SLIP_mpfr_set(mpfr_t x, const mpfr_t y, const mpfr_rnd_t rnd) ;
-#endif
 
 SLIP_info SLIP_mpfr_set_d(mpfr_t x, const double y, const mpfr_rnd_t rnd) ;
 
-SLIP_info SLIP_mpfr_set_q(mpfr_t x, const mpq_t y, const mpfr_rnd_t rnd ) ;
+SLIP_info SLIP_mpfr_set_q(mpfr_t x, const mpq_t y, const mpfr_rnd_t rnd) ;
 
-SLIP_info SLIP_mpfr_set_z(mpfr_t x, const mpz_t y, const mpfr_rnd_t rnd ) ;
+SLIP_info SLIP_mpfr_set_z(mpfr_t x, const mpz_t y, const mpfr_rnd_t rnd) ;
 
 SLIP_info SLIP_mpfr_get_z(mpz_t x, const mpfr_t y, const mpfr_rnd_t rnd) ;
+
+SLIP_info SLIP_mpfr_get_q(mpq_t x, const mpfr_t y, const mpfr_rnd_t rnd) ;
 
 SLIP_info SLIP_mpfr_get_d(double *x, const mpfr_t y, const mpfr_rnd_t rnd) ;
 
@@ -1298,7 +1308,9 @@ SLIP_info SLIP_mpfr_div_d(mpfr_t x, const mpfr_t y, const double z,
 SLIP_info SLIP_mpfr_ui_pow_ui(mpfr_t x, const uint64_t y, const uint64_t z,
                     const mpfr_rnd_t rnd) ;
 
-SLIP_info SLIP_mpfr_log2(mpfr_t x, const mpfr_t y, const mpfr_rnd_t rnd );
+SLIP_info SLIP_mpfr_log2(mpfr_t x, const mpfr_t y, const mpfr_rnd_t rnd) ;
+
+SLIP_info SLIP_mpfr_sgn(int *sgn, const mpfr_t x) ;
 
 SLIP_info SLIP_mpfr_free_cache(void);
 

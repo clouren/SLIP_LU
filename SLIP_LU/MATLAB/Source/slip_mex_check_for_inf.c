@@ -9,18 +9,18 @@
 //------------------------------------------------------------------------------
 
 // Purpose: This function checks if the array x contains Inf's, NaN's, or
-// if its values can be represented as int32_t values.
+// if its values can be represented as int64_t values.
 
 #include "SLIP_LU_mex.h"
 
-bool slip_mex_check_for_inf     // true if x can be represented as int32_t
+bool slip_mex_check_for_inf     // true if x can be represented as int64_t
 (
     double* x, // The array of numeric values
     mwSize n   // size of array
 )
 {
     
-    bool x_is_int32 = true ;
+    bool x_is_int64 = true ;
 
     for (mwSize k = 0; k < n; k++)
     {
@@ -36,24 +36,23 @@ bool slip_mex_check_for_inf     // true if x can be represented as int32_t
             mexErrMsgTxt ("A must not have any NaN values") ;
         }
 
-        if (x_is_int32)
+        if (x_is_int64)
         {
-
-            if (xk < INT32_MIN || xk > INT32_MAX)
+            if (xk < INT64_MIN || xk > INT64_MAX)
             {
-                x_is_int32 = false ;
+                x_is_int64 = false ;
             }
             else
             {
-                int32_t xi = (int32_t) xk ;
+                int64_t xi = (int64_t) xk ;
                 if ((double) xi != xk)
                 {
-                    x_is_int32 = false ;
+                    x_is_int64 = false ;
                 }
             }
         }
     }
 
-    return (x_is_int32) ;
+    return (x_is_int64) ;
 }
 

@@ -47,7 +47,7 @@ SLIP_info SLIP_LU_factorize
     SLIP_sparse **L_handle, // lower triangular matrix
     SLIP_sparse **U_handle, // upper triangular matrix
     mpz_t **rhos_handle,    // sequence of pivots
-    int32_t **pinv_handle,  // inverse row permutation
+    int64_t **pinv_handle,  // inverse row permutation
     // input:
     SLIP_sparse *A,         // matrix to be factored
     SLIP_LU_analysis *S,    // stores guess on nnz and column permutation
@@ -62,11 +62,11 @@ SLIP_info SLIP_LU_factorize
     SLIP_sparse *L = NULL ;     // TODO change to SLIP_matrix (csc, mpz)
     SLIP_sparse *U = NULL ;     // TODO change to SLIP_matrix (csc, mpz)
     mpz_t *rhos = NULL ;        // TODO change to SLIP_matrix (dense, mpz)
-    int32_t *pinv = NULL ;
-    int32_t *xi = NULL ;
-    int32_t *h = NULL ;
-    int32_t *pivs = NULL ;
-    int32_t *row_perm = NULL ;
+    int64_t *pinv = NULL ;
+    int64_t *xi = NULL ;
+    int64_t *h = NULL ;
+    int64_t *pivs = NULL ;
+    int64_t *row_perm = NULL ;
     mpz_t* x = NULL ;           // TODO change to SLIP_matrix (dense, mpz)?
 
     mpz_t sigma; SLIP_MPZ_SET_NULL(sigma);
@@ -94,11 +94,11 @@ SLIP_info SLIP_LU_factorize
     //--------------------------------------------------------------------------
 
     SLIP_info info ;
-    int32_t n = A->n ;
+    int64_t n = A->n ;
 
     L = slip_create_sparse ( ) ;
     U = slip_create_sparse ( ) ;
-    pinv = (int32_t *) SLIP_malloc (n * sizeof (int32_t)) ;
+    pinv = (int64_t *) SLIP_malloc (n * sizeof (int64_t)) ;
     rhos = SLIP_create_mpz_array (n) ;
     if (!L || !U || !pinv || !rhos)
     {
@@ -107,7 +107,7 @@ SLIP_info SLIP_LU_factorize
         return SLIP_OUT_OF_MEMORY;
     }
 
-    int32_t k = 0, top, i, j, col, loc, lnz = 0, unz = 0, pivot, jnew ;
+    int64_t k = 0, top, i, j, col, loc, lnz = 0, unz = 0, pivot, jnew ;
     size_t size ;
 
     SLIP_CHECK(SLIP_mpz_init(sigma));
@@ -116,22 +116,22 @@ SLIP_info SLIP_LU_factorize
     // Indicator of which rows have been pivotal
     // pivs[i] = 1 if row i has been selected as a pivot
     // row, otherwise, pivs[i] < 0
-    pivs = (int32_t*) SLIP_malloc(n* sizeof(int32_t));
+    pivs = (int64_t*) SLIP_malloc(n* sizeof(int64_t));
 
     // h is the history vector utilized for the sparse REF
     // triangular solve algorithm. h serves as a global
     // vector which is repeatedly passed into the triangular
     // solve algorithm
-    h = (int32_t*) SLIP_malloc(n* sizeof(int32_t));
+    h = (int64_t*) SLIP_malloc(n* sizeof(int64_t));
 
     // xi is the global nonzero pattern vector. It stores
     // the pattern of nonzeros of the kth column of L and U
     // for the triangular solve.
-    xi = (int32_t*) SLIP_malloc(2*n* sizeof(int32_t));
+    xi = (int64_t*) SLIP_malloc(2*n* sizeof(int64_t));
 
     // Actual row permutation, the inverse of pinv. This
     // is used for sorting
-    row_perm = (int32_t*) SLIP_malloc(n* sizeof(int32_t));
+    row_perm = (int64_t*) SLIP_malloc(n* sizeof(int64_t));
 
     if (!pivs || !h || !xi || !row_perm)
     {
@@ -141,8 +141,8 @@ SLIP_info SLIP_LU_factorize
     }
     // Initialize pivs and h; that is set pivs[i] = -1 and
     // h[i] = -1 for all i
-    slip_reset_int32_array(pivs,n);
-    slip_reset_int32_array(h,n);
+    slip_reset_int64_array(pivs,n);
+    slip_reset_int64_array(h,n);
 
     //--------------------------------------------------------------------------
     // This section of the code computes a bound for the worst case bit-length
@@ -161,7 +161,9 @@ SLIP_info SLIP_LU_factorize
     // Iterate throughout A and set sigma = max (A)
     for (i = 1; i < A->nz; i++)
     {
-        if(mpz_cmpabs(sigma,A->x[i]) < 0)
+        int r ;
+        SLIP_CHECK (SLIP_mpz_cmpabs (&r, sigma, A->x [i])) ;
+        if(r < 0)
         {
             SLIP_CHECK(SLIP_mpz_set(sigma,A->x[i]));
         }
@@ -172,7 +174,7 @@ SLIP_info SLIP_LU_factorize
 
     // gamma is the number of nonzeros in the most dense column of A. First, we
     // initialize gamma to be the number of nonzeros in A(:,1).
-    int32_t gamma = A->p[1];
+    int64_t gamma = A->p[1];
 
     // Iterate throughout A and obtain gamma as the most dense column of A
     for (i = 1; i<n; i++)
@@ -184,25 +186,26 @@ SLIP_info SLIP_LU_factorize
     }
 
     // temp = sigma
-    SLIP_CHECK(SLIP_mpfr_set_z(temp, sigma, option->SLIP_MPFR_ROUND));
+    SLIP_CHECK(SLIP_mpfr_set_z(temp, sigma, option->round));
 
     //--------------------------------------------------------------------------
     // The bound is given as: gamma*log2(sigma sqrt(gamma))
     //--------------------------------------------------------------------------
+
     // temp = sigma*sqrt(gamma)
     SLIP_CHECK(SLIP_mpfr_mul_d(temp, temp, (double) sqrt(gamma),
-        option->SLIP_MPFR_ROUND));
+        option->round));
     // temp = log2(temp)
-    SLIP_CHECK(SLIP_mpfr_log2(temp, temp, option->SLIP_MPFR_ROUND));
+    SLIP_CHECK(SLIP_mpfr_log2(temp, temp, option->round));
     // inner2 = temp
     double inner2;
-    SLIP_CHECK(SLIP_mpfr_get_d(&inner2, temp, option->SLIP_MPFR_ROUND));
+    SLIP_CHECK(SLIP_mpfr_get_d(&inner2, temp, option->round));
     // Free cache from log2. Even though mpfr_free_cache is called in
     // SLIP_LU_final(), it has to be called here to prevent memory leak in
     // some rare situations.
     SLIP_mpfr_free_cache();
     // bound = gamma * inner2+1. We add 1 to inner2 because log2(1) = 0
-    int32_t bound = ceil(gamma*(inner2+1));
+    int64_t bound = ceil(gamma*(inner2+1));
     // Ensure bound is at least 64 bit. In some rare cases the bound is very
     // small so we default to 64 bits.
     if (bound < 64) {bound = 64;}
@@ -258,10 +261,10 @@ SLIP_info SLIP_LU_factorize
 
         // LDx = A(:,k)
         SLIP_CHECK(slip_ref_triangular_solve(&top, L, A, k, xi,
-            (const int32_t *) (S->q),
+            (const int64_t *) (S->q),
             (const mpz_t   *) rhos,
-            (const int32_t *) pinv,
-            (const int32_t *) row_perm,
+            (const int64_t *) pinv,
+            (const int64_t *) row_perm,
             h, x)) ;
 
         // Obtain pivot index

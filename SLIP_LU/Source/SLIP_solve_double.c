@@ -71,14 +71,14 @@ SLIP_info SLIP_solve_double
 
     SLIP_sparse *L = NULL ;
     SLIP_sparse *U = NULL ;
-    int32_t *pinv = NULL ;
+    int64_t *pinv = NULL ;
     mpz_t *rhos = NULL ;
 
     //--------------------------------------------------------------------------
     /* Declare memory */
     //--------------------------------------------------------------------------
 
-    int32_t n = A->n, numRHS = b->n;
+    int64_t n = A->n, numRHS = b->n;
     mpq_t **x_mpq = SLIP_create_mpq_mat(n, numRHS);
     if (!x_mpq)
     {
@@ -100,7 +100,7 @@ SLIP_info SLIP_solve_double
         (const SLIP_sparse *) L,
         (const SLIP_sparse *) U,
         (const mpz_t *) rhos,
-        (const int32_t *) pinv));
+        (const int64_t *) pinv));
 
     SLIP_CHECK(SLIP_permute_x(x_mpq, n, numRHS, S));
 

@@ -24,18 +24,18 @@
 SLIP_info slip_trip_to_mat
 (
     SLIP_sparse *A,     //matrix stored in CSC that will take B
-    int32_t *I,         // Row indices.
-    int32_t *J,         // Column indices
+    int64_t *I,         // Row indices.
+    int64_t *J,         // Column indices
     mpz_t *x,           // Values in the matrix
-    int32_t n,          // Dimension of the matrix
-    int32_t nz          // Number of nonzeros in the matrix
+    int64_t n,          // Dimension of the matrix
+    int64_t nz          // Number of nonzeros in the matrix
 )
 {
 
     // inputs have been validated in SLIP_build_sparse_trip_*.c
-    int32_t k, p;
+    int64_t k, p;
     SLIP_info info ;
-    int32_t* w = (int32_t*) SLIP_calloc(n, sizeof(int32_t));
+    int64_t* w = (int64_t*) SLIP_calloc(n, sizeof(int64_t));
     if (!w)
     {
         return SLIP_OUT_OF_MEMORY;

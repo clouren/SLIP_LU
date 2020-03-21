@@ -5,7 +5,7 @@ typedef enum
     SLIP_MPZ = 0 ;
     SLIP_MPQ = 1 ;
     SLIP_MPFR = 2 ;
-    SLIP_INT32 = 3 ;
+    SLIP_INT64 = 3 ;
     SLIP_DOUBLE = 4 ;
 }
 SLIP_type ;
@@ -24,24 +24,24 @@ SLIP_kind ;
 
 typedef struct
 {
-    int32_t m ;     // Number of rows
-    int32_t n ;     // Number of columns
-    int32_t nzmax ; // Allocated size of A->i, A->j, and A->x
-    int32_t nz ;    // Number of nonzeros in the matrix
+    int64_t m ;     // Number of rows
+    int64_t n ;     // Number of columns
+    int64_t nzmax ; // Allocated size of A->i, A->j, and A->x
+    int64_t nz ;    // Number of nonzeros in the matrix
     bool shallow ;  // if true, matrix is shallow.  When a shallow matrix
                     // is freed, the p, i, j, and x arrays are not modified.
 
     SLIP_kind kind ;    // CSC, triplet, or dense
-    SLIP_type type ;    // mpz, mpq, mpfr, int32, or double
+    SLIP_type type ;    // mpz, mpq, mpfr, int64, or double
 
-    int32_t *p;     // if CSC: Column pointers. Array size is n+1
+    int64_t *p;     // if CSC: Column pointers. Array size is n+1
                     // if triplet or dense: NULL.
 
-    int32_t *i;     // if CSC or triplet: Row indices.
+    int64_t *i;     // if CSC or triplet: Row indices.
                     // Array size is nzmax, # of entries = nz.
                     // if dense: NULL
 
-    int32_t *j;     // if triplet: Col indices. Array size is nzmax,
+    int64_t *j;     // if triplet: Col indices. Array size is nzmax,
                     // # of entries = nz>
                     // if CSC or dense: j is NULL.
 
@@ -52,7 +52,7 @@ typedef struct
         mpz_t *mpz ;            // A->x.mpz
         mpq_t *mpq ;            // A->x.mpq
         mpfr_t *mpfr ;          // A->x.mpfr
-        int32_t *int32 ;        // A->x.int32
+        int64_t *int64 ;        // A->x.int64
         double *fp64 ;          // A->x.fp64
     } x ;
 
@@ -66,11 +66,11 @@ typedef struct
 SLIP_Info SLIP_matrix_allocate
 (
     SLIP_matrix **A,        // matrix to allocate
-    int32_t m,              // # of rows
-    int32_t n,              // # of columns
-    int32_t nzmax,          // max # of entries
+    int64_t m,              // # of rows
+    int64_t n,              // # of columns
+    int64_t nzmax,          // max # of entries
     SLIP_kind kind,         // CSC, triplet, or dense
-    SLIP_type type,         // mpz, mpq, mpfr, int32, or double
+    SLIP_type type,         // mpz, mpq, mpfr, int64, or double
     bool shallow,           // if true, matrix is shallow.
     SLIP_options *options
 ) ;
@@ -97,7 +97,7 @@ SLIP_Info SLIP_matrix_copy
 (
     SLIP_matrix **C,        // matrix to create (never shallow)
     SLIP_kind kind,         // CSC, triplet, or dense
-    SLIP_type type,         // mpz_t, mpq_t, mprf_t, int32_t, or double
+    SLIP_type type,         // mpz_t, mpq_t, mprf_t, int64_t, or double
     SLIP_Matrix *A,         // matrix to make a copy of (may be shallow)
     SLIP_options *option
 ) ;

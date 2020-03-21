@@ -29,7 +29,7 @@ SLIP_info slip_expand_double_array
     mpz_t* x_out,   // integral final array
     double* x,      // double array that needs to be made integral
     mpq_t scale,    // the scaling factor used (x_out = scale * x)
-    int32_t n,      // size of x
+    int64_t n,      // size of x
     SLIP_options* option
 )
 {
@@ -38,14 +38,17 @@ SLIP_info slip_expand_double_array
     // check inputs
     //--------------------------------------------------------------------------
 
-    // TODO: this functionality becomes part of SLIP_matrix_copy.
-    // TODO: move this functionality into slip_cast_array.
+    // TODO: this functionality becomes part of SLIP_matrix_copy:
+    // move this functionality into slip_cast_array,
+    // or keep it here as a helper function for slip_cast_array.
+
     // The scale factored is computed below, but it must have already been
     // created on input as an empty mpq_t variable.
 
     //--------------------------------------------------------------------------
 
-    int32_t i, k, r1, r2 = 1;
+    int64_t i, k ;
+    int r1, r2 = 1;
     bool nz_found = false;
     SLIP_info info ;
     // Double precision accurate ~17 decimals.  TODO: No, closer to 2e-16.
@@ -69,19 +72,20 @@ SLIP_info slip_expand_double_array
     for (i = 0; i < n; i++)
     {
         // Set x3[i] = x[i]
-        SLIP_CHECK(SLIP_mpfr_set_d(x3[i], x[i], option->SLIP_MPFR_ROUND));
+        SLIP_CHECK(SLIP_mpfr_set_d(x3[i], x[i], option->round));
 
         // x3[i] = x[i] * 10^17
         SLIP_CHECK(SLIP_mpfr_mul_d(x3[i], x3[i], expon,
-            option->SLIP_MPFR_ROUND));
+            option->round));
 
         // x_out[i] = x3[i]
-        SLIP_CHECK(SLIP_mpfr_get_z(x_out[i], x3[i], option->SLIP_MPFR_ROUND));
+        SLIP_CHECK(SLIP_mpfr_get_z(x_out[i], x3[i], option->round));
     }
 
     //--------------------------------------------------------------------------
     // Compute the GCD to reduce the size of scale
     //--------------------------------------------------------------------------
+
     SLIP_CHECK(SLIP_mpz_set_ui(one, 1));
     // Find an initial GCD
     for (i = 0; i < n; i++)
@@ -115,10 +119,10 @@ SLIP_info slip_expand_double_array
         return SLIP_OK;
     }
 
-
     //--------------------------------------------------------------------------
     // Scale all entries to make as small as possible
     //--------------------------------------------------------------------------
+
     if (r2 != 0)             // If gcd == 1 then stop
     {
         for (i = k; i < n; i++)

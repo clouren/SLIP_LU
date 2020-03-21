@@ -24,12 +24,12 @@
 
 SLIP_info slip_get_largest_pivot
 (
-    int32_t *pivot,  // the index of largest pivot
+    int64_t *pivot,  // the index of largest pivot
     mpz_t* x,        // kth column of L and U
-    int32_t* pivs,   // vector which indicates whether each row has been pivotal
-    int32_t n,       // dimension of problem
-    int32_t top,     // nonzero pattern is located in xi[top..n-1]
-    int32_t* xi      // nonzero pattern of x
+    int64_t* pivs,   // vector which indicates whether each row has been pivotal
+    int64_t n,       // dimension of problem
+    int64_t top,     // nonzero pattern is located in xi[top..n-1]
+    int64_t* xi      // nonzero pattern of x
 )
 {
 
@@ -44,7 +44,8 @@ SLIP_info slip_get_largest_pivot
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    int32_t i, inew, r ;
+    int64_t i, inew ;
+    int r ;
     (*pivot) = -1 ;
     mpz_t big ;
     SLIP_MPZ_SET_NULL (big) ;

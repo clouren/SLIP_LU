@@ -22,12 +22,12 @@
 
 SLIP_info slip_get_smallest_pivot
 (
-    int32_t *pivot, // the index of smallest pivot
+    int64_t *pivot, // the index of smallest pivot
     mpz_t* x,       // kth column of L and U
-    int32_t* pivs,  // vector indicating whether each row has been pivotal
-    int32_t n,      // dimension of problem
-    int32_t top,    // nonzeros are stored in xi[top..n-1]
-    int32_t* xi     // nonzero pattern of x
+    int64_t* pivs,  // vector indicating whether each row has been pivotal
+    int64_t n,      // dimension of problem
+    int64_t top,    // nonzeros are stored in xi[top..n-1]
+    int64_t* xi     // nonzero pattern of x
 )
 {
 
@@ -42,7 +42,8 @@ SLIP_info slip_get_smallest_pivot
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    int32_t i, inew, j, flag, sgn, r;
+    int64_t i, inew, j, flag ;
+    int sgn, r;
     // Flag is non-negative until we have an initial starting value for small
     (*pivot) = -1;
     j = n;

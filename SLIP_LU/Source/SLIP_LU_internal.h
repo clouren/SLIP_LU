@@ -24,6 +24,8 @@
 #include <setjmp.h>
 #include <math.h>
 #include <stdarg.h>
+#include <stdint.h>
+#include <inttypes.h>
 
 // SuiteSparse headers
 #include "SuiteSparse_config.h"
@@ -149,7 +151,7 @@ void slip_gmp_free (void *p, size_t size) ;
 
 void *slip_gmp_reallocate (void *p_old, size_t old_size, size_t new_size );
 
-void slip_gmp_failure (int32_t status) ;
+void slip_gmp_failure (int status) ;
 
 
 // Tolerance used in the pivoting schemes. This number can be anything in
@@ -296,7 +298,7 @@ SLIP_dense *slip_create_dense( void );
  */
 SLIP_LU_analysis *slip_create_LU_analysis
 (
-    int32_t n     // numbers of columns in matrix to be analyzed
+    int64_t n     // numbers of columns in matrix to be analyzed
 );
 
 /* Purpose: This function creates an mpz array of size n and allocates
@@ -306,8 +308,8 @@ SLIP_LU_analysis *slip_create_LU_analysis
  */
 mpz_t* slip_create_mpz_array2
 (
-    int32_t n,     // size of the array
-    int32_t size   // Relative size of numbers
+    int64_t n,     // size of the array
+    int64_t size   // Relative size of numbers
 );
 
 /* Purpose: This function resets an mpz array of size n with the nonzero
@@ -317,31 +319,31 @@ mpz_t* slip_create_mpz_array2
 SLIP_info slip_reset_mpz_array
 (
     mpz_t* x,      // mpz array to be reset
-    int32_t n,     // size of x
-    int32_t top,   // beginning of the nonzero pattern
-    int32_t* xi    // nonzero pattern
+    int64_t n,     // size of x
+    int64_t top,   // beginning of the nonzero pattern
+    int64_t* xi    // nonzero pattern
 );
 
 
-/* Purpose: This function initializes an int32_t vector of size n and sets the
+/* Purpose: This function initializes an int64_t vector of size n and sets the
  * value equal to -1. This function is used for the history and pivot vectors.
  */
-SLIP_info slip_reset_int32_array
+SLIP_info slip_reset_int64_array
 (
-    int32_t* h,           // int32_t vector to be reset
-    int32_t n             // size of the int32_t vector
+    int64_t* h,           // int64_t vector to be reset
+    int64_t n             // size of the int64_t vector
 );
 
-/* Purpose: This function resets an int32_t vector of size n and sets each term
+/* Purpose: This function resets an int64_t vector of size n and sets each term
  * equal to -1 with nonzero pattern given. This is more efficient than
  * resetting each term individually.
  */
-SLIP_info slip_reset_int32_array2
+SLIP_info slip_reset_int64_array2
 (
-    int32_t* h,    // int32_t vector to be reset
-    int32_t n,     // size of h
-    int32_t top,   // beginning of nonzero pattern
-    int32_t* xi    // nonzero pattern
+    int64_t* h,    // int64_t vector to be reset
+    int64_t n,     // size of h
+    int64_t top,   // beginning of nonzero pattern
+    int64_t* xi    // nonzero pattern
 );
 
 /* Purpose: This function takes as input a mpz_t** array and divides it by a
@@ -355,8 +357,8 @@ SLIP_info slip_array_div // divides the x vector by the determinant
     mpq_t** x2,     // solution of x/det
     mpz_t** x,      // input vector
     const mpz_t det,// given determinant of matrix
-    int32_t n,      // size of x and x2
-    int32_t numRHS  // number of rhs vectors
+    int64_t n,      // size of x and x2
+    int64_t numRHS  // number of rhs vectors
 );
 
 /* Purpose: This function multiplies vector x by the determinant of matrix.
@@ -366,8 +368,8 @@ SLIP_info slip_array_mul // multiplies vector x by the determinant of matrix
 (
     mpz_t** x,      // matrix to be multiplied
     const mpz_t det,// given determinant of matrix
-    int32_t n,      // size of x
-    int32_t numRHS  // number of RHS vectors
+    int64_t n,      // size of x
+    int64_t numRHS  // number of RHS vectors
 );
 
 /* Purpose: This function performs sparse REF forward substitution. This is
@@ -382,7 +384,7 @@ SLIP_info slip_forward_sub
     const SLIP_sparse *L,   // lower triangular matrix
     mpz_t **x,              // right hand side matrix of size n*numRHS
     const mpz_t *rhos,      // sequence of pivots used in factorization
-    int32_t numRHS          // number of columns in x
+    int64_t numRHS          // number of columns in x
 );
 
 /* Purpose: This function performs sparse REF backward substitution. In essense
@@ -394,7 +396,7 @@ SLIP_info slip_back_sub  // performs sparse REF backward substitution
 (
     const SLIP_sparse *U,   // input upper triangular matrix
     mpz_t **bx,             // right hand side matrix of size n*numRHS
-    int32_t numRHS          // number of columns in bx
+    int64_t numRHS          // number of columns in bx
 )  ;
 
 /* Purpose: p [0..n] = cumulative sum of c [0..n-1], and then copy p [0..n-1]
@@ -402,9 +404,9 @@ SLIP_info slip_back_sub  // performs sparse REF backward substitution
  */
 SLIP_info slip_cumsum
 (
-    int32_t *p,      // vector to store the sum of c
-    int32_t *c,      // vector which is summed
-    int32_t n        // size of c
+    int64_t *p,      // vector to store the sum of c
+    int64_t *c,      // vector which is summed
+    int64_t n        // size of c
 );
 
 /* Purpose: This function performs a depth first search of the graph of the
@@ -413,12 +415,12 @@ SLIP_info slip_cumsum
  */
 void slip_dfs // performs a dfs of the graph of the matrix starting at node j
 (
-    int32_t *top,          // beginning of stack
-    int32_t j,             // What node to start DFS at
+    int64_t *top,          // beginning of stack
+    int64_t j,             // What node to start DFS at
     SLIP_sparse* L,        // matrix which represents the Graph of L
-    int32_t* xi,           // the nonzero pattern
-    int32_t* pstack,       // workspace vector
-    const int32_t* pinv    // row permutation
+    int64_t* xi,           // the nonzero pattern
+    int64_t* pstack,       // workspace vector
+    const int64_t* pinv    // row permutation
 );
 
 /* Purpose: This function converts a double array of size n to an appropriate
@@ -432,7 +434,7 @@ SLIP_info slip_expand_double_array
     mpz_t *x_out,   // integral final array
     double* x,      // double array that needs to be made integral
     mpq_t scale,    // the scaling factor used (x_out = scale * x)
-    int32_t n,      // size of x
+    int64_t n,      // size of x
     SLIP_options* option
 );
 
@@ -447,8 +449,8 @@ SLIP_info slip_expand_double_mat
     mpz_t **x_out,  // integral final mat
     double** x,     // double matrix that needs to be made integral
     mpq_t scale,    // the scaling factor used (x_out = scale * x)
-    int32_t m,      // row number of x
-    int32_t n,      // column number of x
+    int64_t m,      // row number of x
+    int64_t n,      // column number of x
     SLIP_options* option
 );
 
@@ -463,7 +465,7 @@ SLIP_info slip_expand_mpfr_array
     mpz_t *x_out,   // integral final array
     mpfr_t* x,      // mpfr array to be expanded
     mpq_t scale,    // scaling factor used (x_out = scale*x)
-    int32_t n,      // size of x
+    int64_t n,      // size of x
     SLIP_options *option // command options containing the prec for mpfr
 );
 
@@ -478,8 +480,8 @@ SLIP_info slip_expand_mpfr_mat
     mpz_t **x_out,     //integral final mat
     mpfr_t** x,        // mpfr matrix to be expanded
     mpq_t scale,       // scaling factor used (x_out = scale*x)
-    int32_t m,         // size of x
-    int32_t n,         // size of x
+    int64_t m,         // size of x
+    int64_t n,         // size of x
     SLIP_options *option// command options containing the prec for mpfr
 );
 
@@ -492,7 +494,7 @@ SLIP_info slip_expand_mpq_array
     mpz_t *x_out, // integral final array
     mpq_t* x,     // mpq array that needs to be converted
     mpq_t scale,  // scaling factor. x_out = scale*x
-    int32_t n     // size of x
+    int64_t n     // size of x
 );
 
 /* Purpose: This function converts a mpq matrix of size m*n into an appropriate
@@ -505,8 +507,8 @@ SLIP_info slip_expand_mpq_mat
     mpz_t **x_out,// integral final mat
     mpq_t **x,    // mpq mat that needs to be converted
     mpq_t scale,  // scaling factor. x_out = scale*x
-    int32_t m,    // number of rows of x
-    int32_t n     // number of columns of x
+    int64_t m,    // number of rows of x
+    int64_t n     // number of columns of x
 );
 
 /* Purpose: This function obtains column k from matrix A and stores it in the
@@ -516,7 +518,7 @@ SLIP_info slip_get_column //extract k-th column from A, i.e., x=A(:,k)
 (
     mpz_t* x,       // A(:,k)
     SLIP_sparse* A, // input matrix
-    int32_t k       // column to extract
+    int64_t k       // column to extract
 ) ;
 
 
@@ -533,18 +535,18 @@ SLIP_info slip_get_column //extract k-th column from A, i.e., x=A(:,k)
  */
 SLIP_info slip_get_pivot
 (
-    int32_t *pivot,
+    int64_t *pivot,
     mpz_t* x,       // kth column of L and U
-    int32_t* pivs,  // vector indicating which rows have been pivotal
-    int32_t n,      // dimension of the problem
-    int32_t top,    // nonzero pattern is located in xi[top..n-1]
-    int32_t* xi,    // nonzero pattern of x
+    int64_t* pivs,  // vector indicating which rows have been pivotal
+    int64_t n,      // dimension of the problem
+    int64_t top,    // nonzero pattern is located in xi[top..n-1]
+    int64_t* xi,    // nonzero pattern of x
     SLIP_pivot order,  // pivoting method to use (see above description)
-    int32_t col,    // current column of A (real kth column i.e., q[k])
-    int32_t k,      // iteration of the algorithm
+    int64_t col,    // current column of A (real kth column i.e., q[k])
+    int64_t k,      // iteration of the algorithm
     mpz_t* rhos,    // vector of pivots
-    int32_t* pinv,  // row permutation
-    int32_t* row_perm,// opposite of pinv. if pinv[i] = j then row_perm[j] = i
+    int64_t* pinv,  // row permutation
+    int64_t* row_perm,// opposite of pinv. if pinv[i] = j then row_perm[j] = i
     double tolerance// tolerance used if some tolerance based pivoting is used
 ) ;
 
@@ -555,12 +557,12 @@ SLIP_info slip_get_pivot
  */
 SLIP_info slip_get_largest_pivot
 (
-    int32_t *pivot,  // index of largest pivot
+    int64_t *pivot,  // index of largest pivot
     mpz_t* x,        // kth column of L and U
-    int32_t* pivs,   // vector which indicates whether each row has been pivotal
-    int32_t n,       // dimension of problem
-    int32_t top,     // nonzero pattern is located in xi[top..n-1]
-    int32_t* xi      // nonzero pattern of x
+    int64_t* pivs,   // vector which indicates whether each row has been pivotal
+    int64_t n,       // dimension of problem
+    int64_t top,     // nonzero pattern is located in xi[top..n-1]
+    int64_t* xi      // nonzero pattern of x
 );
 
 /* This function obtains the first eligible nonzero pivot.  This is enabled if
@@ -569,12 +571,12 @@ SLIP_info slip_get_largest_pivot
  */
 SLIP_info slip_get_nonzero_pivot // find the first eligible nonzero pivot
 (
-    int32_t *pivot,   // index of nonzero pivot
+    int64_t *pivot,   // index of nonzero pivot
     mpz_t* x,         // kth column of L and U
-    int32_t* pivs,    // vector indicating which rows are pivotal
-    int32_t n,        // size of x
-    int32_t top,      // nonzero pattern is located in xi[top..n-1]
-    int32_t* xi       // nonzero pattern of x
+    int64_t* pivs,    // vector indicating which rows are pivotal
+    int64_t n,        // size of x
+    int64_t top,      // nonzero pattern is located in xi[top..n-1]
+    int64_t* xi       // nonzero pattern of x
 );
 
 /* Purpose: This function selects the pivot element as the smallest in the
@@ -584,12 +586,12 @@ SLIP_info slip_get_nonzero_pivot // find the first eligible nonzero pivot
  */
 SLIP_info slip_get_smallest_pivot
 (
-    int32_t *pivot, // index of smallest pivot
+    int64_t *pivot, // index of smallest pivot
     mpz_t* x,       // kth column of L and U
-    int32_t* pivs,  // vector indicating whether each row has been pivotal
-    int32_t n,      // dimension of problem
-    int32_t top,    // nonzeros are stored in xi[top..n-1]
-    int32_t* xi     // nonzero pattern of x
+    int64_t* pivs,  // vector indicating whether each row has been pivotal
+    int64_t n,      // dimension of problem
+    int64_t top,    // nonzeros are stored in xi[top..n-1]
+    int64_t* xi     // nonzero pattern of x
 );
 
 /* Purpose: This function prints the basic info about SLIP_LU library */
@@ -603,9 +605,9 @@ void slip_lu_info(void);
 SLIP_info slip_sparse_alloc
 (
     SLIP_sparse* A,// sparse matrix data structure to be allocated
-    int32_t n,     // number of columns
-    int32_t m,     // number of rows (recall m=n assumed)
-    int32_t nzmax  // size of allocated i and x arrays
+    int64_t n,     // number of columns
+    int64_t m,     // number of rows (recall m=n assumed)
+    int64_t nzmax  // size of allocated i and x arrays
 );
 
 /* Purpose: This function allocates a SLIP LU matrix of size n*m with array
@@ -615,9 +617,9 @@ SLIP_info slip_sparse_alloc
 SLIP_info slip_sparse_alloc2
 (
     SLIP_sparse* A, // sparse matrix data structure to be allocated
-    int32_t n,      // number of columns
-    int32_t m,      // number of rows (recall m=n assumed)
-    int32_t nzmax   // size of allocated i and x arrays
+    int64_t n,      // number of columns
+    int64_t m,      // number of rows (recall m=n assumed)
+    int64_t nzmax   // size of allocated i and x arrays
 );
 
 /* Purpose: This function collapses a SLIP matrix. Essentially it shrinks the
@@ -645,8 +647,8 @@ SLIP_info slip_sparse_realloc
 SLIP_info slip_dense_alloc
 (
     SLIP_dense* A, // dense matrix data structure to be allocated
-    int32_t m,     // number of rows
-    int32_t n      // number of columns
+    int64_t m,     // number of rows
+    int64_t n      // number of columns
 );
 
 /* Purpose: This function populates the SLIP_sparse A by the CSC stored vectors
@@ -655,11 +657,11 @@ SLIP_info slip_dense_alloc
 SLIP_info slip_mpz_populate_mat
 (
     SLIP_sparse* A,   // matrix to be populated
-    int32_t* I,       // row indices
-    int32_t* p,       // column pointers
+    int64_t* I,       // row indices
+    int64_t* p,       // column pointers
     mpz_t* x,         // set of values in A
-    int32_t n,        // size of the matrix A
-    int32_t nz        // number of nonzeros in the matrix A
+    int64_t n,        // size of the matrix A
+    int64_t nz        // number of nonzeros in the matrix A
 );
 
 /* Purpose: This function computes the reach of column k of A on the graph of L
@@ -667,12 +669,12 @@ SLIP_info slip_mpz_populate_mat
  */
 void slip_reach    // compute the reach of column k of A on the graph of L
 (
-    int32_t *top,
+    int64_t *top,
     SLIP_sparse* L,         // matrix representing graph of L
     SLIP_sparse* A,         // input matrix
-    int32_t k,              // column of A of interest
-    int32_t* xi,            // nonzero pattern
-    const int32_t* pinv     // row permutation
+    int64_t k,              // column of A of interest
+    int64_t* xi,            // nonzero pattern
+    const int64_t* pinv     // row permutation
 )  ;
 
 /* Purpose: This function sorts the xi vector with respect to the current row
@@ -685,11 +687,11 @@ void slip_reach    // compute the reach of column k of A on the graph of L
  */
 void slip_sort_xi
 (
-    int32_t* xi,              // nonzero pattern
-    int32_t top,              // nonzeros are stored in xi[top..n-1]
-    int32_t n,                // size of problem
-    const int32_t* pinv,      // inverse row permutation
-    const int32_t* row_perm   // opposite of pinv. if pinv[j] = k,
+    int64_t* xi,              // nonzero pattern
+    int64_t top,              // nonzeros are stored in xi[top..n-1]
+    int64_t n,                // size of problem
+    const int64_t* pinv,      // inverse row permutation
+    const int64_t* row_perm   // opposite of pinv. if pinv[j] = k,
                               //     then row_perm[k] = j
 );
 
@@ -703,16 +705,16 @@ void slip_sort_xi
  */
 SLIP_info slip_ref_triangular_solve // performs the sparse REF triangular solve
 (
-    int32_t *top_output,      // Output the beginning of nonzero pattern
+    int64_t *top_output,      // Output the beginning of nonzero pattern
     SLIP_sparse* L,           // partial L matrix
     SLIP_sparse* A,           // input matrix
-    int32_t k,                // iteration of algorithm
-    int32_t* xi,              // nonzero pattern vector
-    const int32_t* q,         // column permutation
+    int64_t k,                // iteration of algorithm
+    int64_t* xi,              // nonzero pattern vector
+    const int64_t* q,         // column permutation
     const mpz_t* rhos,        // sequence of pivots
-    const int32_t* pinv,      // inverse row permutation
-    const int32_t* row_perm,  // row permutation
-    int32_t* h,               // history vector
+    const int64_t* pinv,      // inverse row permutation
+    const int64_t* row_perm,  // row permutation
+    int64_t* h,               // history vector
     mpz_t* x                  // solution of system ==> kth column of L and U
 );
 
@@ -722,16 +724,37 @@ SLIP_info slip_ref_triangular_solve // performs the sparse REF triangular solve
 SLIP_info slip_trip_to_mat
 (
     SLIP_sparse *A,     //matrix stored in CSC that will take B
-    int32_t *I,         // Row indices.
-    int32_t *J,         // Column indices
+    int64_t *I,         // Row indices.
+    int64_t *J,         // Column indices
     mpz_t *x,           // Values in the matrix
-    int32_t n,          // Dimension of the matrix
-    int32_t nz          // Number of nonzeros in the matrix
+    int64_t n,          // Dimension of the matrix
+    int64_t nz          // Number of nonzeros in the matrix
 );
 
 ////////////////////////////////////////////////////////////////////////////////
 // new functions
 ////////////////////////////////////////////////////////////////////////////////
+
+// typecast a double value to int64, accounting for Infs and Nans
+static inline int64_t slip_cast_double_to_int64 (double x)
+{
+    if (isnan (x))
+    {
+        return (0) ;
+    }
+    else if (x > INT64_MAX)
+    {
+        return (INT64_MAX) ;
+    }
+    else if (x < INT64_MIN)
+    {
+        return (INT64_MIN) ;
+    }
+    else
+    {
+        return ((int64_t) (x)) ;
+    }
+}
 
 SLIP_info slip_cast_array
 (
@@ -739,10 +762,25 @@ SLIP_info slip_cast_array
     SLIP_type ytype,        // type of Y
     void *X,                // input array, of size n
     SLIP_type xtype,        // type of X
-    int32_t n,              // size of Y and X
+    int64_t n,              // size of Y and X
     mpq_t scale,            // scale factor applied if X is mpz_t
     SLIP_options *option
 ) ;
+
+SLIP_info slip_cast_matrix
+(
+    SLIP_matrix **Y_handle,     // nz-by-1 dense matrix to create
+    SLIP_type Y_type,           // type of Y
+    SLIP_matrix *A,             // matrix with nz entries
+    SLIP_options *option
+) ;
+
+// (void *) pointer to the values of A.  A must be non-NULL with a valid type
+#define SLIP_X(A)                                                           \
+    ((A->type == SLIP_MPZ  ) ? (void *) A->x.mpz   :                        \
+    ((A->type == SLIP_MPQ  ) ? (void *) A->x.mpq   :                        \
+    ((A->type == SLIP_MPFR ) ? (void *) A->x.mpfr  :                        \
+    ((A->type == SLIP_INT64) ? (void *) A->x.int64 : (void *) A->x.fp64))))
 
 #if 0
 
@@ -750,7 +788,7 @@ SLIP_info slip_cast_array
 #define SLIP_REQUIRE_KIND(A,required_kind) \
     if (A == NULL || A->kind != required_kind) return (SLIP_INCORRECT_INPUT) ;
 
-// return an error if A->type (mpz, mpq, mpfr, int32, or double) is wrong
+// return an error if A->type (mpz, mpq, mpfr, int64, or double) is wrong
 #define SLIP_REQUIRE_TYPE(A,required_type) \
     if (A == NULL || A->type == required_type) return (SLIP_INCORRECT_INPUT) ;
 

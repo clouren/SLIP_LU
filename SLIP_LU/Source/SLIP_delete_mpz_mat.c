@@ -18,8 +18,8 @@
 void SLIP_delete_mpz_mat
 (
     mpz_t ***A,     // The dense mpz matrix
-    int32_t m,      // number of rows of A
-    int32_t n       // number of columns of A
+    int64_t m,      // number of rows of A
+    int64_t n       // number of columns of A
 )
 {
 
@@ -28,7 +28,7 @@ void SLIP_delete_mpz_mat
 
     if (A == NULL || (*A) == NULL) {return ;}
 
-    for (int32_t i = 0; i < m; i++)
+    for (int64_t i = 0; i < m; i++)
     {
         SLIP_delete_mpz_array(&((*A)[i]), n);
     }

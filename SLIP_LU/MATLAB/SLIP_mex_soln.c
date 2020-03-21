@@ -16,9 +16,9 @@
 
 void mexFunction
 (
-    int32_t nargout,
+    int nargout,
     mxArray *pargout [ ],
-    int32_t nargin,
+    int nargin,
     const mxArray *pargin [ ]
 )
 {
@@ -44,7 +44,7 @@ void mexFunction
     SLIP_sparse *A = NULL ;
     SLIP_sparse *L = NULL ;
     SLIP_sparse *U = NULL ;
-    int32_t *pinv = NULL ;
+    int64_t *pinv = NULL ;
     mpz_t *rhos = NULL ;
     SLIP_LU_analysis* S = NULL;
     SLIP_dense *b = NULL ;

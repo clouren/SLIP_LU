@@ -27,15 +27,15 @@ SLIP_info slip_expand_mpq_mat
     mpz_t** x_out,// mpz mat
     mpq_t** x,    // mpq mat that needs to be converted
     mpq_t scale,  // scaling factor. x_out = scale*x
-    int32_t m,    // number of rows of x
-    int32_t n     // number of columns of x
+    int64_t m,    // number of rows of x
+    int64_t n     // number of columns of x
 )
 {
 
     // TODO: delete this since *_mat will no longer be used.
 
     SLIP_info info ;
-    int32_t i, j;
+    int64_t i, j;
     mpq_t **x4 = NULL;
     mpz_t **x3 = NULL;
     mpz_t temp ;

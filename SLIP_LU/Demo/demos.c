@@ -97,16 +97,18 @@ void SLIP_print_options // display specified/default options to user
 
 SLIP_info SLIP_process_command_line //processes the command line
 (
-    int32_t argc,           // number of command line arguments
+    int argc,               // number of command line arguments
     char* argv[],           // set of command line arguments
     SLIP_options* option,   // struct containing the command options
     char** mat_name,        // Name of the matrix to be read in
     char** rhs_name,        // Name of the RHS vector to be read in
-    int32_t *rat            // data type of output solution.
-                            // 1: mpz, 2: double, 3: mpfr
+    SLIP_type *rat          // data type of output solution:
+                            // 1:SLIP_MPZ (default), 2:SLIP_FP64, 3:SLIP_MPFR
 )
 {
-    for (int32_t i = 1; i < argc; i++)
+    (*rat) = SLIP_MPZ ;
+
+    for (int i = 1; i < argc; i++)
     {
         char* arg = (char*) argv[i];
         if ( strcmp(arg,"help") == 0)
@@ -198,32 +200,40 @@ SLIP_info SLIP_process_command_line //processes the command line
                     " 1 (rational) 2 (double) or 3 (variable precision) \n");
                 return SLIP_INCORRECT_INPUT;
             }
-            *rat = atoi(argv[i]);
-            if (*rat < 1 || *rat > 3)
+
+            switch (atoi (argv [i]))
             {
-                printf("\n\n****ERROR! Invalid output type!\n"
-                   "Defaulting to rational");
-                *rat = 1;
+                case 2:
+                    (*rat) = SLIP_FP64 ;
+                    break ;
+
+                case 3:
+                    (*rat) = SLIP_MPFR ;
+                    i++ ;   // get the next argument
+                    if (i >= argc)
+                    {
+                        printf("\n****ERROR! Precision must be specified\n");
+                        return SLIP_INCORRECT_INPUT;
+                    }
+                    else if (!atoi(argv[i]))
+                    {
+                        printf("\n****ERROR! Precision must be specified\n");
+                        return SLIP_INCORRECT_INPUT;
+                    }
+                    option->prec = atoi (argv [i]) ;
+                    if (option->prec < 2)
+                    {
+                        printf("\n\n****ERROR! Invalid precision. prec >= 2\n");
+                        return SLIP_INCORRECT_INPUT;
+                    }
+                    break ;
+
+                case 1:
+                default:
+                    (*rat) = SLIP_MPZ ;
+                    break ;
             }
-            if (*rat == 3)
-            {
-                if (!argv[++i])
-                {
-                    printf("\n****ERROR! Precision must be specified\n");
-                    return SLIP_INCORRECT_INPUT;
-                }
-                else if (!atoi(argv[i]))
-                {
-                    printf("\n****ERROR! Precision must be specified\n");
-                    return SLIP_INCORRECT_INPUT;
-                }
-                option->prec = atoi(argv[i]);
-                if (option->prec < 2)
-                {
-                    printf("\n\n****ERROR! Invalid precision. prec >= 2\n");
-                    return SLIP_INCORRECT_INPUT;
-                }
-            }
+
         }
         else if ( strcmp(arg, "f") == 0 || strcmp(arg, "file") == 0)
         {
@@ -248,6 +258,7 @@ SLIP_info SLIP_process_command_line //processes the command line
             return SLIP_INCORRECT_INPUT;
         }
     }
+
     return SLIP_OK;
 }
 
@@ -294,7 +305,7 @@ SLIP_info SLIP_tripread
 )
 {
 
-    SLIP_info ok;
+    SLIP_info info ;
     if (A_handle == NULL || file == NULL)
     {
         printf ("invalid input\n") ;
@@ -303,18 +314,19 @@ SLIP_info SLIP_tripread
 
     (*A_handle) = NULL ;
 
-    int32_t m, n, nz;
+    int64_t m, n, nz;
 
     // Read in size of matrix & number of nonzeros
-    ok = fscanf(file, "%d %d %d\n", &m, &n, &nz);
-    if (feof(file) || ok < 3)
+    int s = fscanf(file, "%"PRId64" %"PRId64" %"PRId64"\n", &m, &n, &nz);
+    if (feof(file) || s < 3)
     {
         printf ("premature end-of-file\n") ;
         return SLIP_INCORRECT_INPUT;
     }
     // Initialize i and j vectors
-    int32_t *i = (int32_t*) SLIP_malloc(nz * sizeof(int32_t));
-    int32_t *j = (int32_t*) SLIP_malloc(nz * sizeof(int32_t));
+    int64_t *i = (int64_t*) SLIP_malloc(nz * sizeof(int64_t));
+    int64_t *j = (int64_t*) SLIP_malloc(nz * sizeof(int64_t));
+    // printf ("triplets: m: %"PRId64" n: %"PRId64" nz: %"PRId64"\n", m, n, nz);
 
     // Create an initialized input mpz vector
     mpz_t* x_mpz = SLIP_create_mpz_array(nz);
@@ -327,9 +339,10 @@ SLIP_info SLIP_tripread
         return SLIP_OUT_OF_MEMORY;
     }
 
-    int32_t decrement;
-    ok = SLIP_gmp_fscanf(file, "%d %d %Zd\n", &i[0], &j[0], &x_mpz[0]);
-    if (feof(file) || ok < 3)
+    int64_t decrement;
+    info = SLIP_gmp_fscanf(file, "%"PRId64" %"PRId64" %Zd\n",
+        &i[0], &j[0], &x_mpz[0]);
+    if (feof (file) || info != SLIP_OK)
     {
         printf ("premature end-of-file\n") ;
         SLIP_FREE(i);
@@ -350,10 +363,11 @@ SLIP_info SLIP_tripread
     }
 
     // Read in the values from file
-    for (int32_t p = 1; p < nz; p++)
+    for (int64_t p = 1; p < nz; p++)
     {
-        ok = SLIP_gmp_fscanf(file, "%d %d %Zd\n", &i[p], &j[p], &x_mpz[p]);
-        if ((feof(file) && p != nz-1) || ok < 3)
+        info = SLIP_gmp_fscanf(file, "%"PRId64" %"PRId64" %Zd\n",
+            &i[p], &j[p], &x_mpz[p]);
+        if ((feof(file) && p != nz-1) || info != SLIP_OK)
         {
             printf ("premature end-of-file\n") ;
             SLIP_FREE(i);
@@ -369,17 +383,17 @@ SLIP_info SLIP_tripread
     //------------------------------------------------------------------
     // At this point, we have read in i, j, and x arrays and have
     // allocated memory for the A matrix. The i & j are stored as
-    // int32_t and x is stored as a mpz_array. We conclude by using the
+    // int64_t and x is stored as a mpz_array. We conclude by using the
     // appropriate SLIP_build_* to construct our input matrix A
     //------------------------------------------------------------------
-    ok = SLIP_build_sparse_trip_mpz(A_handle, i, j, x_mpz, n, nz);
+    info = SLIP_build_sparse_trip_mpz(A_handle, i, j, x_mpz, n, nz);
 
     // A now contains our input matrix. Free memory for i, j, and x
 
     SLIP_FREE(i);
     SLIP_FREE(j);
     SLIP_delete_mpz_array(&x_mpz, nz);
-    return ok;
+    return (info) ;
 }
 
 //------------------------------------------------------------------------------
@@ -405,7 +419,7 @@ SLIP_info SLIP_tripread_double
 )
 {
 
-    SLIP_info ok;
+    SLIP_info info ;
     if (A_handle == NULL || file == NULL)
     {
         printf ("invalid input\n") ;
@@ -414,18 +428,18 @@ SLIP_info SLIP_tripread_double
     (*A_handle) = NULL ;
 
     // Read in triplet form first
-    int32_t m, n, nz;
+    int64_t m, n, nz;
 
     // Read in size of matrix & number of nonzeros
-    ok = fscanf(file, "%d %d %d\n", &m, &n, &nz);
-    if (feof(file) || ok < 3)
+    int s = fscanf(file, "%"PRId64" %"PRId64" %"PRId64"\n", &m, &n, &nz);
+    if (feof(file) || s < 3)
     {
         printf ("premature end-of-file\n") ;
         return SLIP_INCORRECT_INPUT;
     }
 
-    int32_t *i = (int32_t*) SLIP_malloc(nz* sizeof(int32_t));
-    int32_t *j = (int32_t*) SLIP_malloc(nz* sizeof(int32_t));
+    int64_t *i = (int64_t*) SLIP_malloc(nz* sizeof(int64_t));
+    int64_t *j = (int64_t*) SLIP_malloc(nz* sizeof(int64_t));
     double *x_doub = (double*) SLIP_malloc(nz* sizeof(double));
 
     if (!i || !j || !x_doub )
@@ -436,9 +450,10 @@ SLIP_info SLIP_tripread_double
         return SLIP_OUT_OF_MEMORY;
     }
 
-    int32_t decrement;
-    ok = fscanf(file, "%d %d %lf\n", &(i[0]), &(j[0]), &(x_doub[0]));
-    if (feof(file) || ok < 3)
+    int64_t decrement;
+    info = fscanf (file, "%"PRId64" %"PRId64" %lf\n",
+        &(i[0]), &(j[0]), &(x_doub[0])) ;
+    if (feof(file) || info != SLIP_OK)
     {
         printf ("premature end-of-file\n") ;
         SLIP_FREE(i);
@@ -459,10 +474,11 @@ SLIP_info SLIP_tripread_double
     }
 
     // Read in the values from file
-    for (int32_t k = 1; k < nz; k++)
+    for (int64_t k = 1; k < nz; k++)
     {
-        ok = fscanf(file, "%d %d %lf\n", &(i[k]), &(j[k]), &(x_doub[k]));
-        if ((feof(file) && k != nz-1) || ok < 3)
+        s = fscanf(file, "%"PRId64" %"PRId64" %lf\n",
+            &(i[k]), &(j[k]), &(x_doub[k]));
+        if ((feof(file) && k != nz-1) || s < 3)
         {
             printf ("premature end-of-file\n") ;
             SLIP_FREE(i);
@@ -478,16 +494,16 @@ SLIP_info SLIP_tripread_double
     //------------------------------------------------------------------
     // At this point, we have read in i, j, and x arrays and have
     // allocated memory for the A matrix. The i & j are stored as
-    // int32_t and x is stored as a double array. We conclude by using the
+    // int64_t and x is stored as a double array. We conclude by using the
     // appropriate SLIP_build_* to construct our input matrix A
     //------------------------------------------------------------------
 
-    ok = SLIP_build_sparse_trip_double(A_handle, i, j, x_doub, n, nz, option);
+    info = SLIP_build_sparse_trip_double(A_handle, i, j, x_doub, n, nz, option);
     // Now, A contains the input matrix
     SLIP_FREE(i);
     SLIP_FREE(j);
     SLIP_FREE(x_doub);
-    return ok;
+    return (info) ;
 }
 
 
@@ -515,12 +531,12 @@ SLIP_info SLIP_read_dense
         printf ("invalid inputs\n") ;
         return SLIP_INCORRECT_INPUT;
     }
-    int32_t nrows, ncols;
-    SLIP_info ok;
+    int64_t nrows, ncols;
+    SLIP_info info ;
 
     // First, we obtain the dimension of the matrix
-    ok = fscanf(file, "%d %d", &nrows, &ncols);
-    if (feof(file) || ok < 2)
+    int s = fscanf(file, "%"PRId64" %"PRId64, &nrows, &ncols) ;
+    if (feof(file) || s < 2)
     {
         printf ("premature end-of-file\n") ;
         return SLIP_INCORRECT_INPUT;
@@ -534,14 +550,14 @@ SLIP_info SLIP_read_dense
     }
 
     // We now populate the matrix b.
-    for (int32_t i = 0; i < nrows; i++)
+    for (int64_t i = 0; i < nrows; i++)
     {
-        for (int32_t j = 0; j < ncols; j++)
+        for (int64_t j = 0; j < ncols; j++)
         {
-            ok = SLIP_gmp_fscanf(file, "%Zd", &(b_orig[i][j]));
-            if (ok < 0) // return from this function can be a nonzero
+            info = SLIP_gmp_fscanf(file, "%Zd", &(b_orig[i][j]));
+            if (info != SLIP_OK)
             {
-                printf("\n\nhere at i = %d and j = %d", i, j);
+                printf("\n\nhere at i = %"PRId64" and j = %"PRId64"", i, j);
                 return SLIP_INCORRECT_INPUT;
             }
         }
@@ -553,9 +569,9 @@ SLIP_info SLIP_read_dense
     // to form our internal SLIP_dense structure.
     //------------------------------------------------------------------
 
-    ok = SLIP_build_dense_mpz(b_handle, b_orig, nrows, ncols);
+    info = SLIP_build_dense_mpz(b_handle, b_orig, nrows, ncols);
     SLIP_delete_mpz_mat(&b_orig, nrows, ncols);
-    return SLIP_OK;
+    return (info) ;
 }
 
 //------------------------------------------------------------------------------
@@ -565,14 +581,14 @@ SLIP_info SLIP_read_dense
 SLIP_info SLIP_print_stats_mpq
 (
     mpq_t **x_mpq,          // solution vector in mpq, pass NULL if unused
-    int32_t n,              // dimension of A
-    int32_t numRHS,         // number of RHS vectors
+    int64_t n,              // dimension of A
+    int64_t numRHS,         // number of RHS vectors
     SLIP_info check,        // whether the solution is correct or not
     SLIP_options *option    // option struct telling how much info to print
 )
 {
 
-    SLIP_info ok = SLIP_OK;
+    SLIP_info info = SLIP_OK;
     if (option == NULL)
     {
         printf ("invalid inputs\n") ;
@@ -588,14 +604,14 @@ SLIP_info SLIP_print_stats_mpq
             return SLIP_INCORRECT_INPUT;
         }
         printf ("\nSolution in full precision rational arithmetic:\n");
-        for (int32_t i = 0; i < n; i++)
+        for (int64_t i = 0; i < n; i++)
         {
-            for (int32_t j = 0; j < numRHS; j++)
+            for (int64_t j = 0; j < numRHS; j++)
             {
-                ok = SLIP_gmp_fprintf (stdout, "%Qd ", x_mpq[i][j]) ;
-                if (ok < 0)
+                info = SLIP_gmp_fprintf (stdout, "%Qd ", x_mpq[i][j]) ;
+                if (info != SLIP_OK)
                 {
-                    return ok;
+                    return (info) ;
                 }
             }
             printf ("\n") ;
@@ -611,8 +627,8 @@ SLIP_info SLIP_print_stats_mpq
 SLIP_info SLIP_print_stats_double
 (
     double **x_doub,        // solution vector in double, pass NULL if unused
-    int32_t n,              // dimension of A
-    int32_t numRHS,         // number of RHS vectors
+    int64_t n,              // dimension of A
+    int64_t numRHS,         // number of RHS vectors
     SLIP_info check,        // whether the solution is correct or not
     SLIP_options *option    // option struct telling how much info to print
 )
@@ -632,9 +648,9 @@ SLIP_info SLIP_print_stats_double
             return SLIP_INCORRECT_INPUT;
         }
         printf("\nSolution in double precision\n");
-        for (int32_t i = 0; i < n; i++)
+        for (int64_t i = 0; i < n; i++)
         {
-            for (int32_t j = 0; j < numRHS; j++)
+            for (int64_t j = 0; j < numRHS; j++)
             {
                 // Output the solution in double precision
                 printf ("%lf ", x_doub[i][j]);
@@ -652,14 +668,14 @@ SLIP_info SLIP_print_stats_double
 SLIP_info SLIP_print_stats_mpfr
 (
     mpfr_t **x_mpfr,        // solution vector in mpfr, pass NULL if unused
-    int32_t n,              // dimension of A
-    int32_t numRHS,         // number of RHS vectors
+    int64_t n,              // dimension of A
+    int64_t numRHS,         // number of RHS vectors
     SLIP_info check,        // whether the solution is correct or not
     SLIP_options *option    // option struct telling how much info to print
 )
 {
 
-    SLIP_info ok = SLIP_OK;
+    SLIP_info info = SLIP_OK;
     if (option == NULL)
     {
         printf ("invalid inputs\n") ;
@@ -675,15 +691,15 @@ SLIP_info SLIP_print_stats_mpfr
         }
         printf ("\nSolution in fixed precision of size: %ld bits\n",
             option->prec);
-        for (int32_t i = 0; i < n; i++)
+        for (int64_t i = 0; i < n; i++)
         {
-            for (int32_t j = 0; j < numRHS; j++)
+            for (int64_t j = 0; j < numRHS; j++)
             {
-                ok = SLIP_mpfr_fprintf (stdout, "%.*Rf",
+                info = SLIP_mpfr_fprintf (stdout, "%.*Rf",
                     option->prec, x_mpfr[i][j]);
-                if (ok < 0)
+                if (info != SLIP_OK)
                 {
-                    return ok;
+                    return (info) ;
                 }
             }
             printf ("\n");

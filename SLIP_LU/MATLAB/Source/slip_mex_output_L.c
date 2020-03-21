@@ -39,8 +39,8 @@ mxArray* slip_mex_output_L
     xA = mxGetDoubles(Amatlab);
 
     // Populate L->p and L->i
-    slip_int32_to_mwIndex(pA, L->p, (L->n)+1);
-    slip_int32_to_mwIndex(iA, L->i, L->nz);
+    slip_int64_to_mwIndex(pA, L->p, (L->n)+1);
+    slip_int64_to_mwIndex(iA, L->i, L->nz);
 
     //--------------------------------------------------------------------------
     // As per Escobedo et. al. Column j of L is divided by rho[j]
@@ -48,11 +48,11 @@ mxArray* slip_mex_output_L
     mpq_t* xL = SLIP_create_mpq_array(L->nz);
     if (!xL)  { SLIP_MEX_OK (SLIP_OUT_OF_MEMORY); }
 
-    for (int32_t k = 0; k < L->n; k++)
+    for (int64_t k = 0; k < L->n; k++)
     {
         // Populate pL
         SLIP_MEX_OK(SLIP_mpq_set_z(temp, rhos[k]));
-        for (int32_t j = L->p[k]; j < L->p[k+1]; j++)
+        for (int64_t j = L->p[k]; j < L->p[k+1]; j++)
         {
             SLIP_MEX_OK(SLIP_mpq_set_z(xL[j], L->x[j]));
             // Populate xL

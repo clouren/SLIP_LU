@@ -33,9 +33,9 @@
 SLIP_info slip_sparse_alloc2
 (
     SLIP_sparse* A, // sparse matrix data structure to be allocated
-    int32_t n,      // number of columns
-    int32_t m,      // number of rows (recall m=n assumed)
-    int32_t nzmax   // size of allocated i and x arrays
+    int64_t n,      // number of columns
+    int64_t m,      // number of rows (recall m=n assumed)
+    int64_t nzmax   // size of allocated i and x arrays
 )
 {
 
@@ -54,8 +54,8 @@ SLIP_info slip_sparse_alloc2
 
     // Allocate memory for A->x, A->p, and A->i arrays
     A->x = (mpz_t*) SLIP_calloc(nzmax, sizeof(mpz_t));
-    A->p = (int32_t*) SLIP_calloc(n+1, sizeof(int32_t));
-    A->i = (int32_t*) SLIP_calloc(nzmax, sizeof(int32_t));
+    A->p = (int64_t*) SLIP_calloc(n+1, sizeof(int64_t));
+    A->i = (int64_t*) SLIP_calloc(nzmax, sizeof(int64_t));
 
     if (!A->x || !A->p || !A->i) {return SLIP_OUT_OF_MEMORY;}
     return SLIP_OK;

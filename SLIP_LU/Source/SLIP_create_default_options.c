@@ -32,15 +32,12 @@ SLIP_options* SLIP_create_default_options ( void )
     // set defaults
     //--------------------------------------------------------------------------
 
-    // TODO: option->SLIP_MPFR_ROUND should not be upper case;
-    // change to option->mpfr_round.
-
-    option->pivot           = SLIP_DEFAULT_PIVOT ;
-    option->order           = SLIP_DEFAULT_ORDER ;
-    option->print_level     = SLIP_DEFAULT_PRINT_LEVEL ;
-    option->prec            = SLIP_DEFAULT_PRECISION ;
-    option->tol             = SLIP_DEFAULT_TOL ;
-    option->SLIP_MPFR_ROUND = SLIP_DEFAULT_MPFR_ROUND ;
+    option->pivot       = SLIP_DEFAULT_PIVOT ;
+    option->order       = SLIP_DEFAULT_ORDER ;
+    option->print_level = SLIP_DEFAULT_PRINT_LEVEL ;
+    option->prec        = SLIP_DEFAULT_PRECISION ;
+    option->tol         = SLIP_DEFAULT_TOL ;
+    option->round       = SLIP_DEFAULT_MPFR_ROUND ;
 
     //--------------------------------------------------------------------------
     // return result

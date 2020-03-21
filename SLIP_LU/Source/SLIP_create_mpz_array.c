@@ -16,7 +16,7 @@
 
 mpz_t* SLIP_create_mpz_array
 (
-    int32_t n      // Size of x
+    int64_t n      // Size of x
 )
 {
 
@@ -34,7 +34,7 @@ mpz_t* SLIP_create_mpz_array
     mpz_t* x = (mpz_t*) SLIP_calloc(n, sizeof(mpz_t));
     if (!x) {return NULL;}
 
-    for (int32_t i = 0; i < n; i++)
+    for (int64_t i = 0; i < n; i++)
     {
         if (SLIP_mpz_init(x[i]) != SLIP_OK)
         {

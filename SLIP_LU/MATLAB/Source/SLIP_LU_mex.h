@@ -48,14 +48,14 @@ void SLIP_mpq_to_double
 (
     double* x_doub,       // double array
     const mpq_t* x_mpq,   // mpq array
-    const int32_t n       // size of b
+    const int64_t n       // size of b
 );
 
 void slip_check_input
 (
-    const mxArray * input [],    // The matlab input array
-    int32_t nargin
-);
+    const mxArray * input [],   // The MATLAB inputs
+    int nargin                  // # of input arguments
+) ;
 
 void slip_get_matlab_options
 (
@@ -63,27 +63,26 @@ void slip_get_matlab_options
     const mxArray* input   // The input options from MATLAB interface
 );
 
-/* Purpose: Convert int32_t* array to MATLAB mwIndex* array
- */
-void slip_int32_to_mwIndex
+void slip_int64_to_mwIndex
 (
-    mwIndex* y,
-    int32_t* x,
-    int32_t n
+    mwIndex* y,    // the mwIndex vector
+    int64_t* x,    // the int64_t vector
+    int64_t n      // the size of x and y
 ) ;
 
-/* Purpose: convert mwIndex* array to int32_t* array
+/* Purpose: convert mwIndex* array to int64_t* array
  */
-void slip_mwIndex_to_int32
+void slip_mwIndex_to_int64
 (
-    int32_t* y,
+    int64_t* y,
     mwIndex* x,
     mwSize n
 ) ;
 
 // Purpose: This function checks if the array x contains Inf's, NaN's, or
-// if its values can be represented as int32_t values.
-bool slip_mex_check_for_inf     // true if x can be represented as int32_t
+// if its values can be represented as int64_t values.
+
+bool slip_mex_check_for_inf     // true if x can be represented as int64_t
 (
     double* x, // The array of numeric values
     mwSize n   // size of array
@@ -95,7 +94,7 @@ void slip_mex_get_A_and_b
     SLIP_sparse **A_handle,  // Internal SLIP Mat stored in CSC
     SLIP_dense **b_handle,   // mpz matrix used internally
     const mxArray* pargin[], // The input A matrix and options
-    int32_t nargin           // Number of input to the mexFunction
+    int nargin               // Number of input to the mexFunction
 ) ;
 
 /* Purpose: Output the solution to the linear system Ax=b to matlab
@@ -103,24 +102,24 @@ void slip_mex_get_A_and_b
 mxArray* slip_mex_output_soln
 (
     double** x,
-    int32_t m,
-    int32_t n
+    int64_t m,
+    int64_t n
 ) ;
 
 /* Purpose: Output the column permutation the Q matrix
  */
 mxArray* slip_mex_output_col_permut
 (
-    int32_t* x,
-    int32_t n
+    int64_t* x,
+    int64_t n
 );
 
 /* Purpose: Output the row permutation the P matrix
  */
 mxArray* slip_mex_output_p
 (
-    int32_t* pinv,
-    int32_t n
+    int64_t* pinv,
+    int64_t n
 ) ;
 
 /* Purpose: Output the L matrix
@@ -160,7 +159,7 @@ mwIndex slip_dropzeros
 mwIndex slip_fkeep
 (
     mxArray *A,
-    bool (*fkeep) (int32_t, int32_t, double)
+    bool (*fkeep) (int64_t, int64_t, double)
 );
 
 /* Purpose: transpose the matrix A

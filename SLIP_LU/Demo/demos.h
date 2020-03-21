@@ -10,6 +10,8 @@
 
 #include "SLIP_LU.h"
 #include <time.h>
+#include <stdint.h>
+#include <inttypes.h>
 
 #define OK(method)                      \
 {                                       \
@@ -27,13 +29,13 @@
 /* Purpose: This processes the command line for user specified options */
 SLIP_info SLIP_process_command_line //processes the command line
 (
-    int32_t argc,           // number of command line arguments
+    int argc,               // number of command line arguments
     char* argv[],           // set of command line arguments
     SLIP_options* option,   // struct containing the command options
     char** mat_name,        // Name of the matrix to be read in
     char** rhs_name,        // Name of the RHS vector to be read in
-    int32_t *rat            // data type of output solution.
-                            // 1: mpz, 2: double, 3: mpfr
+    SLIP_type *rat          // data type of output solution:
+                            // 1:SLIP_MPZ (default), 2:SLIP_FP64, 3:SLIP_MPFR
 );
 
 /* Purpose: This function prints out the user specified/default options*/
@@ -75,8 +77,8 @@ SLIP_info SLIP_read_dense
 SLIP_info SLIP_print_stats_mpq
 (
     mpq_t **x_mpq,          // solution vector in mpq, pass NULL if unused
-    int32_t n,              // dimension of A
-    int32_t numRHS,         // number of RHS vectors
+    int64_t n,              // dimension of A
+    int64_t numRHS,         // number of RHS vectors
     SLIP_info check,        // whether the solution is correct or not
     SLIP_options *option    // option struct telling how much info to print
 );
@@ -85,8 +87,8 @@ SLIP_info SLIP_print_stats_mpq
 SLIP_info SLIP_print_stats_double
 (
     double **x_doub,        // solution vector in double, pass NULL if unused
-    int32_t n,              // dimension of A
-    int32_t numRHS,         // number of RHS vectors
+    int64_t n,              // dimension of A
+    int64_t numRHS,         // number of RHS vectors
     SLIP_info check,        // whether the solution is correct or not
     SLIP_options *option    // option struct telling how much info to print
 );
@@ -95,8 +97,8 @@ SLIP_info SLIP_print_stats_double
 SLIP_info SLIP_print_stats_mpfr
 (
     mpfr_t **x_mpfr,        // solution vector in mpfr, pass NULL if unused
-    int32_t n,              // dimension of A
-    int32_t numRHS,         // number of RHS vectors
+    int64_t n,              // dimension of A
+    int64_t numRHS,         // number of RHS vectors
     SLIP_info check,        // whether the solution is correct or not
     SLIP_options *option    // option struct telling how much info to print
 );

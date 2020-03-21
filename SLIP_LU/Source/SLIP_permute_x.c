@@ -20,8 +20,8 @@
 SLIP_info SLIP_permute_x
 (
     mpq_t **x,            // Solution vector
-    int32_t n,            // Size of solution vector
-    int32_t numRHS,       // number of RHS vectors
+    int64_t n,            // Size of solution vector
+    int64_t numRHS,       // number of RHS vectors
     SLIP_LU_analysis *S   // symbolic analysis with the column ordering Q
 )
 {
@@ -42,14 +42,14 @@ SLIP_info SLIP_permute_x
     // x2 (q) = x
     //--------------------------------------------------------------------------
 
-    int32_t *q = S->q;     // column permutation
+    int64_t *q = S->q;     // column permutation
     // Declare temp x
     mpq_t** x2 = SLIP_create_mpq_mat(n, numRHS);
     if (!x2) {return SLIP_OUT_OF_MEMORY;}
     // Set x2 = Q*x
-    for (int32_t i = 0; i < n; i++)
+    for (int64_t i = 0; i < n; i++)
     {
-        for (int32_t j = 0; j < numRHS; j++)
+        for (int64_t j = 0; j < numRHS; j++)
         {
             SLIP_CHECK(SLIP_mpq_set(x2[q[i]][j], x[i][j]));
         }
@@ -59,9 +59,9 @@ SLIP_info SLIP_permute_x
     // x = x2
     //--------------------------------------------------------------------------
 
-    for (int32_t i = 0; i < n; i++)
+    for (int64_t i = 0; i < n; i++)
     {
-        for (int32_t j = 0; j < numRHS; j++)
+        for (int64_t j = 0; j < numRHS; j++)
         {
             SLIP_CHECK(SLIP_mpq_set(x[i][j], x2[i][j]));
         }

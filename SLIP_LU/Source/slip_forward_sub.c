@@ -35,7 +35,7 @@ SLIP_info slip_forward_sub
     const SLIP_sparse *L,   // lower triangular matrix
     mpz_t **x,              // right hand side matrix of size n*numRHS
     const mpz_t *rhos,      // sequence of pivots used in factorization
-    int32_t numRHS          // number of columns in x
+    int64_t numRHS          // number of columns in x
 )
 {
 
@@ -51,19 +51,20 @@ SLIP_info slip_forward_sub
 
     //--------------------------------------------------------------------------
 
-    int32_t i, j, p, k, n, m, mnew, sgn, **h;
+    int64_t i, j, p, k, n, m, mnew, **h;
+    int sgn ;
     // Size of x vector
     n = L->n;
 
     // calloc is used, so that h is initialized for SLIP_FREE_ALL
-    h = (int32_t**) SLIP_calloc(n, sizeof(int32_t*));
+    h = (int64_t**) SLIP_calloc(n, sizeof(int64_t*));
     if (!h)
     {
         return SLIP_OUT_OF_MEMORY;
     }
     for (i = 0; i < n; i++)
     {
-        h[i] = (int32_t*) SLIP_malloc(numRHS* sizeof(int32_t));
+        h[i] = (int64_t*) SLIP_malloc(numRHS* sizeof(int64_t));
         if (!h[i])
         {
             SLIP_FREE_ALL;
@@ -81,9 +82,11 @@ SLIP_info slip_forward_sub
 
     for (k = 0; k < numRHS; k++)
     {
+
         //----------------------------------------------------------------------
         // Iterate accross all nonzeros in x. Assume x is dense
         //----------------------------------------------------------------------
+
         for (i = 0; i < n; i++)
         {
             p = h[i][k];
@@ -94,6 +97,7 @@ SLIP_info slip_forward_sub
             //------------------------------------------------------------------
             // History Update
             //------------------------------------------------------------------
+
             if (p < i-1)
             {
                 // x[i] = x[i] * rhos[i-1]
@@ -108,6 +112,7 @@ SLIP_info slip_forward_sub
             //------------------------------------------------------------------
             // IPGE updates
             //------------------------------------------------------------------
+
             // Access the Lmi
             for (m = L->p[i]; m < L->p[i+1]; m++)
             {
@@ -171,6 +176,7 @@ SLIP_info slip_forward_sub
     //--------------------------------------------------------------------------
     // Free h memory
     //--------------------------------------------------------------------------
+
     SLIP_FREE_ALL;
     return SLIP_OK;
 }

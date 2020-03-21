@@ -30,8 +30,8 @@ SLIP_info SLIP_build_dense_mpz
     SLIP_dense **C_handle,      // Dense matrix to construct
     // inputs, not modified:
     mpz_t **B,                  // Set of values in full precision integer
-    int32_t m,                  // number of rows
-    int32_t n                   // number of columns
+    int64_t m,                  // number of rows
+    int64_t n                   // number of columns
 )
 {
 
@@ -58,9 +58,9 @@ SLIP_info SLIP_build_dense_mpz
     }
 
     SLIP_CHECK (slip_dense_alloc(C, m, n)) ;
-    for (int32_t i = 0; i < m; i++)
+    for (int64_t i = 0; i < m; i++)
     {
-        for (int32_t j = 0; j < n; j++)
+        for (int64_t j = 0; j < n; j++)
         {
             SLIP_CHECK (SLIP_mpz_set(C->x[i][j], B[i][j])) ;
         }

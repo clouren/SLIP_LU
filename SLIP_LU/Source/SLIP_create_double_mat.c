@@ -14,8 +14,8 @@
 
 double** SLIP_create_double_mat
 (
-    int32_t m,     // number of rows (must be > 0)
-    int32_t n      // number of columns (must be > 0)
+    int64_t m,     // number of rows (must be > 0)
+    int64_t n      // number of columns (must be > 0)
 )
 {
 
@@ -32,7 +32,7 @@ double** SLIP_create_double_mat
     double **x = (double**) SLIP_calloc(m, sizeof(double*));
     if (!x) {return NULL;}
 
-    for (int32_t i = 0; i < m; i++)
+    for (int64_t i = 0; i < m; i++)
     {
         x[i] = (double*) SLIP_calloc(n, sizeof(double));
         if (x[i] == NULL)

@@ -90,7 +90,7 @@ external libraries. SLIP LU is written in ANSI C and is accompanied by a MATLAB
 interface.
 
 The user's input matrix $A$ and right hand side (RHS) vectors $\mathbf{b}$ are
-read from either \verb|double|, \verb|int32_t|, \verb|mpq_t|, \verb|mpz_t|, or
+read from either \verb|double|, \verb|int64_t|, \verb|mpq_t|, \verb|mpz_t|, or
 \verb|mpfr_t| data types. $A$ must be stored in either compressed sparse column
 form or sparse triplet form, while $\mathbf{b}$ must be stored as a dense
 matrix. A discussion of building each of these types of input is given in
@@ -148,12 +148,12 @@ stores the matrix $A$ as a sequence of three arrays:
 \item
 \verb|A->p|: Column pointers; an array of size \verb|n+1|. The row indices of
 column $j$ are located in positions \verb|A->p[j]| to \verb|A->p[j+1]-1| of the
-array \verb|A->i|. Data type: \verb|int32_t|.
+array \verb|A->i|. Data type: \verb|int64_t|.
 
 \item
 \verb|A->i|: Row indices; an array of size equal to the number of entries in
 the matrix. The entry \verb|A->i[k]| is the row index of the $k$th nonzero in
-the matrix. Data type: \verb|int32_t|.
+the matrix. Data type: \verb|int64_t|.
 
 \item
 \verb|A->x|: Numeric entries. The entry \verb|A->x[k]| is the numeric value of
@@ -461,7 +461,7 @@ Default value: 1 meaning that the diagonal entry will be selected if it has the
 same magnitude as the smallest entry in the $k$ the column.
 
 \item
-\verb|option->print_level|: An \verb|int32_t| which controls the amount of
+\verb|option->print_level|: An \verb|int| which controls the amount of
 output. 0: print nothing, 1: just errors, 2: terse, with basic stats from
 COLAMD/AMD and SLIP, 3: all, with matrices and results. Default value: 0.
 
@@ -474,7 +474,7 @@ the largest possible \verb'int' available in your system). Default value: 128
 (quad precision).
 
 \item
-\verb|option->SLIP_MPFR_ROUND|: A \verb|mpfr_rnd_t| which determines the type
+\verb|option->round|: A \verb|mpfr_rnd_t| which determines the type
 of MPFR rounding to be used by SLIP LU. This is a parameter of the MPFR
 library. The options for this parameter are:
 
@@ -530,26 +530,26 @@ form via the \verb|SLIP_sparse| structure. A sparse matrix
 
 \begin{itemize}
 \item \verb|A->m|: Number of rows in the matrix. It is typically assumed that
-$m=n$.  Data Type: \verb|int32_t|
+$m=n$.  Data Type: \verb|int64_t|
 
 \item \verb|A->n|: Number of columns in the matrix. It is typically assumed
-that $m=n$. Data Type: \verb|int32_t|
+that $m=n$. Data Type: \verb|int64_t|
 
 \item \verb|A->nz|: The number of nonzeros in the matrix $A$. Data Type:
-\verb|int32_t|
+\verb|int64_t|
 
 \item \verb|A->nzmax|: The allocated size of the vectors \verb|A->x| and
 \verb|A->i|. Note that \verb|A->nzmax| $\geq$ \verb|A->nz|. Internally, this
 parameter serves as an estimate on the amount of memory needed and is used to
 reduce the number of intermediate reallocations performed in the library. Data
-Type: \verb|int32_t|
+Type: \verb|int64_t|
 
 \item \verb|A->p|: An array of size $n+1$ which contains column pointers of
-$A$. Data Type: \verb|int32_t*|
+$A$. Data Type: \verb|int64_t*|
 
 \item \verb|A->i|: An array of size \verb|A->nzmax| which contains the row
 indices of the nonzeros in $A$. The matrix is zero based therefore indices are
-in the range of $[0, n-1]$. Data Type: \verb|int32_t*|
+in the range of $[0, n-1]$. Data Type: \verb|int64_t*|
 
 \item \verb|A->x|: An array of size \verb|A->nzmax| which contains the numeric
 values of the matrix. Data Type: \verb|mpz_t*|
@@ -574,9 +574,9 @@ function name & description & section \\
 \verb|SLIP_build_sparse_csc_double|
     & build sparse matrix from \verb|double| type CSC matrix
     & \ref{s:user:build_sparse_csc_double} \\
-\verb|SLIP_build_sparse_csc_int32|
-    & build sparse matrix from \verb|int32_t| type CSC matrix
-    & \ref{s:user:build_sparse_csc_int32} \\
+\verb|SLIP_build_sparse_csc_int64|
+    & build sparse matrix from \verb|int64_t| type CSC matrix
+    & \ref{s:user:build_sparse_csc_int64} \\
 \verb|SLIP_build_sparse_csc_mpq|
     & build sparse matrix from \verb|mpq_t| type CSC matrix
     & \ref{s:user:build_sparse_csc_mpq} \\
@@ -590,9 +590,9 @@ function name & description & section \\
 \verb|SLIP_build_sparse_trip_double|
     & build sparse matrix from \verb|double| type triplet-format matrix
     & \ref{s:user:build_sparse_trip_double} \\
-\verb|SLIP_build_sparse_trip_int32|
-    & build sparse matrix from \verb|int32_t| type triplet-format matrix
-    & \ref{s:user:build_sparse_trip_int32} \\
+\verb|SLIP_build_sparse_trip_int64|
+    & build sparse matrix from \verb|int64_t| type triplet-format matrix
+    & \ref{s:user:build_sparse_trip_int64} \\
 \verb|SLIP_build_sparse_trip_mpq|
     & build sparse matrix from \verb|mpq_t| type triplet-format matrix
     & \ref{s:user:build_sparse_trip_mpq} \\
@@ -623,8 +623,8 @@ All internal right-hand side matrices are stored as dense matrices, using the
 following components:
 
 \begin{itemize}
-\item \verb|b->m|: Number of rows in the matrix. Data Type: \verb|int32_t|
-\item \verb|b->n|: Number of columns in the matrix. Data Type: \verb|int32_t|
+\item \verb|b->m|: Number of rows in the matrix. Data Type: \verb|int64_t|
+\item \verb|b->n|: Number of columns in the matrix. Data Type: \verb|int64_t|
 \item \verb|b->x|: A 2D array of size $m$-by-$n$ which contains the numeric
     values of the matrix. Data Type: \verb|mpz_t**|
 \item \verb|b->scale|: A scaling parameters that ensures integrality if the
@@ -646,9 +646,9 @@ function name & description & section \\
 \verb|SLIP_build_dense_double|
     & build \verb'SLIP_dense' matrix from a 2D \verb|double| array
     & \ref{s:user:build_dense_double} \\
-\verb|SLIP_build_dense_int32|
-    & build \verb'SLIP_dense' matrix from a 2D \verb|int32_t| array
-    & \ref{s:user:build_dense_int32} \\
+\verb|SLIP_build_dense_int64|
+    & build \verb'SLIP_dense' matrix from a 2D \verb|int64_t| array
+    & \ref{s:user:build_dense_int64} \\
 \verb|SLIP_build_dense_mpq|
     & build \verb'SLIP_dense' matrix from a 2D \verb|mpq_t| array
     & \ref{s:user:build_dense_mpq} \\
@@ -679,17 +679,17 @@ to modify this struct, just pass it into the functions. A
 \verb|SLIP_LU_analysis| structure has the following components:
 
 \begin{itemize}
-\item \verb|S->q|: The column permutation stored as a dense \verb|int32_t|
+\item \verb|S->q|: The column permutation stored as a dense \verb|int64_t|
 vector of size $n+1$, where $n$ is the number of columns of the analyzed matrix.
 Currently this vector is obtained via COLAMD, AMD, or is set to no ordering
 (i.e., $[0, 1, \hdots, n-1]$).
 
-\item \verb|S->lnz|: An \verb|int32_t| which is a guess for the number of
+\item \verb|S->lnz|: An \verb|int64_t| which is a guess for the number of
 nonzeros in $L$. \verb|S->lnz| must be in the range of $[n, n^2]$. If
 \verb|S->lnz| is too small, the program may waste time performing extra memory
 reallocations. This is set during the symbolic analysis.
 
-\item \verb|S->unz|: An \verb|int32_t| which is a guess for the number of
+\item \verb|S->unz|: An \verb|int64_t| which is a guess for the number of
 nonzeros in $U$. \verb|S->unz| must be in the range of $[n, n^2$. If
 \verb|S->unz| is too small, the program may waste time performing extra memory
 reallocations. This is set during the symbolic analysis.
@@ -1054,11 +1054,11 @@ matrix or a \verb'SLIP_dense' matrix.
     SLIP_info SLIP_build_sparse_csc_double
     (
         SLIP_sparse **A_handle,     // output matrix
-        int32_t *p,         // The set of column pointers
-        int32_t *I,         // set of row indices
+        int64_t *p,         // The set of column pointers
+        int64_t *I,         // set of row indices
         double *x,          // Set of values as doubles
-        int32_t n,          // dimension of the matrix
-        int32_t nz          // number of nonzeros in A (size of x and I vectors)
+        int64_t n,          // dimension of the matrix
+        int64_t nz          // number of nonzeros in A (size of x and I vectors)
     ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -1067,27 +1067,27 @@ matrix or a \verb'SLIP_dense' matrix.
 sparse column (CSC) form inputs, where the entry values are \verb|double| type.
 
 %-------------------------------------------------------------------------------
-\cprotect\subsubsection{\verb|SLIP_build_sparse_csc_int32|: from \verb|int32_t| entries}
-\label{s:user:build_sparse_csc_int32}
+\cprotect\subsubsection{\verb|SLIP_build_sparse_csc_int64|: from \verb|int64_t| entries}
+\label{s:user:build_sparse_csc_int64}
 %-------------------------------------------------------------------------------
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-    SLIP_info SLIP_build_sparse_csc_int32
+    SLIP_info SLIP_build_sparse_csc_int64
     (
         SLIP_sparse **A_handle,     // output matrix
-        int32_t *p,         // The set of column pointers
-        int32_t *I,         // set of row indices
-        int32_t *x,         // Set of values as doubles
-        int32_t n,          // dimension of the matrix
-        int32_t nz          // number of nonzeros in A (size of x and I vectors)
+        int64_t *p,         // The set of column pointers
+        int64_t *I,         // set of row indices
+        int64_t *x,         // Set of values as doubles
+        int64_t n,          // dimension of the matrix
+        int64_t nz          // number of nonzeros in A (size of x and I vectors)
     ) ;
 \end{verbatim}
 } \end{mdframed}
 
-\verb|SLIP_build_sparse_csc_int32| builds a sparse matrix using compressed column
-form inputs, where the entry values are \verb|int32_t| type.
+\verb|SLIP_build_sparse_csc_int64| builds a sparse matrix using compressed column
+form inputs, where the entry values are \verb|int64_t| type.
 
 %-------------------------------------------------------------------------------
 \cprotect\subsubsection{\verb|SLIP_build_sparse_csc_mpq|: from \verb|mpq_t| entries}
@@ -1100,11 +1100,11 @@ form inputs, where the entry values are \verb|int32_t| type.
     SLIP_info SLIP_build_sparse_csc_mpq
     (
         SLIP_sparse **A_handle,     // output matrix
-        int32_t *p,         // The set of column pointers
-        int32_t *I,         // set of row indices
+        int64_t *p,         // The set of column pointers
+        int64_t *I,         // set of row indices
         mpq_t *x,           // Set of values as mpq_t rational numbers
-        int32_t n,          // dimension of the matrix
-        int32_t nz          // number of nonzeros in A (size of x and I vectors)
+        int64_t n,          // dimension of the matrix
+        int64_t nz          // number of nonzeros in A (size of x and I vectors)
     ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -1123,11 +1123,11 @@ sparse column (CSC) form inputs, where the entry values are \verb|mpq_t| type.
     SLIP_info SLIP_build_sparse_csc_mpfr
     (
         SLIP_sparse **A_handle,     // output matrix
-        int32_t *p,         // The set of column pointers
-        int32_t *I,         // set of row indices
+        int64_t *p,         // The set of column pointers
+        int64_t *I,         // set of row indices
         mpfr_t *x,          // Set of values as doubles
-        int32_t n,          // dimension of the matrix
-        int32_t nz,         // number of nonzeros in A (size of x and I vectors)
+        int64_t n,          // dimension of the matrix
+        int64_t nz,         // number of nonzeros in A (size of x and I vectors)
         SLIP_options *option  // command options containing the prec for mpfr
     ) ;
 \end{verbatim}
@@ -1147,11 +1147,11 @@ sparse column (CSC) form inputs, where the entry values are \verb|mpfr_t| type.
     SLIP_info SLIP_build_sparse_csc_mpz
     (
         SLIP_sparse **A_handle,     // output matrix
-        int32_t *p,         // The set of column pointers
-        int32_t *I,         // set of row indices
+        int64_t *p,         // The set of column pointers
+        int64_t *I,         // set of row indices
         mpz_t *x,           // Set of values in full precision integer
-        int32_t n,          // dimension of the matrix
-        int32_t nz          // number of nonzeros in A (size of x and I vectors)
+        int64_t n,          // dimension of the matrix
+        int64_t nz          // number of nonzeros in A (size of x and I vectors)
     ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -1176,11 +1176,11 @@ from \verb|double| entries}
     SLIP_info SLIP_build_sparse_trip_double
     (
         SLIP_sparse **A_handle,     // output matrix
-        int32_t *I,         // set of row indices
-        int32_t *J,         // set of column indices
+        int64_t *I,         // set of row indices
+        int64_t *J,         // set of column indices
         double *x,          // Set of values in double
-        int32_t n,          // dimension of the matrix
-        int32_t nz          // number of nonzeros in A (size of x, I, and J)
+        int64_t n,          // dimension of the matrix
+        int64_t nz          // number of nonzeros in A (size of x, I, and J)
     ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -1189,29 +1189,29 @@ from \verb|double| entries}
 inputs, where the entry values are \verb|double| type.
 
 %-------------------------------------------------------------------------------
-\cprotect\subsubsection{\verb|SLIP_build_sparse_trip_int32|:
-from \verb|int32_t| entries}
-\label{s:user:build_sparse_trip_int32}
+\cprotect\subsubsection{\verb|SLIP_build_sparse_trip_int64|:
+from \verb|int64_t| entries}
+\label{s:user:build_sparse_trip_int64}
 %-------------------------------------------------------------------------------
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-    SLIP_info SLIP_build_sparse_trip_int32
+    SLIP_info SLIP_build_sparse_trip_int64
     (
         SLIP_sparse **A_handle,     // output matrix
-        int32_t *I,         // set of row indices
-        int32_t *J,         // set of column indices
-        int32_t *x,         // Set of values in int32_t
-        int32_t n,          // dimension of the matrix
-        int32_t nz          // number of nonzeros in A (size of x, I,
+        int64_t *I,         // set of row indices
+        int64_t *J,         // set of column indices
+        int64_t *x,         // Set of values in int64_t
+        int64_t n,          // dimension of the matrix
+        int64_t nz          // number of nonzeros in A (size of x, I,
                             // and J vectors)
     ) ;
 \end{verbatim}
 } \end{mdframed}
 
-\verb|SLIP_build_sparse_trip_int32| builds a sparse matrix from triplet form
-inputs, where the entry values are \verb|int32_t| type.
+\verb|SLIP_build_sparse_trip_int64| builds a sparse matrix from triplet form
+inputs, where the entry values are \verb|int64_t| type.
 
 %-------------------------------------------------------------------------------
 \cprotect\subsubsection{\verb|SLIP_build_sparse_trip_mpq|:
@@ -1225,11 +1225,11 @@ from \verb|mpq_t| entries}
     SLIP_info SLIP_build_sparse_trip_mpq
     (
         SLIP_sparse **A_handle,     // output matrix
-        int32_t *I,         // set of row indices
-        int32_t *J,         // set of column indices
+        int64_t *I,         // set of row indices
+        int64_t *J,         // set of column indices
         mpq_t *x,           // Set of values as rational numbers
-        int32_t n,          // dimension of the matrix
-        int32_t nz          // number of nonzeros in A (size of x, I and J)
+        int64_t n,          // dimension of the matrix
+        int64_t nz          // number of nonzeros in A (size of x, I and J)
     ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -1249,11 +1249,11 @@ from \verb|mpfr_t| entries}
     SLIP_info SLIP_build_sparse_trip_mpfr
     (
         SLIP_sparse **A_handle,     // output matrix
-        int32_t *I,         // set of row indices
-        int32_t *J,         // set of column indices
+        int64_t *I,         // set of row indices
+        int64_t *J,         // set of column indices
         mpfr_t *x,          // Set of values as mpfr_t
-        int32_t n,          // dimension of the matrix
-        int32_t nz,         // number of nonzeros in A (size of x, I, and J)
+        int64_t n,          // dimension of the matrix
+        int64_t nz,         // number of nonzeros in A (size of x, I, and J)
         SLIP_options *option// command options containing the prec for mpfr
     ) ;
 \end{verbatim}
@@ -1274,11 +1274,11 @@ from \verb|mpz_t| entries}
     SLIP_info SLIP_build_sparse_trip_mpz
     (
         SLIP_sparse **A_handle,     // output matrix
-        int32_t *I,         // set of row indices
-        int32_t *J,         // set of column indices
+        int64_t *I,         // set of row indices
+        int64_t *J,         // set of column indices
         mpz_t *x,           // Set of values in full precision integer
-        int32_t n,          // dimension of the matrix
-        int32_t nz          // number of nonzeros in A (size of x, I, and J)
+        int64_t n,          // dimension of the matrix
+        int64_t nz          // number of nonzeros in A (size of x, I, and J)
     ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -1303,8 +1303,8 @@ inputs, where the entry values are \verb|mpz_t| type.
         SLIP_dense **C_handle,      // Dense matrix to construct
         // inputs, not modified:
         double **B,                 // Set of values as doubles
-        int32_t m,                  // number of rows
-        int32_t n,                  // number of columns
+        int64_t m,                  // number of rows
+        int64_t n,                  // number of columns
         SLIP_options* option
     ) ;
 \end{verbatim}
@@ -1314,26 +1314,26 @@ inputs, where the entry values are \verb|mpz_t| type.
 from a 2D \verb|double| array \verb'B'.
 
 %-------------------------------------------------------------------------------
-\cprotect\subsubsection{\verb|SLIP_build_dense_int32|: from \verb|int32_t| array}
-\label{s:user:build_dense_int32}
+\cprotect\subsubsection{\verb|SLIP_build_dense_int64|: from \verb|int64_t| array}
+\label{s:user:build_dense_int64}
 %-------------------------------------------------------------------------------
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-    SLIP_info SLIP_build_dense_int32
+    SLIP_info SLIP_build_dense_int64
     (
         SLIP_dense **C_handle,      // Dense matrix to construct
         // inputs, not modified:
-        int32_t **B,                // Set of values as ints
-        int32_t m,                  // number of rows
-        int32_t n                   // number of columns
+        int64_t **B,                // Set of values as ints
+        int64_t m,                  // number of rows
+        int64_t n                   // number of columns
     ) ;
 \end{verbatim}
 } \end{mdframed}
 
-\verb|SLIP_build_dense_int32| builds a \verb'SLIP_dense' matrix \verb'C'
-from a 2D \verb|int32_t| array \verb'B'.
+\verb|SLIP_build_dense_int64| builds a \verb'SLIP_dense' matrix \verb'C'
+from a 2D \verb|int64_t| array \verb'B'.
 
 %-------------------------------------------------------------------------------
 \cprotect\subsubsection{\verb|SLIP_build_dense_mpq|: from \verb|mpq_t| array}
@@ -1348,8 +1348,8 @@ from a 2D \verb|int32_t| array \verb'B'.
         SLIP_dense **C_handle,      // Dense matrix to construct
         // inputs, not modified:
         mpq_t **B,                  // set of values as mpq_t
-        int32_t m,                  // number of rows
-        int32_t n                   // number of columns
+        int64_t m,                  // number of rows
+        int64_t n                   // number of columns
     ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -1370,8 +1370,8 @@ from a 2D \verb|mpq_t| array \verb'B'.
         SLIP_dense **C_handle,      // Dense matrix to construct
         // inputs, not modified:
         mpfr_t **B,             // Set of values as mpfr_t
-        int32_t m,              // number of rows
-        int32_t n,              // number of columns
+        int64_t m,              // number of rows
+        int64_t n,              // number of columns
         SLIP_options *option    // command options with precision for mpfr
     ) ;
 \end{verbatim}
@@ -1393,8 +1393,8 @@ array.
         SLIP_dense **C_handle,      // Dense matrix to construct
         // inputs, not modified:
         mpz_t **B,                  // Set of values in full precision integer
-        int32_t m,                  // number of rows
-        int32_t n                   // number of columns
+        int64_t m,                  // number of rows
+        int64_t n                   // number of columns
     ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -1453,7 +1453,7 @@ The analysis \verb|S| is freed by \verb|SLIP_delete_LU_analysis|.
         SLIP_sparse **L,         // lower triangular matrix
         SLIP_sparse **U,         // upper triangular matrix
         mpz_t **rhos,            // sequence of pivots
-        int32_t **pinv,          // inverse row permutation
+        int64_t **pinv,          // inverse row permutation
         // input:
         SLIP_sparse *A,         // matrix to be factored
         SLIP_LU_analysis *S,    // prior symbolic analysis
@@ -1496,7 +1496,7 @@ returned as \verb|NULL|.
         SLIP_sparse *L,         // lower triangular matrix
         SLIP_sparse *U,         // upper triangular matrix
         mpz_t *rhos,            // sequence of pivots
-        int32_t *pinv           // row permutation
+        int64_t *pinv           // row permutation
     ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -1527,8 +1527,8 @@ calculation results; thus for usage information please refer to either
     SLIP_info SLIP_permute_x
     (
         mpq_t **x,            // Solution vector
-        int32_t n,            // Size of solution vector
-        int32_t numRHS,       // number of RHS vectors
+        int64_t n,            // Size of solution vector
+        int64_t numRHS,       // number of RHS vectors
         SLIP_LU_analysis *S   // symbolic analysis with the column ordering Q
     ) ;
 \end{verbatim}
@@ -1605,8 +1605,8 @@ please refer to either \verb|Demos/SLIPLU.c| or Section \ref{s:Using:expert}.
     (
         double **x_doub,      // double soln of size n*numRHS to Ax = b
         mpq_t  **x_mpq,       // mpq solution to Ax = b. x is of size n*numRHS
-        int32_t n,            // Dimension of A, number of rows of x
-        int32_t numRHS        // Number of right hand side vectors
+        int64_t n,            // Dimension of A, number of rows of x
+        int64_t numRHS        // Number of right hand side vectors
     ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -1630,8 +1630,8 @@ On input, \verb|double **x_doub| should be allocated using
     (
         mpfr_t **x_mpfr,      // mpfr solution of size n*numRHS to Ax = b
         mpq_t  **x_mpq,       // mpq solution of size n*numRHS to Ax = b.
-        int32_t n,            // Dimension of A, number of rows of x
-        int32_t numRHS        // Number of right hand side vectors
+        int64_t n,            // Dimension of A, number of rows of x
+        int64_t numRHS        // Number of right hand side vectors
     ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -1792,8 +1792,8 @@ used in many places.}
 \begin{verbatim}
     double** SLIP_create_double_mat
     (
-        int32_t m,     // number of rows (must be > 0)
-        int32_t n      // number of columns (must be > 0)
+        int64_t m,     // number of rows (must be > 0)
+        int64_t n      // number of columns (must be > 0)
     ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -1824,8 +1824,8 @@ $m \le 0 $ or $n\le 0$ or out of memory.
     void SLIP_delete_double_mat
     (
         double*** A,   // dense matrix
-        int32_t m,     // number of rows of A
-        int32_t n      // number of columns of A
+        int64_t m,     // number of rows of A
+        int64_t n      // number of columns of A
     ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -1842,43 +1842,43 @@ This data structure should be redesigned. Also for integer matrix.
 \end{verbatim}
 
 %-------------------------------------------------------------------------------
-\cprotect\subsection{\verb|SLIP_create_int32_mat|: create a $m$-by-$n$ \verb|int32_t| matrix}
+\cprotect\subsection{\verb|SLIP_create_int64_mat|: create a $m$-by-$n$ \verb|int64_t| matrix}
 %-------------------------------------------------------------------------------
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-    int32_t** SLIP_create_int32_mat
+    int64_t** SLIP_create_int64_mat
     (
-        int32_t m,     // number of rows (must be > 0)
-        int32_t n      // number of columns (must be > 0)
+        int64_t m,     // number of rows (must be > 0)
+        int64_t n      // number of columns (must be > 0)
     ) ;
 \end{verbatim}
 } \end{mdframed}
 
-\verb|SLIP_create_int32_mat| allocates a \verb|int32_t| matrix of size $m \times
+\verb|SLIP_create_int64_mat| allocates a \verb|int64_t| matrix of size $m \times
 n$ and sets each entry equal to zero, where $A[i][j]$ is the ($i,j$)th entry.
 $A[i]$ is a pointer to row $i$, of size $n$. \verb|NULL| is returned if
 $m \le 0 $ or $n\le 0$ or out of memory.
 
 
 %-------------------------------------------------------------------------------
-\cprotect\subsection{\verb|SLIP_delete_int32_mat|: delete a $m$-by-$n$ \verb|int32_t| matrix}
+\cprotect\subsection{\verb|SLIP_delete_int64_mat|: delete a $m$-by-$n$ \verb|int64_t| matrix}
 %-------------------------------------------------------------------------------
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
 \begin{verbatim}
-    void SLIP_delete_int32_mat
+    void SLIP_delete_int64_mat
     (
-        int32_t*** A,  // dense matrix
-        int32_t m,     // number of rows
-        int32_t n      // number of columns
+        int64_t*** A,  // dense matrix
+        int64_t m,     // number of rows
+        int64_t n      // number of columns
     ) ;
 \end{verbatim}
 } \end{mdframed}
 
-\verb|SLIP_delete_int32_mat| frees the memory associated with a \verb|int32_t|
+\verb|SLIP_delete_int64_mat| frees the memory associated with a \verb|int64_t|
 matrix of size $m \times n$, and sets \verb|**A=NULL|.
 
 %-------------------------------------------------------------------------------
@@ -1891,8 +1891,8 @@ matrix of size $m \times n$, and sets \verb|**A=NULL|.
 \begin{verbatim}
     mpfr_t** SLIP_create_mpfr_mat
     (
-        int32_t m,     // number of rows (must be > 0)
-        int32_t n,     // number of columns (must be > 0)
+        int64_t m,     // number of rows (must be > 0)
+        int64_t n,     // number of columns (must be > 0)
         SLIP_options *option  // command options containing the prec for mpfr
     ) ;
 \end{verbatim}
@@ -1916,8 +1916,8 @@ $m \le 0 $ or $n\le 0$ or out of memory.
     void SLIP_delete_mpfr_mat
     (
         mpfr_t ***A,   // Dense mpfr matrix
-        int32_t m,     // number of rows of A
-        int32_t n      // number of columns of A
+        int64_t m,     // number of rows of A
+        int64_t n      // number of columns of A
     ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -1941,8 +1941,8 @@ matrix of size $m \times n$, and sets \verb|**A=NULL|.
 \begin{verbatim}
     mpq_t** SLIP_create_mpq_mat
     (
-        int32_t m,     // number of rows (must be > 0)
-        int32_t n      // number of columns (must be > 0)
+        int64_t m,     // number of rows (must be > 0)
+        int64_t n      // number of columns (must be > 0)
     ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -1963,8 +1963,8 @@ $m \le 0 $ or $n\le 0$ or out of memory.
     void SLIP_delete_mpq_mat
     (
         mpq_t***A,     // dense mpq matrix
-        int32_t m,     // number of rows of A
-        int32_t n      // number of columns of A
+        int64_t m,     // number of rows of A
+        int64_t n      // number of columns of A
     ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -1982,8 +1982,8 @@ matrix of size $m \times n$, and sets \verb|**A=NULL|.
 \begin{verbatim}
     mpz_t** SLIP_create_mpz_mat
     (
-        int32_t m,     // number of rows (must be > 0)
-        int32_t n      // number of columns (must be > 0)
+        int64_t m,     // number of rows (must be > 0)
+        int64_t n      // number of columns (must be > 0)
     ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -2004,8 +2004,8 @@ $m \le 0 $ or $n\le 0$ or out of memory.
     void SLIP_delete_mpz_mat
     (
         mpz_t ***A,     // The dense mpz matrix
-        int32_t m,      // number of rows of A
-        int32_t n       // number of columns of A
+        int64_t m,      // number of rows of A
+        int64_t n       // number of columns of A
     ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -2022,7 +2022,7 @@ matrix of size $m \times n$, and sets \verb|**A=NULL|.
 \begin{verbatim}
     mpfr_t* SLIP_create_mpfr_array
     (
-        int32_t n,     // size of the array (must be > 0)
+        int64_t n,     // size of the array (must be > 0)
         SLIP_options *option  // command options containing the prec for mpfr
     ) ;
 \end{verbatim}
@@ -2045,7 +2045,7 @@ $n\le 0$ or out of memory.
     void SLIP_delete_mpfr_array
     (
         mpfr_t** x,    // mpfr array to be deleted
-        int32_t n      // size of x
+        int64_t n      // size of x
     ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -2062,7 +2062,7 @@ array of size $n$, and sets \verb|*x=NULL|.
 \begin{verbatim}
     mpq_t* SLIP_create_mpq_array
     (
-        int32_t n      // size of the array (must be > 0)
+        int64_t n      // size of the array (must be > 0)
     ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -2083,7 +2083,7 @@ $n\le 0$ or out of memory.
     void SLIP_delete_mpq_array
     (
         mpq_t** x,     // mpq array to be deleted
-        int32_t n      // size of x
+        int64_t n      // size of x
     ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -2102,7 +2102,7 @@ array of size $n$, and sets \verb|*x=NULL|.
 \begin{verbatim}
     mpz_t* SLIP_create_mpz_array
     (
-        int32_t n      // Size of x (must be > 0)
+        int64_t n      // Size of x (must be > 0)
     ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -2122,7 +2122,7 @@ $n\le 0$ or out of memory.
     void SLIP_delete_mpz_array
     (
         mpz_t ** x,     // mpz array to be deleted
-        int32_t n       // Size of x
+        int64_t n       // Size of x
     ) ;
 \end{verbatim}
 } \end{mdframed}
@@ -2140,7 +2140,7 @@ array of size $n$, and sets \verb|*x=NULL|.
     SLIP_info SLIP_spok  // returns a SLIP_LU status code
     (
         SLIP_sparse *A,     // matrix to check
-        int32_t print_level // 0: print nothing, 1: just errors,
+        int print_level     // 0: print nothing, 1: just errors,
                             // 2: terse, 3: all
     ) ;
 \end{verbatim}
@@ -2520,7 +2520,7 @@ populated by the user.
 TODO: no, we have functions that create A and b.
 
 SLIP LU allows the input numerical data for \verb|A| and \verb|b| to come in
-one of 5 options: \verb|int32_t|, \verb|double|, \verb|mpfr_t|, \verb|mpq_t|,
+one of 5 options: \verb|int64_t|, \verb|double|, \verb|mpfr_t|, \verb|mpq_t|,
 and \verb|mpz_t|. Moreover, \verb|A| can be stored in either triplet form or
 compressed column form.  Compressed column form is discussed in Section
 \ref{s:intro}. Conversely, triplet form stores the contents of the matrix $A$
@@ -2541,8 +2541,8 @@ want to use and delete the surrounding if statements).
 \begin{verbatim}
 
     /* Get the matrix A. Assume that everything is stored in
-       compressed column form. This means that int32_t* I is the
-       set of row indices, int32_t* p are the column pointers, x
+       compressed column form. This means that int64_t* I is the
+       set of row indices, int64_t* p are the column pointers, x
        is the array of values, n is the size of the matrix and
        nz is the number of nonzeros in the matrix. We will show
        how to obtain for each possible data type of x (again,
@@ -2557,9 +2557,9 @@ want to use and delete the surrounding if statements).
     {
         SLIP_build_sparse_csc_double(&A, p, I, x, n, nz) ;
     }
-    else if (X IS int32_t)
+    else if (X IS int64_t)
     {
-        SLIP_build_sparse_csc_int32(&A, p, I, x, n, nz) ;
+        SLIP_build_sparse_csc_int64(&A, p, I, x, n, nz) ;
     }
     else if (X IS mpq_t)
     {
@@ -2583,8 +2583,8 @@ want to use and delete the surrounding if statements).
 {\small
 \begin{verbatim}
     /* Get the matrix A. Assume that everything is stored in
-       compressed column form. This means that int32_t* I is the
-       set of row indices, int32_t* J is the set of column indices,
+       compressed column form. This means that int64_t* I is the
+       set of row indices, int64_t* J is the set of column indices,
        x is the array of values, n is the size of the matrix and
        nz is the number of nonzeros in the matrix. We will show
        how to obtain for each possible data type of x (again,
@@ -2599,9 +2599,9 @@ want to use and delete the surrounding if statements).
     {
         SLIP_build_sparse_trip_double(&A, I, J, x, n, nz) ;
     }
-    else if (X IS int32_t)
+    else if (X IS int64_t)
     {
-        SLIP_build_sparse_trip_int32(&A, I, J, x, n, nz) ;
+        SLIP_build_sparse_trip_int64(&A, I, J, x, n, nz) ;
     }
     else if (X IS mpq_t)
     {
@@ -2631,9 +2631,9 @@ want to use and delete the surrounding if statements).
     {
         SLIP_build_dense_double(&b, b2, n, numRHS) ;
     }
-    else if (b2 IS int32_t)
+    else if (b2 IS int64_t)
     {
-        SLIP_build_dense_int32(&b, b2, n, numRHS) ;
+        SLIP_build_dense_int64(&b, b2, n, numRHS) ;
     }
     else if (b2 IS mpq_t)
     {
@@ -2682,19 +2682,19 @@ the one they desire and paste into their code.
     {
         // The solution is a dense matrix of size n*numRHS
         mpq_t** soln = SLIP_create_mpq_mat(n, numRHS) ;
-        int32_t ok = SLIP_solve_mpq(soln, A, S, b, option) ;
+        SLIP_info info = SLIP_solve_mpq(soln, A, S, b, option) ;
     }
     else if (USER WANTS DOUBLE)
     {
         // The solution is a dense matrix of size n*numRHS
         double** soln = SLIP_create_double_mat(n, numRHS) ;
-        int32_t ok = SLIP_solve_double(soln, A, S, b, option) ;
+        SLIP_info info = SLIP_solve_double(soln, A, S, b, option) ;
     }
     else if (USER WANTS MPFR)
     {
         // The solution is a dense matrix of size n*numRHS
         mpfr_t** soln = SLIP_create_mpfr_mat(n, numRHS, option) ;
-        int32_t ok = SLIP_solve_mpfr(soln, A, S, b, option) ;
+        SLIP_info info = SLIP_solve_mpfr(soln, A, S, b, option) ;
     } \end{verbatim} }
 
 On success, each of these functions return \verb|SLIP_OK| (see Section

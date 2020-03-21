@@ -18,8 +18,8 @@
 SLIP_info slip_dense_alloc
 (
     SLIP_dense* A, // dense matrix data structure to be allocated
-    int32_t m,     // number of rows
-    int32_t n      // number of columns
+    int64_t m,     // number of rows
+    int64_t n      // number of columns
 )
 {
 

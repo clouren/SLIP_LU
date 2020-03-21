@@ -40,7 +40,8 @@ SLIP_info SLIP_scale_x
 
     //--------------------------------------------------------------------------
 
-    int32_t r, s, n, numRHS;
+    int r, s ;
+    int64_t n, numRHS;
     n = A->m;
     numRHS = b->n;
 
@@ -49,9 +50,9 @@ SLIP_info SLIP_scale_x
     SLIP_CHECK(SLIP_mpq_cmp_ui(&s, A->scale, 0, 1));
     if (r != 0 && s != 0)
     {
-        for (int32_t i = 0; i < n; i++)
+        for (int64_t i = 0; i < n; i++)
         {
-            for (int32_t j = 0; j < numRHS; j++)
+            for (int64_t j = 0; j < numRHS; j++)
             {
                 SLIP_CHECK(SLIP_mpq_mul(x[i][j], x[i][j], A->scale));
             }
@@ -63,9 +64,9 @@ SLIP_info SLIP_scale_x
     SLIP_CHECK(SLIP_mpq_cmp_ui(&s, b->scale, 0, 1));
     if (r != 0 && s != 0)
     {
-        for (int32_t i = 0; i < n; i++)
+        for (int64_t i = 0; i < n; i++)
         {
-            for (int32_t j = 0; j < numRHS; j++)
+            for (int64_t j = 0; j < numRHS; j++)
             {
                 SLIP_CHECK(SLIP_mpq_div(x[i][j], x[i][j], b->scale));
             }

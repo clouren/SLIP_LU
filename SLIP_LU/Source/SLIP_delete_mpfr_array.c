@@ -19,7 +19,7 @@
 void SLIP_delete_mpfr_array
 (
     mpfr_t** x,    // mpfr array to be deleted
-    int32_t n      // size of x
+    int64_t n      // size of x
 )
 {
 
@@ -27,7 +27,7 @@ void SLIP_delete_mpfr_array
     // Move this functionality into SLIP_matrix_free.
 
     if (x == NULL || *x == NULL) {return;}
-    for (int32_t i = 0; i < n; i++)
+    for (int64_t i = 0; i < n; i++)
     {
         SLIP_MPFR_CLEAR((*x) [i]);
     }

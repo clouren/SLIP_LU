@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/slip_reset_int32_array2: clear the used parts of an int32_t workspace
+// SLIP_LU/slip_reset_int64_array2: clear the used parts of an int64_t workspace
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -8,7 +8,7 @@
 
 //------------------------------------------------------------------------------
 
-/* Purpose: This function resets an int32_t vector of size n and sets each term
+/* Purpose: This function resets an int64_t vector of size n and sets each term
  * equal to -1 with nonzero pattern given. This is more efficient than
  * resetting each term individually.
  */
@@ -18,12 +18,12 @@
 
 #include "SLIP_LU_internal.h"
 
-SLIP_info slip_reset_int32_array2
+SLIP_info slip_reset_int64_array2
 (
-    int32_t *h,    // int32_t vector to be reset
-    int32_t n,     // size of h
-    int32_t top,   // beginning of nonzero pattern
-    int32_t *xi    // nonzero pattern
+    int64_t *h,    // int64_t vector to be reset
+    int64_t n,     // size of h
+    int64_t top,   // beginning of nonzero pattern
+    int64_t *xi    // nonzero pattern
 )
 {
 
@@ -40,7 +40,7 @@ SLIP_info slip_reset_int32_array2
     // Access the nonzero pattern located in xi [top..n-1]
     // and set each h[i] = -1, for each i in the list xi [top..n-1].
 
-    for (int32_t i = top; i < n; i++)
+    for (int64_t i = top; i < n; i++)
     {
         h[xi[i]] = -1;
     }

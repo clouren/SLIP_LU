@@ -25,8 +25,8 @@ SLIP_info slip_array_div // divides the x vector by the determinant
     mpq_t** x2,         // solution of x/det
     mpz_t** x,          // input vector
     const mpz_t det,    // given determinant of matrix
-    int32_t n,          // size of x and x2
-    int32_t numRHS      // number of rhs vectors
+    int64_t n,          // size of x and x2
+    int64_t numRHS      // number of rhs vectors
 )
 {
 
@@ -50,9 +50,9 @@ SLIP_info slip_array_div // divides the x vector by the determinant
     // iterate each entry of x, copy to x2 and divide it by det
     //--------------------------------------------------------------------------
 
-    for (int32_t i = 0; i < n; i++)
+    for (int64_t i = 0; i < n; i++)
     {
-        for (int32_t k = 0; k < numRHS; k++)
+        for (int64_t k = 0; k < numRHS; k++)
         {
             // Set x2[i] = x[i]
             SLIP_CHECK(SLIP_mpq_set_num(x2[i][k], x[i][k]));

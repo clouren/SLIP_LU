@@ -134,8 +134,8 @@ int main (int argc, char* argv[])
     //          user guide. Much like a sparse and dense matrix, it must be
     //          created with a call to SLIP_create_default_options();
     //--------------------------------------------------------------------------
-    int32_t nrows = 0, numRHS = 0;
-    int32_t rat = 1;
+    int64_t nrows = 0, numRHS = 0;
+    SLIP_type rat ;
     SLIP_info ok, check = SLIP_OK ;
     char *mat_name, *rhs_name;
     mat_name = "../ExampleMats/10teams_mat.txt";// Set demo matrix and RHS name
@@ -143,7 +143,7 @@ int main (int argc, char* argv[])
 
     mpz_t* rhos = NULL;
     mpq_t** x = NULL;
-    int32_t* pinv = NULL;
+    int64_t* pinv = NULL;
     SLIP_LU_analysis* S = NULL;
     double **x_doub = NULL;
     mpfr_t **x_mpfr = NULL;
@@ -266,7 +266,7 @@ int main (int argc, char* argv[])
         (const SLIP_sparse *) L,
         (const SLIP_sparse *) U,
         (const mpz_t *) rhos,
-        (const int32_t *) pinv));
+        (const int64_t *) pinv));
 
     clock_t end_solve = clock();
 
@@ -318,18 +318,18 @@ int main (int argc, char* argv[])
     // Output timing statistics. This also prints to a file if desired.
     //--------------------------------------------------------------------------
 
-    if (rat == 1)
+    if (rat == SLIP_MPZ)
     {
         OK(SLIP_print_stats_mpq(x, nrows, numRHS, check, option));
     }
-    else if (rat == 2)
+    else if (rat == SLIP_FP64)
     {
         x_doub = SLIP_create_double_mat(nrows, numRHS);
         if (x_doub == NULL) {OK(SLIP_OUT_OF_MEMORY);}
         OK(SLIP_get_double_soln(x_doub, x, nrows, numRHS));
         OK(SLIP_print_stats_double(x_doub, nrows, numRHS, check, option));
     }
-    else
+    else // rat == SLIP_MPFR
     {
         x_mpfr = SLIP_create_mpfr_mat(nrows, numRHS, option);
         if (x_mpfr == NULL) {OK(SLIP_OUT_OF_MEMORY);}
@@ -341,7 +341,7 @@ int main (int argc, char* argv[])
     double t_factor = (double) (end_factor - start_factor) / CLOCKS_PER_SEC;
     double t_solve =  (double) (end_solve - start_solve) / CLOCKS_PER_SEC;
 
-    printf("\nNumber of L+U nonzeros: \t\t%d",
+    printf("\nNumber of L+U nonzeros: \t\t%"PRId64,
         (L->nz) + (U->nz) - (L->m));
     printf("\nSymbolic analysis time: \t\t%lf", t_sym);
     printf("\nSLIP LU Factorization time: \t\t%lf", t_factor);

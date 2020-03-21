@@ -17,8 +17,8 @@
 
 mpz_t* slip_create_mpz_array2
 (
-    int32_t n,     // size of the array
-    int32_t size   // Relative size of numbers
+    int64_t n,     // size of the array
+    int64_t size   // Relative size of numbers
 )
 {
 
@@ -39,7 +39,7 @@ mpz_t* slip_create_mpz_array2
     // Malloc space
     mpz_t* x = (mpz_t*) SLIP_calloc(n, sizeof(mpz_t));
     if (!x) {return NULL;}
-    for (int32_t i = 0; i < n; i++)
+    for (int64_t i = 0; i < n; i++)
     {
         // Allocate x[i] for bit-length size
         if (SLIP_mpz_init2(x[i],size) != SLIP_OK)

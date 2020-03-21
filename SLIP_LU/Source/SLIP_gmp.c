@@ -31,7 +31,7 @@
     SLIP_info SLIP_gmpfunc (args)
     {
         SLIP_GMP_WRAPPER_START ;
-        gmpfunc (args;
+        gmpfunc (args) ;
         SLIP_GMP_WRAPPER_FINISH ;
         return SLIP_OK ;
     }
@@ -327,7 +327,7 @@ void slip_gmp_dump ( )
 /* Purpose: Catch an error from longjmp */
 void slip_gmp_failure
 (
-    int32_t status  // Status returned from longjmp
+    int status      // Status returned from longjmp
                     // (unused parameter unless debugging)
 )
 {
@@ -363,7 +363,7 @@ void slip_gmp_failure
  * characters written) upon success, otherwise return negative value (error
  * code) */
 
-int32_t SLIP_gmp_fprintf
+SLIP_info SLIP_gmp_fprintf
 (
     FILE *fp,
     const char *format,
@@ -371,20 +371,18 @@ int32_t SLIP_gmp_fprintf
 )
 {
     // Start the GMP wrapper
-    SLIP_GMP_WRAPPER_START;
+    SLIP_GMP_WRAPPER_START ;
 
     // call gmp_vfprintf
-    int32_t num_of_char;
     va_list args;
-    va_start(args, format);
-    num_of_char = gmp_vfprintf(fp, format, args);
-    va_end (args);
+    va_start (args, format) ;
+    int n = gmp_vfprintf (fp, format, args) ;
+    va_end (args) ;
 
-    // Finish the wrapper and return num_of_char if successful
-    SLIP_GMP_WRAPPER_FINISH;
+    // Finish the wrapper
+    SLIP_GMP_WRAPPER_FINISH ;
     // gmp_vfprintf returns -1 if an error occurred.
-    return ((num_of_char < 0) ?
-        ((int32_t) SLIP_INCORRECT_INPUT) : num_of_char) ;
+    return ((n < 0) ? SLIP_INCORRECT_INPUT : SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -395,27 +393,25 @@ int32_t SLIP_gmp_fprintf
  * of characters written) upon success, otherwise return negative value (error
  * code) */
 
-int32_t SLIP_gmp_printf
+SLIP_info SLIP_gmp_printf
 (
     const char *format,
     ...
 )
 {
     // Start the GMP wrapper
-    SLIP_GMP_WRAPPER_START;
+    SLIP_GMP_WRAPPER_START ;
 
     // call gmp_vprintf
-    int32_t num_of_char;
     va_list args;
-    va_start(args, format);
-    num_of_char = gmp_vprintf(format, args);
-    va_end (args);
+    va_start (args, format) ;
+    int n = gmp_vprintf (format, args) ;
+    va_end (args) ;
 
-    // Finish the wrapper and return num_of_char if successful
-    SLIP_GMP_WRAPPER_FINISH;
+    // Finish the wrapper
+    SLIP_GMP_WRAPPER_FINISH ;
     // gmp_vprintf returns -1 if an error occurred.
-    return ((num_of_char < 0) ?
-        ((int32_t) SLIP_INCORRECT_INPUT) : num_of_char) ;
+    return ((n < 0) ? SLIP_INCORRECT_INPUT : SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -426,7 +422,7 @@ int32_t SLIP_gmp_printf
  * successfully parsed and stored), otherwise return negative value (error
  * code) */
 
-int32_t SLIP_gmp_fscanf
+SLIP_info SLIP_gmp_fscanf
 (
     FILE *fp,
     const char *format,
@@ -434,22 +430,20 @@ int32_t SLIP_gmp_fscanf
 )
 {
     // Start the GMP wrapper
-    SLIP_GMP_WRAPPER_START;
+    SLIP_GMP_WRAPPER_START ;
 
     // call gmp_vfscanf
-    int32_t num_of_field;
     va_list args;
-    va_start(args, format);
-    num_of_field = gmp_vfscanf(fp, format, args);
-    va_end (args);
+    va_start (args, format) ;
+    int n = gmp_vfscanf (fp, format, args) ;
+    va_end (args) ;
 
-    // Finish the wrapper and return num_of_field if successful
-    SLIP_GMP_WRAPPER_FINISH;
+    // Finish the wrapper
+    SLIP_GMP_WRAPPER_FINISH ;
     // If end of input (or a file error) is reached before a character
     // for a field or a literal, and if no previous non-suppressed fields have
     // matched, then the return value is EOF instead of 0
-    return ((num_of_field == EOF ) ?
-        ((int32_t) SLIP_INCORRECT_INPUT) : num_of_field) ;
+    return ((n < 0) ? SLIP_INCORRECT_INPUT : SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -465,29 +459,21 @@ int32_t SLIP_gmp_fscanf
 #if 0
 /* This function is currently unused, but kept here for future reference. */
 
-int32_t SLIP_mpfr_asprintf (char **str, const char *template, ... )
+SLIP_info SLIP_mpfr_asprintf (char **str, const char *template, ... )
 {
     // Start the GMP wrapper
-    SLIP_GMP_WRAPPER_START;
+    SLIP_GMP_WRAPPER_START ;
 
     // call mpfr_vasprintf
-    int32_t num_of_char;
     va_list args;
-    va_start(args, template);
-    num_of_char = mpfr_vasprintf(str, template, args);
-    va_end (args);
+    va_start (args, template) ;
+    int n = mpfr_vasprintf (str, template, args) ;
+    va_end (args) ;
 
-    // Finish the wrapper and return num_of_char if successful
-    SLIP_GMP_WRAPPER_FINISH;
+    // Finish the wrapper
+    SLIP_GMP_WRAPPER_FINISH ;
     // mpfr_vasprintf returns a negative value if an error occurred
-    if (num_of_char < 0)
-    {
-        return (int32_t) SLIP_INCORRECT_INPUT;
-    }
-    else
-    {
-        return num_of_char;
-    }
+    return ((n < 0) ? SLIP_INCORRECT_INPUT : SLIP_OK) ;
 }
 #endif
 
@@ -503,14 +489,14 @@ int32_t SLIP_mpfr_asprintf (char **str, const char *template, ... )
 SLIP_info SLIP_mpfr_free_str (char *str)
 {
     // Start the GMP wrapper
-    SLIP_GMP_WRAPPER_START;
+    SLIP_GMP_WRAPPER_START ;
 
     // call mpfr_free_str
-    mpfr_free_str(str);
+    mpfr_free_str (str) ;
 
     // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 #endif
 
@@ -522,7 +508,7 @@ SLIP_info SLIP_mpfr_free_str (char *str)
  * characters written) upon success, otherwise return negative value (error
  * code) */
 
-int32_t SLIP_mpfr_fprintf
+SLIP_info SLIP_mpfr_fprintf
 (
     FILE *fp,
     const char *format,
@@ -530,25 +516,22 @@ int32_t SLIP_mpfr_fprintf
 )
 {
     // Start the GMP wrapper
-    SLIP_GMP_WRAPPER_START;
+    SLIP_GMP_WRAPPER_START ;
 
     // call mpfr_vfprintf
-    int32_t num_of_char;
     va_list args;
-    va_start(args, format);
-    num_of_char = mpfr_vfprintf(fp, format, args);
-    va_end (args);
+    va_start (args, format) ;
+    int n = mpfr_vfprintf (fp, format, args) ;
+    va_end (args) ;
     // Free cache from mpfr_vfprintf. Even though mpfr_free_cache is
-    // called in SLIP_LU_final(), it has to be called here to
+    // called in SLIP_LU_final ( ), it has to be called here to
     // prevent memory leak in some rare situations.
-    mpfr_free_cache();
+    mpfr_free_cache ( ) ;
 
-
-    // Finish the wrapper and return num_of_char if successful
-    SLIP_GMP_WRAPPER_FINISH;
+    // Finish the wrapper
+    SLIP_GMP_WRAPPER_FINISH ;
     // mpfr_vfprintf returns -1 if an error occurred.
-    return ((num_of_char < 0) ?
-        ((int32_t) SLIP_INCORRECT_INPUT) : num_of_char) ;
+    return ((n < 0) ? SLIP_INCORRECT_INPUT : SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -568,15 +551,10 @@ SLIP_info SLIP_mpz_init
     mpz_t x
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPZ_WRAPPER_START(x);
-
-    // call mpz_init
-    mpz_init(x);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPZ_WRAPPER_START (x) ;
+    mpz_init (x) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -588,18 +566,13 @@ SLIP_info SLIP_mpz_init
 SLIP_info SLIP_mpz_init2
 (
     mpz_t x,                // Number to be initialized
-    const uint64_t size     // size of the number
+    const size_t size       // size of the number
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPZ_WRAPPER_START(x);
-
-    // call mpz_init2
-    mpz_init2(x, (unsigned long int) size);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPZ_WRAPPER_START (x) ;
+    mpz_init2 (x, (mp_bitcnt_t) size) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -614,22 +587,17 @@ SLIP_info SLIP_mpz_set
     const mpz_t y
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPZ_WRAPPER_START(x);
-
-    // call mpz_set
-    mpz_set(x, y);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPZ_WRAPPER_START (x) ;
+    mpz_set (x, y) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
 // SLIP_mpz_set_ui
 //------------------------------------------------------------------------------
 
-/* Purpose: Safely set an mpz number = to an unsigned int, i.e., x = y */
+/* Purpose: Safely set an mpz number = to uint64_t, i.e., x = y */
 
 SLIP_info SLIP_mpz_set_ui
 (
@@ -637,38 +605,28 @@ SLIP_info SLIP_mpz_set_ui
     const uint64_t y
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPZ_WRAPPER_START(x);
-
-    // call mpz_set_ui
-    mpz_set_ui(x, (unsigned long int) y);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPZ_WRAPPER_START (x) ;
+    mpz_set_ui (x, (unsigned long int) y) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
 // SLIP_mpz_set_si
 //------------------------------------------------------------------------------
 
-/* Purpose: Safely set an mpz number = a signed int */
+/* Purpose: Safely set an mpz number = a signed int64_t */
 
 SLIP_info SLIP_mpz_set_si
 (
     mpz_t x,
-    const int32_t y
+    const int64_t y
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPZ_WRAPPER_START(x);
-
-    // call mpz_set_si
-    mpz_set_si(x, (int) y);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPZ_WRAPPER_START (x) ;
+    mpz_set_si (x, (signed long int) y) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -677,26 +635,17 @@ SLIP_info SLIP_mpz_set_si
 
 /* Purpose: Safely set an mpz number = a double */
 
-#if 0
-/* This function is currently unused, but kept here for future reference. */
-
 SLIP_info SLIP_mpz_set_d
 (
     mpz_t x,
     const double y
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPZ_WRAPPER_START(x);
-
-    // call mpz_set_d
-    mpz_set_d(x, y);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPZ_WRAPPER_START (x) ;
+    mpz_set_d (x, y) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
-#endif
 
 //------------------------------------------------------------------------------
 // SLIP_mpz_get_d
@@ -704,26 +653,17 @@ SLIP_info SLIP_mpz_set_d
 
 /* Purpose: Safely set a double number = a mpz */
 
-#if 0
-/* This function is currently unused, but kept here for future reference. */
-
 SLIP_info SLIP_mpz_get_d
 (
     double *x,
     const mpz_t y
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMP_WRAPPER_START;
-
-    // call mpz_set_d
-    *x = mpz_get_d(y);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMP_WRAPPER_START ;
+    *x = mpz_get_d (y) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
-#endif
 
 //------------------------------------------------------------------------------
 // SLIP_mpz_set_q
@@ -737,15 +677,10 @@ SLIP_info SLIP_mpz_set_q
     const mpq_t y
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPZ_WRAPPER_START(x);
-
-    // call mpz_set_q
-    mpz_set_q(x, y);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPZ_WRAPPER_START (x) ;
+    mpz_set_q (x, y) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -761,15 +696,10 @@ SLIP_info SLIP_mpz_mul
     const mpz_t c
 )
 {
-    // Start the GMP Wrapper
-    SLIP_GMPZ_WRAPPER_START(a);
-
-    // Call gmp mul
-    mpz_mul(a, b, c);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPZ_WRAPPER_START (a) ;
+    mpz_mul (a, b, c) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -788,15 +718,10 @@ SLIP_info SLIP_mpz_add
     const mpz_t c
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPZ_WRAPPER_START(a);
-
-    // call mpz_add
-    mpz_add(a,b,c);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPZ_WRAPPER_START (a) ;
+    mpz_add (a,b,c) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 #endif
 
@@ -816,15 +741,10 @@ SLIP_info SLIP_mpz_addmul
     const mpz_t z
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPZ_WRAPPER_START(x);
-
-    // call mpz_addmul
-    mpz_addmul(x, y, z);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPZ_WRAPPER_START (x) ;
+    mpz_addmul (x, y, z) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 #endif
 
@@ -843,15 +763,10 @@ SLIP_info SLIP_mpz_submul
     const mpz_t z
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPZ_WRAPPER_START(x);
-
-    // call mpz_submul
-    mpz_submul(x, y, z);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPZ_WRAPPER_START (x) ;
+    mpz_submul (x, y, z) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -867,22 +782,17 @@ SLIP_info SLIP_mpz_divexact
     const mpz_t z
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPZ_WRAPPER_START(x);
-
-    // call mpz_divexact
-    mpz_divexact(x, y, z);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPZ_WRAPPER_START (x) ;
+    mpz_divexact (x, y, z) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
 // SLIP_mpz_gcd
 //------------------------------------------------------------------------------
 
-/* Purpose: Safely compute the gcd of two mpz_t numbers, i.e., x = gcd(y, z) */
+/* Purpose: Safely compute the gcd of two mpz_t numbers, i.e., x = gcd (y, z) */
 
 SLIP_info SLIP_mpz_gcd
 (
@@ -891,15 +801,10 @@ SLIP_info SLIP_mpz_gcd
     const mpz_t z
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPZ_WRAPPER_START(x);
-
-    // call mpz_gcd
-    mpz_gcd(x, y, z);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPZ_WRAPPER_START (x) ;
+    mpz_gcd (x, y, z) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -915,15 +820,10 @@ SLIP_info SLIP_mpz_lcm
     const mpz_t y
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPZ_WRAPPER_START(lcm);
-
-    // call mpz_lcm
-    mpz_lcm(lcm, x, y);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPZ_WRAPPER_START (lcm) ;
+    mpz_lcm (lcm, x, y) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -938,15 +838,10 @@ SLIP_info SLIP_mpz_abs
     const mpz_t y
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPZ_WRAPPER_START(x);
-
-    // call mpz_abs
-    mpz_abs(x, y);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPZ_WRAPPER_START (x) ;
+    mpz_abs (x, y) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -958,20 +853,15 @@ SLIP_info SLIP_mpz_abs
 
 SLIP_info SLIP_mpz_cmp
 (
-    int32_t *r,
+    int *r,
     const mpz_t x,
     const mpz_t y
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMP_WRAPPER_START;
-
-    // call mpz_cmp
-    *r = (int32_t) mpz_cmp(x, y);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMP_WRAPPER_START ;
+    *r = mpz_cmp (x, y) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -983,20 +873,15 @@ SLIP_info SLIP_mpz_cmp
 
 SLIP_info SLIP_mpz_cmpabs
 (
-    int32_t *r,
+    int *r,
     const mpz_t x,
     const mpz_t y
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMP_WRAPPER_START;
-
-    // call mpz_cmpabs
-    *r = (int32_t) mpz_cmpabs(x, y);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMP_WRAPPER_START ;
+    *r = mpz_cmpabs (x, y) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1007,20 +892,15 @@ SLIP_info SLIP_mpz_cmpabs
  * r > 0 if x > y, r = 0 if x = y, and r < 0 if x < y */
 SLIP_info SLIP_mpz_cmp_ui
 (
-    int32_t *r,
+    int *r,
     const mpz_t x,
     const uint64_t y
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMP_WRAPPER_START;
-
-    // call mpz_cmp_ui
-    *r = (int32_t) mpz_cmp_ui(x, (unsigned long int) y);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMP_WRAPPER_START ;
+    *r = mpz_cmp_ui (x, (unsigned long int) y) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1031,19 +911,14 @@ SLIP_info SLIP_mpz_cmp_ui
 
 SLIP_info SLIP_mpz_sgn
 (
-    int32_t *sgn,
+    int *sgn,
     const mpz_t x
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMP_WRAPPER_START;
-
-    // call mpz_sgn
-    *sgn = (int32_t) mpz_sgn(x);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMP_WRAPPER_START ;
+    *sgn = mpz_sgn (x) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1056,23 +931,18 @@ SLIP_info SLIP_mpz_sizeinbase
 (
     size_t *size,
     const mpz_t x,
-    int32_t base
+    int64_t base
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMP_WRAPPER_START;
-
-    // call mpz_sizeinbase
-    *size = (size_t) mpz_sizeinbase(x, (int) base);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMP_WRAPPER_START ;
+    *size = mpz_sizeinbase (x, (int) base) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-//-------------------------Rational (mpq type) functions------------------------
+//-------------------------Rational  (mpq type) functions------------------------
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
@@ -1087,15 +957,10 @@ SLIP_info SLIP_mpq_init
     mpq_t x
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPQ_WRAPPER_START(x);
-
-    // call mpq_init
-    mpq_init(x);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPQ_WRAPPER_START (x) ;
+    mpq_init (x) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1110,15 +975,10 @@ SLIP_info SLIP_mpq_set
     const mpq_t y
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPQ_WRAPPER_START(x);
-
-    // call mpq_set
-    mpq_set(x, y);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPQ_WRAPPER_START (x) ;
+    mpq_set (x, y) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1133,15 +993,10 @@ SLIP_info SLIP_mpq_set_z
     const mpz_t y
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPQ_WRAPPER_START(x);
-
-    // call mpq_set_z
-    mpq_set_z(x, y);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPQ_WRAPPER_START (x) ;
+    mpq_set_z (x, y) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1149,21 +1004,17 @@ SLIP_info SLIP_mpq_set_z
 //------------------------------------------------------------------------------
 
 /* Purpose: Safely set an mpq number = a double */
+
 SLIP_info SLIP_mpq_set_d
 (
     mpq_t x,
     const double y
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPQ_WRAPPER_START(x);
-
-    // call mpq_set_d
-    mpq_set_d(x, y);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPQ_WRAPPER_START (x) ;
+    mpq_set_d (x, y) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1181,15 +1032,29 @@ SLIP_info SLIP_mpq_set_ui
     const uint64_t z
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPQ_WRAPPER_START(x);
+    SLIP_GMPQ_WRAPPER_START (x) ;
+    mpq_set_ui (x, (unsigned long int) y, (unsigned long int) z) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
+}
 
-    // call mpq_set_ui
-    mpq_set_ui(x, (unsigned long int) y, (unsigned long int) z);
+//------------------------------------------------------------------------------
+// SLIP_mpq_set_si
+//------------------------------------------------------------------------------
 
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+/* Purpose: Safely set an mpq number = an int64_t */
+
+SLIP_info SLIP_mpq_set_si
+(
+    mpq_t x,
+    const int64_t y,
+    const uint64_t z
+)
+{
+    SLIP_GMPQ_WRAPPER_START (x) ;
+    mpq_set_si (x, (signed long int) y, (unsigned long int) x) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1204,15 +1069,10 @@ SLIP_info SLIP_mpq_set_num
     const mpz_t y
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPQ_WRAPPER_START(x);
-
-    // call mpq_set_num
-    mpq_set_num(x, y);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPQ_WRAPPER_START (x) ;
+    mpq_set_num (x, y) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1227,15 +1087,10 @@ SLIP_info SLIP_mpq_set_den
     const mpz_t y
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPQ_WRAPPER_START(x);
-
-    // call mpq_set_den
-    mpq_set_den(x, y);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPQ_WRAPPER_START (x) ;
+    mpq_set_den (x, y) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1250,15 +1105,10 @@ SLIP_info SLIP_mpq_get_den
     const mpq_t y
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPZ_WRAPPER_START(x);
-
-    // call mpq_get_den
-    mpq_get_den(x, y);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPZ_WRAPPER_START (x) ;
+    mpq_get_den (x, y) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1273,15 +1123,10 @@ SLIP_info SLIP_mpq_get_d
     const mpq_t y
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMP_WRAPPER_START;
-
-    // call mpq_get_d
-    *x = mpq_get_d(y);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMP_WRAPPER_START ;
+    *x = mpq_get_d (y) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1296,15 +1141,10 @@ SLIP_info SLIP_mpq_abs
     const mpq_t y
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPQ_WRAPPER_START(x);
-
-    // call mpq_abs
-    mpq_abs(x, y);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPQ_WRAPPER_START (x) ;
+    mpq_abs (x, y) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1320,15 +1160,10 @@ SLIP_info SLIP_mpq_add
     const mpq_t z
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPQ_WRAPPER_START(x);
-
-    // call mpq_add
-    mpq_add(x, y, z);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPQ_WRAPPER_START (x) ;
+    mpq_add (x, y, z) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1343,15 +1178,10 @@ SLIP_info SLIP_mpq_mul
     const mpq_t z
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPQ_WRAPPER_START(x);
-
-    // call mpq_mul
-    mpq_mul(x, y, z);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPQ_WRAPPER_START (x) ;
+    mpq_mul (x, y, z) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1367,15 +1197,10 @@ SLIP_info SLIP_mpq_div
     const mpq_t z
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPQ_WRAPPER_START(x);
-
-    // call mpq_div
-    mpq_div(x, y, z);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPQ_WRAPPER_START (x) ;
+    mpq_div (x, y, z) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1387,20 +1212,15 @@ SLIP_info SLIP_mpq_div
 
 SLIP_info SLIP_mpq_cmp
 (
-    int32_t *r,
+    int *r,
     const mpq_t x,
     const mpq_t y
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMP_WRAPPER_START;
-
-    // call mpq_cmp
-    *r = (int32_t) mpq_cmp(x, y);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMP_WRAPPER_START ;
+    *r = mpq_cmp (x, y) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1412,22 +1232,16 @@ SLIP_info SLIP_mpq_cmp
 
 SLIP_info SLIP_mpq_cmp_ui
 (
-    int32_t *r,
+    int *r,
     const mpq_t x,
     const uint64_t num,
     const uint64_t den
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMP_WRAPPER_START;
-
-    // call mpq_cmp_ui
-    *r = (int32_t) mpq_cmp_ui(x, (unsigned long int) num,
-                                 (unsigned long int) den);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMP_WRAPPER_START ;
+    *r = mpq_cmp_ui (x, (unsigned long int) num, (unsigned long int) den) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1436,22 +1250,36 @@ SLIP_info SLIP_mpq_cmp_ui
 
 /* Purpose: Safely check if two mpq numbers equal,
  * r = 0 (r = false) if x != y, r != 0 (r = true) if x = y */
+
 SLIP_info SLIP_mpq_equal
 (
-    int32_t *r,
+    int *r,
     const mpq_t x,
     const mpq_t y
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMP_WRAPPER_START;
+    SLIP_GMP_WRAPPER_START ;
+    *r = mpq_equal (x, y) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
+}
 
-    // call mpq_equal
-    *r = (int32_t) mpq_equal(x, y);
+//------------------------------------------------------------------------------
+// SLIP_mpq_sgn
+//------------------------------------------------------------------------------
 
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+/* Purpose: Safely set sgn = 0 if x = 0, otherwise, sgn = x/|x| */
+
+SLIP_info SLIP_mpq_sgn
+(
+    int *sgn,
+    const mpq_t x
+)
+{
+    SLIP_GMP_WRAPPER_START ;
+    *sgn = mpq_sgn (x) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1472,15 +1300,10 @@ SLIP_info SLIP_mpfr_init2
     uint64_t size    // # of bits in x
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPFR_WRAPPER_START(x);
-
-    // call mpfr_init2
-    mpfr_init2(x, (unsigned long int) size);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPFR_WRAPPER_START (x) ;
+    mpfr_init2 (x, (unsigned long int) size) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1489,9 +1312,6 @@ SLIP_info SLIP_mpfr_init2
 
 /* Purpose: Safely set an mpfr number = to an mpfr number, i.e., x = y */
 
-#if 0
-/* This function is currently unused, but kept here for future reference. */
-
 SLIP_info SLIP_mpfr_set
 (
     mpfr_t x,
@@ -1499,17 +1319,11 @@ SLIP_info SLIP_mpfr_set
     const mpfr_rnd_t rnd
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPFR_WRAPPER_START(x);
-
-    // call mpfr_set
-    mpfr_set(x, y, rnd);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPFR_WRAPPER_START (x) ;
+    mpfr_set (x, y, rnd) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
-#endif
 
 //------------------------------------------------------------------------------
 // SLIP_mpfr_set_d
@@ -1524,15 +1338,10 @@ SLIP_info SLIP_mpfr_set_d
     const mpfr_rnd_t rnd  // MPFR rounding scheme used
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPFR_WRAPPER_START(x);
-
-    // call mpfr_set_d
-    mpfr_set_d(x, y, rnd);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPFR_WRAPPER_START (x) ;
+    mpfr_set_d (x, y, rnd) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1548,15 +1357,10 @@ SLIP_info SLIP_mpfr_set_q
     const mpfr_rnd_t rnd
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPFR_WRAPPER_START(x);
-
-    // call mpfr_set_q
-    mpfr_set_q(x, y, rnd);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPFR_WRAPPER_START (x) ;
+    mpfr_set_q (x, y, rnd) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1572,15 +1376,10 @@ SLIP_info SLIP_mpfr_set_z
     const mpfr_rnd_t rnd
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPFR_WRAPPER_START(x);
-
-    // call mpfr_set_q
-    mpfr_set_z(x, y, rnd);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPFR_WRAPPER_START (x) ;
+    mpfr_set_z (x, y, rnd) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1596,15 +1395,29 @@ SLIP_info SLIP_mpfr_get_z
     const mpfr_rnd_t rnd  // MPFR rounding scheme used
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPZ_WRAPPER_START(x);
+    SLIP_GMPZ_WRAPPER_START (x) ;
+    mpfr_get_z (x, y, rnd) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
+}
 
-    // call mpfr_get_z
-    mpfr_get_z(x, y, rnd);
+//------------------------------------------------------------------------------
+// SLIP_mpfr_get_q
+//------------------------------------------------------------------------------
 
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+/* Purpose: Safely set an mpq number = to an mpfr number, i.e., x = y */
+
+SLIP_info SLIP_mpfr_get_q
+(
+    mpq_t x,
+    const mpfr_t y,
+    const mpfr_rnd_t rnd  // MPFR rounding scheme used
+)
+{
+    SLIP_GMPQ_WRAPPER_START (x) ;
+    mpfr_get_q (x, y) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1620,15 +1433,10 @@ SLIP_info SLIP_mpfr_get_d
     const mpfr_rnd_t rnd  // MPFR rounding scheme used
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMP_WRAPPER_START;
-
-    // call mpfr_get_d
-    *x = mpfr_get_d(y, rnd);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMP_WRAPPER_START ;
+    *x = mpfr_get_d (y, rnd) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1645,15 +1453,10 @@ SLIP_info SLIP_mpfr_mul
     const mpfr_rnd_t rnd  // MPFR rounding mode
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPFR_WRAPPER_START(x);
-
-    // call mpfr_mul
-    mpfr_mul(x, y, z, rnd);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPFR_WRAPPER_START (x) ;
+    mpfr_mul (x, y, z, rnd) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1672,15 +1475,10 @@ SLIP_info SLIP_mpfr_mul_d
     const mpfr_rnd_t rnd  // MPFR rounding scheme used
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPFR_WRAPPER_START(x);
-
-    // call mpfr_mul_d
-    mpfr_mul_d(x, y, z, rnd);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPFR_WRAPPER_START (x) ;
+    mpfr_mul_d (x, y, z, rnd) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1699,15 +1497,10 @@ SLIP_info SLIP_mpfr_div_d
     const mpfr_rnd_t rnd  // MPFR rounding scheme used
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPFR_WRAPPER_START(x);
-
-    // call mpfr_mul_d
-    mpfr_div_d(x, y, z, rnd);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPFR_WRAPPER_START (x) ;
+    mpfr_div_d (x, y, z, rnd) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1726,15 +1519,10 @@ SLIP_info SLIP_mpfr_ui_pow_ui
     const mpfr_rnd_t rnd  // MPFR rounding mode
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPFR_WRAPPER_START(x);
-
-    // call mpfr_ui_pow_ui
-    mpfr_ui_pow_ui(x, (unsigned long int) y, (unsigned long int) z, rnd);
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMPFR_WRAPPER_START (x) ;
+    mpfr_ui_pow_ui (x, (unsigned long int) y, (unsigned long int) z, rnd) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1750,15 +1538,28 @@ SLIP_info SLIP_mpfr_log2
     const mpfr_rnd_t rnd
 )
 {
-    // Start the GMP wrapper
-    SLIP_GMPFR_WRAPPER_START(x);
+    SLIP_GMPFR_WRAPPER_START (x) ;
+    mpfr_log2 (x, y, rnd) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
+}
 
-    // call mpq_add
-    mpfr_log2(x, y, rnd);
+//------------------------------------------------------------------------------
+// SLIP_mpfr_sgn
+//------------------------------------------------------------------------------
 
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+/* Purpose: Safely set sgn = 0 if x = 0, otherwise, sgn = x/|x| */
+
+SLIP_info SLIP_mpfr_sgn
+(
+    int *sgn,
+    const mpfr_t x
+)
+{
+    SLIP_GMP_WRAPPER_START ;
+    *sgn = mpfr_sgn (x) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 
 //------------------------------------------------------------------------------
@@ -1767,16 +1568,11 @@ SLIP_info SLIP_mpfr_log2
 
 /* Purpose: Safely free all caches and pools used by MPFR internally */
 
-SLIP_info SLIP_mpfr_free_cache(void)
+SLIP_info SLIP_mpfr_free_cache ( void )
 {
-    // Start the GMP wrapper
-    SLIP_GMP_WRAPPER_START;
-
-    // call mpfr_free_cache
-    mpfr_free_cache();
-
-    // Finish the wrapper and return 0 if successful
-    SLIP_GMP_WRAPPER_FINISH;
-    return SLIP_OK;
+    SLIP_GMP_WRAPPER_START ;
+    mpfr_free_cache ( ) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
 }
 

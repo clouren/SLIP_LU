@@ -26,12 +26,12 @@ SLIP_info slip_transpose
     mwIndex *Ci, *Ap, *Ai, p, q;
     mwSize m, n, j;
     double *Cx, *Ax ;
-    int32_t *Cp, *w;
+    int64_t *Cp, *w;
     m = mxGetM(A) ; n = mxGetN(A) ;
     Ap = mxGetJc(A) ; Ai = mxGetIr(A) ; Ax = mxGetDoubles(A) ;
-    w =  (int32_t*) SLIP_calloc (m,    sizeof(int32_t));// get workspace
+    w =  (int64_t*) SLIP_calloc (m,    sizeof(int64_t));// get workspace
     Cx = (double *) SLIP_calloc(Ap[n], sizeof(double)) ;// Allocate memory for x
-    Cp = (int32_t*) SLIP_calloc(n+1,   sizeof(int32_t));// Initialize p
+    Cp = (int64_t*) SLIP_calloc(n+1,   sizeof(int64_t));// Initialize p
     Ci = (mwIndex*) SLIP_calloc(Ap[n], sizeof(mwIndex));// Initialize i
     /* out of memory */
     if (!w || !Cx || !Cp || !Ci)
@@ -40,7 +40,7 @@ SLIP_info slip_transpose
     }
 
     for (p = 0 ; p < Ap [n] ; p++) w [Ai [p]]++ ;          /* row counts */
-    slip_cumsum (Cp, w, (int32_t) m) ;                     /* row pointers */
+    slip_cumsum (Cp, w, (int64_t) m) ;                     /* row pointers */
     for (j = 0 ; j < n ; j++)
     {
         for (p = Ap [j] ; p < Ap [j+1] ; p++)
@@ -55,7 +55,7 @@ SLIP_info slip_transpose
     SLIP_FREE(Ax);
     mxSetDoubles(A, Cx);
 
-    slip_int32_to_mwIndex(Ap, Cp, n+1);
+    slip_int64_to_mwIndex(Ap, Cp, n+1);
     SLIP_FREE(Cp);
 
     SLIP_FREE(w);

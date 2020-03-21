@@ -16,8 +16,8 @@
 
 mpz_t** SLIP_create_mpz_mat
 (
-    int32_t m,     // number of rows
-    int32_t n      // number of columns
+    int64_t m,     // number of rows
+    int64_t n      // number of columns
 )
 {
 
@@ -36,7 +36,7 @@ mpz_t** SLIP_create_mpz_mat
     mpz_t **x = (mpz_t**) SLIP_calloc(m, sizeof(mpz_t*));
     if (!x) {return NULL;}
 
-    for (int32_t i = 0; i < m; i++)
+    for (int64_t i = 0; i < m; i++)
     {
         x[i] = (mpz_t*) SLIP_calloc(n, sizeof(mpz_t));
         if (x [i] == NULL)
@@ -45,7 +45,7 @@ mpz_t** SLIP_create_mpz_mat
             SLIP_delete_mpz_mat (&x, m, n) ;
             return (NULL) ;
         }
-        for (int32_t j = 0; j < n; j++)
+        for (int64_t j = 0; j < n; j++)
         {
             if (SLIP_mpz_init(x[i][j]) == SLIP_OUT_OF_MEMORY)
             {

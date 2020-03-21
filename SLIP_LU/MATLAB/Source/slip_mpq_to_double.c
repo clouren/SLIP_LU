@@ -18,11 +18,11 @@ void SLIP_mpq_to_double
 (
     double* x_doub,       // double array
     const mpq_t* x_mpq,   // mpq array
-    const int32_t n       // size of b
+    const int64_t n       // size of b
 )
 {
     SLIP_info status;
-    for (int32_t i = 0; i < n; i++)
+    for (int64_t i = 0; i < n; i++)
     {
         SLIP_MEX_OK(SLIP_mpq_get_d(&(x_doub[i]), x_mpq[i]));
     }

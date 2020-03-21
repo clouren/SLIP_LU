@@ -17,7 +17,7 @@ void slip_mex_get_A_and_b
     SLIP_sparse **A_handle,  // Internal SLIP Mat stored in CSC
     SLIP_dense **b_handle,   // mpz matrix used internally
     const mxArray* pargin[], // The input A matrix and options
-    int32_t nargin           // Number of input to the mexFunction
+    int nargin               // Number of input to the mexFunction
 )
 {
 
@@ -65,51 +65,51 @@ void slip_mex_get_A_and_b
         mexErrMsgTxt ("A must be square") ;
     }
 
-    int32_t *Ai_int32 = (int32_t *) SLIP_malloc (Anz * sizeof (int32_t)) ;
-    int32_t *Ap_int32 = (int32_t *) SLIP_malloc ((nA+1) * sizeof (int32_t)) ;
-    if (!Ai_int32 || !Ap_int32)
+    int64_t *Ai_int64 = (int64_t *) SLIP_malloc (Anz * sizeof (int64_t)) ;
+    int64_t *Ap_int64 = (int64_t *) SLIP_malloc ((nA+1) * sizeof (int64_t)) ;
+    if (!Ai_int64 || !Ap_int64)
     {
         slip_mex_error (SLIP_OUT_OF_MEMORY) ;
     }
 
     // convert the integer pattern
-    slip_mwIndex_to_int32 (Ai_int32, Ai, Anz) ;
-    slip_mwIndex_to_int32 (Ap_int32, Ap, nA+1) ;
+    slip_mwIndex_to_int64 (Ai_int64, Ai, Anz) ;
+    slip_mwIndex_to_int64 (Ap_int64, Ap, nA+1) ;
 
     // check the values of A
-    bool A_has_int32_values = slip_mex_check_for_inf (Ax, Anz) ;
+    bool A_has_int64_values = slip_mex_check_for_inf (Ax, Anz) ;
 
-    if (A_has_int32_values)
+    if (A_has_int64_values)
     {
-        // All entries in A can be typecast to int32_t without change in value.
-        int32_t *Ax_int32 = (int32_t*) SLIP_malloc (Anz* sizeof (int32_t)) ;
-        if (!Ax_int32)
+        // All entries in A can be typecast to int64_t without change in value.
+        int64_t *Ax_int64 = (int64_t*) SLIP_malloc (Anz* sizeof (int64_t)) ;
+        if (!Ax_int64)
         {
             slip_mex_error (SLIP_OUT_OF_MEMORY) ;
         }
         for (k = 0; k < Anz; k++)
         {
-            Ax_int32[k] = (int32_t) Ax[k];
+            Ax_int64[k] = (int64_t) Ax[k];
         }
         // Create A with no scaling
-        status = SLIP_build_sparse_csc_int32 (A_handle, Ap_int32, Ai_int32,
-            Ax_int32, (int32_t) nA, (int32_t) Anz) ;
-        SLIP_FREE (Ax_int32) ;
+        status = SLIP_build_sparse_csc_int64 (A_handle, Ap_int64, Ai_int64,
+            Ax_int64, (int64_t) nA, (int64_t) Anz) ;
+        SLIP_FREE (Ax_int64) ;
     }
     else
     {
-        // Entries in A cannot be typecast to int32_t without changing them.
+        // Entries in A cannot be typecast to int64_t without changing them.
         // Create A with scaling
-        status = SLIP_build_sparse_csc_double (A_handle, Ap_int32, Ai_int32,
-            Ax, (int32_t) nA, (int32_t) Anz, option) ;
+        status = SLIP_build_sparse_csc_double (A_handle, Ap_int64, Ai_int64,
+            Ax, (int64_t) nA, (int64_t) Anz, option) ;
     }
 
     if (status != SLIP_OK)
     {
         mexErrMsgTxt ("A invalid") ;
     }
-    SLIP_FREE (Ai_int32) ;
-    SLIP_FREE (Ap_int32) ;
+    SLIP_FREE (Ai_int64) ;
+    SLIP_FREE (Ap_int64) ;
 
     //--------------------------------------------------------------------------
     // Read in b
@@ -131,48 +131,48 @@ void slip_mex_get_A_and_b
             mexErrMsgTxt ("dimension mismatch") ;
         }
 
-        int32_t count = 0;
+        int64_t count = 0;
 
         // check the values of b
-        bool b_has_int32_values = slip_mex_check_for_inf (bx, nb*mb) ;
+        bool b_has_int64_values = slip_mex_check_for_inf (bx, nb*mb) ;
 
-        if (b_has_int32_values)
+        if (b_has_int64_values)
         {
-            // populate bx to a int32_t mat
-            int32_t** bx_int32 = SLIP_create_int32_mat ((int32_t) mb,
-                (int32_t) nb) ;
-            if (!bx_int32)
+            // populate bx to a int64_t mat
+            int64_t** bx_int64 = SLIP_create_int64_mat ((int64_t) mb,
+                (int64_t) nb) ;
+            if (!bx_int64)
             {
                 slip_mex_error (SLIP_OUT_OF_MEMORY) ;
             }
-            for (int32_t j = 0; j < nb; j++)
+            for (int64_t j = 0; j < nb; j++)
             {
-                for (int32_t i = 0; i < mb; i++)
+                for (int64_t i = 0; i < mb; i++)
                 {
-                    bx_int32[i][j] = (int32_t) bx[count];
+                    bx_int64[i][j] = (int64_t) bx[count];
                     count++;
                 }
             }
 
             // Create b
-            status = SLIP_build_dense_int32(b_handle, bx_int32, (int32_t) mb,
-                (int32_t) nb) ;
-            SLIP_delete_int32_mat (&bx_int32, (int32_t) mb, (int32_t) nb) ;
+            status = SLIP_build_dense_int64(b_handle, bx_int64, (int64_t) mb,
+                (int64_t) nb) ;
+            SLIP_delete_int64_mat (&bx_int64, (int64_t) mb, (int64_t) nb) ;
         }
         else
         {
             // populate bx to a double mat
             double** bx_doub;
-            bx_doub = SLIP_create_double_mat ((int32_t) mb, (int32_t) nb) ;
+            bx_doub = SLIP_create_double_mat ((int64_t) mb, (int64_t) nb) ;
             if (!bx_doub)
             {
                 slip_mex_error (SLIP_OUT_OF_MEMORY) ;
             }
 
             count = 0;
-            for (int32_t j = 0; j < nb; j++)
+            for (int64_t j = 0; j < nb; j++)
             {
-                for (int32_t i = 0; i < mb; i++)
+                for (int64_t i = 0; i < mb; i++)
                 {
                     bx_doub[i][j] = bx[count];
                     count++;
@@ -180,9 +180,9 @@ void slip_mex_get_A_and_b
             }
 
             // Create b
-            status = SLIP_build_dense_double (b_handle, bx_doub, (int32_t) mb,
-                (int32_t) nb, option) ;
-            SLIP_delete_double_mat (&bx_doub, (int32_t) mb, (int32_t) nb) ;
+            status = SLIP_build_dense_double (b_handle, bx_doub, (int64_t) mb,
+                (int64_t) nb, option) ;
+            SLIP_delete_double_mat (&bx_doub, (int64_t) mb, (int64_t) nb) ;
         }
 
         if (status != SLIP_OK)

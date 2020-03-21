@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/SLIP_build_sparse_csc_int32: build sparse matrix from int32
+// SLIP_LU/SLIP_build_sparse_csc_int64: build sparse matrix from int64
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -8,7 +8,7 @@
 
 //------------------------------------------------------------------------------
 
-/* Purpose: build sparse matrix from int32 values */
+/* Purpose: build sparse matrix from int64 values */
 
 #define SLIP_FREE_ALL                 \
     (*A_handle) = NULL ;                    \
@@ -17,14 +17,14 @@
 
 #include "SLIP_LU_internal.h"
 
-SLIP_info SLIP_build_sparse_csc_int32
+SLIP_info SLIP_build_sparse_csc_int64
 (
     SLIP_sparse **A_handle,     // matrix to construct
-    int32_t *p,         // The set of column pointers
-    int32_t *I,         // set of row indices
-    int32_t *x,         // Set of values as doubles
-    int32_t n,          // dimension of the matrix
-    int32_t nz          // number of nonzeros in A (size of x and I vectors)
+    int64_t *p,         // The set of column pointers
+    int64_t *I,         // set of row indices
+    int64_t *x,         // Set of values as doubles
+    int64_t n,          // dimension of the matrix
+    int64_t nz          // number of nonzeros in A (size of x and I vectors)
 )
 {
 
@@ -51,7 +51,7 @@ SLIP_info SLIP_build_sparse_csc_int32
         return (SLIP_OUT_OF_MEMORY) ;
     }
 
-    for (int32_t i = 0; i < nz; i++)
+    for (int64_t i = 0; i < nz; i++)
     {
         SLIP_CHECK(SLIP_mpz_set_si(x_new[i], x[i]));
     }

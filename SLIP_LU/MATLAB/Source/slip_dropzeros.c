@@ -10,7 +10,7 @@
 
 #include "SLIP_LU_mex.h"
 
-static bool slip_nonzero (int32_t i, int32_t j, double aij)
+static bool slip_nonzero (int64_t i, int64_t j, double aij)
 {
     return (aij != 0) ;
 }
@@ -21,7 +21,7 @@ mwIndex slip_dropzeros (mxArray *A)
 }
 
 /* drop entries for which fkeep(A(i,j)) is false; return nz if OK, else -1 */
-mwIndex slip_fkeep (mxArray *A, bool (*fkeep) (int32_t, int32_t, double))
+mwIndex slip_fkeep (mxArray *A, bool (*fkeep) (int64_t, int64_t, double))
 {
     if (!A || !mxIsSparse(A)|| !fkeep) return (-1) ;    /* check inputs */
 

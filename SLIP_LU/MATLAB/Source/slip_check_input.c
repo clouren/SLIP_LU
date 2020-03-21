@@ -10,12 +10,13 @@
 
 #include "SLIP_LU_mex.h"
 
-/* Purpose: This function checks the input of the matlab array. It ensures that
+/* Purpose: This function checks the input of the MATLAB array. It ensures that
    the input matrix and right hand side vectors are correct format. */
+
 void slip_check_input
 (
-    const mxArray * input [],     // The matlab input array
-    int32_t nargin
+    const mxArray * input [],   // The MATLAB inputs
+    int nargin                  // # of input arguments
 )
 {
 
@@ -59,3 +60,4 @@ void slip_check_input
         }
     }
 }
+

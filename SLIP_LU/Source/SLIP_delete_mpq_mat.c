@@ -18,8 +18,8 @@
 void SLIP_delete_mpq_mat
 (
     mpq_t***A,     // dense mpq matrix
-    int32_t m,     // number of rows of A
-    int32_t n      // number of columns of A
+    int64_t m,     // number of rows of A
+    int64_t n      // number of columns of A
 )
 {
 
@@ -27,7 +27,7 @@ void SLIP_delete_mpq_mat
     // Delete this since *_mat will no longer be used.
 
     if (A == NULL || *A == NULL) {return;}
-    for (int32_t i = m-1; i >= 0; i--)
+    for (int64_t i = m-1; i >= 0; i--)
     {
         SLIP_delete_mpq_array(&((*A)[i]), n);
     }

@@ -25,7 +25,7 @@ SLIP_info slip_expand_mpq_array
     mpz_t* x_out,   // mpz array
     mpq_t* x,       // mpq array that needs to be converted
     mpq_t scale,    // scaling factor. x_out = scale*x
-    int32_t n       // size of x
+    int64_t n       // size of x
 )
 {
 
@@ -53,20 +53,20 @@ SLIP_info slip_expand_mpq_array
         return SLIP_OUT_OF_MEMORY;
     }
 
-    for (int32_t i = 0; i < n; i++)                  // x3 = denominators of x
+    for (int64_t i = 0; i < n; i++)                  // x3 = denominators of x
     {
         SLIP_CHECK(SLIP_mpq_get_den(x3[i], x[i]));
     }
     SLIP_CHECK(SLIP_mpz_set(temp,x3[0]));
 
     // Find LCM of denominators of x
-    for (int32_t i = 1; i < n; i++)
+    for (int64_t i = 1; i < n; i++)
     {
         SLIP_CHECK(SLIP_mpz_lcm(temp, x3[i], temp));
     }
     SLIP_CHECK(SLIP_mpq_set_z(scale,temp));
 
-    for (int32_t i = 0; i < n; i++)
+    for (int64_t i = 0; i < n; i++)
     {
         // x4[i] = x[i]*temp
         SLIP_CHECK(SLIP_mpq_mul(x4[i], x[i], scale));

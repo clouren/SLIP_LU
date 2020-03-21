@@ -19,7 +19,7 @@
 void SLIP_delete_mpz_array
 (
     mpz_t **x,      // mpz array to be deleted
-    int32_t n       // Size of x
+    int64_t n       // Size of x
 )
 {
 
@@ -27,7 +27,7 @@ void SLIP_delete_mpz_array
     // Move this functionality into SLIP_matrix_free.
 
     if (x == NULL || (*x) == NULL) {return;}
-    for (int32_t i = 0; i < n; i++)
+    for (int64_t i = 0; i < n; i++)
     {
         if ( (*x) [i] != NULL)
         {

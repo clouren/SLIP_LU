@@ -10,7 +10,7 @@
 
 // Allocate an m-by-n SLIP_matrix, in one of 15 data structures:
 // (sparse CSC, sparse triplet, or dense) x
-// (mpz, mpz, mfpr, int32, or double).
+// (mpz, mpz, mfpr, int64, or double).
 
 // The matrix may be created as 'shallow', in which case A->p, A->i, A->j, and
 // A->x are all returned as NULL, and all A->*_shallow flags are returned as
@@ -25,10 +25,10 @@ SLIP_info SLIP_matrix_allocate
 (
     SLIP_matrix **A_handle, // matrix to allocate
     SLIP_kind kind,         // CSC, triplet, or dense
-    SLIP_type type,         // mpz, mpq, mpfr, int32, or double
-    int32_t m,              // # of rows
-    int32_t n,              // # of columns
-    int32_t nzmax,          // max # of entries
+    SLIP_type type,         // mpz, mpq, mpfr, int64, or double
+    int64_t m,              // # of rows
+    int64_t n,              // # of columns
+    int64_t nzmax,          // max # of entries for CSC or triplet
     bool shallow,           // if true, matrix is shallow.  A->p, A->i, A->j,
                             // A->x are all returned as NULL and must be set
                             // by the caller.  All A->*_shallow are returned
@@ -47,7 +47,7 @@ SLIP_info SLIP_matrix_allocate
         return (SLIP_INCORRECT_INPUT) ;
     }
     (*A_handle) = NULL ;
-    if (m <= 0 || n <= 0 || option == NULL)
+    if (m < 0 || n < 0 || option == NULL)
     {
         return (SLIP_INCORRECT_INPUT) ;
     }
@@ -62,6 +62,10 @@ SLIP_info SLIP_matrix_allocate
         return (SLIP_OUT_OF_MEMORY) ;
     }
 
+    if (kind == SLIP_DENSE)
+    {
+        nzmax = m*n ;
+    }
     nzmax = SLIP_MAX (nzmax, 1) ;
 
     A->m = m ;
@@ -106,14 +110,14 @@ SLIP_info SLIP_matrix_allocate
         switch (kind)
         {
             case SLIP_CSC:
-                A->p = (int32_t *) SLIP_calloc (n+1, sizeof (int32_t)) ;
-                A->i = (int32_t *) SLIP_malloc (nzmax * sizeof (int32_t)) ;
+                A->p = (int64_t *) SLIP_calloc (n+1, sizeof (int64_t)) ;
+                A->i = (int64_t *) SLIP_malloc (nzmax * sizeof (int64_t)) ;
                 ok = (A->p != NULL && A->i != NULL) ;
                 break ;
 
             case SLIP_TRIPLET:
-                A->i = (int32_t *) SLIP_malloc (nzmax * sizeof (int32_t)) ;
-                A->j = (int32_t *) SLIP_malloc (nzmax * sizeof (int32_t)) ;
+                A->i = (int64_t *) SLIP_malloc (nzmax * sizeof (int64_t)) ;
+                A->j = (int64_t *) SLIP_malloc (nzmax * sizeof (int64_t)) ;
                 ok = (A->i != NULL && A->j != NULL) ;
                 break ;
 
@@ -144,9 +148,9 @@ SLIP_info SLIP_matrix_allocate
                 ok = ok && (A->x.mpfr != NULL) ;
                 break ;
 
-            case SLIP_INT32:
-                A->x.int32 = (int32_t *) SLIP_calloc (nzmax, sizeof (int32_t)) ;
-                ok = ok && (A->x.int32 != NULL) ;
+            case SLIP_INT64:
+                A->x.int64 = (int64_t *) SLIP_calloc (nzmax, sizeof (int64_t)) ;
+                ok = ok && (A->x.int64 != NULL) ;
                 break ;
 
             case SLIP_FP64:

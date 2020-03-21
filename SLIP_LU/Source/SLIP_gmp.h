@@ -21,7 +21,7 @@
 {                                                                       \
     slip_gmp_nmalloc = 0 ;                                              \
     /* setjmp returns 0 if called from here, or > 0 if from longjmp */  \
-    int32_t slip_gmp_status = setjmp (slip_gmp_environment) ;           \
+    int slip_gmp_status = setjmp (slip_gmp_environment) ;               \
     if (slip_gmp_status != 0)                                           \
     {                                                                   \
         /* failure from longjmp */                                      \

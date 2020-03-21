@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/SLIP_create_mpq_array: create a dense mpq array
+// SLIP_LU/SLIP_matrix_nnz: find # of entries in a matrix
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -8,15 +8,12 @@
 
 //------------------------------------------------------------------------------
 
-/* Purpose: This function creates an mpq array of size n.
- * This function must be called for all mpq arrays created.
- */
-
 #include "SLIP_LU_internal.h"
 
-mpq_t* SLIP_create_mpq_array
+int64_t SLIP_matrix_nnz     // return # of entries in A, or -1 on error
 (
-    int64_t n      // size of the array
+    SLIP_matrix *A,         // matrix to query
+    SLIP_options *option
 )
 {
 
@@ -24,25 +21,21 @@ mpq_t* SLIP_create_mpq_array
     // check inputs
     //--------------------------------------------------------------------------
 
-    // TODO: use SLIP_matrix_allocate (&A, SLIP_DENSE, SLIP_MPQ, ...)
-
-    if (n <= 0) {return NULL;}
+    if (A == NULL)
+    {
+        return (-1) ;
+    }
 
     //--------------------------------------------------------------------------
+    // find nnz (A)
+    //--------------------------------------------------------------------------
 
-    // Malloc space
-    mpq_t* x = (mpq_t*) SLIP_calloc(n, sizeof(mpq_t));
-    if (!x) {return NULL;}
-    for (int64_t i = 0; i < n; i++)
+    switch (A->kind)
     {
-        if (SLIP_mpq_init(x[i]) != SLIP_OK)
-        {
-            // Out of memory
-            SLIP_MPQ_SET_NULL(x[i]);
-            SLIP_delete_mpq_array(&x,n);
-            return NULL;
-        }
+        case SLIP_CSC:     return (A->p == NULL ? (-1) : A->p [A->n]) ;
+        case SLIP_TRIPLET: return (A->nz) ;
+        case SLIP_DENSE:   return (A->m * A->n) ;
+        default:           return (-1) ;
     }
-    return x;
 }
 

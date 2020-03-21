@@ -37,7 +37,7 @@ int main (int argc, char **argv)
     //--------------------------------------------------------------------------
     SLIP_initialize();
     SLIP_info ok;
-    int32_t n = 0, numRHS = 0;
+    int64_t n = 0, numRHS = 0;
 
     //--------------------------------------------------------------------------
     // Get matrix and right hand side file names
@@ -94,7 +94,7 @@ int main (int argc, char **argv)
     // Check if the size of A matches b
     if (A->m != b->m)
     {
-        printf("%d %d \n", A->m,b->m);
+        printf("%"PRId64" %"PRId64" \n", A->m,b->m);
         fprintf (stderr, "Error! Size of A and b do not match!\n");
         FREE_WORKSPACE;
         return 0;

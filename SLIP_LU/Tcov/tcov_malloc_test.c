@@ -10,7 +10,7 @@
 
 #include "tcov_malloc_test.h"
 
-int32_t malloc_count = INT32_MAX ;
+int64_t malloc_count = INT64_MAX ;
 
 // Note that only the ANSI C memory manager is used here
 // (malloc, calloc, realloc, free)

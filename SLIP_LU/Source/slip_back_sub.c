@@ -25,7 +25,7 @@ SLIP_info slip_back_sub  // performs sparse REF backward substitution
 (
     const SLIP_sparse *U,   // input upper triangular matrix
     mpz_t **bx,             // right hand side matrix of size n*numRHS
-    int32_t numRHS          // number of columns in bx
+    int64_t numRHS          // number of columns in bx
 )
 {
 
@@ -39,15 +39,15 @@ SLIP_info slip_back_sub  // performs sparse REF backward substitution
 
     //--------------------------------------------------------------------------
 
-    int32_t sgn;
+    int sgn;
     mpz_t *Ux = U->x;
-    int32_t *Ui = U->i;
-    int32_t *Up = U->p;
+    int64_t *Ui = U->i;
+    int64_t *Up = U->p;
 
-    for (int32_t k = 0; k < numRHS; k++)
+    for (int64_t k = 0; k < numRHS; k++)
     {
         // Start at bx[n]
-        for (int32_t j = U->n-1; j >= 0; j--)
+        for (int64_t j = U->n-1; j >= 0; j--)
         {
             // If bx[j] is zero skip this iteration
                 SLIP_CHECK(SLIP_mpz_sgn(&sgn, bx[j][k]));
@@ -55,7 +55,7 @@ SLIP_info slip_back_sub  // performs sparse REF backward substitution
 
             // Obtain bx[j]
             SLIP_CHECK(SLIP_mpz_divexact(bx[j][k], bx[j][k],Ux[Up[j+1]-1]));
-            for (int32_t i = Up[j]; i < Up[j+1]-1; i++)
+            for (int64_t i = Up[j]; i < Up[j+1]-1; i++)
             {
                 SLIP_CHECK(SLIP_mpz_sgn(&sgn, Ux[i]));
                 if (sgn == 0) {continue;}

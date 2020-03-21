@@ -19,8 +19,8 @@ SLIP_info slip_array_mul // multiplies vector x by the determinant of matrix
 (
     mpz_t** x,          // matrix to be multiplied
     const mpz_t det,    // given determinant of matrix
-    int32_t n,          // size of x
-    int32_t numRHS      // number of RHS vectors
+    int64_t n,          // size of x
+    int64_t numRHS      // number of RHS vectors
 )
 {
 
@@ -35,9 +35,9 @@ SLIP_info slip_array_mul // multiplies vector x by the determinant of matrix
     // x = x * det
     //--------------------------------------------------------------------------
 
-    for (int32_t i = 0; i < n; i++)
+    for (int64_t i = 0; i < n; i++)
     {
-        for (int32_t k = 0; k < numRHS; k++)
+        for (int64_t k = 0; k < numRHS; k++)
         {
             // x[i][k] = x[i][k] * det
             SLIP_CHECK(SLIP_mpz_mul(x[i][k], x[i][k], det));

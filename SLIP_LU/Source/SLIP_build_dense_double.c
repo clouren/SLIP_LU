@@ -30,8 +30,8 @@ SLIP_info SLIP_build_dense_double
     SLIP_dense **C_handle,      // Dense matrix to construct
     // inputs, not modified:
     double **B,                 // Set of values as doubles
-    int32_t m,                  // number of rows
-    int32_t n,                  // number of columns
+    int64_t m,                  // number of rows
+    int64_t n,                  // number of columns
     SLIP_options* option
 )
 {

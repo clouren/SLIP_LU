@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/MATLAB/slip_mwIndex_to_int32: Convert mwIndex* to int32_t*
+// SLIP_LU/MATLAB/slip_mwIndex_to_int64: Convert mwIndex* to int64_t*
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -8,20 +8,20 @@
 
 //------------------------------------------------------------------------------
 
-/* Purpose: This function converts an mwIndex to an int32_t. */
+/* Purpose: This function converts an mwIndex to an int64_t. */
 
 #include "SLIP_LU_mex.h"
 
-void slip_mwIndex_to_int32
+void slip_mwIndex_to_int64
 (
-    int32_t* y,    // the int32_t vector
+    int64_t* y,    // the int64_t vector
     mwIndex* x,    // the mwIndex vector
     mwSize n       // the size of x and y
 )
 {
     for (mwSize i = 0; i < n; i++)
     {
-        y[i] = (int32_t) x[i];
+        y[i] = (int64_t) x[i];
     }
 }
 

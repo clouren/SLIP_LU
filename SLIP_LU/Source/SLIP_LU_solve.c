@@ -47,7 +47,7 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     const SLIP_sparse *L,   // lower triangular matrix
     const SLIP_sparse *U,   // upper triangular matrix
     const mpz_t *rhos,      // sequence of pivots
-    const int32_t *pinv     // row permutation
+    const int64_t *pinv     // row permutation
 )
 {
 
@@ -74,7 +74,7 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     // initializations
     //--------------------------------------------------------------------------
 
-    int32_t i, k, n = L->n, numRHS = b->n;
+    int64_t i, k, n = L->n, numRHS = b->n;
     mpz_t **bx = b->x;
 
     //--------------------------------------------------------------------------

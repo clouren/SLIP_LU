@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/SLIP_build_sparse_trip_int32: build sparse matrix from int32
+// SLIP_LU/SLIP_build_sparse_trip_int64: build sparse matrix from int64
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -8,7 +8,7 @@
 
 //------------------------------------------------------------------------------
 
-/* Purpose:  build a sparse mpz matrix from int32 triplets
+/* Purpose:  build a sparse mpz matrix from int64 triplets
  */
 
 #define SLIP_FREE_ALL                       \
@@ -18,14 +18,14 @@
 
 #include "SLIP_LU_internal.h"
 
-SLIP_info SLIP_build_sparse_trip_int32
+SLIP_info SLIP_build_sparse_trip_int64
 (
     SLIP_sparse **A_handle,     // matrix to construct
-    int32_t *I,         // set of row indices
-    int32_t *J,         // set of column indices
-    int32_t *x,         // Set of values in int32
-    int32_t n,          // dimension of the matrix
-    int32_t nz          // number of nonzeros in A (size of x, I, and J vectors)
+    int64_t *I,         // set of row indices
+    int64_t *J,         // set of column indices
+    int64_t *x,         // Set of values in int64
+    int64_t n,          // dimension of the matrix
+    int64_t nz          // number of nonzeros in A (size of x, I, and J vectors)
 )
 {
 
@@ -52,7 +52,7 @@ SLIP_info SLIP_build_sparse_trip_int32
         return (SLIP_OUT_OF_MEMORY) ;
     }
 
-    for (int32_t k = 0; k < nz; k++)
+    for (int64_t k = 0; k < nz; k++)
     {
         SLIP_CHECK(SLIP_mpz_set_si(x_new[k], x[k]));
     }

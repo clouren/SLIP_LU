@@ -61,8 +61,8 @@ SLIP_info SLIP_matrix_free
                 SLIP_delete_mpfr_array (&(A->x.mpfr), A->nzmax) ;
                 break ;
 
-            case SLIP_INT32:
-                SLIP_FREE (A->x.int32) ;
+            case SLIP_INT64:
+                SLIP_FREE (A->x.int64) ;
                 break ;
 
             case SLIP_FP64:

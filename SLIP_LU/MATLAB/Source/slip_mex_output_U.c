@@ -38,8 +38,8 @@ mxArray* slip_mex_output_U
     xA = mxGetDoubles(Amatlab);
 
     // Populate U->p and U->i
-    slip_int32_to_mwIndex(pA, U->p, (U->n)+1);
-    slip_int32_to_mwIndex(iA, U->i, U->nz);
+    slip_int64_to_mwIndex(pA, U->p, (U->n)+1);
+    slip_int64_to_mwIndex(iA, U->i, U->nz);
 
     //--------------------------------------------------------------------------
     // As per Escobedo et. al., row j of U is divided by rho[j-1]
@@ -47,7 +47,7 @@ mxArray* slip_mex_output_U
     mpq_t* xU = SLIP_create_mpq_array(U->nz);
     if (!xU)  { SLIP_MEX_OK (SLIP_OUT_OF_MEMORY); }
 
-    for (int32_t j = 0; j < U->nz; j++)
+    for (int64_t j = 0; j < U->nz; j++)
     {
         SLIP_MEX_OK(SLIP_mpq_set_z(xU[j], U->x[j]));
         if (U->i[j] > 0)

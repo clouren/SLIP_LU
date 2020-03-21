@@ -50,8 +50,8 @@ SLIP_info SLIP_check_solution
     // Declare vars
     //--------------------------------------------------------------------------
 
-    int32_t p, j, i, r;
-    int32_t n = A->n, numRHS = b->n;
+    int64_t p, j, i ;
+    int64_t n = A->n, numRHS = b->n;
     mpz_t** bx = b->x;
     mpq_t** b2 = NULL;
     mpq_t temp; SLIP_MPQ_SET_NULL(temp);
@@ -99,6 +99,7 @@ SLIP_info SLIP_check_solution
             SLIP_CHECK(SLIP_mpq_set_z(temp, bx[i][j]));
 
             // set check false if b!=b2
+            int r ;
             SLIP_CHECK(SLIP_mpq_equal(&r, temp, b2[i][j]));
             if (r == 0)
             {

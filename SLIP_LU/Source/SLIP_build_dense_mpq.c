@@ -30,8 +30,8 @@ SLIP_info SLIP_build_dense_mpq
     SLIP_dense **C_handle,      // Dense matrix to construct
     // inputs, not modified:
     mpq_t **B,                  // set of values as mpq_t
-    int32_t m,                  // number of rows
-    int32_t n                   // number of columns
+    int64_t m,                  // number of rows
+    int64_t n                   // number of columns
 )
 {
 

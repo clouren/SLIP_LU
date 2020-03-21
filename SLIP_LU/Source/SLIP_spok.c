@@ -37,7 +37,7 @@ SLIP_info SLIP_spok     // returns a SLIP_LU status code
     {
         return (SLIP_INCORRECT_INPUT) ;
     }
-    int32_t print_level = option->print_level;
+    int print_level = option->print_level;
     if (A == NULL)
     {
         if (print_level >= 1)
@@ -51,19 +51,20 @@ SLIP_info SLIP_spok     // returns a SLIP_LU status code
     // get the input matrix
     //--------------------------------------------------------------------------
 
-    int32_t i, j, p, pend ;
+    int64_t i, j, p, pend ;
 
-    int32_t m = A->m ;
-    int32_t n = A->n ;
-    int32_t nzmax = A->nzmax ;
-    int32_t nz = A->nz ;            // also nz == Ap [n]
-    int32_t *Ap = A->p ;
-    int32_t *Ai = A->i ;
+    int64_t m = A->m ;
+    int64_t n = A->n ;
+    int64_t nzmax = A->nzmax ;
+    int64_t nz = A->nz ;            // also nz == Ap [n]
+    int64_t *Ap = A->p ;
+    int64_t *Ai = A->i ;
     mpz_t *Ax = A->x ;
 
     if (print_level >= 2)
     {
-        printf ("SLIP_sparse: m %d n %d nz %d nzmax %d\n", m, n, nz, nzmax) ;
+        printf ("SLIP_sparse: m %"PRId64" n %"PRId64" nz %"PRId64
+            " nzmax %"PRId64"\n", m, n, nz, nzmax) ;
     }
 
     //--------------------------------------------------------------------------
@@ -120,7 +121,7 @@ SLIP_info SLIP_spok     // returns a SLIP_LU status code
     }
 
     // allocate workspace to check for duplicates
-    int32_t *mark = SLIP_calloc (n, sizeof (int32_t)) ;
+    int64_t *mark = SLIP_calloc (n, sizeof (int64_t)) ;
     if (mark == NULL)
     {
         // out of memory
@@ -132,9 +133,9 @@ SLIP_info SLIP_spok     // returns a SLIP_LU status code
     {
         if (print_level >= 2)
         {
-            printf ("column %d :\n", j) ;
+            printf ("column %"PRId64" :\n", j) ;
         }
-        int32_t marked = j+1 ;
+        int64_t marked = j+1 ;
         for (p = Ap [j] ; p < Ap [j+1] ; p++)
         {
             i = Ai [p] ;
@@ -147,7 +148,7 @@ SLIP_info SLIP_spok     // returns a SLIP_LU status code
             }
             if (print_level >= 2)
             {
-                printf ("  row %d : ", i) ;
+                printf ("  row %"PRId64" : ", i) ;
                 SLIP_info status = SLIP_gmp_printf ( "%Zd " , Ax [p]) ;
                 if (status < 0)
                 {

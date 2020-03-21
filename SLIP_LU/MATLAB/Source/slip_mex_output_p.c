@@ -14,8 +14,8 @@
 
 mxArray* slip_mex_output_p
 (
-    int32_t* pinv,     // pinv
-    int32_t n          // size of pinv
+    int64_t* pinv,     // pinv
+    int64_t n          // size of pinv
 )
 {
     // Create a n*1 array
@@ -25,7 +25,7 @@ mxArray* slip_mex_output_p
     double* x = mxGetPr(Pmatlab);
 
     // Set Pmatlab[pinv[k]] = k
-    for (int32_t k = 0; k < n; k++)
+    for (int64_t k = 0; k < n; k++)
     {
         x[pinv[k]] = (double) k;
     }

@@ -31,18 +31,18 @@
 
 SLIP_info slip_get_pivot
 (
-    int32_t *pivot, // found index of pivot entry
+    int64_t *pivot, // found index of pivot entry
     mpz_t* x,       // kth column of L and U
-    int32_t* pivs,  // vector indicating which rows have been pivotal
-    int32_t n,      // dimension of the problem
-    int32_t top,    // nonzero pattern is located in xi[top..n-1]
-    int32_t* xi,    // nonzero pattern of x
+    int64_t* pivs,  // vector indicating which rows have been pivotal
+    int64_t n,      // dimension of the problem
+    int64_t top,    // nonzero pattern is located in xi[top..n-1]
+    int64_t* xi,    // nonzero pattern of x
     SLIP_pivot order,  // pivoting method to use (see above description)
-    int32_t col,    // current column of A (real kth column i.e., q[k])
-    int32_t k,      // iteration of the algorithm
+    int64_t col,    // current column of A (real kth column i.e., q[k])
+    int64_t k,      // iteration of the algorithm
     mpz_t* rhos,    // vector of pivots
-    int32_t* pinv,  // row permutation
-    int32_t* row_perm,// opposite of pinv. if pinv[i] = j then row_perm[j] = i
+    int64_t* pinv,  // row permutation
+    int64_t* row_perm,// opposite of pinv. if pinv[i] = j then row_perm[j] = i
     double tolerance// tolerance used if some tolerance based pivoting is used
 )
 {
@@ -58,7 +58,7 @@ SLIP_info slip_get_pivot
     // allocate workspace
     //--------------------------------------------------------------------------
 
-    int32_t sgn, r;
+    int sgn, r;
     mpq_t tol, ratio;
     SLIP_MPQ_SET_NULL(tol);
     SLIP_MPQ_SET_NULL(ratio);
@@ -175,8 +175,8 @@ SLIP_info slip_get_pivot
     // Reflect changes in row location & row_perm
     //--------------------------------------------------------------------------
     // Must move pivot into position k
-    int32_t intermed = pinv[*pivot];
-    int32_t intermed2 = row_perm[k];
+    int64_t intermed = pinv[*pivot];
+    int64_t intermed2 = row_perm[k];
 
     //--------------------------------------------------------------------------
     // Set row_perm[k] = pivot and row_perm[pinv[pivot]] = row_perm[k]

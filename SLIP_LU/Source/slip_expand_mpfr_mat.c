@@ -29,15 +29,16 @@ SLIP_info slip_expand_mpfr_mat
     mpz_t** x_out,// mpz mat
     mpfr_t** x,   // mpfr matrix to be expanded
     mpq_t scale,  // scaling factor. x_out = scale*x
-    int32_t m,    // number of rows of x
-    int32_t n,    // number of columns of x
+    int64_t m,    // number of rows of x
+    int64_t n,    // number of columns of x
     SLIP_options *option// command options containing the prec for mpfr
 )
 {
 
     // TODO: delete this since *_mat will no longer be used
 
-    int32_t i, j, k, l, r1, r2 = 1;
+    int64_t i, j, k, l ;
+    int r1, r2 = 1;
     bool nz_found = false;
     SLIP_info info ;
     mpfr_t expon, **x3 = NULL; SLIP_MPFR_SET_NULL(expon);
@@ -59,23 +60,20 @@ SLIP_info slip_expand_mpfr_mat
     }
 
     // expon = 10^prec (overestimate)
-    SLIP_CHECK(SLIP_mpfr_ui_pow_ui(expon, 10, option->prec,
-        option->SLIP_MPFR_ROUND));
+    SLIP_CHECK(SLIP_mpfr_ui_pow_ui(expon, 10, option->prec, option->round));
 
     for (i = 0; i < m; i++)
     {
         for (j = 0; j < n; j++)
         {
             // x3[i][j] = x[i][j]*expon
-            SLIP_CHECK(SLIP_mpfr_mul(x3[i][j], x[i][j], expon,
-                option->SLIP_MPFR_ROUND));
+            SLIP_CHECK(SLIP_mpfr_mul(x3[i][j], x[i][j], expon, option->round));
             // x_out[i][j] = x3[i][j]
-            SLIP_CHECK(SLIP_mpfr_get_z(x_out[i][j], x3[i][j],
-                option->SLIP_MPFR_ROUND));
+            SLIP_CHECK(SLIP_mpfr_get_z(x_out[i][j], x3[i][j], option->round));
         }
     }
 
-    SLIP_CHECK(SLIP_mpfr_get_z(temp_expon, expon, option->SLIP_MPFR_ROUND));
+    SLIP_CHECK(SLIP_mpfr_get_z(temp_expon, expon, option->round));
     SLIP_CHECK(SLIP_mpq_set_z(scale, temp_expon));
 
     //--------------------------------------------------------------------------

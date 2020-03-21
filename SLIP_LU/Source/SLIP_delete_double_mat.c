@@ -21,8 +21,8 @@
 void SLIP_delete_double_mat
 (
     double*** A,   // dense matrix
-    int32_t m,     // number of rows of A
-    int32_t n      // number of columns of A (unused parameter)
+    int64_t m,     // number of rows of A
+    int64_t n      // number of columns of A (unused parameter)
 )
 {
 
@@ -31,7 +31,7 @@ void SLIP_delete_double_mat
 
     if (A == NULL || (*A) == NULL) {return;}
 
-    for (int32_t i = 0; i < m; i++)
+    for (int64_t i = 0; i < m; i++)
     {
         SLIP_FREE( (*A)[i]);
     }

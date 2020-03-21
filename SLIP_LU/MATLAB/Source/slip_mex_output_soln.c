@@ -15,8 +15,8 @@
 mxArray* slip_mex_output_soln
 (
     double** x,        // The matrix to be output
-    int32_t m,         // size of x
-    int32_t n          // the size of x
+    int64_t m,         // size of x
+    int64_t n          // the size of x
 )
 {
     // Create a m * n array
@@ -24,15 +24,14 @@ mxArray* slip_mex_output_soln
 
     // Get the numeric values
     double* x2 = mxGetPr(Xmatlab);
-    int32_t count = 0;
+    int64_t count = 0;
 
     // Populate the nonzeros in output matrix
-    for (int32_t j = 0; j < n; j++)
+    for (int64_t j = 0; j < n; j++)
     {
-        for (int32_t i = 0; i < m; i++)
+        for (int64_t i = 0; i < m; i++)
         {
-            x2[count] = x[i][j];
-            count+=1;
+            x2[count++] = x[i][j];
         }
     }
     return Xmatlab;

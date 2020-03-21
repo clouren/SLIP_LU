@@ -20,11 +20,11 @@
 SLIP_info SLIP_build_sparse_csc_double
 (
     SLIP_sparse **A_handle,     // matrix to construct
-    int32_t *p,             // The set of column pointers
-    int32_t *I,             // set of row indices
+    int64_t *p,             // The set of column pointers
+    int64_t *I,             // set of row indices
     double *x,              // Set of values as doubles
-    int32_t n,              // dimension of the matrix
-    int32_t nz,             // number of nonzeros in A (size of x and I vectors)
+    int64_t n,              // dimension of the matrix
+    int64_t nz,             // number of nonzeros in A (size of x and I vectors)
     SLIP_options* option
 )
 {

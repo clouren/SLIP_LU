@@ -66,10 +66,10 @@ SLIP_info SLIP_solve_mpq
         return SLIP_INCORRECT_INPUT;
     }
 
-    int32_t n = A->n, numRHS = b->n;
+    int64_t n = A->n, numRHS = b->n;
     SLIP_sparse *L = NULL ;
     SLIP_sparse *U = NULL ;
-    int32_t *pinv = NULL ;
+    int64_t *pinv = NULL ;
     mpz_t *rhos = NULL ;
 
     //--------------------------------------------------------------------------
@@ -86,7 +86,7 @@ SLIP_info SLIP_solve_mpq
         (const SLIP_sparse *) L,
         (const SLIP_sparse *) U,
         (const mpz_t *) rhos,
-        (const int32_t *) pinv));
+        (const int64_t *) pinv));
 
     SLIP_CHECK(SLIP_permute_x(x_mpq, n, numRHS, S));
 

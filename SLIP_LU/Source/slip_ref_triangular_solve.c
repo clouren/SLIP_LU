@@ -20,7 +20,7 @@
 
 /* Description of input/output
  *
- *  top_output: An int32_t scalar which on input is uninitialized. On output
+ *  top_output: An int64_t scalar which on input is uninitialized. On output
  *              contains the contains the beginning of the nonzero pattern.
  *              The nonzero pattern is contained in xi[top_output...n-1].
  *
@@ -29,7 +29,7 @@
  *
  *  A:          The input matrix. Unmodified on input/output
  *
- *  k:          Unmodified int32_t which indicates which column of L and U is
+ *  k:          Unmodified int64_t which indicates which column of L and U is
  *              being computed.  That is, this triangular solve computes L(:,k)
  *              and U(:,k).
  *
@@ -70,16 +70,16 @@
 
 SLIP_info slip_ref_triangular_solve // performs the sparse REF triangular solve
 (
-    int32_t *top_output,      // Output the beginning of nonzero pattern
+    int64_t *top_output,      // Output the beginning of nonzero pattern
     SLIP_sparse* L,           // partial L matrix
     SLIP_sparse* A,           // input matrix
-    int32_t k,                // constructing L(:,k)
-    int32_t* xi,              // nonzero pattern vector
-    const int32_t* q,         // column permutation, not modified
+    int64_t k,                // constructing L(:,k)
+    int64_t* xi,              // nonzero pattern vector
+    const int64_t* q,         // column permutation, not modified
     const mpz_t* rhos,        // sequence of pivots
-    const int32_t* pinv,      // inverse row permutation
-    const int32_t* row_perm,  // row permutation
-    int32_t* h,               // history vector
+    const int64_t* pinv,      // inverse row permutation
+    const int64_t* row_perm,  // row permutation
+    int64_t* h,               // history vector
     mpz_t* x                  // solution of system ==> kth column of L and U
 )
 {
@@ -94,7 +94,8 @@ SLIP_info slip_ref_triangular_solve // performs the sparse REF triangular solve
     ASSERT (A != NULL && A->kind == SLIP_CSC && A->type == SLIP_MPZ) ;
     ASSERT (rhos != NULL && rhos->kind == SLIP_DENSE && rhos->type == SLIP_MPZ);
 
-    int32_t j, jnew, i, inew, p, m, n, col, sgn, top ;
+    int64_t j, jnew, i, inew, p, m, n, col, top ;
+    int sgn ;
 
     //--------------------------------------------------------------------------
     // Begin the REF triangular solve by obtaining the nonzero pattern, and
@@ -128,7 +129,7 @@ SLIP_info slip_ref_triangular_solve // performs the sparse REF triangular solve
     SLIP_CHECK(SLIP_mpz_set_ui(x[col], 0));
 
     // Reset h[i] = -1 for all i in nonzero pattern xi [top..n-1]
-    SLIP_CHECK(slip_reset_int32_array2(h, n, top, xi));
+    SLIP_CHECK(slip_reset_int64_array2(h, n, top, xi));
 
     // Set x = A(:,q(k))
     SLIP_CHECK(slip_get_column(x, A, col));

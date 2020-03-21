@@ -21,9 +21,9 @@
 SLIP_info slip_reset_mpz_array
 (
     mpz_t *x,      // mpz array to be reset
-    int32_t n,     // size of x
-    int32_t top,   // beginning of the nonzero pattern
-    int32_t *xi    // nonzero pattern
+    int64_t n,     // size of x
+    int64_t top,   // beginning of the nonzero pattern
+    int64_t *xi    // nonzero pattern
 )
 {
 
@@ -40,7 +40,7 @@ SLIP_info slip_reset_mpz_array
 
     // Access the nonzero pattern located in xi[top..n-1]
     // and set nonzero x[i] = 0
-    for (int32_t i = top; i < n; i++)
+    for (int64_t i = top; i < n; i++)
     {
         SLIP_CHECK (SLIP_mpz_set_ui (x [xi [i]], 0)) ;
     }

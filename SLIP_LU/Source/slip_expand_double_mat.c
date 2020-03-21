@@ -29,15 +29,16 @@ SLIP_info slip_expand_double_mat
     mpz_t** x_out,// mpz mat
     double** x,   // double matrix that needs to be made integral
     mpq_t scale,  // scaling factor. x_out = scale*x
-    int32_t m,    // number of rows of x
-    int32_t n,    // number of columns of x
+    int64_t m,    // number of rows of x
+    int64_t n,    // number of columns of x
     SLIP_options* option  // Options struct
 )
 {
 
     // TODO: delete this since *_mat will no longer be used.
 
-    int32_t i, j, k, l, r1, r2 = 1;
+    int64_t i, j, k, l ;
+    int r1, r2 = 1;
     bool nz_found = false;
     SLIP_info info ;
     mpfr_t **x3 = NULL;
@@ -62,16 +63,14 @@ SLIP_info slip_expand_double_mat
         for (j = 0; j < n; j++)
         {
             // x3[i][j] = x[i][j]
-            SLIP_CHECK(SLIP_mpfr_set_d(x3[i][j], x[i][j],
-                option->SLIP_MPFR_ROUND));
+            SLIP_CHECK(SLIP_mpfr_set_d(x3[i][j], x[i][j], option->round));
 
             // x3[i][j] = x[i][j]*10^17
             SLIP_CHECK(SLIP_mpfr_mul_d(x3[i][j], x3[i][j], expon,
-                option->SLIP_MPFR_ROUND));
+                option->round));
 
             // x_out[i][j] = x3[i][j]
-            SLIP_CHECK(SLIP_mpfr_get_z(x_out[i][j], x3[i][j],
-                option->SLIP_MPFR_ROUND));
+            SLIP_CHECK(SLIP_mpfr_get_z(x_out[i][j], x3[i][j], option->round));
         }
     }
     //--------------------------------------------------------------------------

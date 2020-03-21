@@ -21,19 +21,19 @@ void slip_get_matlab_options
     mxArray* tmp;
 
     // Get the column ordering
-    int32_t order = 1 ;     // default: COLAMD ordering
+    int64_t order = 1 ;     // default: COLAMD ordering
     tmp = mxGetField(input, 0, "order");
     if (tmp != NULL)
     {
-        order = (int32_t) mxGetScalar(tmp);
+        order = (int64_t) mxGetScalar(tmp);
     }
 
     // Get the row pivoting scheme
-    int32_t piv = 3 ;       // default: diag pivoting with tolerance
+    int64_t piv = 3 ;       // default: diag pivoting with tolerance
     tmp = mxGetField(input, 0, "pivot");
     if (tmp != NULL)
     {
-        piv = (int32_t) mxGetScalar(tmp);
+        piv = (int64_t) mxGetScalar(tmp);
     }
 
     // tolerance for row partial pivoting

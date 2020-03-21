@@ -12,28 +12,13 @@
 // SLIP_matrix A.  The new matrix C can have a different kind and type
 // than A.
 
-// TODO: this is a sketch (it won't compile yet).  See the TODO's.
-// probably need some helper functions, since some chunks of code are
-// repeated.
-
 // The input matrix A is assumed to be valid.  It can be checked first with
 // SLIP_matrix_check, if desired.  If the input matrix A is not valid, results
 // are undefined.
 
-// TODO: SLIP_matrix_check replaces SLIP_spok and works for any kind and type.
-
-//  What to do about C->scale ?
-//      A (double) to C (in mpz).  C->scale = ... ?
-//      A (mpz) to C (in double).  use A->scale ?
-//      I guess this function needs to compute C->scale somehow.
-//      Does the user need to specify anything?
-
 #define SLIP_FREE_WORK                  \
-    free Y_mpq /* TODO */ \
-    free Y_mpz /* TODO */ \
-    free Y_mpfr /* TODO */ \
-    SLIP_FREE (Y_int32) ;               \
-    SLIP_FREE (Y_fp64) ;                \
+    SLIP_matrix_free (&T, option) ;     \
+    SLIP_matrix_free (&Y, option) ;     \
     SLIP_FREE (W) ;
 
 #define SLIP_FREE_ALL                   \
@@ -46,8 +31,8 @@ SLIP_info SLIP_matrix_copy
 (
     SLIP_matrix **C_handle, // matrix to create (never shallow)
     // inputs, not modified:
-    SLIP_kind kind,         // CSC, triplet, or dense
-    SLIP_type type,         // mpz_t, mpq_t, mprf_t, int32_t, or double
+    SLIP_kind C_kind,       // C->kind: CSC, triplet, or dense
+    SLIP_type C_type,       // C->type: mpz_t, mpq_t, mprf_t, int64_t, or double
     SLIP_matrix *A,         // matrix to make a copy of (may be shallow)
     SLIP_options *option
 )
@@ -58,30 +43,24 @@ SLIP_info SLIP_matrix_copy
     //--------------------------------------------------------------------------
 
     SLIP_info info ;
-    if (A == NULL || option == NULL || C_handle == NULL)
+    int64_t nz = SLIP_matrix_nnz (A, option) ;
+    if (A == NULL || option == NULL || C_handle == NULL || nz < 0)
     {
         return (SLIP_INCORRECT_INPUT) ;
     }
     (*C_handle) = NULL ;
     SLIP_matrix *C = NULL ;
-    int32_t *W = NULL ;
-    int32_t m = A->m ;
-    int32_t n = A->n ;
-
-    // workspace for each data type
-    mpq_t   *Y_mpq   = NULL ;
-    mpz_t   *Y_mpz   = NULL ;
-    mpfr_t  *Y_mpfr  = NULL ;
-    int32_t *Y_int32 = NULL ;
-    double  *Y_fp64  = NULL ;
-
-#if THIS_IS_A_DRAFT_AND_WONT_COMPILE_YET
+    SLIP_matrix *Y = NULL ;
+    SLIP_matrix *T = NULL ;
+    int64_t *W = NULL ;
+    int64_t m = A->m ;
+    int64_t n = A->n ;
 
     //--------------------------------------------------------------------------
     // copy and convert A into C
     //--------------------------------------------------------------------------
 
-    switch (kind)
+    switch (C_kind)
     {
 
         //----------------------------------------------------------------------
@@ -101,15 +80,14 @@ SLIP_info SLIP_matrix_copy
                 case SLIP_CSC:
                 {
                     // allocate C
-                    int32_t nz = A->p [n] ;
-                    SLIP_CHECK (SLIP_matrix_allocate (&C, kind, type, m, n, nz,
-                        false, option)) ;
+                    SLIP_CHECK (SLIP_matrix_allocate (&C, SLIP_CSC, C_type,
+                        m, n, nz, false, option)) ;
                     // copy the pattern of A into C
-                    memcpy (C->p, A->p, (n+1) * sizeof (int32)) ;
-                    memcpy (C->i, A->i, nz * sizeof (int32)) ;
+                    memcpy (C->p, A->p, (n+1) * sizeof (int64_t)) ;
+                    memcpy (C->i, A->i, nz * sizeof (int64_t)) ;
                     // copy and typecast A->x into C->x
-                    SLIP_CHECK (slip_cast_array (C->x, type, A->x, A->type,
-                        nz, C->scale, option)) ;
+                    SLIP_CHECK (slip_cast_array (SLIP_X (C), C->type,
+                        SLIP_X (A), A->type, nz, C->scale, option)) ;
                 }
                 break ;
 
@@ -119,43 +97,94 @@ SLIP_info SLIP_matrix_copy
 
                 case SLIP_TRIPLET:
                 {
-                    int32_t nz = A->nz ;
 
-                    // Y = typecasted/scaled copy of A->x
-                    allocate Y with the right type, of size nz  // TODO
-                    SLIP_CHECK (slip_cast_array (Y, type, A->x, A->type,
-                        nz, scale, option)) ;
+                    // Y = typecast the values of A into the type of C
+                    SLIP_CHECK (slip_cast_matrix (&Y, C_type, A, option)) ;
 
                     // allocate workspace
-                    W = (int32_t *) SLIP_calloc (n, sizeof (int32_t)) ;
+                    W = (int64_t *) SLIP_calloc (n, sizeof (int64_t)) ;
                     if (W == NULL)
                     {
                         SLIP_FREE_ALL ;
                         return (SLIP_OUT_OF_MEMORY) ;
                     }
+
                     // allocate C
-                    SLIP_CHECK (SLIP_matrix_allocate (&C, kind, type, m, n, nz,
-                        false, option)) ;
-                    C->scale = scale ; // TODO
+                    SLIP_CHECK (SLIP_matrix_allocate (&C, SLIP_CSC,
+                        C_type, m, n, nz, false, option)) ;
+
+                    // C->scale = Y->scale
+                    SLIP_CHECK (SLIP_mpq_set (C->scale, Y->scale)) ;
+
                     // count the # of entries in each column
-                    for (int32_t k = 0 ; k < nz ; k++)
+                    for (int64_t k = 0 ; k < nz ; k++)
                     {
                         W [A->j [k]]++ ;
                     }
+
                     // C->p = cumulative sum of W
                     slip_cumsum (C->p, W, n) ;
+
                     // build the matrix
-                    // TODO need 5-way switch for typecast
-                    // (Y and C already have the same type)
-                    for (int32_t k = 0 ; k < nz ; k++)
+                    switch (C->type)
                     {
-                        // find the position in C for the kth tuple
-                        int32_t p = W [J [k]]++ ;
-                        // place the entry in C
-                        C->i [p] = I [k] ;
-                        SLIP_ENTRY (C, p, type) = SLIP_ENTRY (Y, k, type) ;
+                        case SLIP_MPZ:
+                            for (int64_t k = 0 ; k < nz ; k++)
+                            {
+                                int64_t p = W [A->j [k]]++ ;
+                                C->i [p] = A->i [k] ;
+                                SLIP_CHECK (SLIP_mpz_set (
+                                    SLIP_ENTRY (C, p, mpz),
+                                    SLIP_ENTRY (Y, k, mpz))) ;
+                            }
+                            break ;
+
+                        case SLIP_MPQ:
+                            for (int64_t k = 0 ; k < nz ; k++)
+                            {
+                                int64_t p = W [A->j [k]]++ ;
+                                C->i [p] = A->i [k] ;
+                                SLIP_CHECK (SLIP_mpq_set (
+                                    SLIP_ENTRY (C, p, mpq),
+                                    SLIP_ENTRY (Y, k, mpq))) ;
+                            }
+                            break ;
+
+                        case SLIP_MPFR:
+                            for (int64_t k = 0 ; k < nz ; k++)
+                            {
+                                int64_t p = W [A->j [k]]++ ;
+                                C->i [p] = A->i [k] ;
+                                SLIP_CHECK (SLIP_mpfr_set (
+                                    SLIP_ENTRY (C, p, mpfr),
+                                    SLIP_ENTRY (Y, k, mpfr),
+                                    option->round)) ;
+                            }
+                            break ;
+
+                        case SLIP_INT64:
+                            for (int64_t k = 0 ; k < nz ; k++)
+                            {
+                                int64_t p = W [A->j [k]]++ ;
+                                C->i [p] = A->i [k] ;
+                                SLIP_ENTRY (C, p, int64) =
+                                    SLIP_ENTRY (Y, k, int64) ;
+                            }
+                            break ;
+
+                        case SLIP_FP64:
+                            for (int64_t k = 0 ; k < nz ; k++)
+                            {
+                                int64_t p = W [A->j [k]]++ ;
+                                C->i [p] = A->i [k] ;
+                                SLIP_ENTRY (C, p, fp64) =
+                                    SLIP_ENTRY (Y, k, fp64) ;
+                            }
+                            break ;
+
+                        default: SLIP_FREE_ALL ; return (SLIP_INCORRECT_INPUT) ;
                     }
-                    C->nz = C->p [n] ;          // TODO is this needed?
+
                 }
                 break ;
 
@@ -165,48 +194,171 @@ SLIP_info SLIP_matrix_copy
 
                 case SLIP_DENSE:
                 {
-                    int32_t nzmax = m*n ;
-                    // Y = typecasted/scaled copy of A->x
-                    allocate Y with the right type, of size nzmax   // TODO
-                    SLIP_CHECK (slip_cast_array (Y, type, A->x, A->type,
-                        nzmax, scale, option)) ;
-                    // count the nonzeros in Y
-                    int32_t nz = 0 ;
-                    // TODO: make this a helper function with 5-way switch:
-                    for (int32_t k = 0 ; k < nzmax ; k++)
+                    // Y = typecast the values of A into the type of C
+                    SLIP_CHECK (slip_cast_matrix (&Y, C_type, A, option)) ;
+                    int s ;
+
+                    // count the actual nonzeros in Y
+                    int64_t actual = 0 ;
+                    switch (Y->type)
                     {
-                        if (SLIP_ENTRY (Y, k, type) != 0)  // TODO
-                        {
-                            nz++ ;
-                        }
-                    }
-                    // allocate C
-                    SLIP_CHECK (SLIP_matrix_allocate (&C, kind, type, m, n, nz,
-                        false, option)) ;
-                    C->scale = scale ; // TODO
-                    // Construct C
-                    // TODO: need 5-way switch for each type:
-                    // (Y and C already have the same type)
-                    int32_t nz = 0 ;
-                    for (int32_t j = 0 ; j < n ; j++)
-                    {
-                        C->p [j] = nz ;
-                        for (int32_t i = 0 ; i < m ; i++)
-                        {
-                            if (SLIP_2D (Y, i, j, type) != 0)  // TODO
+
+                        case SLIP_MPZ:
+                            for (int64_t k = 0 ; k < nz ; k++)
                             {
-                                C->i [nz] = i ;
-                                SLIP_ENTRY (C, nz, type) =
-                                    SLIP_2D (Y, i, j, type) ;  // TODO
-                                nz++ ;
+                                SLIP_CHECK (SLIP_mpz_sgn (&s,
+                                    SLIP_ENTRY (Y, k, mpz))) ;
+                                if (s != 0) actual++ ;
                             }
-                        }
+                            break ;
+
+                        case SLIP_MPQ:
+                            for (int64_t k = 0 ; k < nz ; k++)
+                            {
+                                SLIP_CHECK (SLIP_mpq_sgn (&s,
+                                    SLIP_ENTRY (Y, k, mpq))) ;
+                                if (s != 0) actual++ ;
+                            }
+                            break ;
+
+                        case SLIP_MPFR:
+                            for (int64_t k = 0 ; k < nz ; k++)
+                            {
+                                SLIP_CHECK (SLIP_mpfr_sgn (&s,
+                                    SLIP_ENTRY (Y, k, mpfr))) ;
+                                if (s != 0) actual++ ;
+                            }
+                            break ;
+
+                        case SLIP_INT64:
+                            for (int64_t k = 0 ; k < nz ; k++)
+                            {
+                                if (SLIP_ENTRY (Y, k, int64) != 0) actual++ ;
+                            }
+                            break ;
+
+                        case SLIP_FP64:
+                            for (int64_t k = 0 ; k < nz ; k++)
+                            {
+                                if (SLIP_ENTRY (Y, k, fp64) != 0) actual++ ;
+                            }
+                            break ;
+
+                        default: SLIP_FREE_ALL ; return (SLIP_INCORRECT_INPUT) ;
+                    }
+
+                    // allocate C
+                    SLIP_CHECK (SLIP_matrix_allocate (&C, SLIP_CSC, C_type,
+                        m, n, actual, false, option)) ;
+
+                    // C->scale = Y->scale
+                    SLIP_CHECK (SLIP_mpq_set (C->scale, Y->scale)) ;
+
+                    // Construct C
+                    nz = 0 ;
+                    switch (C->type)
+                    {
+
+                        case SLIP_MPZ:
+                            for (int64_t j = 0 ; j < n ; j++)
+                            {
+                                C->p [j] = nz ;
+                                for (int64_t i = 0 ; i < m ; i++)
+                                {
+                                    SLIP_CHECK (SLIP_mpz_sgn (&s,
+                                        SLIP_2D (Y, i, j, mpz))) ;
+                                    if (s != 0)
+                                    {
+                                        C->i [nz] = i ;
+                                        SLIP_CHECK (SLIP_mpz_set (
+                                            SLIP_ENTRY (C, nz, mpz),
+                                            SLIP_2D (Y, i, j, mpz))) ;
+                                        nz++ ;
+                                    }
+                                }
+                            }
+                            break ;
+
+                        case SLIP_MPQ:
+                            for (int64_t j = 0 ; j < n ; j++)
+                            {
+                                C->p [j] = nz ;
+                                for (int64_t i = 0 ; i < m ; i++)
+                                {
+                                    SLIP_CHECK (SLIP_mpq_sgn (&s,
+                                        SLIP_2D (Y, i, j, mpq))) ;
+                                    if (s != 0)
+                                    {
+                                        C->i [nz] = i ;
+                                        SLIP_CHECK (SLIP_mpq_set (
+                                            SLIP_ENTRY (C, nz, mpq),
+                                            SLIP_2D (Y, i, j, mpq))) ;
+                                        nz++ ;
+                                    }
+                                }
+                            }
+                            break ;
+
+                        case SLIP_MPFR:
+                            for (int64_t j = 0 ; j < n ; j++)
+                            {
+                                C->p [j] = nz ;
+                                for (int64_t i = 0 ; i < m ; i++)
+                                {
+                                    SLIP_CHECK (SLIP_mpfr_sgn (&s,
+                                        SLIP_2D (Y, i, j, mpfr))) ;
+                                    if (s != 0)
+                                    {
+                                        C->i [nz] = i ;
+                                        SLIP_CHECK (SLIP_mpfr_set (
+                                            SLIP_ENTRY (C, nz, mpfr),
+                                            SLIP_2D (Y, i, j, mpfr),
+                                            option->round)) ;
+                                        nz++ ;
+                                    }
+                                }
+                            }
+                            break ;
+
+                        case SLIP_INT64:
+                            for (int64_t j = 0 ; j < n ; j++)
+                            {
+                                C->p [j] = nz ;
+                                for (int64_t i = 0 ; i < m ; i++)
+                                {
+                                    if (SLIP_2D (Y, i, j, int64) != 0)
+                                    {
+                                        C->i [nz] = i ;
+                                        SLIP_ENTRY (C, nz, int64) =
+                                            SLIP_2D (Y, i, j, int64) ;
+                                        nz++ ;
+                                    }
+                                }
+                            }
+                            break ;
+
+                        case SLIP_FP64:
+                            for (int64_t j = 0 ; j < n ; j++)
+                            {
+                                C->p [j] = nz ;
+                                for (int64_t i = 0 ; i < m ; i++)
+                                {
+                                    if (SLIP_2D (Y, i, j, fp64) != 0)
+                                    {
+                                        C->i [nz] = i ;
+                                        SLIP_ENTRY (C, nz, fp64) =
+                                            SLIP_2D (Y, i, j, fp64) ;
+                                        nz++ ;
+                                    }
+                                }
+                            }
+                            break ;
                     }
                     C->p [n] = nz ;
                 }
                 break ;
 
-                default: return (SLIP_INCORRECT_INPUT) ;
+                default: SLIP_FREE_ALL ; return (SLIP_INCORRECT_INPUT) ;
             }
 
         }
@@ -229,18 +381,17 @@ SLIP_info SLIP_matrix_copy
                 case SLIP_CSC:
                 {
                     // allocate C
-                    int32_t nz = A->p [n] ;
-                    SLIP_CHECK (SLIP_matrix_allocate (&C, kind, type, m, n, nz,
-                        false, option)) ;
+                    SLIP_CHECK (SLIP_matrix_allocate (&C, SLIP_TRIPLET, C_type,
+                        m, n, nz, false, option)) ;
                     // copy and typecast A->x into C->x
-                    SLIP_CHECK (slip_cast_array (C->x, type, A->x, A->type,
-                        nz, C->scale, option)) ;
+                    SLIP_CHECK (slip_cast_array (SLIP_X (C), C->type,
+                        SLIP_X (A), A->type, nz, C->scale, option)) ;
                     // copy the row indices A->i into C->i
-                    memcpy (C->i, A->i, nz * sizeof (int32)) ;
+                    memcpy (C->i, A->i, nz * sizeof (int64_t)) ;
                     // construct C->j
-                    for (int32_t j = 0 ; j < n ; j++)
+                    for (int64_t j = 0 ; j < n ; j++)
                     {
-                        for (int32_t p = A->p [j] ; p < A->p [j+1] ; p++)
+                        for (int64_t p = A->p [j] ; p < A->p [j+1] ; p++)
                         {
                             C->j [p] = j ;
                         }
@@ -255,15 +406,14 @@ SLIP_info SLIP_matrix_copy
                 case SLIP_TRIPLET:
                 {
                     // allocate C
-                    int32_t nz = A->nz ;
-                    SLIP_CHECK (SLIP_matrix_allocate (&C, kind, type, m, n, nz,
-                        false, option)) ;
+                    SLIP_CHECK (SLIP_matrix_allocate (&C, SLIP_TRIPLET, C_type,
+                        m, n, nz, false, option)) ;
                     // copy the pattern of A into C
-                    memcpy (C->j, A->j, nz * sizeof (int32)) ;
-                    memcpy (C->i, A->i, nz * sizeof (int32)) ;
+                    memcpy (C->j, A->j, nz * sizeof (int64_t)) ;
+                    memcpy (C->i, A->i, nz * sizeof (int64_t)) ;
                     // copy and typecast A->x into C->x
-                    SLIP_CHECK (slip_cast_array (C->x, type, A->x, A->type,
-                        nz, C->scale, option)) ;
+                    SLIP_CHECK (slip_cast_array (SLIP_X (C), C->type,
+                        SLIP_X (A), A->type, nz, C->scale, option)) ;
                 }
                 break ;
 
@@ -273,16 +423,17 @@ SLIP_info SLIP_matrix_copy
 
                 case SLIP_DENSE:
                 {
-                    // convert A to a temporary CSC matrix, then to triplet
-                    SLIP_CHECK (SLIP_matrix_copy (&T, SLIP_CSC, type, A,
-                        option)) ;
-                    SLIP_CHECK (SLIP_matrix_copy (&C, kind, type, T, option)) ;
+                    // convert A to a temporary CSC matrix
+                    SLIP_CHECK (SLIP_matrix_copy (&T, SLIP_CSC, C_type,
+                        A, option)) ;
+                    // convert T from CSC to triplet
+                    SLIP_CHECK (SLIP_matrix_copy (&C, SLIP_TRIPLET, C_type,
+                        T, option)) ;
                     SLIP_matrix_free (&T, option) ;
-
                 }
                 break ;
 
-                default: return (SLIP_INCORRECT_INPUT) ;
+                default: SLIP_FREE_ALL ; return (SLIP_INCORRECT_INPUT) ;
             }
 
         }
@@ -296,9 +447,8 @@ SLIP_info SLIP_matrix_copy
         {
 
             // allocate C
-            int32_t nzmax = m*n ;
-            SLIP_CHECK (SLIP_matrix_allocate (&C, kind, type, m, n, nzmax,
-                false, option)) ;
+            SLIP_CHECK (SLIP_matrix_allocate (&C, SLIP_DENSE, C_type,
+                m, n, nz, false, option)) ;
 
             switch (A->kind)
             {
@@ -309,15 +459,79 @@ SLIP_info SLIP_matrix_copy
 
                 case SLIP_CSC:
                 {
-                    // TODO: need 5-way switch for each type:
-                    for (int32_t j = 0 ; j < n ; k++)
+                    // Y = typecast the values of A into the type of C
+                    SLIP_CHECK (slip_cast_matrix (&Y, C->type, A, option)) ;
+
+                    switch (C->type)
                     {
-                        for (int32_t p = A->p [j] ; p < A->p [j+1] ; p++)
-                        {
-                            int32_t i = A->i [p] ;
-                            SLIP_2D (C, i, j, type) = SLIP_ENTRY (Y, p, type) ;
-                        }
+
+                        case SLIP_MPZ:
+                            for (int64_t j = 0 ; j < n ; j++)
+                            {
+                                for (int64_t p = A->p [j] ; p < A->p [j+1] ;p++)
+                                {
+                                    int64_t i = A->i [p] ;
+                                    SLIP_CHECK (SLIP_mpz_set (
+                                        SLIP_2D (C, i, j, mpz),
+                                        SLIP_ENTRY (Y, p, mpz))) ;
+                                }
+                            }
+                            break ;
+
+                        case SLIP_MPQ:
+                            for (int64_t j = 0 ; j < n ; j++)
+                            {
+                                for (int64_t p = A->p [j] ; p < A->p [j+1] ;p++)
+                                {
+                                    int64_t i = A->i [p] ;
+                                    SLIP_CHECK (SLIP_mpq_set (
+                                        SLIP_2D (C, i, j, mpq),
+                                        SLIP_ENTRY (Y, p, mpq))) ;
+                                }
+                            }
+                            break ;
+
+                        case SLIP_MPFR:
+                            for (int64_t j = 0 ; j < n ; j++)
+                            {
+                                for (int64_t p = A->p [j] ; p < A->p [j+1] ;p++)
+                                {
+                                    int64_t i = A->i [p] ;
+                                    SLIP_CHECK (SLIP_mpfr_set (
+                                        SLIP_2D (C, i, j, mpfr),
+                                        SLIP_ENTRY (Y, p, mpfr),
+                                        option->round)) ;
+                                }
+                            }
+                            break ;
+
+                        case SLIP_INT64:
+                            for (int64_t j = 0 ; j < n ; j++)
+                            {
+                                for (int64_t p = A->p [j] ; p < A->p [j+1] ;p++)
+                                {
+                                    int64_t i = A->i [p] ;
+                                    SLIP_2D (C, i, j, int64) =
+                                        SLIP_ENTRY (Y, p, int64) ;
+                                }
+                            }
+                            break ;
+
+                        case SLIP_FP64:
+                            for (int64_t j = 0 ; j < n ; j++)
+                            {
+                                for (int64_t p = A->p [j] ; p < A->p [j+1] ;p++)
+                                {
+                                    int64_t i = A->i [p] ;
+                                    SLIP_2D (C, i, j, fp64) =
+                                        SLIP_ENTRY (Y, p, fp64) ;
+                                }
+                            }
+                            break ;
+
+                        default: SLIP_FREE_ALL ; return (SLIP_INCORRECT_INPUT) ;
                     }
+
                 }
                 break ;
 
@@ -327,13 +541,67 @@ SLIP_info SLIP_matrix_copy
 
                 case SLIP_TRIPLET:
                 {
-                    // TODO: need 5-way switch for each type:
-                    int32_t nz = A->nz ;
-                    for (int32_t k = 0 ; k < nz ; k++)
+                    // Y = typecast the values of A into the type of C
+                    SLIP_CHECK (slip_cast_matrix (&Y, C->type, A, option)) ;
+
+                    switch (C->type)
                     {
-                        int32_t i = A->i [k] ;
-                        int32_t j = A->j [k] ;
-                        SLIP_2D (C, i, j, type) = A->x [k] ;    // TODO
+
+                        case SLIP_MPZ:
+                            for (int64_t k = 0 ; k < nz ; k++)
+                            {
+                                int64_t i = A->i [k] ;
+                                int64_t j = A->j [k] ;
+                                SLIP_CHECK (SLIP_mpz_set (
+                                    SLIP_2D (C, i, j, mpz),
+                                    SLIP_ENTRY (A, k, mpz))) ;
+                            }
+                            break ;
+
+                        case SLIP_MPQ:
+                            for (int64_t k = 0 ; k < nz ; k++)
+                            {
+                                int64_t i = A->i [k] ;
+                                int64_t j = A->j [k] ;
+                                SLIP_CHECK (SLIP_mpq_set (
+                                    SLIP_2D (C, i, j, mpq),
+                                    SLIP_ENTRY (A, k, mpq))) ;
+                            }
+                            break ;
+
+                        case SLIP_MPFR:
+                            for (int64_t k = 0 ; k < nz ; k++)
+                            {
+                                int64_t i = A->i [k] ;
+                                int64_t j = A->j [k] ;
+                                SLIP_CHECK (SLIP_mpfr_set (
+                                    SLIP_2D (C, i, j, mpfr),
+                                    SLIP_ENTRY (A, k, mpfr),
+                                    option->round)) ;
+                            }
+                            break ;
+
+                        case SLIP_INT64:
+                            for (int64_t k = 0 ; k < nz ; k++)
+                            {
+                                int64_t i = A->i [k] ;
+                                int64_t j = A->j [k] ;
+                                SLIP_2D (C, i, j, int64) =
+                                    SLIP_ENTRY (A, k, int64) ;
+                            }
+                            break ;
+
+                        case SLIP_FP64:
+                            for (int64_t k = 0 ; k < nz ; k++)
+                            {
+                                int64_t i = A->i [k] ;
+                                int64_t j = A->j [k] ;
+                                SLIP_2D (C, i, j, fp64) =
+                                    SLIP_ENTRY (A, k, fp64) ;
+                            }
+                            break ;
+                    
+                        default: SLIP_FREE_ALL ; return (SLIP_INCORRECT_INPUT) ;
                     }
                 }
                 break ;
@@ -345,18 +613,18 @@ SLIP_info SLIP_matrix_copy
                 case SLIP_DENSE:
                 {
                     // copy and typecast A->x into C->x
-                    SLIP_CHECK (slip_cast_array (C->x, type, A->x, A->type,
-                        nzmax, C->scale, option)) ;
+                    SLIP_CHECK (slip_cast_array (SLIP_X (C), C->type,
+                        SLIP_X (A), A->type, nz, C->scale, option)) ;
                 }
                 break ;
 
-                default: return (SLIP_INCORRECT_INPUT) ;
+                default: SLIP_FREE_ALL ; return (SLIP_INCORRECT_INPUT) ;
             }
 
         }
         break ;
 
-        default: return (SLIP_INCORRECT_INPUT) ;
+        default: SLIP_FREE_ALL ; return (SLIP_INCORRECT_INPUT) ;
     }
 
     //--------------------------------------------------------------------------
@@ -365,7 +633,6 @@ SLIP_info SLIP_matrix_copy
 
     SLIP_FREE_WORK ;
     (*C_handle) = C ;
-#endif
 
     return (SLIP_OK) ;
 }
