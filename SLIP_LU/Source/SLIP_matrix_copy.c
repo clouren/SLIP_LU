@@ -20,11 +20,20 @@
 // SLIP_matrix_check, if desired.  If the input matrix A is not valid, results
 // are undefined.
 
-// TODO: SLIP_matrix_check would use SLIP_spok for CSC, simpler check for
-// triplet, etc.
+// TODO: SLIP_matrix_check replaces SLIP_spok and works for any kind and type.
+
+//  What to do about C->scale ?
+//      A (double) to C (in mpz).  C->scale = ... ?
+//      A (mpz) to C (in double).  use A->scale ?
+//      I guess this function needs to compute C->scale somehow.
+//      Does the user need to specify anything?
 
 #define SLIP_FREE_WORK                  \
-    free Y /* TODO */                   \
+    free Y_mpq /* TODO */ \
+    free Y_mpz /* TODO */ \
+    free Y_mpfr /* TODO */ \
+    SLIP_FREE (Y_int32) ;               \
+    SLIP_FREE (Y_fp64) ;                \
     SLIP_FREE (W) ;
 
 #define SLIP_FREE_ALL                   \
@@ -59,8 +68,14 @@ SLIP_info SLIP_matrix_copy
     int32_t m = A->m ;
     int32_t n = A->n ;
 
-#if 0
-    Y = NULL ;      // TODO one for each data type?
+    // workspace for each data type
+    mpq_t   *Y_mpq   = NULL ;
+    mpz_t   *Y_mpz   = NULL ;
+    mpfr_t  *Y_mpfr  = NULL ;
+    int32_t *Y_int32 = NULL ;
+    double  *Y_fp64  = NULL ;
+
+#if THIS_IS_A_DRAFT_AND_WONT_COMPILE_YET
 
     //--------------------------------------------------------------------------
     // copy and convert A into C
@@ -105,10 +120,12 @@ SLIP_info SLIP_matrix_copy
                 case SLIP_TRIPLET:
                 {
                     int32_t nz = A->nz ;
+
                     // Y = typecasted/scaled copy of A->x
                     allocate Y with the right type, of size nz  // TODO
                     SLIP_CHECK (slip_cast_array (Y, type, A->x, A->type,
                         nz, scale, option)) ;
+
                     // allocate workspace
                     W = (int32_t *) SLIP_calloc (n, sizeof (int32_t)) ;
                     if (W == NULL)
@@ -118,7 +135,7 @@ SLIP_info SLIP_matrix_copy
                     }
                     // allocate C
                     SLIP_CHECK (SLIP_matrix_allocate (&C, kind, type, m, n, nz,
-                        , false, option)) ;
+                        false, option)) ;
                     C->scale = scale ; // TODO
                     // count the # of entries in each column
                     for (int32_t k = 0 ; k < nz ; k++)
@@ -128,13 +145,15 @@ SLIP_info SLIP_matrix_copy
                     // C->p = cumulative sum of W
                     slip_cumsum (C->p, W, n) ;
                     // build the matrix
+                    // TODO need 5-way switch for typecast
+                    // (Y and C already have the same type)
                     for (int32_t k = 0 ; k < nz ; k++)
                     {
                         // find the position in C for the kth tuple
                         int32_t p = W [J [k]]++ ;
                         // place the entry in C
                         C->i [p] = I [k] ;
-                        C->x [p] = Y [k] ;      // TODO, for each type
+                        SLIP_ENTRY (C, p, type) = SLIP_ENTRY (Y, k, type) ;
                     }
                     C->nz = C->p [n] ;          // TODO is this needed?
                 }
@@ -146,16 +165,17 @@ SLIP_info SLIP_matrix_copy
 
                 case SLIP_DENSE:
                 {
-                    // Y = typecasted/scaled copy of A->x
                     int32_t nzmax = m*n ;
+                    // Y = typecasted/scaled copy of A->x
                     allocate Y with the right type, of size nzmax   // TODO
                     SLIP_CHECK (slip_cast_array (Y, type, A->x, A->type,
                         nzmax, scale, option)) ;
                     // count the nonzeros in Y
                     int32_t nz = 0 ;
+                    // TODO: make this a helper function with 5-way switch:
                     for (int32_t k = 0 ; k < nzmax ; k++)
                     {
-                        if (SLIP_ENTRY (Y, k) != 0)  // TODO
+                        if (SLIP_ENTRY (Y, k, type) != 0)  // TODO
                         {
                             nz++ ;
                         }
@@ -165,16 +185,19 @@ SLIP_info SLIP_matrix_copy
                         false, option)) ;
                     C->scale = scale ; // TODO
                     // Construct C
+                    // TODO: need 5-way switch for each type:
+                    // (Y and C already have the same type)
                     int32_t nz = 0 ;
                     for (int32_t j = 0 ; j < n ; j++)
                     {
                         C->p [j] = nz ;
                         for (int32_t i = 0 ; i < m ; i++)
                         {
-                            if (SLIP_ENTRY (Y, i, j) != 0)  // TODO
+                            if (SLIP_2D (Y, i, j, type) != 0)  // TODO
                             {
                                 C->i [nz] = i ;
-                                C->x [nz] = SLIP_ENTRY (Y, i, j) ;  // TODO
+                                SLIP_ENTRY (C, nz, type) =
+                                    SLIP_2D (Y, i, j, type) ;  // TODO
                                 nz++ ;
                             }
                         }
@@ -250,39 +273,12 @@ SLIP_info SLIP_matrix_copy
 
                 case SLIP_DENSE:
                 {
-                    int32_t nzmax = m*n ;
-                    // Y = typecasted/scaled copy of A->x
-                    allocate Y with the right type, of size nzmax // TODO
-                    SLIP_CHECK (slip_cast_array (Y, type, A->x, A->type,
-                        nzmax, scale, option)) ;
-                    // count the nonzeros in Y
-                    int32_t nz = 0 ;
-                    for (int32_t k = 0 ; k < nzmax ; k++)
-                    {
-                        if (SLIP_ENTRY (Y, k) != 0)  // TODO
-                        {
-                            nz++ ;
-                        }
-                    }
-                    // allocate C
-                    SLIP_CHECK (SLIP_matrix_allocate (&C, kind, type, m, n, nz,
-                        false, option)) ;
-                    C->scale = scale ; // TODO
-                    // Construct C
-                    int32_t nz = 0 ;
-                    for (int32_t j = 0 ; j < n ; j++)
-                    {
-                        for (int32_t i = 0 ; i < m ; i++)
-                        {
-                            if (SLIP_ENTRY (Y, i, j) != 0)  // TODO
-                            {
-                                C->i [nz] = i ;
-                                C->j [nz] = j ;
-                                C->x [nz] = SLIP_ENTRY (Y, i, j) ;  // TODO
-                                nz++ ;
-                            }
-                        }
-                    }
+                    // convert A to a temporary CSC matrix, then to triplet
+                    SLIP_CHECK (SLIP_matrix_copy (&T, SLIP_CSC, type, A,
+                        option)) ;
+                    SLIP_CHECK (SLIP_matrix_copy (&C, kind, type, T, option)) ;
+                    SLIP_matrix_free (&T, option) ;
+
                 }
                 break ;
 
@@ -313,12 +309,13 @@ SLIP_info SLIP_matrix_copy
 
                 case SLIP_CSC:
                 {
+                    // TODO: need 5-way switch for each type:
                     for (int32_t j = 0 ; j < n ; k++)
                     {
                         for (int32_t p = A->p [j] ; p < A->p [j+1] ; p++)
                         {
                             int32_t i = A->i [p] ;
-                            SLIP_ENTRY (C->x, i, j) = A->x [p] ;    // TODO
+                            SLIP_2D (C, i, j, type) = SLIP_ENTRY (Y, p, type) ;
                         }
                     }
                 }
@@ -330,12 +327,13 @@ SLIP_info SLIP_matrix_copy
 
                 case SLIP_TRIPLET:
                 {
+                    // TODO: need 5-way switch for each type:
                     int32_t nz = A->nz ;
                     for (int32_t k = 0 ; k < nz ; k++)
                     {
                         int32_t i = A->i [k] ;
                         int32_t j = A->j [k] ;
-                        SLIP_ENTRY (C->x, i, j) = A->x [k] ;    // TODO
+                        SLIP_2D (C, i, j, type) = A->x [k] ;    // TODO
                     }
                 }
                 break ;

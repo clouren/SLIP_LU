@@ -345,10 +345,13 @@ typedef struct
 // SLIP_matrix_allocate: allocate an m-by-n SLIP_matrix
 //------------------------------------------------------------------------------
 
-// if shallow is false: All components (p,j,i,x) are allocated and set to zero,
+// if shallow is false: All components (p,i,j,x) are allocated and set to zero,
 //                      and then shallow flags are all false.
-// if shallow is true:  All components (p,j,i,x) are NULL, and their shallow
-//                      flags are all true.
+
+// if shallow is true:  All components (p,i,j,x) are NULL, and their shallow
+//                      flags are all true.  The user can then set A->p,
+//                      A->i, A->j, and/or A->x accordingly, from their own
+//                      arrays.
 
 SLIP_info SLIP_matrix_allocate
 (
@@ -379,16 +382,7 @@ SLIP_info SLIP_matrix_free
 // SLIP_matrix_copy: makes a copy of a matrix
 //------------------------------------------------------------------------------
 
-// (C not shallow, A might be)
-
-    // 15x15
-    // 3x3 functions (CSC, triplet, dense) <-> (CSC, triplet, dense)
-    //  all 9 do any [5x5 typecasts]
-    //      typecast function:  2 pointers, 2 SLIP_type, all 5x5, # entries
-
-//  C->scale ?
-//  A (double) to C (in mpz).  C->scale = ... ?
-//  A (mpz) to C (in double).  use A->scale
+// SLIP_matrix_copy: make a copy of a SLIP_matrix, into another kind and type.
 
 SLIP_info SLIP_matrix_copy
 (
@@ -400,56 +394,24 @@ SLIP_info SLIP_matrix_copy
     SLIP_options *option
 ) ;
 
-#if 0
+//------------------------------------------------------------------------------
+// SLIP_matrix macros
+//------------------------------------------------------------------------------
 
-// convert x in mpz (came from SLIP_solve ...)
-SLIP_matrix *my_x, *x_soln ;
-SLIP_solve (x_soln, ...) ;
-SLIP_matrix_copy (&my_x, SLIP_SPARSE, SLIP_MPQ, x_soln, option) ;
+// These macros simplify the access to entries in a SLIP_matrix.
+// The type parameter is one of: mpq, mpz, mpfr, int32, or fp64.
 
-// To access the value of the kth entry in any SLIP_matrix:
-    SLIP_ENTRY (A, p, fp64) = x ;
-    A->x.fp64 [p] = x
+// To access the kth entry in a SLIP_matrix using 1D linear addressing,
+// in any matrix kind (CSC, triplet, or dense), in any type:
+#define SLIP_ENTRY(A,k,type) ((A)->x.type [k])
 
-// To access a single entry in a dense SLIP_matrix:
-#define INDEX(i,j,m) (i + j*A->m)
+// To access the (i,j)th entry in a dense 2D SLIP_matrix, in any type:
+#define SLIP_2D(A,i,j,type) SLIP_ENTRY (A, (i)+(j)*((A)->m), type)
 
-#define SLIPX(A,i,j,type)  A->x.type [i + j*(A->m)]
-#define SLIPS(A,k,type)    A->x.type [k]
 
-SLIPX (A, i, j, fp64)
-SLIPXD (A, i, j)
 
-#define SLIPXD(A,i,j)  SLIPX (A, i, j, fp64)
-#define SLIPXZ(A,i,j)  SLIPX (A, i, j, mpz)
-#define SLIPXQ(A,i,j)  SLIPX (A, i, j, mpq)
-#define SLIPXR(A,i,j)  SLIPX (A, i, j, mpfr)
 
-#define SLIPSD(A,k)  SLIPS (A, k, fp64)
-#define SLIPSZ(A,k)  SLIPS (A, k, mpz)
-#define SLIPSQ(A,k)  SLIPS (A, k, mpq)
-#define SLIPSR(A,k)  SLIPS (A, k, mpfr)
 
-    // A(i,j) = x
-    SLIP_ENTRY (A, i, j, fp64) = x ;
-
-    mpf (A->x [i][j]  ... )
-
-    mpfr_set (A->x [i][j],  ... )
-    mpfr_set (SLIPX (A,i,j,mpfr),  ... )
-
-    mpfr_set (A->x [p],  ... )
-    mpfr_set (A->x.mpfr [p],  ... )
-    mpfr_set (SLIPS (A,p,mpfr),  ... )
-
-    // A(i,j) = x
-    SLIP (A, i, j, fp64) = x ;
-    A->x.fp64 [i+j*(A->m)] = x
-
-    // x = A(i,j) 
-    x = SLIP (A, i, j, fp64) ;
-
-#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // old SLIP_sparse, SLIP_dense, etc methods:
@@ -480,10 +442,10 @@ typedef struct
     int32_t *i;   // Row indices. Array size is nzmax, # of entries = nz
     mpz_t *x;     // Values in matrix with size of nzmax, # of entries = nz
     mpq_t scale ; // scale factor for the matrix
-} SLIP_sparse ;
+} SLIP_sparse ;     // TODO remove
 
 /* Purpose: This function deletes the sparse matrix A */
-void SLIP_delete_sparse
+void SLIP_delete_sparse     // TODO remove
 (
     SLIP_sparse **A // matrix to be deleted
 );
@@ -503,10 +465,10 @@ typedef struct
     mpz_t **x;    // Values in matrix with size of m*n
     mpq_t scale ; // scale factor for the matrix
 
-} SLIP_dense ;
+} SLIP_dense ;      // TODO remove
 
 /* Purpose: This function deletes the dense matrix A */
-void SLIP_delete_dense
+void SLIP_delete_dense      // TODO remove
 (
     SLIP_dense **A
 );
@@ -534,7 +496,7 @@ typedef struct
  * Input is the SLIP_LU_analysis structure, it is destroyed on function
  * termination.
  */
-void SLIP_delete_LU_analysis
+void SLIP_delete_LU_analysis        // TODO rename SLIP_LU_analysis_free
 (
     SLIP_LU_analysis **S // Structure to be deleted
 );
@@ -601,6 +563,9 @@ void SLIP_free
 //---------------------------Build the users input matrix from CSC--------------
 //------------------------------------------------------------------------------
 
+// TODO: remove all SLIP_build* and use SLIP_matrix_copy.
+// User can allocate triplet matrices with SLIP_matrix_allocate.
+
 /* SLIP_build_sparse_csc_[type] will allow the user to take a matrix of their
  * defined type (either double, mpfr_t, mpz_t, or mpq_t) and convert it from
  * their version of compressed column form to our data structure. The integrity
@@ -608,7 +573,6 @@ void SLIP_free
  * delete these arrays)
  *
  * On output, the SLIP_sparse* A structure contains the input matrix
- *
  */
 
 /* Purpose: Build a SLIP_sparse from mpz_t stored CSC matrix */
