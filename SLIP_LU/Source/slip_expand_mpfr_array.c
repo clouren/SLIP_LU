@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/slip_expand_mpfr_array: convert mprf aray to mpz
+// SLIP_LU/slip_expand_mpfr_array: convert mpfr aray to mpz
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,

@@ -32,7 +32,7 @@ SLIP_info SLIP_matrix_copy
     SLIP_matrix **C_handle, // matrix to create (never shallow)
     // inputs, not modified:
     SLIP_kind C_kind,       // C->kind: CSC, triplet, or dense
-    SLIP_type C_type,       // C->type: mpz_t, mpq_t, mprf_t, int64_t, or double
+    SLIP_type C_type,       // C->type: mpz_t, mpq_t, mpfr_t, int64_t, or double
     SLIP_matrix *A,         // matrix to make a copy of (may be shallow)
     SLIP_options *option
 )

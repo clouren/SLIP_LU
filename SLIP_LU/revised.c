@@ -97,7 +97,7 @@ SLIP_Info SLIP_matrix_copy
 (
     SLIP_matrix **C,        // matrix to create (never shallow)
     SLIP_kind kind,         // CSC, triplet, or dense
-    SLIP_type type,         // mpz_t, mpq_t, mprf_t, int64_t, or double
+    SLIP_type type,         // mpz_t, mpq_t, mpfr_t, int64_t, or double
     SLIP_Matrix *A,         // matrix to make a copy of (may be shallow)
     SLIP_options *option
 ) ;

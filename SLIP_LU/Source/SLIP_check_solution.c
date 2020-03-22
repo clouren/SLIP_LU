@@ -66,7 +66,7 @@ SLIP_info SLIP_check_solution
     }
 
     //--------------------------------------------------------------------------
-    // perform mpq_addmul in loops
+    // perform SLIP_mpq_addmul in loops
     //--------------------------------------------------------------------------
 
     for (j = 0; j < numRHS; j++)
