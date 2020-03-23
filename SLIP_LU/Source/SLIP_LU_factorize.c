@@ -67,7 +67,7 @@ SLIP_info SLIP_LU_factorize
     int64_t *h = NULL ;
     int64_t *pivs = NULL ;
     int64_t *row_perm = NULL ;
-    mpz_t* x = NULL ;           // TODO change to SLIP_matrix (dense, mpz)?
+    mpz_t* x = NULL ;           // TODO change to SLIP_matrix (dense, mpz)
 
     mpz_t sigma; SLIP_MPZ_SET_NULL(sigma);
     mpfr_t temp; SLIP_MPFR_SET_NULL(temp);

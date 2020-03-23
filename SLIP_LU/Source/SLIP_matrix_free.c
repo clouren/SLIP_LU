@@ -23,7 +23,7 @@ SLIP_info SLIP_matrix_free
     // check inputs
     //--------------------------------------------------------------------------
 
-    if (option == NULL)
+    if (option == NULL)     // TODO NULL gives defaults?
     {
         // option is currently unused, but it's checked anyway
         return (SLIP_INCORRECT_INPUT) ;

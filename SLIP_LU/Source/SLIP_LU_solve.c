@@ -40,7 +40,8 @@
 
 SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
 (
-    // output:
+    // TODO output:
+    // SLIP_matrix **X_handle,
     mpq_t **x,              // rational solution to the system
     // input:
     SLIP_dense *b,          // right hand side vector

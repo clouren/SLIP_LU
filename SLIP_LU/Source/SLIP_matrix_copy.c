@@ -99,6 +99,7 @@ SLIP_info SLIP_matrix_copy
                 {
 
                     // Y = typecast the values of A into the type of C
+                    // (not the pattern; Y is SLIP_DENSE)
                     SLIP_CHECK (slip_cast_matrix (&Y, C_type, A, option)) ;
 
                     // allocate workspace

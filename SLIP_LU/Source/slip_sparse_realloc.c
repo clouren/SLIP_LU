@@ -12,9 +12,6 @@
  * version merely expands x and i and does not initialize/allocate the values!
  */
 
-// TODO: rename this SLIP_matrix_reallocate, and extend to all matrix kinds
-// and types?
-
 #include "SLIP_LU_internal.h"
 
 SLIP_info slip_sparse_realloc
@@ -26,9 +23,6 @@ SLIP_info slip_sparse_realloc
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
-
-    // TODO could extend this to any data type, but it's only needed for
-    // L and U, in SLIP_LU_factorize.
 
     ASSERT (A != NULL && A->kind = SLIP_CSC && A->type == SLIP_MPZ) ;
 

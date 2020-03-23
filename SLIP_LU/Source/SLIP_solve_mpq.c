@@ -39,6 +39,11 @@
 #include "SLIP_LU_internal.h"
 
 // TODO: rename this function?  Take off "_mpq", at least.
+// use this:  SLIP_solve (&X, SLIP_MPQ, A, S, B, option) ;
+
+// use this:  SLIP_solve (&X, SLIP_FP64, A, S, B, option) ;
+
+// use this:  SLIP_backslash (&X, SLIP_FP64, A, B, option) ;
 
 SLIP_info SLIP_solve_mpq
 (
@@ -60,7 +65,7 @@ SLIP_info SLIP_solve_mpq
     // TODO: change x_doub to SLIP_matrix: SLIP_DENSE, SLIP_MPFR,
     // and create it on output
 
-    if (!x_mpq || !A || !A->p || !A->i || !A->x ||
+    if (!x_mpq || !A->p || !A->i || !A->x ||
         !S || !S->q || !b || !b->x || !option)
     {
         return SLIP_INCORRECT_INPUT;

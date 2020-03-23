@@ -25,6 +25,8 @@ mpq_t* SLIP_create_mpq_array
     //--------------------------------------------------------------------------
 
     // TODO: use SLIP_matrix_allocate (&A, SLIP_DENSE, SLIP_MPQ, ...)
+    // TODO this becomes slip_create_mpq_array, or folder into
+    // SLIP_matrix_allocate.
 
     if (n <= 0) {return NULL;}
 

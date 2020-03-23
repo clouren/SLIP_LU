@@ -33,7 +33,7 @@ SLIP_info slip_expand_mpq_array
     // check inputs
     //--------------------------------------------------------------------------
     
-    // TODO: move this functionality into slip_cast_array
+    // TODO: keep as a helper function for slip_cast_array.
 
     SLIP_info info ;
 

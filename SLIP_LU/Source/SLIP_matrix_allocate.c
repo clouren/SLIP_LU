@@ -33,6 +33,8 @@ SLIP_info SLIP_matrix_allocate
                             // A->x are all returned as NULL and must be set
                             // by the caller.  All A->*_shallow are returned
                             // as true.
+    // TODO add this?:
+    // bool init,
     SLIP_options *option
 )
 {
@@ -134,17 +136,17 @@ SLIP_info SLIP_matrix_allocate
         switch (type)
         {
             case SLIP_MPZ:
-                A->x.mpz = SLIP_create_mpz_array (nzmax) ;
+                A->x.mpz = SLIP_create_mpz_array (nzmax) ;  // TODO
                 ok = ok && (A->x.mpz != NULL) ;
                 break ;
 
             case SLIP_MPQ:
-                A->x.mpq = SLIP_create_mpq_array (nzmax) ;
+                A->x.mpq = SLIP_create_mpq_array (nzmax) ;  // TODO
                 ok = ok && (A->x.mpq != NULL) ;
                 break ;
 
             case SLIP_MPFR:
-                A->x.mpfr = SLIP_create_mpfr_array (nzmax, option) ;
+                A->x.mpfr = SLIP_create_mpfr_array (nzmax, option) ;    // TODO
                 ok = ok && (A->x.mpfr != NULL) ;
                 break ;
 

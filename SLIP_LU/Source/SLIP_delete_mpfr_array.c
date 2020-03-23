@@ -25,6 +25,7 @@ void SLIP_delete_mpfr_array
 
     // TODO: use SLIP_matrix_free (&A, option) ;
     // Move this functionality into SLIP_matrix_free.
+    // or keep as slip_delete_mpfr_array.
 
     if (x == NULL || *x == NULL) {return;}
     for (int64_t i = 0; i < n; i++)

@@ -252,7 +252,7 @@ SLIP_options* SLIP_create_default_options(void);
 typedef enum
 {
     SLIP_CSC = 0,           // matrix is in compressed sparse column format
-    SLIP_TRIPLET = 1,       // matrix is in triplet format
+    SLIP_TRIPLET = 1,       // matrix is in sparse triplet format
     SLIP_DENSE = 2          // matrix is in dense format
 }
 SLIP_kind ;
@@ -301,17 +301,12 @@ SLIP_type ;
 // SLIP_matrix_free.  If A->p is NULL (for a triplet or dense matrix), then
 // A->p_shallow has no effect.
 
-// Note that all integer arrays are int64_t, which limits a SLIP_matrix to
-// having dimensions and nzmax less than 2^31.  Since a SLIP_LU factorization
-// is much more costly in time and memory than a regular LU factorization, this
-// is not a serious limitation.  TODO: should we use int64_t anyway?
-
 typedef struct
 {
     int64_t m ;         // number of rows
     int64_t n ;         // number of columns
     int64_t nzmax ;     // size of A->i, A->j, and A->x
-    int64_t nz ;        // # nonzeros in the matrix (TODO for triplet only??)
+    int64_t nz ;        // # nonzeros in the matrix (TODO: triplet only?)
     SLIP_kind kind ;    // CSC, triplet, or dense
     SLIP_type type ;    // mpz, mpq, mpfr, int64, or double
 
@@ -338,6 +333,7 @@ typedef struct
     bool x_shallow ;    // if true, A->x.type is shallow.
 
     mpq_t scale ;       // scale factor for the matrix (never shallow)
+                        // TODO: mpz only?  A->scale always 1 for others?
 
 } SLIP_matrix ;
 
@@ -364,7 +360,8 @@ SLIP_info SLIP_matrix_allocate
     bool shallow,           // if true, matrix is shallow.  A->p, A->i, A->j,
                             // A->x are all returned as NULL and must be set
                             // by the caller.  All A->*_shallow are returned
-                            // as true.
+                            // as true.  TODO what do you think?
+    // bool init, TODO??
     SLIP_options *option
 ) ;
 
@@ -414,6 +411,8 @@ SLIP_info SLIP_matrix_copy
 // To access the kth entry in a SLIP_matrix using 1D linear addressing,
 // in any matrix kind (CSC, triplet, or dense), in any type:
 #define SLIP_ENTRY(A,k,type) ((A)->x.type [k])
+
+// TODO call it SLIP_1D ?
 
 // To access the (i,j)th entry in a dense 2D SLIP_matrix, in any type:
 #define SLIP_2D(A,i,j,type) SLIP_ENTRY (A, (i)+(j)*((A)->m), type)

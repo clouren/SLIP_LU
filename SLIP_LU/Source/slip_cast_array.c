@@ -25,7 +25,7 @@ SLIP_info slip_cast_array
     void *X,                // input array, of size n
     SLIP_type xtype,        // type of X
     int64_t n,              // size of Y and X
-    mpq_t scale,            // scale factor applied if X is mpz_t
+    mpq_t scale,            // scale factor applied if Y is mpz_t
     SLIP_options *option
 )
 {
@@ -260,6 +260,7 @@ SLIP_info slip_cast_array
                     mpz_t *x = (mpz_t *) X ;
                     for (int64_t k = 0 ; k < n ; k++)
                     {
+                        // FIXME
                         double t ;
                         SLIP_CHECK (SLIP_mpz_get_d (&t, x [k])) ;
                         y [k] = slip_cast_double_to_int64 (t) ;

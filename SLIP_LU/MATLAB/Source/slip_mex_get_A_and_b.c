@@ -40,7 +40,7 @@ void slip_mex_get_A_and_b
     mwSize nA, mA, nb, mb, Anz, k, j;
     mwIndex *Ap, *Ai;
     double *Ax, *bx;
-    // TODO allow option to be NULL in all C functions
+    // TODO allow option to be NULL in all C functions?
     SLIP_options *option = SLIP_create_default_options ();
 
     //--------------------------------------------------------------------------

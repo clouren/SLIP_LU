@@ -5,11 +5,6 @@ function x = SLIP_LU(A,b,option)
 % stored as doubles. A must be stored as a sparse matrix. b must be stored as a
 % dense set of right hand side vectors. b can be either 1 or multiple vector(s)
 %
-% ****WARNING****: If A is very large or dense, this function may crash.
-% TODO: how?  Will it segfault and MATLAB dies?  Or just report out-of-memory?
-% If the latter, then delete this statement (it is true for all MATLAB
-% functions).  If the former ... why?  It shouldn't do that.
-%
 % USAGE:
 %
 % x = SLIP_LU(A,b) returns the solution to Ax=b using default settings

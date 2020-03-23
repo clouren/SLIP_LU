@@ -20,8 +20,6 @@
 // SLIP_dense matrix C is a pointer to a SLIP_dense struct, containing values
 // C->x of type mpz_t, dimensions C->m and C->n, and a scale factor C->scale.
 
-// TODO: why int64_t as a datatype?  We should use int64_t
-
 #define SLIP_FREE_ALL                 \
     (*C_handle) = NULL ;                    \
     SLIP_delete_dense (&C) ;
@@ -43,7 +41,7 @@ SLIP_info SLIP_build_dense_int64
     //--------------------------------------------------------------------------
 
     // TODO: use SLIP_matrix_copy (&C, SLIP_DENSE, SLIP_MPZ, B, option)
-    // instead, and remove this function (or at least make non-user-callable).
+    // instead, and remove this function
 
     SLIP_info info ;
     if (!B || !C_handle)

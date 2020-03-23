@@ -32,7 +32,7 @@ SLIP_info slip_get_column //extract k-th column from A, i.e., x=A(:,k)
     //--------------------------------------------------------------------------
 
     // TODO: this function is only used in slip_ref_triangular_solve.
-    // Just delete this function and move the functionality there.
+    // Just delete this function and move the functionality there?
 
     SLIP_info info ;
     ASSERT (A != NULL && A->kind == SLIP_CSC && A->type == SLIP_MPZ) ;

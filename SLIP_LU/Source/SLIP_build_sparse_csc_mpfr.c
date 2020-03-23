@@ -34,7 +34,7 @@ SLIP_info SLIP_build_sparse_csc_mpfr
     //--------------------------------------------------------------------------
 
     // TODO: use SLIP_matrix_copy (&A, SLIP_CSC, SLIP_MPZ, B, option)
-    // instead, and remove this function (or at least make non-user-callable).
+    // instead, and remove this function
 
     SLIP_info info ;
     if (!p || !I || !x || !A_handle || !option)

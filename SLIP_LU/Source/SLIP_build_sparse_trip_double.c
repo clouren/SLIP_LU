@@ -35,7 +35,7 @@
     //--------------------------------------------------------------------------
 
     // TODO: use SLIP_matrix_copy (&C, SLIP_CSC, SLIP_MPZ, B, option)
-    // instead, and remove this function (or at least make non-user-callable).
+    // instead, and remove this function
 
     SLIP_info info ;
     if (!I || !J || !A_handle || !x || n <= 0 || nz <= 0)

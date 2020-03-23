@@ -14,9 +14,6 @@
  * size 1000, so this function shrinks them to size 500.
  */
 
-// TODO: rename this SLIP_matrix_reallocate, and extend to all matrix kinds
-// and types?
-
 #include "SLIP_LU_internal.h"
 
 SLIP_info slip_sparse_collapse

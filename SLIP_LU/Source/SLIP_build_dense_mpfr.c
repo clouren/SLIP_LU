@@ -41,7 +41,7 @@ SLIP_info SLIP_build_dense_mpfr
     //--------------------------------------------------------------------------
 
     // TODO: use SLIP_matrix_copy (&C, SLIP_DENSE, SLIP_MPZ, B, option)
-    // instead, and remove this function (or at least make non-user-callable).
+    // instead, and remove this function
 
     SLIP_info info ;
     if (!B || !C_handle || !option)

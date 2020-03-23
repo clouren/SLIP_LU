@@ -25,6 +25,7 @@ mpz_t* SLIP_create_mpz_array
     //--------------------------------------------------------------------------
 
     // TODO: use SLIP_matrix_allocate (&A, SLIP_DENSE, SLIP_MPZ, ...)
+    // keep as helper or move into SLIP_matrix_allocte.
 
     if (n <= 0) {return NULL;}
 

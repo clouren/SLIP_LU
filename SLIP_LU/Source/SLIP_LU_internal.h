@@ -784,6 +784,7 @@ SLIP_info slip_cast_matrix
 
 #if 0
 
+// FUTURE:
 // return an error if A->kind (CSC, triplet, or dense) is wrong
 #define SLIP_REQUIRE_KIND(A,required_kind) \
     if (A == NULL || A->kind != required_kind) return (SLIP_INCORRECT_INPUT) ;

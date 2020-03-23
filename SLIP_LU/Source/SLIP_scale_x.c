@@ -12,7 +12,7 @@
 
 #include "SLIP_LU_internal.h"
 
-/* TODO:
+/* TODO:  fold this into SLIP_solve, make internal
 SLIP_info SLIP_scale_x
 (
     SLIP_matrix *x,         // Solution matrix
