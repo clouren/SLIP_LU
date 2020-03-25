@@ -279,8 +279,6 @@ SLIP_info slip_cast_array
 
                 case SLIP_MPQ: // mpq_t to int64_t
                 {
-                    // TODO There is no mpq to int function. We can either
-                    // keep it as is mpq->double->int, or do mpq->mpz->int.
                     mpq_t *x = (mpq_t *) X ;
                     for (int64_t k = 0 ; k < n ; k++)
                     {
