@@ -112,7 +112,7 @@ int main (void)
     // parameter to be true.
     option->check = true;
    
-    // Solve the system and give MPQ solution
+    // Solve the system and give double solution
     OK(SLIP_backslash( &x, SLIP_FP64, A, b, option));
          
     clock_t end_s = clock();
