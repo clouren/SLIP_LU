@@ -77,6 +77,7 @@ void mexFunction
     for (int k = 0; k < x->n*x->m; k++)
         x2[k] = x->x.fp64[k];
     
+    //TODO Can this work?
     //x2 = x->x.fp64;
     
     pargout[0] =  Xmatlab;
