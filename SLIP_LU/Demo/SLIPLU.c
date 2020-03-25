@@ -244,7 +244,7 @@ int main (int argc, char* argv[])
     // 
     // To enable said check, the following bool is set to true
     //
-    bool checker = true; 
+    option->check = true; 
     
     // Solve LDU x = b
     OK(SLIP_LU_solve(&x, b,
@@ -254,7 +254,6 @@ int main (int argc, char* argv[])
         (const SLIP_matrix *) rhos,
                      S,
         (const int64_t *) pinv,
-                     checker,
                      option));    
 
     clock_t end_solve = clock();
