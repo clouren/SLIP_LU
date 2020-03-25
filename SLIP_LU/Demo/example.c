@@ -107,16 +107,14 @@ int main (void)
     //--------------------------------------------------------------------------
 
     clock_t start_s = clock();
-    
+   
+    // SLIP LU has an optional check, to enable it, one can set the following
+    // parameter to be true.
+    option->check = true;
+   
     // Solve the system and give MPQ solution
-    //OK(SLIP_backslash( &x, SLIP_FP64, A, b, option));
-    
-    // SLIP LU has an optional check, this version of backslash will use this check
-    // we refer to this version as SLIP_backslash_debug because it may be far slower
-    // than the regular backslash
-    // TODO: Can we combine these into one function?
-    OK(SLIP_backslash_debug( &x, SLIP_FP64, A, b, option));
- 
+    OK(SLIP_backslash( &x, SLIP_FP64, A, b, option));
+         
     clock_t end_s = clock();
 
     double t_s = (double) (end_s - start_s) / CLOCKS_PER_SEC;
