@@ -55,15 +55,6 @@
 //        1: just errors and warnings: Default
 //        2: terse, with basic stats from COLAMD/AMD and SLIP and solution
 //
-// o (or out) output_param. e.g., SLIPLU o 1, which indicates SLIPLU will
-// output the solution as full precision rational arithmetic stdout or file
-// specified by the stdout redirection. It is noted that solution will be
-// output only when o2 >= 2. Other available options are:
-//        1: The solution will be output in full precision rational arithmetic
-//        2: The solution will be output in double precision
-//        3: The solution will be output in some user specified precision.
-//           This must be input as o 3 USER_PRECISION. Precision must be
-//           an integer, e.g., SLIPLU o 3 128.
 //
 // If none of the above args is given, they are set to the following default:
 //
@@ -73,21 +64,17 @@
 //  p = 0, i.e., using smallest pivot
 //  q = 1, i.e., using COLAMD
 //  t = 0.1, not being using since p != 3 or 4
-//  o2 = 0, i.e., nothing will be printed
-//  o = 1, not being using since o2 < 2
 
 
 #define FREE_WORKSPACE                           \
-    SLIP_delete_sparse(&A);                      \
-    SLIP_delete_sparse(&L);                      \
-    SLIP_delete_sparse(&U);                      \
-    SLIP_delete_dense(&b);                       \
-    SLIP_delete_mpz_array(&rhos,nrows);          \
-    SLIP_delete_mpq_mat(&x,nrows,numRHS);        \
-    SLIP_delete_double_mat(&x_doub,nrows,numRHS);\
-    SLIP_delete_mpfr_mat(&x_mpfr,nrows,numRHS);  \
+    SLIP_matrix_free(&A, option);                \
+    SLIP_matrix_free(&L, option);                \
+    SLIP_matrix_free(&U, option);                \
+    SLIP_matrix_free(&x, option);                \
+    SLIP_matrix_free(&b, option);                \
+    SLIP_matrix_free(&rhos, option);             \
     SLIP_free(pinv);                             \
-    SLIP_delete_LU_analysis(&S);                 \
+    SLIP_LU_analysis_free(&S);                   \
     SLIP_FREE(option);                           \
     SLIP_finalize( ) ;
 
@@ -104,54 +91,53 @@ int main (int argc, char* argv[])
     //--------------------------------------------------------------------------
     // We first initialize the default parameters. These parameters are modified
     // either via command line arguments or when reading in data. The important
-    // initializations are in the second block below, where we initialize the
-    // following:
+    // initializations are in the block below.
     //
-    //  rhos: Sequence of pivots used in LU
+    // First, we initialize 6 SLIP_matrices. Note that these matrices must
+    // simply be declared, they will be created and allocated within their
+    // respective functions. These matrices are:
     //
-    //  x: The final solution vector of the system (notice it is rational
-    //     mpq_t)
-    //  pinv: inverse row permutation used for LU factorization
+    //  A:  User input matrix. Must be SLIP_CSC and SLIP_MPZ for routines
+    //  
+    //  L:  Lower triangular matrix. Will be output as SLIP_CSC and SLIP_MPZ
     //
-    //  S: Analysis struct that contains the column ordering used
+    //  U:  Upper triangular matrix. Will be output as SLIP_CSC and SLIP_MPZ 
     //
-    //  x_doub: Final solution to the linear system stored as double precision
-    //          (note that we declare it here to enumerate all possibilities).
+    //  x:  Solution to the linear system. Will be output as SLIP_DENSE and SLIP_MPQ
     //
-    //  x_mpfr: Final solution to the linear system stored as double precision
-    //          (note that we declare it here to enumerate all possibilities).
+    //  b:  Set of right hand side vectors. Must be SLIP_DENSE and SLIP_MPZ
     //
-    //  A, L, U: Sparse integer matrices. This is the default struct used
-    //          within SLIP LU to perform most internal routines.  Note that
-    //          the numeric entries within these matrices are integral mpz_t
-    //          data types.
+    // Additionally, two other data structures are declared here:
     //
-    //  b: Dense right hand side vector(s). Currently SLIP LU assumes that the
-    //     RHS is always dense.  All entries in b are integers.
+    //  pinv:   Inverse row permutation used for LDU factorization and permutation
     //
-    //  option: The SLIP_options struct contains various command parameters for
-    //          the factorization which are highlighed both above and in the
-    //          user guide. Much like a sparse and dense matrix, it must be
-    //          created with a call to SLIP_create_default_options();
+    //  S:      Symbolic analysis struct.
+    //
+    // Lastly, the following parameter is created:
+    //
+    //  option: Command options for the factorization. In general, this can be 
+    //          set to default values and is almost always the last input argument
+    //          for SLIP LU functions (except SLIP_malloc and such)
     //--------------------------------------------------------------------------
-    int64_t nrows = 0, numRHS = 0;
-    SLIP_type rat ;
-    SLIP_info ok, check = SLIP_OK ;
-    char *mat_name, *rhs_name;
-    mat_name = "../ExampleMats/10teams_mat.txt";// Set demo matrix and RHS name
-    rhs_name = "../ExampleMats/10teams_v.txt";
-
-    mpz_t* rhos = NULL;
-    mpq_t** x = NULL;
+    SLIP_matrix *A = NULL;
+    SLIP_matrix *L = NULL;
+    SLIP_matrix *U = NULL;
+    SLIP_matrix *x = NULL;
+    SLIP_matrix *b = NULL;
+    SLIP_matrix *rhos = NULL;
     int64_t* pinv = NULL;
     SLIP_LU_analysis* S = NULL;
-    double **x_doub = NULL;
-    mpfr_t **x_mpfr = NULL;
-    SLIP_sparse *A = NULL ;
-    SLIP_sparse *L = NULL ;
-    SLIP_sparse *U = NULL ;
-    SLIP_dense *b = NULL ;
+    
+    // Initialize option, command options for the factorization
     SLIP_options *option = SLIP_create_default_options();
+    
+    // Extra parameters used to obtain A, b, etc
+    SLIP_info ok ;
+    char *mat_name, *rhs_name;
+    SLIP_type rat;
+    mat_name = "../ExampleMats/10teams_mat.txt";// Set demo matrix and RHS name
+    rhs_name = "../ExampleMats/10teams_v.txt";
+    
     if (!option)
     {
         fprintf (stderr, "Error! OUT of MEMORY!\n");
@@ -171,8 +157,10 @@ int main (int argc, char* argv[])
 
     //--------------------------------------------------------------------------
     // In this demo file, we now read in the A and b matrices from external
-    // files.  Please refer to the example*.c files or the user for other
-    // methods of creating the input matrix
+    // files.  Please refer to the example.c file or the user guide for other
+    // methods of creating the input matrix. In general, the user can create 
+    // his/her matrix (say in double form) and then create a copy of it with
+    // SLIP_matrix_copy
     //--------------------------------------------------------------------------
 
     // Read in A
@@ -183,7 +171,7 @@ int main (int argc, char* argv[])
         FREE_WORKSPACE;
         return 0;
     }
-    OK(SLIP_tripread(&A, mat_file));
+    OK(SLIP_tripread(&A, mat_file, option));
     fclose(mat_file);
 
     // Read in right hand side
@@ -194,7 +182,7 @@ int main (int argc, char* argv[])
         FREE_WORKSPACE;
         return 0;
     }
-    OK(SLIP_read_dense(&b, rhs_file));
+    OK(SLIP_read_dense(&b, rhs_file, option));
     fclose(rhs_file);
 
     // Check if the size of A matches b
@@ -204,26 +192,15 @@ int main (int argc, char* argv[])
         FREE_WORKSPACE;
         return 0;
     }
-    nrows = A->m;
-    numRHS = b->n;
-
-    //--------------------------------------------------------------------------
-    // Now that we have read in the input matrix, we allocate memory for the
-    // solution to the system.
-    //--------------------------------------------------------------------------
-
-    x = SLIP_create_mpq_mat(nrows, numRHS);
-    if (!x)
-    {
-        fprintf (stderr, "Error! OUT of MEMORY!\n");
-        FREE_WORKSPACE;
-        return 0;
-    }
-
+    
     //--------------------------------------------------------------------------
     // We now perform symbolic analysis by getting the column preordering of
     // the matrix A. This is done via the SLIP_LU_analyze function. The output
-    // of this function is a column permutation Q where we factor the matrix AQ.
+    // of this function is a column permutation Q where we factor the matrix AQ
+    // and a guess on the number of nonzeros in L and U.
+    //
+    // Note that in the simple interface demostrated in the example*.c files,
+    // all of the following code is condensed into the single SLIP_backslash function.
     //--------------------------------------------------------------------------
 
     clock_t start_col = clock();
@@ -241,10 +218,6 @@ int main (int argc, char* argv[])
     // Now we perform the SLIP LU factorization to obtain matrices L and U and a
     // row permutation P such that PAQ = LDU. Note that the D matrix is never
     // explicitly constructed or used.
-    //
-    // Note that in the simple interface of SLIP LU (shown in the example*.c
-    // files) it is not necessary to utilize the L and U matrices nor split the
-    // solution process into factorization and solve.
     //--------------------------------------------------------------------------
 
     clock_t start_factor = clock();
@@ -255,26 +228,12 @@ int main (int argc, char* argv[])
 
     //--------------------------------------------------------------------------
     // We now solve the system Ax=b using the L and U factors computed above.
-    // After we obtain the solution, we permute it with respect to the column
-    // permutation (x_final = Q x).
     //--------------------------------------------------------------------------
 
     clock_t start_solve = clock();
 
-    // Solve LDU x = b
-    OK(SLIP_LU_solve(x, b,
-        (const SLIP_sparse *) L,
-        (const SLIP_sparse *) U,
-        (const mpz_t *) rhos,
-        (const int64_t *) pinv));
-
-    clock_t end_solve = clock();
-
-    OK(SLIP_permute_x(x, nrows, numRHS, S));
-
-    //--------------------------------------------------------------------------
     // SLIP LU has an optional check step which can verify that the solution
-    // vector x satisfies Ax=b in perfect precision.
+    // vector x satisfies Ax=b in perfect precision intended for debugging.
     //
     // Note that this is entirely optional and not necessary. The solution
     // returned is guaranteed to be exact.   It appears here just as a
@@ -282,61 +241,40 @@ int main (int argc, char* argv[])
     // can fail only if it runs out of memory, or if there is a bug in the
     // code.  Also, note that this function can be quite time consuming; thus
     // it is not recommended to be used in general.
+    // 
+    // To enable said check, the following bool is set to true
     //
-    // This function returns the status SLIP_OK if it is successfully verified
-    // to be correct.
-    //--------------------------------------------------------------------------
+    bool checker = true; 
+    
+    // Solve LDU x = b
+    OK(SLIP_LU_solve(&x, b,
+        (const SLIP_matrix *) A,
+        (const SLIP_matrix *) L,
+        (const SLIP_matrix *) U,
+        (const SLIP_matrix *) rhos,
+                     S,
+        (const int64_t *) pinv,
+                     checker,
+                     option));    
 
-    check = SLIP_check_solution(A, x, b);
+    clock_t end_solve = clock();
+    
+    // Done, x now contains the exact solution of the linear system Ax=b in 
+    // dense rational form. There is an optional final step here where the user
+    // can cast their solution to a different data type or matrix format.
+    // Below, we have a block of code which illustrates how one would do this.
+    
+    // Example of how to transform output. Uncomment if desired
+    //
+    // SLIP_kind my_kind = SLIP_DENSE;  // Can be either SLIP_CSC, SLIP_TRIPLET or SLIP_DENSE
+    // SLIP_type my_type = SLIP_FP64;   // Can be either SLIP_MPQ, SLIP_MPFR, or SLIP_FP64
+    //
+    // SLIP_matrix* my_x = NULL;        // New output
+    // SLIP_matrix_copy( &my_x, my_kind, my_type, x, option);   // Create copy which is stored as
+                                                                // my_kind and my_type
 
-    if (check == SLIP_OK)
-    {
-        printf ("Solution is verified to be exact.\n") ;
-    }
-    else if (check == SLIP_INCORRECT)
-    {
-        // This can never happen.
-        printf ("ERROR! Solution is wrong. This is a bug; please"
-            "contact the authors of SLIP LU.\n") ;
-        abort ( ) ;
-    }
-    else
-    {
-        // Out of memory or bad input.
-        FREE_WORKSPACE;
-        return 0;
-    }
-
-    //--------------------------------------------------------------------------
-    // The x vector is now scaled. This consists of accounting for any scaling
-    // done to A and b to make these entries integral mpz_t values.
-    //--------------------------------------------------------------------------
-
-    OK(SLIP_scale_x(x, A, b));
-
-    //--------------------------------------------------------------------------
-    // Output timing statistics. This also prints to a file if desired.
-    //--------------------------------------------------------------------------
-
-    if (rat == SLIP_MPZ)
-    {
-        OK(SLIP_print_stats_mpq(x, nrows, numRHS, check, option));
-    }
-    else if (rat == SLIP_FP64)
-    {
-        x_doub = SLIP_create_double_mat(nrows, numRHS);
-        if (x_doub == NULL) {OK(SLIP_OUT_OF_MEMORY);}
-        OK(SLIP_get_double_soln(x_doub, x, nrows, numRHS));
-        OK(SLIP_print_stats_double(x_doub, nrows, numRHS, check, option));
-    }
-    else // rat == SLIP_MPFR
-    {
-        x_mpfr = SLIP_create_mpfr_mat(nrows, numRHS, option);
-        if (x_mpfr == NULL) {OK(SLIP_OUT_OF_MEMORY);}
-        OK(SLIP_get_mpfr_soln(x_mpfr, x, nrows, numRHS, option));
-        OK(SLIP_print_stats_mpfr(x_mpfr, nrows, numRHS, check, option));
-    }
-
+    
+    // Timing stats
     double t_sym = (double) (end_col-start_col)/CLOCKS_PER_SEC;
     double t_factor = (double) (end_factor - start_factor) / CLOCKS_PER_SEC;
     double t_solve =  (double) (end_solve - start_solve) / CLOCKS_PER_SEC;

@@ -52,8 +52,9 @@ void SLIP_show_usage(void);
  */
 SLIP_info SLIP_tripread
 (
-    SLIP_sparse **A_handle,     // Matrix to be constructed
-    FILE* file                  // file to read from (must already be open)
+    SLIP_matrix **A_handle,     // Matrix to be constructed
+    FILE* file,                 // file to read from (must already be open)
+    SLIP_options* option
 ) ;
 
 /* Purpose: This function reads in a double matrix stored in a triplet format.
@@ -61,7 +62,7 @@ SLIP_info SLIP_tripread
  */
 SLIP_info SLIP_tripread_double
 (
-    SLIP_sparse **A_handle,     // Matrix to be constructed
+    SLIP_matrix **A_handle,     // Matrix to be constructed
     FILE* file,                 // file to read from (must already be open)
     SLIP_options* option
 ) ;
@@ -69,37 +70,7 @@ SLIP_info SLIP_tripread_double
 /* Purpose: SLIP_read_dense: read a dense matrix. */
 SLIP_info SLIP_read_dense
 (
-    SLIP_dense **b_handle,      // Matrix to be constructed
-    FILE* file                  // file to read from (must already be open)
+    SLIP_matrix **b_handle,      // Matrix to be constructed
+    FILE* file,                  // file to read from (must already be open)
+    SLIP_options* option
 ) ;
-
-/* Purpose: prints the solution vector(s) as a set of mpq_t entries */
-SLIP_info SLIP_print_stats_mpq
-(
-    mpq_t **x_mpq,          // solution vector in mpq, pass NULL if unused
-    int64_t n,              // dimension of A
-    int64_t numRHS,         // number of RHS vectors
-    SLIP_info check,        // whether the solution is correct or not
-    SLIP_options *option    // option struct telling how much info to print
-);
-
-/* Purpose: prints the solution vector(s) as a set of double entries */
-SLIP_info SLIP_print_stats_double
-(
-    double **x_doub,        // solution vector in double, pass NULL if unused
-    int64_t n,              // dimension of A
-    int64_t numRHS,         // number of RHS vectors
-    SLIP_info check,        // whether the solution is correct or not
-    SLIP_options *option    // option struct telling how much info to print
-);
-
-/* Purpose: prints the solution vector(s) as a set of mpfr_t entries */
-SLIP_info SLIP_print_stats_mpfr
-(
-    mpfr_t **x_mpfr,        // solution vector in mpfr, pass NULL if unused
-    int64_t n,              // dimension of A
-    int64_t numRHS,         // number of RHS vectors
-    SLIP_info check,        // whether the solution is correct or not
-    SLIP_options *option    // option struct telling how much info to print
-);
-

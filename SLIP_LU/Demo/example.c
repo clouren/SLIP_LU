@@ -8,27 +8,29 @@
 
 //------------------------------------------------------------------------------
 
+
 #include "demos.h"
 
+
 /* This example shows how to use SLIP LU with a given input matrix and a double
-   output */
+   output. The input is a randomly generate dense matrix */
 
 // usage:
 // example > out
 // out is file for output calculated result
 
-#define FREE_WORKSPACE                         \
-    SLIP_free(i);                              \
-    SLIP_free(j);                              \
-    SLIP_free(x);                              \
-    SLIP_delete_double_mat(&soln, n, 1);       \
-    SLIP_delete_double_mat(&b_doub, n, 1);     \
-    SLIP_delete_dense(&b);                     \
-    SLIP_delete_LU_analysis(&S);               \
-    SLIP_delete_sparse(&A);                    \
-    SLIP_FREE(option);                         \
-    SLIP_finalize() ;
+#define FREE_WORKSPACE                       \
+    SLIP_LU_analysis_free(&S);               \
+    SLIP_matrix_free(&A,option);             \
+    SLIP_matrix_free(&x,option);             \
+    SLIP_matrix_free(&b,option);             \
+    SLIP_matrix_free(&Rb,option);            \
+    SLIP_matrix_free(&R,option);             \
+    SLIP_FREE(option);                       \
+    SLIP_finalize() ;                        \
 
+   
+    
 int main (void)
 {
 
@@ -45,13 +47,11 @@ int main (void)
 
     SLIP_info ok;
     int64_t n = 50, nz = 2500, num = 0;
-    int64_t *i = NULL;
-    int64_t *j = NULL;
-    double *x = NULL;
-    double **b_doub = NULL;
-    double **soln = NULL;                       // Solution vector
-    SLIP_sparse *A = NULL ;                     // input matrix
-    SLIP_dense *b = NULL ;                      // Right hand side vector
+    SLIP_matrix *A = NULL ;                     // input matrix
+    SLIP_matrix *R = NULL ;                     // Random matrix to create A
+    SLIP_matrix *Rb = NULL;                     // Random matrix to create b
+    SLIP_matrix *b = NULL ;                     // Right hand side vector
+    SLIP_matrix *x = NULL ;                     // Solution vectors
     SLIP_LU_analysis *S = NULL ;                // Column permutation
     SLIP_options *option = SLIP_create_default_options();
     if (!option)
@@ -65,63 +65,65 @@ int main (void)
     // Generate a random dense 50*50 matrix
     //--------------------------------------------------------------------------
 
-    i = (int64_t*) SLIP_malloc(nz* sizeof(int64_t));
-    j = (int64_t*) SLIP_malloc(nz* sizeof(int64_t));
-    x = (double*) SLIP_malloc(nz* sizeof(double));
-    b_doub = SLIP_create_double_mat(n,1);
-    soln = SLIP_create_double_mat(n,1);
-    if (!i || !j || !x || !b_doub || !soln)
-    {
-        fprintf (stderr, "Error! OUT of MEMORY!\n");
-        FREE_WORKSPACE;
-        return 0;
-    }
-
+    // R is a n*n triplet matrix whose entries are FP64 
+    // Note that the first boolean parameter says that the matrix is not shallow,
+    // so that A->i, A->j, and A->x are calloc'd. The second boolean parameter is
+    // meaningless for FP64 matrices, but it tells SLIP LU to allocate the values of
+    // A->x for the mpz_t, mpq_t, and mpfr_t entries
+    SLIP_matrix_allocate(&R, SLIP_TRIPLET, SLIP_FP64, n, n, nz, false, true, option);
+    
+    // Rb is a n*1 dense matrix whose entries are FP64
+    SLIP_matrix_allocate(&Rb, SLIP_DENSE, SLIP_FP64, n, 1, n, false, true, option);
+    
+    
+    // Randomly generate the input
     unsigned int seed = 10;
     srand(seed);
     for (int64_t k = 0; k < n; k++)
     {
-        b_doub[k][0] = rand();
+        Rb->x.fp64[k] = rand();
         for (int64_t p = 0; p < n; p++)
         {
-            i[num] = k;
-            j[num] = p;
-            x[num] = rand();
+            R->i[num] = k;
+            R->j[num] = p;
+            R->x.fp64[num] = rand();
             num+=1;
         }
     }
 
+    R->nz = n*n;
+    Rb->nz = n;
+    
     //--------------------------------------------------------------------------
     // Build A and b
     //--------------------------------------------------------------------------
 
-    OK (SLIP_build_sparse_trip_double (&A, i, j, x, n, nz, option));
-    OK (SLIP_build_dense_double (&b, b_doub, n, 1, option));
+    // A is a copy of the R matrix. A is a CSC matrix with mpz_t entries
+    OK ( SLIP_matrix_copy(&A, SLIP_CSC, SLIP_MPZ, R, option));
+    // b is a copy of the Rb matrix. b is dense with mpz_t entries. 
+    OK ( SLIP_matrix_copy(&b, SLIP_DENSE, SLIP_MPZ, Rb, option));
 
     //--------------------------------------------------------------------------
-    // analyze and solve
+    // Solve
+    //
     //--------------------------------------------------------------------------
 
-    clock_t start_sym = clock();
+    clock_t start_s = clock();
+    
+    // Solve the system and give MPQ solution
+    //OK(SLIP_backslash( &x, SLIP_FP64, A, b, option));
+    
+    // SLIP LU has an optional check, this version of backslash will use this check
+    // we refer to this version as SLIP_backslash_debug because it may be far slower
+    // than the regular backslash
+    // TODO: Can we combine these into one function?
+    OK(SLIP_backslash_debug( &x, SLIP_FP64, A, b, option));
+ 
+    clock_t end_s = clock();
 
-    // Column permutation of A
-    OK(SLIP_LU_analyze(&S, A, option));
+    double t_s = (double) (end_s - start_s) / CLOCKS_PER_SEC;
 
-    clock_t end_sym = clock();
-
-    clock_t start_f = clock();
-
-    // Solve the linear system. The keyword double below indicates that the
-    // final solution vector will be output as a double**.
-    OK(SLIP_solve_double(soln, A, S, b, option));
-
-    clock_t end_f = clock();
-
-    double t_s = (double) (end_sym - start_sym) / CLOCKS_PER_SEC;
-    double t_f = (double) (end_f - start_f) / CLOCKS_PER_SEC;
-
-    printf("\nSymbolic Analysis Time: %lf", t_s);
-    printf("\nSLIP LU Factor & Solve time: %lf\n", t_f);
+    printf("\nSLIP LU Factor & Solve time: %lf\n", t_s);
 
     //--------------------------------------------------------------------------
     // Free memory
