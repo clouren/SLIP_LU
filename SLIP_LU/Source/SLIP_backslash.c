@@ -111,7 +111,7 @@ SLIP_info SLIP_backslash
     // Convert A to desired type
     //--------------------------------------------------------------------------
     SLIP_matrix* x2 = NULL;
-    SLIP_CHECK(SLIP_matrix_copy(&x2, SLIP_DENSE, type, x, option));
+    SLIP_CHECK(SLIP_matrix_copy(&x2, SLIP_DENSE, type, x, option2));
     
     //--------------------------------------------------------------------------
     // Free memory
