@@ -8,7 +8,7 @@
 
 //------------------------------------------------------------------------------
 
-/* Purpose: one of the 3 .c files defining the SLIP LU matlab interfacee
+/* Purpose: The .c file defining the SLIP LU matlab interfacee
  * This function defines: x = SLIP_LU(A, b, option)
  */
 
@@ -41,21 +41,17 @@ void mexFunction
     // Allocate memory
     //--------------------------------------------------------------------------
 
-    SLIP_sparse *A = NULL ;
-    SLIP_sparse *L = NULL ;
-    SLIP_sparse *U = NULL ;
-    int64_t *pinv = NULL ;
-    mpz_t *rhos = NULL ;
-    SLIP_LU_analysis* S = NULL;
-    SLIP_dense *b = NULL ;
-
-    //Set defaults for options
-    SLIP_options* option = SLIP_create_default_options();
+    SLIP_matrix *A = NULL;
+    SLIP_matrix *b = NULL;
+    SLIP_matrix *x = NULL;
+    SLIP_options *option = SLIP_create_default_options();
+    
     if (!option)
     {
         slip_mex_error (SLIP_OUT_OF_MEMORY);
     }
-
+    
+    
     //--------------------------------------------------------------------------
     // Declare variables and process input
     //--------------------------------------------------------------------------
@@ -63,48 +59,30 @@ void mexFunction
     slip_get_matlab_options(option, pargin[2]);
 
     // Read in A and b
-    slip_mex_get_A_and_b(&A, &b, pargin, nargin);
-
-    // Create arrays based on the size of input matrix
-
-    double** soln = SLIP_create_double_mat(b->m, b->n);
-    mpq_t** soln_mpq = SLIP_create_mpq_mat(b->m, b->n);
-    if (!soln || !soln_mpq)
-    {
-        slip_mex_error (SLIP_OUT_OF_MEMORY);
-    }
+    slip_mex_get_A_and_b(&A, &b, pargin, nargin, option);
 
     //--------------------------------------------------------------------------
-    // Symbolic analysis and factorization
+    // Solve
     //--------------------------------------------------------------------------
 
-    SLIP_MEX_OK (SLIP_LU_analyze (&S, A, option)) ;
-    SLIP_MEX_OK (SLIP_LU_factorize (&L, &U, &rhos, &pinv, A, S, option)) ;
-
-    //--------------------------------------------------------------------------
-    // FB Substitution
-    //--------------------------------------------------------------------------
-
-    SLIP_MEX_OK (SLIP_LU_solve(soln_mpq, b, L, U, rhos, pinv));
-    SLIP_MEX_OK (SLIP_permute_x(soln_mpq, b->m, b->n, S));
-    SLIP_MEX_OK (SLIP_scale_x(soln_mpq, A, b));
-    SLIP_MEX_OK (SLIP_get_double_soln(soln, soln_mpq, b->m, b->n));
-
+    SLIP_MEX_OK(SLIP_backslash( &x, SLIP_FP64, A, b, option));
+    
     //--------------------------------------------------------------------------
     // Set outputs, free memory
     //--------------------------------------------------------------------------
 
-    pargout[0] =  slip_mex_output_soln(soln, b->m, b->n);
-    SLIP_delete_mpq_mat(&soln_mpq, b->m, b->n);
-    SLIP_delete_mpz_array(&rhos, A->n);
-    SLIP_FREE(pinv);
-    SLIP_delete_double_mat(&soln, b->m, b->n);
-    SLIP_delete_LU_analysis(&S);
+    mxArray* Xmatlab = mxCreateDoubleMatrix ((mwSize) x->m, (mwSize) x->n, mxREAL);
+    double* x2 = mxGetPr(Xmatlab);
+    
+    for (int k = 0; k < x->n*x->m; k++)
+        x2[k] = x->x.fp64[k];
+    
+    //x2 = x->x.fp64;
+    
+    pargout[0] =  Xmatlab;
+    SLIP_matrix_free(&b, option);
+    SLIP_matrix_free(&A, option);
     SLIP_FREE(option);
-    SLIP_delete_dense(&b);
-    SLIP_delete_sparse(&U);
-    SLIP_delete_sparse(&L);
-    SLIP_delete_sparse(&A);
     SLIP_finalize();
 }
 

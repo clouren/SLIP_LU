@@ -60,7 +60,7 @@ end
 
 fprintf ('\nmaxerr: %g\n', maxerr) ;
 
-if (maxerr < 1e-10)
+if (maxerr < 1e-6)
     fprintf('\nTesting complete, installation successful\n')
 else
     error ('SLIP_LU:test', '\nTesting failure!  error too high\n')
