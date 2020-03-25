@@ -229,6 +229,7 @@ typedef struct SLIP_options
                           // 3: all, with matrices and results
     uint64_t prec;        // Precision used to output file if MPFR is chosen
     mpfr_rnd_t round;     // Type of MPFR rounding used
+    bool check;           // Set true if the solution to the system should be checked
 } SLIP_options;
 
 /* Purpose: Create and return SLIP_options pointer with default parameters
