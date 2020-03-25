@@ -597,23 +597,6 @@ SLIP_info SLIP_backslash
     SLIP_options* option    // Command options 
 );
 
-/* Solve the linear system Ax = b and check the final solution. This is
- * the debug version of SLIP_backslash as it manually checks the solution
- * to the linear system.
- */
-SLIP_info SLIP_backslash_debug
-(
-    // Output
-    SLIP_matrix **X_handle, // Final solution vector
-    // Input
-    SLIP_type type,         // Type of output desired
-                            // Must be SLIP_MPQ, SLIP_MPFR,
-                            // or SLIP_FP64
-    SLIP_matrix *A,         // Input matrix
-    SLIP_matrix *b,         // Right hand side vector(s)
-    SLIP_options* option    // Command options 
-);
-
 /* Purpose: SLIP_LU_solve solves the linear system LD^(-1)U x = b.*/
 SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
 (
