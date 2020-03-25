@@ -24,7 +24,7 @@
  */
 
 #define SLIP_FREE_WORK              \
-    SLIP_delete_mpz_array(&x,n);    \
+    SLIP_matrix_free(&x, NULL);     \
     SLIP_FREE(xi);                  \
     SLIP_FREE(h);                   \
     SLIP_FREE(pivs);                \
@@ -34,9 +34,9 @@
 
 #define SLIP_FREE_ALL               \
     SLIP_FREE_WORK                  \
-    SLIP_delete_sparse(&L);         \
-    SLIP_delete_sparse(&U);         \
-    SLIP_delete_mpz_array(&rhos,n); \
+    SLIP_matrix_free(&L, NULL);     \
+    SLIP_matrix_free(&U, NULL);     \
+    SLIP_matrix_free(&rhos, NULL);  \
     SLIP_free(pinv);
 
 #include "SLIP_LU_internal.h"
@@ -44,14 +44,14 @@
 SLIP_info SLIP_LU_factorize
 (
     // output:
-    SLIP_sparse **L_handle, // lower triangular matrix
-    SLIP_sparse **U_handle, // upper triangular matrix
-    mpz_t **rhos_handle,    // sequence of pivots
-    int64_t **pinv_handle,  // inverse row permutation
+    SLIP_matrix **L_handle,    // lower triangular matrix
+    SLIP_matrix **U_handle,    // upper triangular matrix
+    SLIP_matrix **rhos_handle, // sequence of pivots
+    int64_t **pinv_handle,     // inverse row permutation
     // input:
-    SLIP_sparse *A,         // matrix to be factored
-    SLIP_LU_analysis *S,    // stores guess on nnz and column permutation
-    SLIP_options* option    // command options
+    SLIP_matrix *A,            // matrix to be factored
+    SLIP_LU_analysis *S,       // stores guess on nnz and column permutation
+    SLIP_options* option       // command options
 )
 {
 
@@ -59,15 +59,15 @@ SLIP_info SLIP_LU_factorize
     // check inputs
     //--------------------------------------------------------------------------
 
-    SLIP_sparse *L = NULL ;     // TODO change to SLIP_matrix (csc, mpz)
-    SLIP_sparse *U = NULL ;     // TODO change to SLIP_matrix (csc, mpz)
-    mpz_t *rhos = NULL ;        // TODO change to SLIP_matrix (dense, mpz)
+    SLIP_matrix *L = NULL ;    
+    SLIP_matrix *U = NULL ;    
+    SLIP_matrix *rhos = NULL ;       
     int64_t *pinv = NULL ;
     int64_t *xi = NULL ;
     int64_t *h = NULL ;
     int64_t *pivs = NULL ;
     int64_t *row_perm = NULL ;
-    mpz_t* x = NULL ;           // TODO change to SLIP_matrix (dense, mpz)
+    SLIP_matrix *x = NULL ;
 
     mpz_t sigma; SLIP_MPZ_SET_NULL(sigma);
     mpfr_t temp; SLIP_MPFR_SET_NULL(temp);
@@ -84,7 +84,7 @@ SLIP_info SLIP_LU_factorize
 
     SLIP_REQUIRE (A, SLIP_CSC, SLIP_MPZ) ;
 
-    if (!A || !S || !option || !A->p || !A->x || !A->i)
+    if (!A || !S || !option || !A->p || !A->i)
     {
         return SLIP_INCORRECT_INPUT;
     }
@@ -95,12 +95,9 @@ SLIP_info SLIP_LU_factorize
 
     SLIP_info info ;
     int64_t n = A->n ;
-
-    L = slip_create_sparse ( ) ;
-    U = slip_create_sparse ( ) ;
     pinv = (int64_t *) SLIP_malloc (n * sizeof (int64_t)) ;
-    rhos = SLIP_create_mpz_array (n) ;
-    if (!L || !U || !pinv || !rhos)
+    
+    if (!pinv)
     {
         // out of memory: free everything and return
         SLIP_FREE_ALL ;
@@ -141,9 +138,12 @@ SLIP_info SLIP_LU_factorize
     }
     // Initialize pivs and h; that is set pivs[i] = -1 and
     // h[i] = -1 for all i
-    slip_reset_int64_array(pivs,n);
-    slip_reset_int64_array(h,n);
-
+    for (int64_t i = 0; i < n; i++)
+    {
+        h[i] = -1;
+        pivs[i] = -1;
+    }
+    
     //--------------------------------------------------------------------------
     // This section of the code computes a bound for the worst case bit-length
     // of each entry in the matrix. This bound is used to allocate the size of
@@ -156,16 +156,16 @@ SLIP_info SLIP_LU_factorize
 
     // sigma is the largest initial entry in A. First we initialize sigma to be
     // the first nonzero in A
-    SLIP_CHECK(SLIP_mpz_set(sigma, A->x[0]));
+    SLIP_CHECK(SLIP_mpz_set(sigma, A->x.mpz[0]));
 
     // Iterate throughout A and set sigma = max (A)
     for (i = 1; i < A->nz; i++)
     {
         int r ;
-        SLIP_CHECK (SLIP_mpz_cmpabs (&r, sigma, A->x [i])) ;
+        SLIP_CHECK (SLIP_mpz_cmpabs (&r, sigma, A->x.mpz [i])) ;
         if(r < 0)
         {
-            SLIP_CHECK(SLIP_mpz_set(sigma,A->x[i]));
+            SLIP_CHECK(SLIP_mpz_set(sigma,A->x.mpz[i]));
         }
     }
 
@@ -211,17 +211,27 @@ SLIP_info SLIP_LU_factorize
     if (bound < 64) {bound = 64;}
 
     //--------------------------------------------------------------------------
-    // Declare memory for x, L, and U
+    // Declare memory for x, rhos, L, and U
     //--------------------------------------------------------------------------
 
-    // Initialize x. x is the global mpz_t vector of size n which is used
-    // repeatedly in the sparse REF triangular solve.
-    x = slip_create_mpz_array2(n,bound);
-    if (!x)
+    // Create rhos, a global dense mpz_t matrix of dimension n*1
+    SLIP_matrix_allocate(&rhos, SLIP_DENSE, SLIP_MPZ, n, 1, n, false, true, option);
+    
+    // Create x, a global dense mpz_t matrix of dimension n*1. Unlike rhos, the second
+    // boolean parameter, x->init is set to false.
+    SLIP_matrix_allocate(&x, SLIP_DENSE, SLIP_MPZ, n, 1, n, false, false, option);
+    
+    if (!rhos || !x)
     {
+        // out of memory: free everything and return
         SLIP_FREE_ALL ;
         return SLIP_OUT_OF_MEMORY;
     }
+    
+    // Allocate the values of x
+    for (i = 0; i < n; i++)
+        SLIP_CHECK(SLIP_mpz_init2(x->x.mpz[i], bound));
+    
     // Initialize location based vectors
     for (i = 0; i < n; i++)
     {
@@ -229,10 +239,17 @@ SLIP_info SLIP_LU_factorize
         row_perm[i] = i;
     }
 
-    // Allocate L and U.
-    SLIP_CHECK(slip_sparse_alloc2(L, n, n, S->lnz));
-    SLIP_CHECK(slip_sparse_alloc2(U, n, n, S->unz));
-
+    // Allocate L and U. 
+    SLIP_matrix_allocate(&L, SLIP_CSC, SLIP_MPZ, n, n, S->lnz, false, false, option);
+    SLIP_matrix_allocate(&U, SLIP_CSC, SLIP_MPZ, n, n, S->unz, false, false, option);
+    
+    if (!L || !U)
+    {
+        // out of memory: free everything and return
+        SLIP_FREE_ALL ;
+        return SLIP_OUT_OF_MEMORY;
+    }
+    
     //--------------------------------------------------------------------------
     // Iterations 0:n-1 (1:n in standard)
     //--------------------------------------------------------------------------
@@ -250,26 +267,26 @@ SLIP_info SLIP_LU_factorize
         {
             // Set L->nz = lnz
             L->nz = lnz;
-            SLIP_CHECK(slip_sparse_realloc(L));
+            SLIP_CHECK(slip_sparse_realloc(L, option));
         }
         if (unz + n > U->nzmax)
         {
             // Set U->nz = unz
             U->nz = unz;
-            SLIP_CHECK(slip_sparse_realloc(U));
+            SLIP_CHECK(slip_sparse_realloc(U, option));
         }
 
         // LDx = A(:,k)
         SLIP_CHECK(slip_ref_triangular_solve(&top, L, A, k, xi,
             (const int64_t *) (S->q),
-            (const mpz_t   *) rhos,
+            rhos,
             (const int64_t *) pinv,
             (const int64_t *) row_perm,
-            h, x)) ;
+            h, x, option)) ;
 
         // Obtain pivot index
         SLIP_CHECK(slip_get_pivot(&pivot, x, pivs, n, top, xi, option->pivot,
-            col, k, rhos, pinv, row_perm, option->tol));
+            col, k, rhos, pinv, row_perm, option->tol, option));
 
         //----------------------------------------------------------------------
         // Iterate accross the nonzeros in x
@@ -287,11 +304,11 @@ SLIP_info SLIP_LU_factorize
             {
                 // Place the i location of the U->nz nonzero
                 U->i[unz] = jnew;
-                SLIP_CHECK(SLIP_mpz_sizeinbase(&size, x[jnew], 2));
+                SLIP_CHECK(SLIP_mpz_sizeinbase(&size, x->x.mpz[jnew], 2));
                 // GMP manual: Allocated size should be size+2
-                SLIP_CHECK(SLIP_mpz_init2(U->x[unz], size+2));
+                SLIP_CHECK(SLIP_mpz_init2(U->x.mpz[unz], size+2));
                 // Place the x value of the U->nz nonzero
-                SLIP_CHECK(SLIP_mpz_set(U->x[unz], x[jnew]));
+                SLIP_CHECK(SLIP_mpz_set(U->x.mpz[unz], x->x.mpz[jnew]));
                 // Increment U->nz
                 unz++;
             }
@@ -303,11 +320,11 @@ SLIP_info SLIP_LU_factorize
             {
                 // Place the i location of the L->nz nonzero
                 L->i[lnz] = jnew;
-                SLIP_CHECK(SLIP_mpz_sizeinbase(&size, x[jnew], 2));
+                SLIP_CHECK(SLIP_mpz_sizeinbase(&size, x->x.mpz[jnew], 2));
                 // GMP manual: Allocated size should be size+2
-                SLIP_CHECK(SLIP_mpz_init2(L->x[lnz], size+2));
+                SLIP_CHECK(SLIP_mpz_init2(L->x.mpz[lnz], size+2));
                 // Place the x value of the L->nz nonzero
-                SLIP_CHECK(SLIP_mpz_set(L->x[lnz], x[jnew]));
+                SLIP_CHECK(SLIP_mpz_set(L->x.mpz[lnz], x->x.mpz[jnew]));
                 // Increment L->nz
                 lnz++;
             }
@@ -320,7 +337,7 @@ SLIP_info SLIP_LU_factorize
     // Finalize L->p, U->p
     L->p[n] = lnz;
     U->p[n] = unz;
-
+    
     //--------------------------------------------------------------------------
     // Free memory
     //--------------------------------------------------------------------------
@@ -330,9 +347,9 @@ SLIP_info SLIP_LU_factorize
 
     // This cannot fail since the size of L and U are shrinking.
     // Collapse L
-    slip_sparse_collapse(L);
+    slip_sparse_collapse(L, option);
     // Collapse U
-    slip_sparse_collapse(U);
+    slip_sparse_collapse(U, option);
 
     //--------------------------------------------------------------------------
     // finalize the row indices in L and U
@@ -354,8 +371,8 @@ SLIP_info SLIP_LU_factorize
     //--------------------------------------------------------------------------
 
     #if 0
-    SLIP_CHECK (SLIP_spok (L, option)) ;
-    SLIP_CHECK (SLIP_spok (U, option)) ;
+    SLIP_CHECK (SLIP_matrix_check (L, option)) ;
+    SLIP_CHECK (SLIP_matrix_check (U, option)) ;
     #endif
 
     //--------------------------------------------------------------------------

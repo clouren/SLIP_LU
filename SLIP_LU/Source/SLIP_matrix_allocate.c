@@ -33,8 +33,11 @@ SLIP_info SLIP_matrix_allocate
                             // A->x are all returned as NULL and must be set
                             // by the caller.  All A->*_shallow are returned
                             // as true.
-    // TODO add this?:
-    // bool init,
+    bool init,              // If true, and the data types are mpz, mpq, or
+                            // mpfr, the entries are initialized (using the 
+                            // appropriate SLIP_mp*_init function). If false,
+                            // the mpz, mpq, and mpfr arrays are malloced but not 
+                            // initialized. Utilized internally to reduce memory
     SLIP_options *option
 )
 {
@@ -136,17 +139,30 @@ SLIP_info SLIP_matrix_allocate
         switch (type)
         {
             case SLIP_MPZ:
-                A->x.mpz = SLIP_create_mpz_array (nzmax) ;  // TODO
+                // If init == true, we create and initialize each entry
+                // in the integer array. If init == false, then we only
+                // allocate the array but do not allocate the individual
+                // mpz, mpq, or mpfr
+                if (init)
+                    A->x.mpz = slip_create_mpz_array (nzmax, option) ;
+                else
+                    A->x.mpz = SLIP_calloc(nzmax, sizeof(mpz_t));
                 ok = ok && (A->x.mpz != NULL) ;
                 break ;
 
             case SLIP_MPQ:
-                A->x.mpq = SLIP_create_mpq_array (nzmax) ;  // TODO
+                if (init)
+                    A->x.mpq = slip_create_mpq_array (nzmax, option) ; 
+                else
+                    A->x.mpq = SLIP_calloc(nzmax, sizeof(mpq_t));
                 ok = ok && (A->x.mpq != NULL) ;
                 break ;
 
             case SLIP_MPFR:
-                A->x.mpfr = SLIP_create_mpfr_array (nzmax, option) ;    // TODO
+                if (init)
+                    A->x.mpfr = slip_create_mpfr_array (nzmax, option) ; 
+                else
+                    A->x.mpfr = SLIP_calloc(nzmax, sizeof(mpfr_t));
                 ok = ok && (A->x.mpfr != NULL) ;
                 break ;
 

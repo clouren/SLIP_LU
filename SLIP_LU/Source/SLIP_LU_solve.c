@@ -10,45 +10,57 @@
 
 /* Purpose: This function solves the linear system LD^(-1)U x = b. It
  * essnetially serves as a wrapper for all forward and backward substitution
- * routines.
+ * routines. This function always returns the solution matrix x as a rational 
+ * matrix. If a user desires to have double or mpfr output, they must create
+ * a matrix copy.
  *
  * Input/output arguments:
  *
- * x:        mpq_t** array. Allocated but uninitialized on input.  On output
- *           contains the exact rational solution to Ax = b.
+ * X_handle: A pointer to the solution vectors. Unitialized on input.
+ *           on output, contains the exact rational solution of the system
  *
- * b:        SLIP_dense data structure containing the set of RHS vectors.
- *           Contains un permuted b on input and contains permuted b on
- *           output.
+ * b:        Set of RHS vectors
  *
+ * A:        Input matrix. Unmodified on input/output
+ * 
  * L:        Lower triangular matrix. Unmodified on input/output
  *
  * U:        Upper triangular matrix. Unmodified on input/output
  *
- * rhos:     mpz_t* array of size n. Contains the sequence of pivots
+ * rhos:     dense mpz_t matrix of pivots. Contains the sequence of pivots
  *           encountered during factorization and is used for forward/back
  *           substitution. Unmodified on input/output.
+ * 
+ * S:        symbolic analysis struct, used for vector permutation
  *
  * pinv:     inverse row permutation vector, used to permute the b vectors.
  *           unmodified on input/output.
+ * 
+ * check:    a debugging check. If true, the exact solution of the linear 
+ *           system is checked for accuracy.
+ * 
+ * option:   command options
  */
 
 #define SLIP_FREE_ALL                        \
-    SLIP_delete_mpz_mat(&b2, n, numRHS);
+    SLIP_matrix_free(&b2, NULL);
 
 #include "SLIP_LU_internal.h"
 
 SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
 (
-    // TODO output:
-    // SLIP_matrix **X_handle,
-    mpq_t **x,              // rational solution to the system
+    // Output
+    SLIP_matrix **X_handle,  // rational solution to the system
     // input:
-    SLIP_dense *b,          // right hand side vector
-    const SLIP_sparse *L,   // lower triangular matrix
-    const SLIP_sparse *U,   // upper triangular matrix
-    const mpz_t *rhos,      // sequence of pivots
-    const int64_t *pinv     // row permutation
+    SLIP_matrix *b,         // right hand side vector
+    const SLIP_matrix *A,   // Input matrix
+    const SLIP_matrix *L,   // lower triangular matrix
+    const SLIP_matrix *U,   // upper triangular matrix
+    const SLIP_matrix *rhos,// sequence of pivots
+    SLIP_LU_analysis *S,    // symbolic analysis struct
+    const int64_t *pinv,    // row permutation
+    bool check,             // Set true to check solution (for debugging)
+    SLIP_options* option    // Command options
 )
 {
 
@@ -57,32 +69,38 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     //--------------------------------------------------------------------------
 
     SLIP_info info ;
+    SLIP_REQUIRE (A,    SLIP_CSC,   SLIP_MPZ) ;
     SLIP_REQUIRE (L,    SLIP_CSC,   SLIP_MPZ) ;
     SLIP_REQUIRE (U,    SLIP_CSC,   SLIP_MPZ) ;
     SLIP_REQUIRE (rhos, SLIP_DENSE, SLIP_MPZ) ;
     SLIP_REQUIRE (b,    SLIP_DENSE, SLIP_MPZ) ;
+    if (!option)
+        return SLIP_INCORRECT_INPUT;
 
-    // TODO: change X to SLIP_matrix, and allocate it here
-    // with SLIP_matrix_allocate (&X, SLIP_DENSE, SLIP_MPZ, ...).
-
-    if (!x || !b || !rhos || !pinv || !L || !U || !b->x
-        || !L->p || !L->i || !L->x || !U->p || !U->i || !U->x)
+    SLIP_matrix *x = NULL;
+    SLIP_matrix_allocate(&x, SLIP_DENSE, SLIP_MPQ, b->m, b->n, b->m*b->n, false, true, option);
+    
+    if (!x || !b || !rhos || !pinv || !L || !U 
+        || !L->p || !L->i || !U->p || !U->i)
     {
         return SLIP_INCORRECT_INPUT;
     }
+
 
     //--------------------------------------------------------------------------
     // initializations
     //--------------------------------------------------------------------------
 
-    int64_t i, k, n = L->n, numRHS = b->n;
-    mpz_t **bx = b->x;
-
+    int64_t i, k, n = L->n;
+    
     //--------------------------------------------------------------------------
     // create the permuted b
     //--------------------------------------------------------------------------
 
-    mpz_t** b2 = SLIP_create_mpz_mat(n, numRHS);
+    SLIP_matrix *b2;
+    
+    SLIP_matrix_copy(&b2, SLIP_DENSE, SLIP_MPZ, b, option);
+    
     if (!b2)
     {
         return SLIP_OUT_OF_MEMORY;
@@ -92,11 +110,12 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     // Set workspace b
     //--------------------------------------------------------------------------
 
-    for (k = 0; k < numRHS; k++)
+    for (k = 0; k < b->n; k++)
     {
-        for (i = 0; i < n; i++)
+        for (i = 0; i < b->m; i++)
         {
-            SLIP_CHECK(SLIP_mpz_set(b2[pinv[i]][k], bx[i][k]));
+            SLIP_CHECK(SLIP_mpz_set(SLIP_2D(b2, pinv[i], k, mpz), 
+                                    SLIP_2D(b, i, k, mpz)));
         }
     }
 
@@ -104,30 +123,68 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     // b2 = L2\b2, via forward substitution
     //--------------------------------------------------------------------------
 
-    SLIP_CHECK(slip_forward_sub(L, b2, rhos, numRHS));
+    SLIP_CHECK(slip_forward_sub(L, b2, (SLIP_matrix*) rhos, option));
 
     //--------------------------------------------------------------------------
     // b2 = b2 * det, where det=rhos[n-1]
     //--------------------------------------------------------------------------
 
-    SLIP_CHECK(slip_array_mul(b2, rhos[n-1], n, numRHS));
+    SLIP_CHECK(slip_array_mul(b2, rhos->x.mpz[n-1], option));
 
     //--------------------------------------------------------------------------
     // b2 = U\b2, via back substitution
     //--------------------------------------------------------------------------
-
-    SLIP_CHECK(slip_back_sub(U, b2, numRHS));
+    SLIP_CHECK(slip_back_sub(U, b2, option));
 
     //--------------------------------------------------------------------------
     // x = b2/det, where det=rhos[n-1]
     //--------------------------------------------------------------------------
 
-    SLIP_CHECK(slip_array_div(x, b2, rhos[n-1], n, numRHS));
+    SLIP_CHECK(slip_array_div(x, b2, rhos->x.mpz[n-1], option));
 
+    //--------------------------------------------------------------------------
+    // Permute the solution vectors
+    //--------------------------------------------------------------------------
+
+    SLIP_CHECK(slip_permute_x(x, S, option));
+    
+    //--------------------------------------------------------------------------
+    // Check the solution if desired (debugging only)
+    //--------------------------------------------------------------------------
+
+    if (check)
+    {
+        SLIP_info checker = slip_check_solution( (SLIP_matrix*) A, x, b, option);
+        if (checker == SLIP_OK)
+        {
+            printf ("Solution is verified to be exact.\n") ;
+        }
+        else if (checker == SLIP_INCORRECT)
+        {
+            // This can never happen.
+            printf ("ERROR! Solution is wrong. This is a bug; please"
+                "contact the authors of SLIP LU.\n") ;
+            abort ( ) ;
+        }
+        else
+        {
+            // Out of memory or bad input.
+            SLIP_FREE_ALL;
+            return checker;
+        }
+    }
+            
+    //--------------------------------------------------------------------------
+    // scale solution
+    //--------------------------------------------------------------------------
+
+    SLIP_CHECK(slip_scale_x(x, (SLIP_matrix*) A, b, option));
+    
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------
 
+    (*X_handle) = x;
     SLIP_FREE_ALL;
     return SLIP_OK;
 }

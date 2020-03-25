@@ -9,18 +9,17 @@
 //------------------------------------------------------------------------------
 
 /* Purpose: This function converts a double array of size n to an appropriate
- * mpz array of size n. To do this, the number is multiplied by 10^17 then, the
- * GCD is found. This function allows the use of matrices in double precision
+ * mpz array of size n. To do this, the number is multiplied by an appropriate power,
+ * then, the GCD is found. This function allows the use of matrices in double precision
  * to work with SLIP LU.
  *
- * See also slip_expand_double_mat, which converts an m-by-n matrix.
  */
 
 #define SLIP_FREE_ALL              \
-    SLIP_delete_mpfr_array(&x3, n); \
     SLIP_MPZ_CLEAR(gcd);            \
     SLIP_MPZ_CLEAR(one);            \
-    SLIP_MPQ_CLEAR(temp);
+    SLIP_MPQ_CLEAR(temp);           \
+    SLIP_matrix_free(&x3, NULL);    \
 
 #include "SLIP_LU_internal.h"
 
@@ -30,7 +29,7 @@ SLIP_info slip_expand_double_array
     double* x,      // double array that needs to be made integral
     mpq_t scale,    // the scaling factor used (x_out = scale * x)
     int64_t n,      // size of x
-    SLIP_options* option
+    SLIP_options* option    // Command options
 )
 {
 
@@ -38,48 +37,46 @@ SLIP_info slip_expand_double_array
     // check inputs
     //--------------------------------------------------------------------------
 
-    // TODO: this functionality becomes part of SLIP_matrix_copy:
-    // move this functionality into slip_cast_array,
-    // or keep it here as a helper function for slip_cast_array.
-
-    // The scale factored is computed below, but it must have already been
-    // created on input as an empty mpq_t variable.
-
+    if (!x_out || !x || !option)
+        return SLIP_INCORRECT_INPUT;
+    
     //--------------------------------------------------------------------------
 
     int64_t i, k ;
     int r1, r2 = 1;
     bool nz_found = false;
     SLIP_info info ;
-    // Double precision accurate ~17 decimals.  TODO: No, closer to 2e-16.
-    // TODO: But shouldn't this use a power of two?
+    // Double precision accurate to about 2e-16. We multiply by 10e17 to convert 
+    // (overestimate to be safe)
     double expon = pow(10, 17);
     // Quad precision in case input is huge
-    mpfr_t* x3 = NULL;
+    SLIP_matrix* x3 = NULL;
     mpz_t gcd, one; SLIP_MPZ_SET_NULL(gcd); SLIP_MPZ_SET_NULL(one);
     mpq_t temp; SLIP_MPQ_SET_NULL(temp);
     SLIP_CHECK(SLIP_mpq_init(temp));
     SLIP_CHECK(SLIP_mpz_init(gcd));
     SLIP_CHECK(SLIP_mpz_init(one));
-    x3 = SLIP_create_mpfr_array(n, option);
+
+    SLIP_matrix_allocate(&x3, SLIP_DENSE, SLIP_MPFR, n, 1, n, false, true, option);
     if (!x3)
     {
         SLIP_FREE_ALL;
         return SLIP_OUT_OF_MEMORY;
     }
 
+    
     SLIP_CHECK(SLIP_mpq_set_d(scale, expon));           // scale = 10^17
     for (i = 0; i < n; i++)
     {
         // Set x3[i] = x[i]
-        SLIP_CHECK(SLIP_mpfr_set_d(x3[i], x[i], option->round));
+        SLIP_CHECK(SLIP_mpfr_set_d(x3->x.mpfr[i], x[i], option->round));
 
         // x3[i] = x[i] * 10^17
-        SLIP_CHECK(SLIP_mpfr_mul_d(x3[i], x3[i], expon,
+        SLIP_CHECK(SLIP_mpfr_mul_d(x3->x.mpfr[i], x3->x.mpfr[i], expon,
             option->round));
 
         // x_out[i] = x3[i]
-        SLIP_CHECK(SLIP_mpfr_get_z(x_out[i], x3[i], option->round));
+        SLIP_CHECK(SLIP_mpfr_get_z(x_out[i], x3->x.mpfr[i], option->round));
     }
 
     //--------------------------------------------------------------------------

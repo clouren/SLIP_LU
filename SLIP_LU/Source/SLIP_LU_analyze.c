@@ -30,8 +30,8 @@
 SLIP_info SLIP_LU_analyze
 (
     SLIP_LU_analysis** S_handle, // symbolic analysis (column perm. and nnz L,U)
-    SLIP_sparse *A,             // Input matrix
-    SLIP_options *option        // Control parameters
+    SLIP_matrix *A,             // Input matrix
+    SLIP_options *option        // Control parameters, if NULL, use default
 )
 {
 
@@ -49,32 +49,38 @@ SLIP_info SLIP_LU_analyze
     }
     (*S_handle) = NULL ;
 
-    if (!A || !(A->i) || !(A->p) || !option || A->n != A->m)
+    if (!A || !(A->i) || !(A->p) || A->n != A->m)
     {
         return SLIP_INCORRECT_INPUT;
     }
-
-    //--------------------------------------------------------------------------
-    // print info about SLIP LU
-    //--------------------------------------------------------------------------
-
-    if (option->print_level > 0)
+    
+    SLIP_options* option2 = NULL;
+    if (option == NULL)
     {
-        // TODO move this to SLIP_initialize_expert?  SLIP_matrix_check?
-        slip_lu_info();
+        option2 = SLIP_create_default_options();
     }
+    else
+        option2 = option;
 
     //--------------------------------------------------------------------------
     // allocate symbolic analysis object
     //--------------------------------------------------------------------------
 
     int64_t n = A->n, nz = A->nz, i;
-    S = slip_create_LU_analysis (n) ;
-    if (!S)
+    // ALlocate memory for S
+    S = (SLIP_LU_analysis*) SLIP_malloc(sizeof(SLIP_LU_analysis));
+    if (S == NULL) {return SLIP_OUT_OF_MEMORY;}
+
+    // Allocate memory for column permutation
+    S->q = (int64_t*) SLIP_malloc((n+1) * sizeof(int64_t));
+    if (S->q == NULL)
     {
-        // out of memory
-        return (SLIP_OUT_OF_MEMORY) ;
+        SLIP_FREE(S);
+        return SLIP_OUT_OF_MEMORY;
     }
+
+    S->lnz = 0;
+    S->unz = 0;
 
     //--------------------------------------------------------------------------
     // No ordering is used. S->q is set to [0 ... n] and the number of nonzeros
@@ -82,7 +88,7 @@ SLIP_info SLIP_LU_analyze
     // is a very crude estimate on the nnz(L) and nnz(U)
     //--------------------------------------------------------------------------
 
-    if (option->order == SLIP_NO_ORDERING)
+    if (option2->order == SLIP_NO_ORDERING)
     {
         for (i = 0; i < n+1; i++)
         {
@@ -97,14 +103,14 @@ SLIP_info SLIP_LU_analyze
     // A+A'. The numer of nonzeros in L and U is given as AMD's computed
     // number of nonzeros in the Cholesky factor L of A+A'
     //--------------------------------------------------------------------------
-    else if (option->order == SLIP_AMD)
+    else if (option2->order == SLIP_AMD)
     {
         double Control [AMD_CONTROL];           // Declare AMD control
         amd_defaults(Control);                  // Set AMD defaults
         double Info [AMD_INFO];
         amd_l_order(n, A->p, A->i, S->q, Control, Info); // Perform AMD
         S->lnz = S->unz = Info[AMD_LNZ];        // Guess for unz and lnz
-        if (option->print_level > 0)            // Output AMD info if desired
+        if (option2->print_level > 0)            // Output AMD info if desired
         {
             printf("\n****Column Ordering Information****\n");
             amd_control(Control);
@@ -125,7 +131,7 @@ SLIP_info SLIP_LU_analyze
         if (!A2)
         {
             // out of memory
-            SLIP_delete_LU_analysis (&S) ;
+            SLIP_LU_analysis_free (&S) ;
             return (SLIP_OUT_OF_MEMORY) ;
         }
         // Initialize S->q as per COLAMD documentation
@@ -144,7 +150,7 @@ SLIP_info SLIP_LU_analyze
         S->lnz = S->unz = 10*A->nz;
 
         // Print stats if desired
-        if (option->print_level > 0)
+        if (option2->print_level > 0)
         {
             printf("\n****Column Ordering Information****\n");
             colamd_l_report(stats);
@@ -180,6 +186,10 @@ SLIP_info SLIP_LU_analyze
     //--------------------------------------------------------------------------
 
     (*S_handle) = S ;
+    if (option == NULL)
+    {
+        SLIP_FREE(option2);
+    }
     return SLIP_OK;
 }
 

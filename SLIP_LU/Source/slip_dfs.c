@@ -19,10 +19,11 @@ void slip_dfs // performs a dfs of the graph of the matrix starting at node j
 (
     int64_t *top,          // beginning of stack
     int64_t j,             // What node to start DFS at
-    SLIP_sparse* L,        // matrix which represents the Graph of L
+    SLIP_matrix* L,        // matrix which represents the Graph of L
     int64_t* xi,           // the nonzero pattern
     int64_t* pstack,       // workspace vector
-    const int64_t* pinv    // row permutation
+    const int64_t* pinv,   // row permutation
+    SLIP_options* option   // Command options, currently unused
 )
 {
 
@@ -32,6 +33,7 @@ void slip_dfs // performs a dfs of the graph of the matrix starting at node j
 
     ASSERT (type != NULL && xi != NULL && pstack != NULL && pinv != NULL) ;
     ASSERT (L != NULL && L->kind == SLIP_CSC) ;
+    if (!top || !xi || !pstack || !option) return;
 
     //--------------------------------------------------------------------------
 

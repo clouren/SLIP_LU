@@ -23,7 +23,7 @@ SLIP_info SLIP_matrix_free
     // check inputs
     //--------------------------------------------------------------------------
 
-    if (option == NULL)     // TODO NULL gives defaults?
+    if (option == NULL)
     {
         // option is currently unused, but it's checked anyway
         return (SLIP_INCORRECT_INPUT) ;
@@ -50,15 +50,39 @@ SLIP_info SLIP_matrix_free
         switch (A->type)
         {
             case SLIP_MPZ:
-                SLIP_delete_mpz_array (&(A->x.mpz), A->nzmax) ;
+                if ( A->x.mpz)
+                for (int64_t i = 0; i < A->nzmax; i++)
+                {
+                    if ( A->x.mpz[i] != NULL)
+                    {
+                        SLIP_MPZ_CLEAR( A->x.mpz[i]);
+                    }
+                }
+                SLIP_FREE (A->x.mpz);
                 break ;
 
             case SLIP_MPQ:
-                SLIP_delete_mpq_array (&(A->x.mpq), A->nzmax) ;
+                if ( A->x.mpq)
+                for (int64_t i = 0; i < A->nzmax; i++)
+                {
+                    if ( A->x.mpq[i] != NULL)
+                    {
+                        SLIP_MPQ_CLEAR( A->x.mpq[i]);
+                    }
+                }
+                SLIP_FREE (A->x.mpq);
                 break ;
 
             case SLIP_MPFR:
-                SLIP_delete_mpfr_array (&(A->x.mpfr), A->nzmax) ;
+                if ( A->x.mpfr)
+                for (int64_t i = 0; i < A->nzmax; i++)
+                {
+                    if ( A->x.mpfr[i] != NULL)
+                    {
+                        SLIP_MPFR_CLEAR( A->x.mpfr[i]);
+                    }
+                }
+                SLIP_FREE (A->x.mpfr);
                 break ;
 
             case SLIP_INT64:

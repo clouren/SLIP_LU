@@ -16,12 +16,15 @@
 
 SLIP_info slip_cumsum
 (
-    int64_t *p,      // vector to store the sum of c
-    int64_t *c,      // vector which is summed
-    int64_t n        // size of c
+    int64_t *p,          // vector to store the sum of c
+    int64_t *c,          // vector which is summed
+    int64_t n,           // size of c
+    SLIP_options* option // Command options, currently unused
 )
 {
 
+    if (!p || !c || !option) return SLIP_INCORRECT_INPUT;
+    
     int64_t i, nz = 0 ;
     for (i = 0 ; i < n ; i++)
     {

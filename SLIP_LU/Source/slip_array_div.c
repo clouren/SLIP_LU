@@ -8,11 +8,12 @@
 
 //------------------------------------------------------------------------------
 
-/* Purpose: This function takes as input a mpz_t** array and divides it by a
- * mpz_t constant storing the solution in a mpq_t** array. This is used
- * internally to divide the solution vector by the determinant of the matrix.
+/* Purpose: This function takes as input a dense SLIP_matrix, x, which is MPZ,
+ * and divides it by the determinant of the matrix. This division is then stored
+ * in a dense MPQ matrix. This is used internally to divide the solution vector 
+ * by the determinant of the matrix.
  *
- * On output, the contents of the array x2 are modified
+ * On output, the contents of the matrix x2 are modified.
  */
 
 #define SLIP_FREE_ALL             \
@@ -22,11 +23,10 @@
 
 SLIP_info slip_array_div // divides the x vector by the determinant
 (
-    mpq_t** x2,         // solution of x/det
-    mpz_t** x,          // input vector
-    const mpz_t det,    // given determinant of matrix
-    int64_t n,          // size of x and x2
-    int64_t numRHS      // number of rhs vectors
+    SLIP_matrix* x2,     // solution of x/det
+    SLIP_matrix* x,      // input vector
+    const mpz_t det,     // given determinant of matrix
+    SLIP_options* option // Command options, currently unused
 )
 {
 
@@ -36,8 +36,12 @@ SLIP_info slip_array_div // divides the x vector by the determinant
 
     SLIP_info info ;
     SLIP_REQUIRE (x2, SLIP_DENSE, SLIP_MPQ) ;
-    SLIP_REQUIRE (x,  SLIP_DENSE, SLIP_MPz) ;
-
+    SLIP_REQUIRE (x,  SLIP_DENSE, SLIP_MPZ) ;
+    if (!option)
+    {
+        return SLIP_INCORRECT_INPUT;
+    }
+    
     //--------------------------------------------------------------------------
     // Set det2 = det
     //--------------------------------------------------------------------------
@@ -50,17 +54,14 @@ SLIP_info slip_array_div // divides the x vector by the determinant
     // iterate each entry of x, copy to x2 and divide it by det
     //--------------------------------------------------------------------------
 
-    for (int64_t i = 0; i < n; i++)
+    for (int64_t i = 0; i < x->n * x->m; i++)
     {
-        for (int64_t k = 0; k < numRHS; k++)
-        {
-            // Set x2[i] = x[i]
-            SLIP_CHECK(SLIP_mpq_set_num(x2[i][k], x[i][k]));
-            // x2[i] = x2[i] / det2
-            SLIP_CHECK(SLIP_mpq_div(x2[i][k], x2[i][k], det2));
-        }
+        // Set x2[i] = x[i]
+        SLIP_CHECK( SLIP_mpq_set_num( x2->x.mpq[i], x->x.mpz[i]));
+        // x2[i] = x2[i] / det2
+        SLIP_CHECK(SLIP_mpq_div( x2->x.mpq[i], x2->x.mpq[i], det2));
     }
-
+    
     //--------------------------------------------------------------------------
     // Free memory associated with det2
     //--------------------------------------------------------------------------

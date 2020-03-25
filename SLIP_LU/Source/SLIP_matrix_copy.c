@@ -81,7 +81,7 @@ SLIP_info SLIP_matrix_copy
                 {
                     // allocate C
                     SLIP_CHECK (SLIP_matrix_allocate (&C, SLIP_CSC, C_type,
-                        m, n, nz, false, option)) ;
+                        m, n, nz, false, true, option)) ;
                     // copy the pattern of A into C
                     memcpy (C->p, A->p, (n+1) * sizeof (int64_t)) ;
                     memcpy (C->i, A->i, nz * sizeof (int64_t)) ;
@@ -112,7 +112,7 @@ SLIP_info SLIP_matrix_copy
 
                     // allocate C
                     SLIP_CHECK (SLIP_matrix_allocate (&C, SLIP_CSC,
-                        C_type, m, n, nz, false, option)) ;
+                        C_type, m, n, nz, false, true, option)) ;
 
                     // C->scale = Y->scale
                     SLIP_CHECK (SLIP_mpq_set (C->scale, Y->scale)) ;
@@ -124,7 +124,7 @@ SLIP_info SLIP_matrix_copy
                     }
 
                     // C->p = cumulative sum of W
-                    slip_cumsum (C->p, W, n) ;
+                    slip_cumsum (C->p, W, n, option) ;
 
                     // build the matrix
                     switch (C->type)
@@ -135,8 +135,8 @@ SLIP_info SLIP_matrix_copy
                                 int64_t p = W [A->j [k]]++ ;
                                 C->i [p] = A->i [k] ;
                                 SLIP_CHECK (SLIP_mpz_set (
-                                    SLIP_ENTRY (C, p, mpz),
-                                    SLIP_ENTRY (Y, k, mpz))) ;
+                                    SLIP_1D (C, p, mpz),
+                                    SLIP_1D (Y, k, mpz))) ;
                             }
                             break ;
 
@@ -146,8 +146,8 @@ SLIP_info SLIP_matrix_copy
                                 int64_t p = W [A->j [k]]++ ;
                                 C->i [p] = A->i [k] ;
                                 SLIP_CHECK (SLIP_mpq_set (
-                                    SLIP_ENTRY (C, p, mpq),
-                                    SLIP_ENTRY (Y, k, mpq))) ;
+                                    SLIP_1D (C, p, mpq),
+                                    SLIP_1D (Y, k, mpq))) ;
                             }
                             break ;
 
@@ -157,8 +157,8 @@ SLIP_info SLIP_matrix_copy
                                 int64_t p = W [A->j [k]]++ ;
                                 C->i [p] = A->i [k] ;
                                 SLIP_CHECK (SLIP_mpfr_set (
-                                    SLIP_ENTRY (C, p, mpfr),
-                                    SLIP_ENTRY (Y, k, mpfr),
+                                    SLIP_1D (C, p, mpfr),
+                                    SLIP_1D (Y, k, mpfr),
                                     option->round)) ;
                             }
                             break ;
@@ -168,8 +168,8 @@ SLIP_info SLIP_matrix_copy
                             {
                                 int64_t p = W [A->j [k]]++ ;
                                 C->i [p] = A->i [k] ;
-                                SLIP_ENTRY (C, p, int64) =
-                                    SLIP_ENTRY (Y, k, int64) ;
+                                SLIP_1D (C, p, int64) =
+                                    SLIP_1D (Y, k, int64) ;
                             }
                             break ;
 
@@ -178,8 +178,8 @@ SLIP_info SLIP_matrix_copy
                             {
                                 int64_t p = W [A->j [k]]++ ;
                                 C->i [p] = A->i [k] ;
-                                SLIP_ENTRY (C, p, fp64) =
-                                    SLIP_ENTRY (Y, k, fp64) ;
+                                SLIP_1D (C, p, fp64) =
+                                    SLIP_1D (Y, k, fp64) ;
                             }
                             break ;
 
@@ -208,7 +208,7 @@ SLIP_info SLIP_matrix_copy
                             for (int64_t k = 0 ; k < nz ; k++)
                             {
                                 SLIP_CHECK (SLIP_mpz_sgn (&s,
-                                    SLIP_ENTRY (Y, k, mpz))) ;
+                                    SLIP_1D (Y, k, mpz))) ;
                                 if (s != 0) actual++ ;
                             }
                             break ;
@@ -217,7 +217,7 @@ SLIP_info SLIP_matrix_copy
                             for (int64_t k = 0 ; k < nz ; k++)
                             {
                                 SLIP_CHECK (SLIP_mpq_sgn (&s,
-                                    SLIP_ENTRY (Y, k, mpq))) ;
+                                    SLIP_1D (Y, k, mpq))) ;
                                 if (s != 0) actual++ ;
                             }
                             break ;
@@ -226,7 +226,7 @@ SLIP_info SLIP_matrix_copy
                             for (int64_t k = 0 ; k < nz ; k++)
                             {
                                 SLIP_CHECK (SLIP_mpfr_sgn (&s,
-                                    SLIP_ENTRY (Y, k, mpfr))) ;
+                                    SLIP_1D (Y, k, mpfr))) ;
                                 if (s != 0) actual++ ;
                             }
                             break ;
@@ -234,14 +234,14 @@ SLIP_info SLIP_matrix_copy
                         case SLIP_INT64:
                             for (int64_t k = 0 ; k < nz ; k++)
                             {
-                                if (SLIP_ENTRY (Y, k, int64) != 0) actual++ ;
+                                if (SLIP_1D (Y, k, int64) != 0) actual++ ;
                             }
                             break ;
 
                         case SLIP_FP64:
                             for (int64_t k = 0 ; k < nz ; k++)
                             {
-                                if (SLIP_ENTRY (Y, k, fp64) != 0) actual++ ;
+                                if (SLIP_1D (Y, k, fp64) != 0) actual++ ;
                             }
                             break ;
 
@@ -250,7 +250,7 @@ SLIP_info SLIP_matrix_copy
 
                     // allocate C
                     SLIP_CHECK (SLIP_matrix_allocate (&C, SLIP_CSC, C_type,
-                        m, n, actual, false, option)) ;
+                        m, n, actual, false, true, option)) ;
 
                     // C->scale = Y->scale
                     SLIP_CHECK (SLIP_mpq_set (C->scale, Y->scale)) ;
@@ -272,7 +272,7 @@ SLIP_info SLIP_matrix_copy
                                     {
                                         C->i [nz] = i ;
                                         SLIP_CHECK (SLIP_mpz_set (
-                                            SLIP_ENTRY (C, nz, mpz),
+                                            SLIP_1D (C, nz, mpz),
                                             SLIP_2D (Y, i, j, mpz))) ;
                                         nz++ ;
                                     }
@@ -292,7 +292,7 @@ SLIP_info SLIP_matrix_copy
                                     {
                                         C->i [nz] = i ;
                                         SLIP_CHECK (SLIP_mpq_set (
-                                            SLIP_ENTRY (C, nz, mpq),
+                                            SLIP_1D (C, nz, mpq),
                                             SLIP_2D (Y, i, j, mpq))) ;
                                         nz++ ;
                                     }
@@ -312,7 +312,7 @@ SLIP_info SLIP_matrix_copy
                                     {
                                         C->i [nz] = i ;
                                         SLIP_CHECK (SLIP_mpfr_set (
-                                            SLIP_ENTRY (C, nz, mpfr),
+                                            SLIP_1D (C, nz, mpfr),
                                             SLIP_2D (Y, i, j, mpfr),
                                             option->round)) ;
                                         nz++ ;
@@ -330,7 +330,7 @@ SLIP_info SLIP_matrix_copy
                                     if (SLIP_2D (Y, i, j, int64) != 0)
                                     {
                                         C->i [nz] = i ;
-                                        SLIP_ENTRY (C, nz, int64) =
+                                        SLIP_1D (C, nz, int64) =
                                             SLIP_2D (Y, i, j, int64) ;
                                         nz++ ;
                                     }
@@ -347,7 +347,7 @@ SLIP_info SLIP_matrix_copy
                                     if (SLIP_2D (Y, i, j, fp64) != 0)
                                     {
                                         C->i [nz] = i ;
-                                        SLIP_ENTRY (C, nz, fp64) =
+                                        SLIP_1D (C, nz, fp64) =
                                             SLIP_2D (Y, i, j, fp64) ;
                                         nz++ ;
                                     }
@@ -383,7 +383,7 @@ SLIP_info SLIP_matrix_copy
                 {
                     // allocate C
                     SLIP_CHECK (SLIP_matrix_allocate (&C, SLIP_TRIPLET, C_type,
-                        m, n, nz, false, option)) ;
+                        m, n, nz, false, true, option)) ;
                     // copy and typecast A->x into C->x
                     SLIP_CHECK (slip_cast_array (SLIP_X (C), C->type,
                         SLIP_X (A), A->type, nz, C->scale, option)) ;
@@ -408,7 +408,7 @@ SLIP_info SLIP_matrix_copy
                 {
                     // allocate C
                     SLIP_CHECK (SLIP_matrix_allocate (&C, SLIP_TRIPLET, C_type,
-                        m, n, nz, false, option)) ;
+                        m, n, nz, false, true, option)) ;
                     // copy the pattern of A into C
                     memcpy (C->j, A->j, nz * sizeof (int64_t)) ;
                     memcpy (C->i, A->i, nz * sizeof (int64_t)) ;
@@ -449,7 +449,7 @@ SLIP_info SLIP_matrix_copy
 
             // allocate C
             SLIP_CHECK (SLIP_matrix_allocate (&C, SLIP_DENSE, C_type,
-                m, n, nz, false, option)) ;
+                m, n, nz, false, true, option)) ;
 
             switch (A->kind)
             {
@@ -474,7 +474,7 @@ SLIP_info SLIP_matrix_copy
                                     int64_t i = A->i [p] ;
                                     SLIP_CHECK (SLIP_mpz_set (
                                         SLIP_2D (C, i, j, mpz),
-                                        SLIP_ENTRY (Y, p, mpz))) ;
+                                        SLIP_1D (Y, p, mpz))) ;
                                 }
                             }
                             break ;
@@ -487,7 +487,7 @@ SLIP_info SLIP_matrix_copy
                                     int64_t i = A->i [p] ;
                                     SLIP_CHECK (SLIP_mpq_set (
                                         SLIP_2D (C, i, j, mpq),
-                                        SLIP_ENTRY (Y, p, mpq))) ;
+                                        SLIP_1D (Y, p, mpq))) ;
                                 }
                             }
                             break ;
@@ -500,7 +500,7 @@ SLIP_info SLIP_matrix_copy
                                     int64_t i = A->i [p] ;
                                     SLIP_CHECK (SLIP_mpfr_set (
                                         SLIP_2D (C, i, j, mpfr),
-                                        SLIP_ENTRY (Y, p, mpfr),
+                                        SLIP_1D (Y, p, mpfr),
                                         option->round)) ;
                                 }
                             }
@@ -513,7 +513,7 @@ SLIP_info SLIP_matrix_copy
                                 {
                                     int64_t i = A->i [p] ;
                                     SLIP_2D (C, i, j, int64) =
-                                        SLIP_ENTRY (Y, p, int64) ;
+                                        SLIP_1D (Y, p, int64) ;
                                 }
                             }
                             break ;
@@ -525,7 +525,7 @@ SLIP_info SLIP_matrix_copy
                                 {
                                     int64_t i = A->i [p] ;
                                     SLIP_2D (C, i, j, fp64) =
-                                        SLIP_ENTRY (Y, p, fp64) ;
+                                        SLIP_1D (Y, p, fp64) ;
                                 }
                             }
                             break ;
@@ -555,7 +555,7 @@ SLIP_info SLIP_matrix_copy
                                 int64_t j = A->j [k] ;
                                 SLIP_CHECK (SLIP_mpz_set (
                                     SLIP_2D (C, i, j, mpz),
-                                    SLIP_ENTRY (A, k, mpz))) ;
+                                    SLIP_1D (A, k, mpz))) ;
                             }
                             break ;
 
@@ -566,7 +566,7 @@ SLIP_info SLIP_matrix_copy
                                 int64_t j = A->j [k] ;
                                 SLIP_CHECK (SLIP_mpq_set (
                                     SLIP_2D (C, i, j, mpq),
-                                    SLIP_ENTRY (A, k, mpq))) ;
+                                    SLIP_1D (A, k, mpq))) ;
                             }
                             break ;
 
@@ -577,7 +577,7 @@ SLIP_info SLIP_matrix_copy
                                 int64_t j = A->j [k] ;
                                 SLIP_CHECK (SLIP_mpfr_set (
                                     SLIP_2D (C, i, j, mpfr),
-                                    SLIP_ENTRY (A, k, mpfr),
+                                    SLIP_1D (A, k, mpfr),
                                     option->round)) ;
                             }
                             break ;
@@ -588,7 +588,7 @@ SLIP_info SLIP_matrix_copy
                                 int64_t i = A->i [k] ;
                                 int64_t j = A->j [k] ;
                                 SLIP_2D (C, i, j, int64) =
-                                    SLIP_ENTRY (A, k, int64) ;
+                                    SLIP_1D (A, k, int64) ;
                             }
                             break ;
 
@@ -598,7 +598,7 @@ SLIP_info SLIP_matrix_copy
                                 int64_t i = A->i [k] ;
                                 int64_t j = A->j [k] ;
                                 SLIP_2D (C, i, j, fp64) =
-                                    SLIP_ENTRY (A, k, fp64) ;
+                                    SLIP_1D (A, k, fp64) ;
                             }
                             break ;
                     
@@ -627,7 +627,14 @@ SLIP_info SLIP_matrix_copy
 
         default: SLIP_FREE_ALL ; return (SLIP_INCORRECT_INPUT) ;
     }
+    
+    //--------------------------------------------------------------------------
+    // Deal with scaling if necessary
+    //--------------------------------------------------------------------------
 
+    C->nz = A->nz;
+    SLIP_CHECK(slip_scale_matrix(C, A, option));
+    
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------

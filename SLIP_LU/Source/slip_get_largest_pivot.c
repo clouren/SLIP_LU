@@ -24,12 +24,13 @@
 
 SLIP_info slip_get_largest_pivot
 (
-    int64_t *pivot,  // the index of largest pivot
-    mpz_t* x,        // kth column of L and U
-    int64_t* pivs,   // vector which indicates whether each row has been pivotal
-    int64_t n,       // dimension of problem
-    int64_t top,     // nonzero pattern is located in xi[top..n-1]
-    int64_t* xi      // nonzero pattern of x
+    int64_t *pivot,         // the index of largest pivot
+    SLIP_matrix* x,         // kth column of L and U
+    int64_t* pivs,          // vector which indicates whether each row has been pivotal
+    int64_t n,              // dimension of problem
+    int64_t top,            // nonzero pattern is located in xi[top..n-1]
+    int64_t* xi,            // nonzero pattern of x
+    SLIP_options* option    // Command options, currently unused
 )
 {
 
@@ -37,8 +38,10 @@ SLIP_info slip_get_largest_pivot
     // check inputs
     //--------------------------------------------------------------------------
 
+    SLIP_REQUIRE(x, SLIP_DENSE, SLIP_MPZ);
+    
     SLIP_info info ;
-    if (!x || !pivs || !xi || !pivot) {return SLIP_INCORRECT_INPUT;}
+    if (!pivs || !xi || !pivot || !option) {return SLIP_INCORRECT_INPUT;}
 
     //--------------------------------------------------------------------------
     // allocate workspace
@@ -60,13 +63,13 @@ SLIP_info slip_get_largest_pivot
         // Location of the ith nonzero
         inew = xi[i];
         // inew can be pivotal
-        SLIP_CHECK(SLIP_mpz_cmpabs(&r, big, x[inew]));
+        SLIP_CHECK(SLIP_mpz_cmpabs(&r, big, x->x.mpz[inew]));
         if (pivs[inew] < 0 && r < 0)
         {
             // Current largest pivot location
             (*pivot) = inew;
             // Current largest pivot value
-            SLIP_CHECK(SLIP_mpz_set(big, x[inew]));
+            SLIP_CHECK(SLIP_mpz_set(big, x->x.mpz[inew]));
         }
     }
 

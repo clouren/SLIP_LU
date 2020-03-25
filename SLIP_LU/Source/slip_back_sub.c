@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 /* Purpose: This function performs sparse REF backward substitution, solving
- * the sysem Ux = b. Note that prior to this, we expect x to be multiplied by
+ * the sysem Ux = b. Note that prior to this, x is multiplied by
  * the determinant of A.
  *
  * U is a sparse mpz matrix, and bx is a dense mpz matrix.  The diagonal entry
@@ -23,9 +23,9 @@
 
 SLIP_info slip_back_sub  // performs sparse REF backward substitution
 (
-    const SLIP_sparse *U,   // input upper triangular matrix
-    mpz_t **bx,             // right hand side matrix of size n*numRHS
-    int64_t numRHS          // number of columns in bx
+    const SLIP_matrix *U,   // input upper triangular matrix
+    SLIP_matrix *bx,        // right hand side matrix
+    SLIP_options* option    // Command options, currently unused
 )
 {
 
@@ -36,31 +36,35 @@ SLIP_info slip_back_sub  // performs sparse REF backward substitution
     SLIP_info info ;
     SLIP_REQUIRE (U,  SLIP_CSC,   SLIP_MPZ) ;
     SLIP_REQUIRE (bx, SLIP_DENSE, SLIP_MPZ) ;
+    if (!option) return SLIP_INCORRECT_INPUT;
 
     //--------------------------------------------------------------------------
 
     int sgn;
-    mpz_t *Ux = U->x;
+    mpz_t *Ux = U->x.mpz;
     int64_t *Ui = U->i;
     int64_t *Up = U->p;
 
-    for (int64_t k = 0; k < numRHS; k++)
+    for (int64_t k = 0; k < bx->n; k++)
     {
         // Start at bx[n]
         for (int64_t j = U->n-1; j >= 0; j--)
         {
             // If bx[j] is zero skip this iteration
-                SLIP_CHECK(SLIP_mpz_sgn(&sgn, bx[j][k]));
+            SLIP_CHECK( SLIP_mpz_sgn( &sgn, SLIP_2D( bx, j, k, mpz)));
             if (sgn == 0) {continue;}
 
             // Obtain bx[j]
-            SLIP_CHECK(SLIP_mpz_divexact(bx[j][k], bx[j][k],Ux[Up[j+1]-1]));
+            SLIP_CHECK(SLIP_mpz_divexact( SLIP_2D(bx, j, k, mpz), 
+                                          SLIP_2D(bx, j, k, mpz),
+                                          Ux[Up[j+1]-1]));
             for (int64_t i = Up[j]; i < Up[j+1]-1; i++)
             {
                 SLIP_CHECK(SLIP_mpz_sgn(&sgn, Ux[i]));
                 if (sgn == 0) {continue;}
                 // bx[i] = bx[i] - Ux[i]*bx[j]
-                SLIP_CHECK(SLIP_mpz_submul(bx[Ui[i]][k], Ux[i], bx[j][k]));
+                SLIP_CHECK(SLIP_mpz_submul( SLIP_2D(bx, Ui[i], k, mpz),
+                                            Ux[i], SLIP_2D(bx, j, k, mpz)));
             }
         }
     }

@@ -666,6 +666,24 @@ SLIP_info SLIP_mpz_get_d
 }
 
 //------------------------------------------------------------------------------
+// SLIP_mpz_get_si
+//------------------------------------------------------------------------------
+
+/* Purpose: Safely set an int64_t = a mpz */
+
+SLIP_info SLIP_mpz_get_si
+(
+    int64_t *x,
+    const mpz_t y
+)
+{
+    SLIP_GMP_WRAPPER_START ;
+    *x = mpz_get_si (y) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
+}
+
+//------------------------------------------------------------------------------
 // SLIP_mpz_set_q
 //------------------------------------------------------------------------------
 
@@ -1344,6 +1362,26 @@ SLIP_info SLIP_mpfr_set_d
     return (SLIP_OK) ;
 }
 
+
+//------------------------------------------------------------------------------
+// SLIP_mpfr_set_si
+//------------------------------------------------------------------------------
+
+/* Purpose: Safely set an mpfr number = to a signed int, i.e., x = y */
+
+SLIP_info SLIP_mpfr_set_si
+(
+    mpfr_t x,
+    int64_t y,
+    const mpfr_rnd_t rnd  // MPFR rounding scheme used
+)
+{
+    SLIP_GMPFR_WRAPPER_START (x) ;
+    mpfr_set_si (x, y, rnd) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
+}
+
 //------------------------------------------------------------------------------
 // SLIP_mpfr_set_q
 //------------------------------------------------------------------------------
@@ -1435,6 +1473,25 @@ SLIP_info SLIP_mpfr_get_d
 {
     SLIP_GMP_WRAPPER_START ;
     *x = mpfr_get_d (y, rnd) ;
+    SLIP_GMP_WRAPPER_FINISH ;
+    return (SLIP_OK) ;
+}
+
+//------------------------------------------------------------------------------
+// SLIP_mpfr_get_si
+//------------------------------------------------------------------------------
+
+/* Purpose: Safely set a signed int = to a mpfr number, i.e., x = y */
+
+SLIP_info SLIP_mpfr_get_si
+(
+    int64_t *x,
+    const mpfr_t y,
+    const mpfr_rnd_t rnd  // MPFR rounding scheme used
+)
+{
+    SLIP_GMP_WRAPPER_START ;
+    *x = mpfr_get_si (y, rnd) ;
     SLIP_GMP_WRAPPER_FINISH ;
     return (SLIP_OK) ;
 }

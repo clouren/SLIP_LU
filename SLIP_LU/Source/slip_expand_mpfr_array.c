@@ -16,21 +16,21 @@
 
 #define SLIP_FREE_ALL               \
     SLIP_MPFR_CLEAR(expon);         \
-    SLIP_delete_mpfr_array(&x3, n); \
     SLIP_MPZ_CLEAR(temp_expon);     \
     SLIP_MPZ_CLEAR(gcd);            \
     SLIP_MPZ_CLEAR(one);            \
-    SLIP_MPQ_CLEAR(temp);
+    SLIP_MPQ_CLEAR(temp);           \
+    SLIP_matrix_free(&x3, NULL);    \
 
 #include "SLIP_LU_internal.h"
 
 SLIP_info slip_expand_mpfr_array
 (
-    mpz_t* x_out,// full precision mpz array
-    mpfr_t* x,  // mpfr array to be expanded
-    mpq_t scale,// scaling factor used (x_out = scale*x)
-    int64_t n,  // size of x
-    SLIP_options *option  // command options containing the prec for mpfr
+    mpz_t* x_out,          // full precision mpz array
+    mpfr_t* x,            // mpfr array to be expanded
+    mpq_t scale,          // scaling factor used (x_out = scale*x)
+    int64_t n,            // size of x
+    SLIP_options *option  // command options containing the prec and rounding for mpfr
 )
 {
 
@@ -38,11 +38,8 @@ SLIP_info slip_expand_mpfr_array
     // check inputs
     //--------------------------------------------------------------------------
 
-    // TODO: move this functionality into slip_cast_array,
-    // or keep it here as a helper function.
-
     SLIP_info info ;
-    if (!x || !x_out || !scale || n <= 0) {return SLIP_INCORRECT_INPUT;}
+    if (!x || !x_out || !scale || n <= 0 || !option) {return SLIP_INCORRECT_INPUT;}
 
     //--------------------------------------------------------------------------
     // initializations
@@ -51,8 +48,9 @@ SLIP_info slip_expand_mpfr_array
     int64_t i, k ;
     int r1, r2 = 1 ;
     bool nz_found = false;
-    mpfr_t expon, *x3 = NULL; SLIP_MPFR_SET_NULL(expon);
+    mpfr_t expon; SLIP_MPFR_SET_NULL(expon);
     mpz_t temp_expon, gcd, one;
+    SLIP_matrix* x3 = NULL;
     SLIP_MPZ_SET_NULL(temp_expon);
     SLIP_MPZ_SET_NULL(gcd);
     SLIP_MPZ_SET_NULL(one);
@@ -62,24 +60,27 @@ SLIP_info slip_expand_mpfr_array
     SLIP_CHECK(SLIP_mpz_init(temp_expon));
     SLIP_CHECK(SLIP_mpz_init(gcd));
     SLIP_CHECK(SLIP_mpz_init(one));
-    x3 = SLIP_create_mpfr_array(n, option);// Create the new x array
+    
+    
+    SLIP_matrix_allocate(&x3, SLIP_DENSE, SLIP_MPFR, n, 1, n, false, true, option);
+    
     if (!x3)
     {
         SLIP_FREE_ALL;
         return SLIP_OUT_OF_MEMORY;
     }
 
-    // expon = 10^prec (overestimate)
-    SLIP_CHECK(SLIP_mpfr_ui_pow_ui(expon, 10, option->prec, option->round));
+    // expon = 2^prec (overestimate)
+    SLIP_CHECK(SLIP_mpfr_ui_pow_ui(expon, 2, option->prec, option->round));
 
     for (i = 0; i < n; i++)
     {
-        // x3[i] = x[i]*10^prec
-        SLIP_CHECK(SLIP_mpfr_mul(x3[i], x[i], expon,
+        // x3[i] = x[i]*2^prec
+        SLIP_CHECK(SLIP_mpfr_mul(x3->x.mpfr[i], x[i], expon,
             option->round));
 
         // x_out[i] = x3[i]
-        SLIP_CHECK(SLIP_mpfr_get_z(x_out[i], x3[i], option->round));
+        SLIP_CHECK(SLIP_mpfr_get_z(x_out[i], x3->x.mpfr[i], option->round));
     }
     SLIP_CHECK(SLIP_mpfr_get_z(temp_expon, expon, option->round));
     SLIP_CHECK(SLIP_mpq_set_z(scale, temp_expon));

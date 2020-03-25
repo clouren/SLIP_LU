@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/slip_sparse_collapse: shrink space required by a sparse mpz matrix
+// SLIP_LU/slip_sparse_collapse: shrink space required by a CSC mpz matrix
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -12,22 +12,25 @@
  * size of x and i. so that they only take up the number of elements in the
  * matrix. For example if A->nzmax = 1000 but A->nz = 500, A->i and A->x are of
  * size 1000, so this function shrinks them to size 500.
+ * This is only valid in the factorization routines for sparse csc mpz matrices
  */
 
 #include "SLIP_LU_internal.h"
-
 SLIP_info slip_sparse_collapse
 (
-    SLIP_sparse* A // matrix to be shrunk
+    SLIP_matrix* A, // matrix to be shrunk
+    SLIP_options* option    // Command options currently unused
 )
 {
 
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
+    SLIP_REQUIRE(A, SLIP_CSC, SLIP_MPZ);
+    if (!A || !A->p || !A->i || !option) {return SLIP_INCORRECT_INPUT;}
 
-    if (!A || !A->p || !A->i || !A->x) {return SLIP_INCORRECT_INPUT;}
-
+    
+    
     //--------------------------------------------------------------------------
 
     int64_t nz = A->nz;
@@ -35,7 +38,7 @@ SLIP_info slip_sparse_collapse
     // SLIP_realloc cannot fail since the space is shrinking.
     A->i = (int64_t*) SLIP_realloc(A->i, A->nzmax*sizeof(int64_t),
         nz*sizeof(int64_t));
-    A->x = (mpz_t*) SLIP_realloc(A->x, A->nzmax*sizeof(mpz_t),
+    A->x.mpz = (mpz_t*) SLIP_realloc(A->x.mpz, A->nzmax*sizeof(mpz_t),
         nz*sizeof(mpz_t));
     A->nzmax = nz;
     return SLIP_OK;

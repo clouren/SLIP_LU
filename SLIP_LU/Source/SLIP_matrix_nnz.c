@@ -13,7 +13,7 @@
 int64_t SLIP_matrix_nnz     // return # of entries in A, or -1 on error
 (
     SLIP_matrix *A,         // matrix to query
-    SLIP_options *option
+    SLIP_options *option    // command options, currently unused
 )
 {
 
@@ -21,7 +21,7 @@ int64_t SLIP_matrix_nnz     // return # of entries in A, or -1 on error
     // check inputs
     //--------------------------------------------------------------------------
 
-    if (A == NULL)
+    if (A == NULL || !option)
     {
         return (-1) ;
     }

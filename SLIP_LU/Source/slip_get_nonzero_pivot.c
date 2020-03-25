@@ -21,12 +21,13 @@
 
 SLIP_info slip_get_nonzero_pivot // find the first eligible nonzero pivot
 (
-    int64_t *pivot,   // the index of first eligible nonzero pivot
-    mpz_t* x,         // kth column of L and U
-    int64_t* pivs,    // vector indicating which rows are pivotal
-    int64_t n,        // size of x
-    int64_t top,      // nonzero pattern is located in xi[top..n-1]
-    int64_t* xi       // nonzero pattern of x
+    int64_t *pivot,         // the index of first eligible nonzero pivot
+    SLIP_matrix* x,         // kth column of L and U
+    int64_t* pivs,          // vector indicating which rows are pivotal
+    int64_t n,              // size of x
+    int64_t top,            // nonzero pattern is located in xi[top..n-1]
+    int64_t* xi,            // nonzero pattern of x
+    SLIP_options* option    // Command options, currently unused
 )
 {
 
@@ -34,8 +35,10 @@ SLIP_info slip_get_nonzero_pivot // find the first eligible nonzero pivot
     // check inputs
     //--------------------------------------------------------------------------
 
+    SLIP_REQUIRE(x, SLIP_DENSE, SLIP_MPZ);
+    
     SLIP_info info ;
-    if (!x || !pivs || !xi) {return SLIP_INCORRECT_INPUT;}
+    if (!pivs || !xi || !option) {return SLIP_INCORRECT_INPUT;}
 
     //--------------------------------------------------------------------------
     // initializations
@@ -53,7 +56,7 @@ SLIP_info slip_get_nonzero_pivot // find the first eligible nonzero pivot
         int64_t inew = xi[i];
         // check if x[inew] is an eligible pivot
         int sgn ;
-        SLIP_CHECK (SLIP_mpz_sgn (&sgn, x[inew])) ;
+        SLIP_CHECK (SLIP_mpz_sgn (&sgn, x->x.mpz[inew])) ;
         if (sgn != 0 && pivs [inew] < 0)
         {
             (*pivot) = inew;

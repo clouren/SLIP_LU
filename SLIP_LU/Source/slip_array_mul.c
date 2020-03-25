@@ -8,7 +8,9 @@
 
 //------------------------------------------------------------------------------
 
-/* Purpose: This function multiplies vector x by the determinant of matrix.
+/* Purpose: This function multiplies the dense matrix x by the determinant of matrix.
+ * 
+ * This function requires that the matrix x is mpz_t and dense
  *
  * On output the contents of the x vector is modified.
  */
@@ -17,10 +19,9 @@
 
 SLIP_info slip_array_mul // multiplies vector x by the determinant of matrix
 (
-    mpz_t** x,          // matrix to be multiplied
-    const mpz_t det,    // given determinant of matrix
-    int64_t n,          // size of x
-    int64_t numRHS      // number of RHS vectors
+    SLIP_matrix *x,         // matrix to be multiplied
+    const mpz_t det,        // given determinant of matrix
+    SLIP_options* option    // Command options, currently unused
 )
 {
 
@@ -30,18 +31,15 @@ SLIP_info slip_array_mul // multiplies vector x by the determinant of matrix
 
     SLIP_info info ;
     SLIP_REQUIRE (x, SLIP_DENSE, SLIP_MPZ) ;
-
+    if (!option) return SLIP_INCORRECT_INPUT;
     //--------------------------------------------------------------------------
     // x = x * det
     //--------------------------------------------------------------------------
 
-    for (int64_t i = 0; i < n; i++)
+    for (int64_t i = 0; i < x->n * x->m; i++)
     {
-        for (int64_t k = 0; k < numRHS; k++)
-        {
-            // x[i][k] = x[i][k] * det
-            SLIP_CHECK(SLIP_mpz_mul(x[i][k], x[i][k], det));
-        }
+        // x[i] = x[i]*det
+        SLIP_CHECK( SLIP_mpz_mul( x->x.mpz[i], x->x.mpz[i], det));
     }
 
     return (SLIP_OK) ;

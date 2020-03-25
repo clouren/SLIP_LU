@@ -8,6 +8,7 @@
 
 //------------------------------------------------------------------------------
 
+
 /*
  * Purpose: This function performs the sparse REF triangular solve. i.e.,
  * (LD) x = A(:,k). The algorithm is described in the paper; however in essence
@@ -43,7 +44,7 @@
  *              j = q[k] if the original column j is the kth column of the
  *              LU factorization.
  *
- *  rhos:       Sequence of pivots, unmodified on input/output. This vector is
+ *  rhos:       Sequence of pivots, unmodified on input/output. This matrix is
  *              utilized to perform history and IPGE updates in the triangular
  *              solve.
  *
@@ -60,27 +61,48 @@
  *              on entries in x. During the triangular solve, h[i] indicates
  *              the last pivot in which entry x[i] was IPGE updated.
  *
- *  x:          Workspace of size n, unitialized on input. On output, x[i] is
- *              the value of L(i,k) here i is in the nonzero patter
- *              xi[top...n-1]. Other entries of x are undefined on output.
+ *  x:          Dense mpz_t matrix Workspace of size n*1, unitialized on input. 
+ *              On output, x[i] is the value of L(i,k) here i is in the nonzero 
+ *              pattern xi[top...n-1]. Other entries of x are undefined on output.
+ * 
+ * option:      Command options
  */
 
 
 #include "SLIP_LU_internal.h"
 
+// Sorting function 
+static inline int compare (const void * a, const void * b)
+{
+    int64_t delta = ( *(int64_t*)a - *(int64_t*)b ) ;
+    if (delta < 0)
+    {
+        return (-1) ;
+    }
+    else if (delta > 0)
+    {
+        return (1) ;
+    }
+    else
+    {
+        return (0) ;
+    }
+}
+
 SLIP_info slip_ref_triangular_solve // performs the sparse REF triangular solve
 (
     int64_t *top_output,      // Output the beginning of nonzero pattern
-    SLIP_sparse* L,           // partial L matrix
-    SLIP_sparse* A,           // input matrix
+    SLIP_matrix* L,           // partial L matrix
+    SLIP_matrix* A,           // input matrix
     int64_t k,                // constructing L(:,k)
     int64_t* xi,              // nonzero pattern vector
     const int64_t* q,         // column permutation, not modified
-    const mpz_t* rhos,        // sequence of pivots
+    SLIP_matrix* rhos,        // sequence of pivots
     const int64_t* pinv,      // inverse row permutation
     const int64_t* row_perm,  // row permutation
     int64_t* h,               // history vector
-    mpz_t* x                  // solution of system ==> kth column of L and U
+    SLIP_matrix* x,           // solution of system ==> kth column of L and U
+    SLIP_options* option      // Command options
 )
 {
 
@@ -90,10 +112,10 @@ SLIP_info slip_ref_triangular_solve // performs the sparse REF triangular solve
 
     // inputs have been validated in SLIP_LU_factorize.c
     SLIP_info info ;
-    ASSERT (L != NULL && L->kind == SLIP_CSC && L->type == SLIP_MPZ) ;
-    ASSERT (A != NULL && A->kind == SLIP_CSC && A->type == SLIP_MPZ) ;
-    ASSERT (rhos != NULL && rhos->kind == SLIP_DENSE && rhos->type == SLIP_MPZ);
-
+    SLIP_REQUIRE(L, SLIP_CSC, SLIP_MPZ);
+    SLIP_REQUIRE(A, SLIP_CSC, SLIP_MPZ);
+    SLIP_REQUIRE(rhos, SLIP_DENSE, SLIP_MPZ);
+    
     int64_t j, jnew, i, inew, p, m, n, col, top ;
     int sgn ;
 
@@ -112,28 +134,51 @@ SLIP_info slip_ref_triangular_solve // performs the sparse REF triangular solve
     col = q[k];
 
     // Obtain nonzero pattern of L(:,k) in xi[top..n]
-    slip_reach(&top, L, A, col, xi, pinv);
+    slip_reach(&top, L, A, col, xi, pinv, option);
 
     // Sort xi [top..n-1] wrt sequence of pivots
-    slip_sort_xi(xi, top, n, pinv, row_perm);
+    // Convert xi vector with respect to pinv
+    for (int64_t j = top; j < n; j++)
+    {
+        xi[j] = pinv[xi[j]];
+    }
+
+    // Sort xi[top..n-1]
+    qsort(&xi[top], n-top, sizeof(int64_t), compare);
+
+    // Place xi back in original value
+    for (int64_t j = top; j < n; j++)
+    {
+        xi[j] = row_perm[xi[j]];
+    }
 
     // Reset x[i] = 0 for all i in nonzero pattern xi [top..n-1]
-    SLIP_CHECK(slip_reset_mpz_array(x, n, top, xi));
-
+    for (int64_t i = top; i < n; i++)
+    {
+        SLIP_CHECK (SLIP_mpz_set_ui (x->x.mpz[xi [i]], 0)) ;
+    }
     // Set x[col] = 0.  A(col,col) is the diagonal entry in the original
     // matrix.  The pivot search prefers to select the diagonal, if it is
     // present.  It may be not present in A itself, at all, and thus also
     // not in the pattern xi [top..n-1].  The value x[col] is set to zero
     // here, in case the entry A(col,col) is not present, so that the pivot
     // search query the value of the diagonal.
-    SLIP_CHECK(SLIP_mpz_set_ui(x[col], 0));
+    SLIP_CHECK(SLIP_mpz_set_ui(x->x.mpz[col], 0));
 
     // Reset h[i] = -1 for all i in nonzero pattern xi [top..n-1]
-    SLIP_CHECK(slip_reset_int64_array2(h, n, top, xi));
-
+    for (int64_t i = top; i < n; i++)
+    {
+        h[xi[i]] = -1;
+    }
+    
     // Set x = A(:,q(k))
-    SLIP_CHECK(slip_get_column(x, A, col));
-
+    for (int64_t i = A->p[col]; i < A->p[col + 1]; i++)
+    {
+        // Value of the ith nonzero
+        SLIP_CHECK(SLIP_mpz_set(x->x.mpz[A->i[i]], A->x.mpz[i]));
+    }
+    
+    
     //--------------------------------------------------------------------------
     // Iterate across nonzeros in x
     //--------------------------------------------------------------------------
@@ -143,7 +188,7 @@ SLIP_info slip_ref_triangular_solve // performs the sparse REF triangular solve
         j = xi[p];                         // First nonzero term
         jnew = pinv[j];                    // Location of nonzero term
         // Check if x[j] == 0, if so continue to next nonzero
-        SLIP_CHECK(SLIP_mpz_sgn(&sgn, x[j]));
+        SLIP_CHECK(SLIP_mpz_sgn(&sgn, x->x.mpz[j]));
         if (sgn == 0) {continue;}          // x[j] = 0 no work must be done
 
         // x[j] is nonzero
@@ -155,12 +200,12 @@ SLIP_info slip_ref_triangular_solve // performs the sparse REF triangular solve
             if (h[j] < jnew - 1)           // HU must be performed
             {
                 // x[j] = x[j] * rho[j-1]
-                SLIP_CHECK(SLIP_mpz_mul(x[j],x[j],rhos[jnew-1]));
+                SLIP_CHECK(SLIP_mpz_mul(x->x.mpz[j],x->x.mpz[j],rhos->x.mpz[jnew-1]));
 
                 if (h[j] > -1)
                 {
                     // x[j] = x[j] / rho[h[j]]
-                    SLIP_CHECK(SLIP_mpz_divexact(x[j],x[j],rhos[h[j]]));
+                    SLIP_CHECK(SLIP_mpz_divexact(x->x.mpz[j],x->x.mpz[j],rhos->x.mpz[h[j]]));
                 }
             }
 
@@ -176,11 +221,11 @@ SLIP_info slip_ref_triangular_solve // performs the sparse REF triangular solve
                 if (inew > jnew)
                 {
                     /*************** If lij==0 then no update******************/
-                    SLIP_CHECK(SLIP_mpz_sgn(&sgn, L->x[m]));
+                    SLIP_CHECK(SLIP_mpz_sgn(&sgn, L->x.mpz[m]));
                     if (sgn == 0) {continue;}
 
                     // lij is nonzero. Check if x[i] is nonzero
-                    SLIP_CHECK(SLIP_mpz_sgn(&sgn, x[i]));
+                    SLIP_CHECK(SLIP_mpz_sgn(&sgn, x->x.mpz[i]));
 
                     //----------------------------------------------------------
                     /************* lij is nonzero, x[i] is zero****************/
@@ -194,7 +239,7 @@ SLIP_info slip_ref_triangular_solve // performs the sparse REF triangular solve
                         if (jnew < 1)
                         {
                             // x[i] = 0 - lij*x[j]
-                            SLIP_CHECK(SLIP_mpz_submul(x[i], L->x[m], x[j]));
+                            SLIP_CHECK(SLIP_mpz_submul(x->x.mpz[i], L->x.mpz[m], x->x.mpz[j]));
                             h[i] = jnew;   // Entry is up to date
                         }
 
@@ -202,11 +247,11 @@ SLIP_info slip_ref_triangular_solve // performs the sparse REF triangular solve
                         else
                         {
                             // x[i] = 0 - lij*x[j]
-                            SLIP_CHECK(SLIP_mpz_submul(x[i], L->x[m], x[j]));
+                            SLIP_CHECK(SLIP_mpz_submul(x->x.mpz[i], L->x.mpz[m], x->x.mpz[j]));
 
                             // x[i] = x[i] / rho[j-1]
-                            SLIP_CHECK(SLIP_mpz_divexact(x[i], x[i],
-                                rhos[jnew-1]));
+                            SLIP_CHECK(SLIP_mpz_divexact(x->x.mpz[i], x->x.mpz[i],
+                                rhos->x.mpz[jnew-1]));
                             h[i] = jnew;   // Entry is up to date
                         }
                     }
@@ -221,10 +266,10 @@ SLIP_info slip_ref_triangular_solve // performs the sparse REF triangular solve
                         if (jnew < 1)
                         {
                             // x[i] = x[i]*rho[0]
-                            SLIP_CHECK(SLIP_mpz_mul(x[i],x[i],rhos[0]));
+                            SLIP_CHECK(SLIP_mpz_mul(x->x.mpz[i],x->x.mpz[i],rhos->x.mpz[0]));
 
                             // x[i] = x[i] - lij*xj
-                            SLIP_CHECK(SLIP_mpz_submul(x[i], L->x[m], x[j]));
+                            SLIP_CHECK(SLIP_mpz_submul(x->x.mpz[i], L->x.mpz[m], x->x.mpz[j]));
                             h[i] = jnew;   // Entry is now up to date
                         }
                         // There is a previous pivot
@@ -234,22 +279,22 @@ SLIP_info slip_ref_triangular_solve // performs the sparse REF triangular solve
                             if (h[i] < jnew - 1)
                             {
                                 // x[i] = x[i] * rho[j-1]
-                                SLIP_CHECK(SLIP_mpz_mul(x[i], x[i],
-                                    rhos[jnew-1]));
+                                SLIP_CHECK(SLIP_mpz_mul(x->x.mpz[i], x->x.mpz[i],
+                                    rhos->x.mpz[jnew-1]));
                                 if (h[i] > -1)
                                 {
                                     // x[i] = x[i] / rho[h[i]]
-                                    SLIP_CHECK(SLIP_mpz_divexact(x[i], x[i],
-                                        rhos[h[i]]));
+                                    SLIP_CHECK(SLIP_mpz_divexact(x->x.mpz[i], x->x.mpz[i],
+                                        rhos->x.mpz[h[i]]));
                                 }
                             }
                             // x[i] = x[i] * rho[j]
-                            SLIP_CHECK(SLIP_mpz_mul(x[i],x[i],rhos[jnew]));
+                            SLIP_CHECK(SLIP_mpz_mul(x->x.mpz[i],x->x.mpz[i],rhos->x.mpz[jnew]));
                             // x[i] = x[i] - lij*xj
-                            SLIP_CHECK(SLIP_mpz_submul(x[i], L->x[m], x[j]));
+                            SLIP_CHECK(SLIP_mpz_submul(x->x.mpz[i], L->x.mpz[m], x->x.mpz[j]));
                             // x[i] = x[i] / rho[j-1]
-                            SLIP_CHECK(SLIP_mpz_divexact(x[i], x[i],
-                                rhos[jnew-1]));
+                            SLIP_CHECK(SLIP_mpz_divexact(x->x.mpz[i], x->x.mpz[i],
+                                rhos->x.mpz[jnew-1]));
                             h[i] = jnew;   // Entry is up to date
                         }
                     }
@@ -264,11 +309,11 @@ SLIP_info slip_ref_triangular_solve // performs the sparse REF triangular solve
             if (h[j] < k-1)
             {
                 // x[j] = x[j] * rho[k-1]
-                SLIP_CHECK(SLIP_mpz_mul(x[j], x[j], rhos[k-1]));
+                SLIP_CHECK(SLIP_mpz_mul(x->x.mpz[j], x->x.mpz[j], rhos->x.mpz[k-1]));
                 if (h[j] > -1)
                 {
                     // x[j] = x[j] / rho[h[j]]
-                    SLIP_CHECK(SLIP_mpz_divexact(x[j], x[j], rhos[h[j]]));
+                    SLIP_CHECK(SLIP_mpz_divexact(x->x.mpz[j], x->x.mpz[j], rhos->x.mpz[h[j]]));
                 }
             }
         }

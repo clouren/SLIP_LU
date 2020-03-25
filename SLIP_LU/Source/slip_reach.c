@@ -19,11 +19,12 @@
 void slip_reach    // compute the reach of column k of A on the graph of L
 (
     int64_t *top,
-    SLIP_sparse* L,         // matrix representing graph of L
-    SLIP_sparse* A,         // input matrix
+    SLIP_matrix* L,         // matrix representing graph of L
+    SLIP_matrix* A,         // input matrix
     int64_t k,              // column of A of interest
     int64_t* xi,            // nonzero pattern
-    const int64_t* pinv     // row permutation
+    const int64_t* pinv,    // row permutation
+    SLIP_options* option    // Command options
 )
 {
 
@@ -32,8 +33,6 @@ void slip_reach    // compute the reach of column k of A on the graph of L
     //-------------------------------------------------------------------------- 
 
     // inputs have been checked in slip_ref_triangular_solve
-    ASSERT (L != NULL && L->kind == SLIP_CSC && L->type == SLIP_MPZ) ;
-    ASSERT (A != NULL && A->kind == SLIP_CSC && A->type == SLIP_MPZ) ;
     int64_t p, n = L->n;
     *top = n;
 
@@ -46,7 +45,7 @@ void slip_reach    // compute the reach of column k of A on the graph of L
         // DFS at unmarked node i
         if (!SLIP_MARKED(L->p, A->i[p]))
         {
-            slip_dfs(top, A->i[p], L, xi, xi+n, pinv);
+            slip_dfs(top, A->i[p], L, xi, xi+n, pinv, option);
         }
     }
 

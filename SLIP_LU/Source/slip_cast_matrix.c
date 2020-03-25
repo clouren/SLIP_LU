@@ -22,7 +22,7 @@ SLIP_info slip_cast_matrix
     SLIP_matrix **Y_handle,     // nz-by-1 dense matrix to create
     SLIP_type Y_type,           // type of Y
     SLIP_matrix *A,             // matrix with nz entries
-    SLIP_options *option
+    SLIP_options *option        // Command options, if NULL defaults are used
 )
 {
 
@@ -33,18 +33,28 @@ SLIP_info slip_cast_matrix
     SLIP_info info = SLIP_OK ;
     int64_t nz = SLIP_matrix_nnz (A, option) ;
     SLIP_matrix *Y = NULL ;
-    if (Y_handle == NULL || A == NULL || option == NULL || nz < 0)
+    if (Y_handle == NULL || A == NULL ||  nz < 0)
     {
         return (SLIP_INCORRECT_INPUT) ;
     }
     (*Y_handle) = NULL ;
 
+    SLIP_options* option2 = NULL;
+    if (option == NULL)
+    {
+        option2 = SLIP_create_default_options();
+    }
+    else
+    {
+        option2 = option;
+    }
+    
     //--------------------------------------------------------------------------
     // allocate Y (shallow if Y_type is the same as A->type)
     //--------------------------------------------------------------------------
 
     SLIP_CHECK (SLIP_matrix_allocate (&Y, SLIP_DENSE, Y_type,
-        nz, 1, nz, Y_type == A->type, option)) ;
+        nz, 1, nz, Y_type == A->type, true, option2)) ;
 
     //--------------------------------------------------------------------------
     // typecast the values from A into Y
@@ -60,10 +70,15 @@ SLIP_info slip_cast_matrix
         switch (Y_type)
         {
             case SLIP_MPZ:   Y->x.mpz   = A->x.mpz   ;
+            break;
             case SLIP_MPQ:   Y->x.mpq   = A->x.mpq   ;
+            break;
             case SLIP_MPFR:  Y->x.mpfr  = A->x.mpfr  ;
+            break;
             case SLIP_INT64: Y->x.int64 = A->x.int64 ;
+            break;
             case SLIP_FP64:  Y->x.fp64  = A->x.fp64  ;
+            break;
             default: SLIP_FREE_ALL ; return (SLIP_INCORRECT_INPUT) ;
         }
 
@@ -76,14 +91,15 @@ SLIP_info slip_cast_matrix
         //----------------------------------------------------------------------
 
         SLIP_CHECK (slip_cast_array (SLIP_X (Y), Y->type,
-            SLIP_X (A), A->type, nz, Y->scale, option)) ;
-
+            SLIP_X (A), A->type, nz, Y->scale, option2)) ;
+           
     }
 
     //--------------------------------------------------------------------------
     // return result
     //--------------------------------------------------------------------------
 
+    (*Y_handle) = Y;
     SLIP_CHECK (info) ;
     return (SLIP_OK) ;
 }
