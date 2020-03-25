@@ -106,7 +106,7 @@ SLIP_info SLIP_backslash
         (const SLIP_matrix *) rhos,
         S,
         (const int64_t *) pinv, 
-        false,
+        option2->check,
         option));
     //--------------------------------------------------------------------------
     // Convert A to desired type
