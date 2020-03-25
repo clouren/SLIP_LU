@@ -36,9 +36,6 @@
  * pinv:     inverse row permutation vector, used to permute the b vectors.
  *           unmodified on input/output.
  * 
- * check:    a debugging check. If true, the exact solution of the linear 
- *           system is checked for accuracy.
- * 
  * option:   command options
  */
 
@@ -59,7 +56,6 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     const SLIP_matrix *rhos,// sequence of pivots
     SLIP_LU_analysis *S,    // symbolic analysis struct
     const int64_t *pinv,    // row permutation
-    bool check,             // Set true to check solution (for debugging)
     SLIP_options* option    // Command options
 )
 {
@@ -152,7 +148,7 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     // Check the solution if desired (debugging only)
     //--------------------------------------------------------------------------
 
-    if (check)
+    if (option->check)
     {
         SLIP_info checker = slip_check_solution( (SLIP_matrix*) A, x, b, option);
         if (checker == SLIP_OK)
