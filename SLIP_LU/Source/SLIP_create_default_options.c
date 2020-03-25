@@ -38,6 +38,7 @@ SLIP_options* SLIP_create_default_options ( void )
     option->prec        = SLIP_DEFAULT_PRECISION ;
     option->tol         = SLIP_DEFAULT_TOL ;
     option->round       = SLIP_DEFAULT_MPFR_ROUND ;
+    option->check       = false;
 
     //--------------------------------------------------------------------------
     // return result
