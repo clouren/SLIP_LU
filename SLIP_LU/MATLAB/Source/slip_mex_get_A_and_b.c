@@ -14,10 +14,11 @@
 
 void slip_mex_get_A_and_b
 (
-    SLIP_sparse **A_handle,  // Internal SLIP Mat stored in CSC
-    SLIP_dense **b_handle,   // mpz matrix used internally
+    SLIP_matrix **A_handle,  // Internal SLIP Mat stored in CSC
+    SLIP_matrix **b_handle,   // mpz matrix used internally
     const mxArray* pargin[], // The input A matrix and options
-    int nargin               // Number of input to the mexFunction
+    int nargin,               // Number of input to the mexFunction
+    SLIP_options* option
 )
 {
 
@@ -40,8 +41,6 @@ void slip_mex_get_A_and_b
     mwSize nA, mA, nb, mb, Anz, k, j;
     mwIndex *Ap, *Ai;
     double *Ax, *bx;
-    // TODO allow option to be NULL in all C functions?
-    SLIP_options *option = SLIP_create_default_options ();
 
     //--------------------------------------------------------------------------
     // Read in A
@@ -79,6 +78,9 @@ void slip_mex_get_A_and_b
     // check the values of A
     bool A_has_int64_values = slip_mex_check_for_inf (Ax, Anz) ;
 
+    SLIP_matrix* A = NULL;
+    SLIP_matrix* A_matlab = NULL;
+    
     if (A_has_int64_values)
     {
         // All entries in A can be typecast to int64_t without change in value.
@@ -91,17 +93,34 @@ void slip_mex_get_A_and_b
         {
             Ax_int64[k] = (int64_t) Ax[k];
         }
-        // Create A with no scaling
-        status = SLIP_build_sparse_csc_int64 (A_handle, Ap_int64, Ai_int64,
-            Ax_int64, (int64_t) nA, (int64_t) Anz) ;
-        SLIP_FREE (Ax_int64) ;
+        
+        
+        // Create A_matlab (which is shallow)
+        SLIP_matrix_allocate(&A_matlab, SLIP_CSC, SLIP_INT64, (int64_t) mA, (int64_t) nA,
+                             (int64_t) Anz, true, true, option);
+        
+        A_matlab->p = Ap_int64;
+        A_matlab->i = Ai_int64;
+        A_matlab->x.int64 = Ax_int64;
+        A_matlab->nz = (int64_t) Anz;
+        // Create A
+        status = SLIP_matrix_copy(&A, SLIP_CSC, SLIP_MPZ, A_matlab, option);
     }
     else
     {
         // Entries in A cannot be typecast to int64_t without changing them.
+        
+        // Create A_matlab
+        SLIP_matrix_allocate(&A_matlab, SLIP_CSC, SLIP_FP64, (int64_t) mA, (int64_t) nA,
+                             (int64_t) Anz, true, true, option);
+        
+        A_matlab->p = Ap_int64;
+        A_matlab->i = Ai_int64;
+        A_matlab->x.fp64 = Ax;
+        A_matlab->nz = (int64_t) Anz;
+        
         // Create A with scaling
-        status = SLIP_build_sparse_csc_double (A_handle, Ap_int64, Ai_int64,
-            Ax, (int64_t) nA, (int64_t) Anz, option) ;
+        status = SLIP_matrix_copy(&A, SLIP_CSC, SLIP_MPZ, A_matlab, option);
     }
 
     if (status != SLIP_OK)
@@ -115,6 +134,9 @@ void slip_mex_get_A_and_b
     // Read in b
     //--------------------------------------------------------------------------
 
+    SLIP_matrix* b = NULL;
+    SLIP_matrix* b_matlab = NULL;
+    
     if (nargin == 3)
     {
         bx = mxGetDoubles (pargin[1]) ;
@@ -138,51 +160,32 @@ void slip_mex_get_A_and_b
 
         if (b_has_int64_values)
         {
-            // populate bx to a int64_t mat
-            int64_t** bx_int64 = SLIP_create_int64_mat ((int64_t) mb,
-                (int64_t) nb) ;
-            if (!bx_int64)
+            
+            // Create b_matlab (which is shallow)
+            SLIP_matrix_allocate(&b_matlab, SLIP_DENSE, SLIP_INT64, (int64_t) mb,
+                                 (int64_t) nb, (int64_t) mb*nb, true, true, option);
+        
+            b_matlab->x.int64 = SLIP_calloc( (int64_t) nb*mb, sizeof(int64_t));
+            for (int64_t j = 0; j < mb*nb; j++)
             {
-                slip_mex_error (SLIP_OUT_OF_MEMORY) ;
+                b_matlab->x.int64[j] = (int64_t) bx[j];
             }
-            for (int64_t j = 0; j < nb; j++)
-            {
-                for (int64_t i = 0; i < mb; i++)
-                {
-                    bx_int64[i][j] = (int64_t) bx[count];
-                    count++;
-                }
-            }
-
+        
+            b_matlab->nz = (int64_t) mb*nb;
             // Create b
-            status = SLIP_build_dense_int64(b_handle, bx_int64, (int64_t) mb,
-                (int64_t) nb) ;
-            SLIP_delete_int64_mat (&bx_int64, (int64_t) mb, (int64_t) nb) ;
+            status = SLIP_matrix_copy(&b, SLIP_DENSE, SLIP_MPZ, b_matlab, option);
         }
         else
         {
-            // populate bx to a double mat
-            double** bx_doub;
-            bx_doub = SLIP_create_double_mat ((int64_t) mb, (int64_t) nb) ;
-            if (!bx_doub)
-            {
-                slip_mex_error (SLIP_OUT_OF_MEMORY) ;
-            }
-
-            count = 0;
-            for (int64_t j = 0; j < nb; j++)
-            {
-                for (int64_t i = 0; i < mb; i++)
-                {
-                    bx_doub[i][j] = bx[count];
-                    count++;
-                }
-            }
-
+            
+            // Create b_matlab (which is shallow)
+            SLIP_matrix_allocate(&b_matlab, SLIP_DENSE, SLIP_FP64, (int64_t) mb,
+                                 (int64_t) nb, (int64_t) mb*nb, true, true, option);
+        
+            b_matlab->x.fp64 = bx;
+            b_matlab->nz = (int64_t) mb*nb;
             // Create b
-            status = SLIP_build_dense_double (b_handle, bx_doub, (int64_t) mb,
-                (int64_t) nb, option) ;
-            SLIP_delete_double_mat (&bx_doub, (int64_t) mb, (int64_t) nb) ;
+            status = SLIP_matrix_copy(&b, SLIP_DENSE, SLIP_MPZ, b_matlab, option);
         }
 
         if (status != SLIP_OK)
@@ -191,6 +194,7 @@ void slip_mex_get_A_and_b
         }
     }
 
-    SLIP_FREE (option) ;
+    (*A_handle) = A;
+    (*b_handle) = b;
 }
 

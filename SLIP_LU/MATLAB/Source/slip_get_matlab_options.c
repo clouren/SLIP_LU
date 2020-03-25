@@ -11,7 +11,7 @@
 #include "SLIP_LU_mex.h"
 
 /* Purpose: This function reads in the necessary information from the options
-   struct */
+   struct for matlab */
 void slip_get_matlab_options
 (
     SLIP_options* option,  // Control parameters

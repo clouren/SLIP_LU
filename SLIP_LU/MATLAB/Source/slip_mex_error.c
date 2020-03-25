@@ -8,7 +8,7 @@
 
 //------------------------------------------------------------------------------
 
-/* Purpose: This function prints error messages for MATLAB */
+/* Purpose: This function prints error messages for MATLAB for debugging*/
 
 #include "SLIP_LU_mex.h"
 

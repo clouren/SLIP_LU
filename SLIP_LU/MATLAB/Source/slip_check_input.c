@@ -11,7 +11,7 @@
 #include "SLIP_LU_mex.h"
 
 /* Purpose: This function checks the input of the MATLAB array. It ensures that
-   the input matrix and right hand side vectors are correct format. */
+   the input matrix and right hand side vectors are in the correct format. */
 
 void slip_check_input
 (

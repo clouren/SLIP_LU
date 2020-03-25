@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/MATLAB/SLIP_gmp_mex_realloc: A gmp realloc function for matlab
+// SLIP_LU/MATLAB/slip_mwIndex_to_int64: Convert mwIndex* to int64_t*
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -8,20 +8,20 @@
 
 //------------------------------------------------------------------------------
 
-/* Purpose: A GMP wrapper for mxRealloc
- * This allows GMP to use MATLAB's default realloc function.
- */
+/* Purpose: This function converts an mwIndex to an int64_t, used for A&b*/
 
 #include "SLIP_LU_mex.h"
 
-// A GMP realloc function
-void* SLIP_gmp_mex_realloc
+void slip_mwIndex_to_int64
 (
-    void* x,    // void* to be reallocated
-    size_t a,   // Previous size
-    size_t b    // New size
+    int64_t* y,    // the int64_t vector
+    mwIndex* x,    // the mwIndex vector
+    mwSize n       // the size of x and y
 )
 {
-    return mxRealloc(x,b);
+    for (mwSize i = 0; i < n; i++)
+    {
+        y[i] = (int64_t) x[i];
+    }
 }
 

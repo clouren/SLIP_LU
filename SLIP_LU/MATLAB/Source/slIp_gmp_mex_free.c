@@ -8,7 +8,7 @@
 
 //------------------------------------------------------------------------------
 
-/* Purpose: A GMP free function. This allows GMP to use
+/* Purpose: A GMP wrapper for mxFree
  * MATLAB's mxFree instead of free */
 
 #include "SLIP_LU_mex.h"

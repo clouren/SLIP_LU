@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 // Purpose: This function checks if the array x contains Inf's, NaN's, or
-// if its values can be represented as int64_t values.
+// if its values can be represented as int64_t values, useful for input arguments.
 
 #include "SLIP_LU_mex.h"
 
