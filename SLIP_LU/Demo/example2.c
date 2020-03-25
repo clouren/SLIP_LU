@@ -109,14 +109,12 @@ int main (int argc, char **argv)
 
     clock_t start_s = clock();
     
+    // SLIP LU has an optional check, to enable it, one can set the following
+    // parameter to be true.
+    option->check = true;
+   
     // Solve the system and give MPQ solution
-    //OK( SLIP_backslash( &x, SLIP_MPQ, A, b, option));
-    
-    // SLIP LU has an optional check, this version of backslash will use this check
-    // we refer to this version as SLIP_backslash_debug because it may be far slower
-    // than the regular backslash
-    
-    OK(SLIP_backslash_debug( &x, SLIP_MPQ, A, b, option));
+    OK(SLIP_backslash( &x, SLIP_MPQ, A, b, option));
     
     clock_t end_s = clock();
 
