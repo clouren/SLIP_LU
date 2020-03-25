@@ -52,7 +52,6 @@ int main (void)
     SLIP_matrix *Rb = NULL;                     // Random matrix to create b
     SLIP_matrix *b = NULL ;                     // Right hand side vector
     SLIP_matrix *x = NULL ;                     // Solution vectors
-    SLIP_LU_analysis *S = NULL ;                // Column permutation
     SLIP_options *option = SLIP_create_default_options();
     if (!option)
     {
