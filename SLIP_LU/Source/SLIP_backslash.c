@@ -62,7 +62,7 @@ SLIP_info SLIP_backslash
     SLIP_REQUIRE (A, SLIP_CSC,   SLIP_MPZ) ;
     SLIP_REQUIRE (b, SLIP_DENSE, SLIP_MPZ) ;
 
-    if ( !A->p || !A->i )
+    if ( !A->p || !A->i )//TODO check A->x?
     {
         return SLIP_INCORRECT_INPUT;
     }
@@ -108,7 +108,7 @@ SLIP_info SLIP_backslash
         (const int64_t *) pinv, 
         option2));
     //--------------------------------------------------------------------------
-    // Convert A to desired type
+    // Convert A to desired type// TODO only perform copy when it's not MPQ?
     //--------------------------------------------------------------------------
     SLIP_matrix* x2 = NULL;
     SLIP_CHECK(SLIP_matrix_copy(&x2, SLIP_DENSE, type, x, option2));

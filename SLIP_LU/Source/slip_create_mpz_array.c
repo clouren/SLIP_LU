@@ -25,7 +25,7 @@ mpz_t* slip_create_mpz_array
     // check inputs
     //--------------------------------------------------------------------------
 
-    if (n <= 0 || !option) {return NULL;}
+    if (n <= 0 || !option) {return NULL;} // TODO create default option
 
     //--------------------------------------------------------------------------
 
@@ -40,10 +40,10 @@ mpz_t* slip_create_mpz_array
             SLIP_MPZ_SET_NULL(x[i]);
             for (int64_t j = 0; j < n; j++)
             {
-                    if ( x[j] != NULL)
-                    {
-                        SLIP_MPZ_CLEAR( x[j]);
-                    }
+                if ( x[j] != NULL)
+                {
+                    SLIP_MPZ_CLEAR( x[j]);
+                }
             }
             SLIP_FREE(x);
             return NULL;

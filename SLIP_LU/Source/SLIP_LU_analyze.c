@@ -60,7 +60,9 @@ SLIP_info SLIP_LU_analyze
         option2 = SLIP_create_default_options();
     }
     else
+    {
         option2 = option;
+    }
 
     //--------------------------------------------------------------------------
     // allocate symbolic analysis object

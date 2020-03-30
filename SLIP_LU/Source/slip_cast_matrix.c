@@ -31,6 +31,8 @@ SLIP_info slip_cast_matrix
     //--------------------------------------------------------------------------
 
     SLIP_info info = SLIP_OK ;
+    // TODO NULL option always return nz=-1, but it's awkward to create default
+    // option before basic input check
     int64_t nz = SLIP_matrix_nnz (A, option) ;
     SLIP_matrix *Y = NULL ;
     if (Y_handle == NULL || A == NULL ||  nz < 0)
@@ -99,6 +101,12 @@ SLIP_info slip_cast_matrix
     // return result
     //--------------------------------------------------------------------------
 
+    /*TODO add this?
+    if (option == NULL)
+    {
+        SLIP_FREE(option2);
+    }
+    */
     (*Y_handle) = Y;
     SLIP_CHECK (info) ;
     return (SLIP_OK) ;

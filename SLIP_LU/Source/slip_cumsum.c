@@ -23,6 +23,7 @@ SLIP_info slip_cumsum
 )
 {
 
+    // TODO create default option or ignore it?
     if (!p || !c || !option) return SLIP_INCORRECT_INPUT;
     
     int64_t i, nz = 0 ;

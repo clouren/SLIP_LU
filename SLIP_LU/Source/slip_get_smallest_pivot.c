@@ -24,7 +24,7 @@ SLIP_info slip_get_smallest_pivot
 (
     int64_t *pivot,         // the index of smallest pivot
     SLIP_matrix* x,         // kth column of L and U
-    int64_t* pivs,          // vector indicating whether each row has been pivotal
+    int64_t* pivs,          // vector indicating if each row has been pivotal
     int64_t n,              // dimension of problem
     int64_t top,            // nonzeros are stored in xi[top..n-1]
     int64_t* xi,            // nonzero pattern of x
@@ -38,6 +38,8 @@ SLIP_info slip_get_smallest_pivot
 
     SLIP_REQUIRE(x, SLIP_DENSE, SLIP_MPZ);
     SLIP_info info ;
+    // TODO just add option as input arg for user-callable functions, unless
+    // it is needed by that specific internal function?
     if (!pivs || !xi || !option) {return SLIP_INCORRECT_INPUT;}
 
     //--------------------------------------------------------------------------

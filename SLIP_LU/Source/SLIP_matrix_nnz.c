@@ -21,7 +21,7 @@ int64_t SLIP_matrix_nnz     // return # of entries in A, or -1 on error
     // check inputs
     //--------------------------------------------------------------------------
 
-    if (A == NULL || !option)
+    if (A == NULL || !option)// TODO ignore option or create default option?
     {
         return (-1) ;
     }

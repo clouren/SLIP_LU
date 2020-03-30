@@ -27,10 +27,9 @@ SLIP_info slip_sparse_collapse
     // check inputs
     //--------------------------------------------------------------------------
     SLIP_REQUIRE(A, SLIP_CSC, SLIP_MPZ);
+    // TODO create default or remove option as input
     if (!A || !A->p || !A->i || !option) {return SLIP_INCORRECT_INPUT;}
 
-    
-    
     //--------------------------------------------------------------------------
 
     int64_t nz = A->nz;

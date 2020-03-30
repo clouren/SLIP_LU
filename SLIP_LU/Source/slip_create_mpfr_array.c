@@ -26,6 +26,8 @@ mpfr_t* slip_create_mpfr_array
 
     if (n <= 0) {return NULL;}
     int64_t prec;
+
+    // TODO option has been checked in the only caller SLIP_matrix_allocate
     if (option == NULL)
     {
         prec = SLIP_DEFAULT_PRECISION;
@@ -45,11 +47,11 @@ mpfr_t* slip_create_mpfr_array
             SLIP_MPFR_SET_NULL(x[i]);
             for (int64_t j = 0; j < n; j++)
             {
-                    if ( x[j] != NULL)
-                    {
-                        SLIP_MPFR_CLEAR( x[j]);
-                    }
+                if ( x[j] != NULL)
+                {
+                    SLIP_MPFR_CLEAR( x[j]);
                 }
+            }
             SLIP_FREE(x);
             return NULL;
         }

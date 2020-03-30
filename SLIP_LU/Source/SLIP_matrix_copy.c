@@ -43,6 +43,8 @@ SLIP_info SLIP_matrix_copy
     //--------------------------------------------------------------------------
 
     SLIP_info info ;
+    // TODO NULL option always return nz=-1, but it's awkward to create default
+    // option before basic input check
     int64_t nz = SLIP_matrix_nnz (A, option) ;
     if (A == NULL || option == NULL || C_handle == NULL || nz < 0)
     {
@@ -555,7 +557,7 @@ SLIP_info SLIP_matrix_copy
                                 int64_t j = A->j [k] ;
                                 SLIP_CHECK (SLIP_mpz_set (
                                     SLIP_2D (C, i, j, mpz),
-                                    SLIP_1D (A, k, mpz))) ;
+                                    SLIP_1D (Y, k, mpz))) ;
                             }
                             break ;
 
@@ -566,7 +568,7 @@ SLIP_info SLIP_matrix_copy
                                 int64_t j = A->j [k] ;
                                 SLIP_CHECK (SLIP_mpq_set (
                                     SLIP_2D (C, i, j, mpq),
-                                    SLIP_1D (A, k, mpq))) ;
+                                    SLIP_1D (Y, k, mpq))) ;
                             }
                             break ;
 
@@ -577,7 +579,7 @@ SLIP_info SLIP_matrix_copy
                                 int64_t j = A->j [k] ;
                                 SLIP_CHECK (SLIP_mpfr_set (
                                     SLIP_2D (C, i, j, mpfr),
-                                    SLIP_1D (A, k, mpfr),
+                                    SLIP_1D (Y, k, mpfr),
                                     option->round)) ;
                             }
                             break ;
@@ -588,7 +590,7 @@ SLIP_info SLIP_matrix_copy
                                 int64_t i = A->i [k] ;
                                 int64_t j = A->j [k] ;
                                 SLIP_2D (C, i, j, int64) =
-                                    SLIP_1D (A, k, int64) ;
+                                    SLIP_1D (Y, k, int64) ;
                             }
                             break ;
 
@@ -598,7 +600,7 @@ SLIP_info SLIP_matrix_copy
                                 int64_t i = A->i [k] ;
                                 int64_t j = A->j [k] ;
                                 SLIP_2D (C, i, j, fp64) =
-                                    SLIP_1D (A, k, fp64) ;
+                                    SLIP_1D (Y, k, fp64) ;
                             }
                             break ;
                     
@@ -632,6 +634,9 @@ SLIP_info SLIP_matrix_copy
     // Deal with scaling if necessary
     //--------------------------------------------------------------------------
 
+    // TODO why not simply apply scale in slip_cast_array? It is inefficient to
+    // set and divide seperately instead of setting C as division result
+    // directly
     C->nz = A->nz;
     SLIP_CHECK(slip_scale_matrix(C, A, option));
     

@@ -20,9 +20,7 @@
  */
 
 #define SLIP_FREE_ALL            \
-{                                \
-SLIP_matrix_free(&h, NULL)  ;    \
-}                                \
+    SLIP_matrix_free(&h, NULL)  ;
 
 #include "SLIP_LU_internal.h"
 
@@ -30,7 +28,7 @@ SLIP_info slip_forward_sub
 (
     const SLIP_matrix *L,   // lower triangular matrix
     SLIP_matrix *x,         // right hand side matrix of size n*numRHS
-    SLIP_matrix *rhos,      // sequence of pivots used in factorization
+    const SLIP_matrix *rhos,// sequence of pivots used in factorization
     SLIP_options* option    // Command options, currently unused
 )
 {
@@ -41,25 +39,28 @@ SLIP_info slip_forward_sub
 
     SLIP_info info ;
     SLIP_REQUIRE(L, SLIP_CSC, SLIP_MPZ);
-    SLIP_REQUIRE(L, SLIP_DENSE, SLIP_MPZ);
+    SLIP_REQUIRE(x, SLIP_DENSE, SLIP_MPZ);
     SLIP_REQUIRE(rhos, SLIP_DENSE, SLIP_MPZ);
-    if (!option) return SLIP_INCORRECT_INPUT;
+    if (!option)// TODO create default option?
+    {
+        return SLIP_INCORRECT_INPUT;
+    }
     
     //--------------------------------------------------------------------------
 
-    int64_t i, p, k, m, mnew;
+    int64_t i, hx, k, j, jnew;
     int sgn ;
     
     // Build the history matrix
     SLIP_matrix *h;
-    SLIP_matrix_allocate(&h, SLIP_DENSE, SLIP_INT64, x->m, x->n, x->nzmax, false, true, option);
-    if (!h)
-    {
-        SLIP_FREE_ALL;
-        return SLIP_OUT_OF_MEMORY;
-    }
+    SLIP_CHECK (SLIP_matrix_allocate(&h, SLIP_DENSE, SLIP_INT64, x->m, x->n,
+        x->nzmax, false, true, option));
+
+    // initialize entries of history matrix to be -1
     for (i = 0; i < x->nzmax; i++)
+    {
         h->x.int64[i] = -1;
+    }
     
 
     //--------------------------------------------------------------------------
@@ -75,7 +76,7 @@ SLIP_info slip_forward_sub
 
         for (i = 0; i < x->m; i++)
         {
-            p = SLIP_2D(h, i, k, int64);
+            hx = SLIP_2D(h, i, k, int64);
             // If x[i][k] = 0, can skip operations and continue to next i
             SLIP_CHECK(SLIP_mpz_sgn(&sgn, SLIP_2D(x, i, k, mpz)));
             if (sgn == 0) {continue;}
@@ -84,17 +85,18 @@ SLIP_info slip_forward_sub
             // History Update
             //------------------------------------------------------------------
 
-            if (p < i-1)
+            if (hx < i-1)
             {
                 // x[i] = x[i] * rhos[i-1]
-                SLIP_CHECK(SLIP_mpz_mul( SLIP_2D(x, i, k, mpz), SLIP_2D(x, i, k, mpz),
+                SLIP_CHECK(SLIP_mpz_mul( SLIP_2D(x, i, k, mpz),
+                                         SLIP_2D(x, i, k, mpz),
                                          SLIP_1D(rhos, i-1, mpz)));
-                // x[i] = x[i] / rhos[p]
-                if (p > -1)
+                // x[i] = x[i] / rhos[hx]
+                if (hx > -1)
                 {
                     SLIP_CHECK(SLIP_mpz_divexact( SLIP_2D(x, i, k, mpz), 
                                                   SLIP_2D(x, i, k, mpz), 
-                                                  SLIP_1D(rhos, p, mpz)));
+                                                  SLIP_1D(rhos, hx, mpz)));
                 }
             }
 
@@ -102,67 +104,74 @@ SLIP_info slip_forward_sub
             // IPGE updates
             //------------------------------------------------------------------
 
-            // Access the Lmi
-            for (m = L->p[i]; m < L->p[i+1]; m++)
+            // Access the Lji
+            for (j = L->p[i]; j < L->p[i+1]; j++)
             {
-                // Location of Lmi
-                mnew = L->i[m];
-                // skip if Lx[m] is zero
-                SLIP_CHECK(SLIP_mpz_sgn(&sgn, L->x.mpz[m]));
+                // Location of Lji
+                jnew = L->i[j];
+
+                // skip if Lx[j] is zero
+                SLIP_CHECK(SLIP_mpz_sgn(&sgn, L->x.mpz[j]));
                 if (sgn == 0) {continue;}
-                // m > i
-                if (mnew > i)
+
+                // j > i
+                if (jnew > i)
                 {
-                    p = SLIP_2D(h, mnew, k, int64);
-                    // x[mnew] is zero
-                    SLIP_CHECK(SLIP_mpz_sgn(&sgn, SLIP_2D(x, mnew, k, mpz)));
+                    // check if x[jnew] is zero
+                    SLIP_CHECK(SLIP_mpz_sgn(&sgn, SLIP_2D(x, jnew, k, mpz)));
                     if (sgn == 0)
                     {
-                        // x[m] = x[m] - lmi xi
-                        SLIP_CHECK(SLIP_mpz_submul(SLIP_2D(x, mnew, k, mpz), L->x.mpz[m],
+                        // x[j] = x[j] - lji xi
+                        SLIP_CHECK(SLIP_mpz_submul(SLIP_2D(x, jnew, k, mpz),
+                                                   SLIP_1D(L, j, mpz),
                                                    SLIP_2D(x, i, k, mpz)));
-                        // x[m] = x[m] / rhos[i-1]
+                        // x[j] = x[j] / rhos[i-1]
                         if (i > 0)
                         {
-                            SLIP_CHECK(SLIP_mpz_divexact(SLIP_2D(x, mnew, k, mpz),
-                                                         SLIP_2D(x, mnew, k, mpz), 
-                                                         SLIP_1D(rhos, i-1, mpz)));
+                            SLIP_CHECK(
+                                SLIP_mpz_divexact(SLIP_2D(x, jnew, k, mpz),
+                                                  SLIP_2D(x, jnew, k, mpz), 
+                                                  SLIP_1D(rhos, i-1, mpz)));
                         }
                     }
                     else
                     {
+                        hx = SLIP_2D(h, jnew, k, int64);
                         // History update if necessary
-                        if (p < i-1)
+                        if (hx < i-1)
                         {
-                            // x[m] = x[m] * rhos[i-1]
-                            SLIP_CHECK(SLIP_mpz_mul(SLIP_2D(x, mnew, k, mpz), 
-                                                    SLIP_2D(x, mnew, k, mpz),
+                            // x[j] = x[j] * rhos[i-1]
+                            SLIP_CHECK(SLIP_mpz_mul(SLIP_2D(x, jnew, k, mpz), 
+                                                    SLIP_2D(x, jnew, k, mpz),
                                                     SLIP_1D(rhos, i-1, mpz)));
-                            // x[m] = x[m] / rhos[p]
-                            if (p > -1)
+                            // x[j] = x[j] / rhos[hx]
+                            if (hx > -1)
                             {
-                                SLIP_CHECK(SLIP_mpz_divexact(SLIP_2D(x, mnew, k, mpz),
-                                                             SLIP_2D(x, mnew, k, mpz),
-                                                             SLIP_1D(rhos, p, mpz)));
+                                SLIP_CHECK(
+                                    SLIP_mpz_divexact(SLIP_2D(x, jnew, k, mpz),
+                                                      SLIP_2D(x, jnew, k, mpz),
+                                                      SLIP_1D(rhos, hx, mpz)));
                             }
                         }
-                        // x[m] = x[m] * rhos[i]
-                        SLIP_CHECK(SLIP_mpz_mul(SLIP_2D(x, mnew, k, mpz), SLIP_2D(x, mnew, k, mpz),
+                        // x[j] = x[j] * rhos[i]
+                        SLIP_CHECK(SLIP_mpz_mul(SLIP_2D(x, jnew, k, mpz),
+                                                SLIP_2D(x, jnew, k, mpz),
                                                 SLIP_1D(rhos, i, mpz)));
-                        // x[m] = x[m] - lmi xi
-                        SLIP_CHECK(SLIP_mpz_submul(SLIP_2D(x, mnew, k, mpz), SLIP_1D(L, m, mpz),
+                        // x[j] = x[j] - lmi xi
+                        SLIP_CHECK(SLIP_mpz_submul(SLIP_2D(x, jnew, k, mpz),
+                                                   SLIP_1D(L, j, mpz),
                                                    SLIP_2D(x, i, k, mpz)));
-                        // x[m] = x[m] / rhos[i-1]
+                        // x[j] = x[j] / rhos[i-1]
                         if (i > 0)
                         {
-                            SLIP_CHECK(SLIP_mpz_divexact(SLIP_2D(x, mnew, k, mpz), 
-                                                         SLIP_2D(x, mnew, k, mpz), 
-                                                         SLIP_1D(rhos, i-1, mpz)));
+                            SLIP_CHECK(
+                                SLIP_mpz_divexact(SLIP_2D(x, jnew, k, mpz), 
+                                                  SLIP_2D(x, jnew, k, mpz), 
+                                                  SLIP_1D(rhos, i-1, mpz)));
                         }
                     }
-                    // Is this correct?
-                    SLIP_2D(h, mnew, k, int64) = i;
-                    //h[mnew][k] = i;
+                    //h[jnew][k] = i;
+                    SLIP_2D(h, jnew, k, int64) = i;
                 }
             }
         }

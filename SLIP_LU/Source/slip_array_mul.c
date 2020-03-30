@@ -17,6 +17,7 @@
 
 #include "SLIP_LU_internal.h"
 
+// TODO rename slip_matrix_mul?
 SLIP_info slip_array_mul // multiplies vector x by the determinant of matrix
 (
     SLIP_matrix *x,         // matrix to be multiplied
@@ -31,7 +32,10 @@ SLIP_info slip_array_mul // multiplies vector x by the determinant of matrix
 
     SLIP_info info ;
     SLIP_REQUIRE (x, SLIP_DENSE, SLIP_MPZ) ;
-    if (!option) return SLIP_INCORRECT_INPUT;
+    if (!option)
+    {
+        return SLIP_INCORRECT_INPUT;// TODO create default option?
+    }
     //--------------------------------------------------------------------------
     // x = x * det
     //--------------------------------------------------------------------------

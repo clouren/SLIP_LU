@@ -535,6 +535,39 @@ SLIP_info SLIP_mpfr_fprintf
 }
 
 //------------------------------------------------------------------------------
+// SLIP_mpfr_printf
+//------------------------------------------------------------------------------
+
+/* Safely print to the standard output stdout. Return positive value (the number
+ * of characters written) upon success, otherwise return negative value (error
+ * code) */
+
+SLIP_info SLIP_mpfr_printf
+(
+    const char *format,
+    ...
+)
+{
+    // Start the GMP wrapper
+    SLIP_GMP_WRAPPER_START ;
+
+    // call mpfr_vprintf
+    va_list args;
+    va_start (args, format) ;
+    int n = mpfr_vprintf (format, args) ;
+    va_end (args) ;
+    // Free cache from mpfr_vprintf. Even though mpfr_free_cache is
+    // called in SLIP_LU_final ( ), it has to be called here to
+    // prevent memory leak in some rare situations.
+    mpfr_free_cache ( ) ;
+
+    // Finish the wrapper
+    SLIP_GMP_WRAPPER_FINISH ;
+    // mpfr_vprintf returns -1 if an error occurred.
+    return ((n < 0) ? SLIP_INCORRECT_INPUT : SLIP_OK) ;
+}
+
+//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //-------------------------Integer (mpz_t type) functions-----------------------
 //------------------------------------------------------------------------------

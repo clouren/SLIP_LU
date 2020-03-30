@@ -36,8 +36,9 @@ SLIP_info SLIP_matrix_allocate
     bool init,              // If true, and the data types are mpz, mpq, or
                             // mpfr, the entries are initialized (using the 
                             // appropriate SLIP_mp*_init function). If false,
-                            // the mpz, mpq, and mpfr arrays are malloced but not 
-                            // initialized. Utilized internally to reduce memory
+                            // the mpz, mpq, and mpfr arrays are malloced but
+                            // not initialized. Utilized internally to reduce
+                            // memory
     SLIP_options *option
 )
 {
@@ -52,7 +53,7 @@ SLIP_info SLIP_matrix_allocate
         return (SLIP_INCORRECT_INPUT) ;
     }
     (*A_handle) = NULL ;
-    if (m < 0 || n < 0 || option == NULL)
+    if (m < 0 || n < 0 || option == NULL) // TODO create default option?
     {
         return (SLIP_INCORRECT_INPUT) ;
     }
@@ -76,7 +77,7 @@ SLIP_info SLIP_matrix_allocate
     A->m = m ;
     A->n = n ;
     A->nzmax = nzmax ;
-    A->nz = 0 ;
+    A->nz = nzmax ;
     A->kind = kind ;
     A->type = type ;
 

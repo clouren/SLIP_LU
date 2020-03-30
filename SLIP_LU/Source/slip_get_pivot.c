@@ -42,8 +42,9 @@ SLIP_info slip_get_pivot
     int64_t k,              // iteration of the algorithm
     SLIP_matrix* rhos,      // vector of pivots
     int64_t* pinv,          // row permutation
-    int64_t* row_perm,      // opposite of pinv. if pinv[i] = j then row_perm[j] = i
-    double tolerance,       // tolerance used if some tolerance based pivoting is used
+    int64_t* row_perm,      // opposite of pinv.
+                            // if pinv[i] = j then row_perm[j] = i
+    double tolerance,       // tolerance used if some tol-based pivoting is used
     SLIP_options* option    // Command options, currently unused
 )
 {
@@ -55,8 +56,11 @@ SLIP_info slip_get_pivot
     SLIP_info info ;
     SLIP_REQUIRE(rhos, SLIP_DENSE, SLIP_MPZ);
     SLIP_REQUIRE(x, SLIP_DENSE, SLIP_MPZ);
+    // TODO create default option?
     if (!pivot || !pivs || !xi || !pinv || !row_perm || !option)
+    {
         return SLIP_INCORRECT_INPUT;
+    }
 
     //--------------------------------------------------------------------------
     // allocate workspace
@@ -73,7 +77,7 @@ SLIP_info slip_get_pivot
 
     if (order == SLIP_SMALLEST)
     {
-        SLIP_CHECK (slip_get_smallest_pivot(pivot, x, pivs, n, top, xi, option));
+        SLIP_CHECK(slip_get_smallest_pivot(pivot, x, pivs, n, top, xi, option));
     }
 
     //--------------------------------------------------------------------------
@@ -89,7 +93,8 @@ SLIP_info slip_get_pivot
         }
         else
         {
-            SLIP_CHECK (slip_get_smallest_pivot(pivot, x, pivs, n, top, xi, option));
+            SLIP_CHECK (slip_get_smallest_pivot(pivot, x, pivs, n, top, xi,
+                                                option));
         }
     }
 
@@ -146,7 +151,8 @@ SLIP_info slip_get_pivot
     //--------------------------------------------------------------------------
     else // if (order == SLIP_TOL_SMALLEST)
     {
-        SLIP_CHECK (slip_get_smallest_pivot(pivot, x, pivs, n, top, xi, option)) ;
+        SLIP_CHECK (slip_get_smallest_pivot(pivot, x, pivs, n, top, xi,
+                                            option)) ;
 
         //----------------------------------------------------------------------
         // Checking x[col] vs smallest pivot

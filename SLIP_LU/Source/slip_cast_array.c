@@ -35,7 +35,7 @@ SLIP_info slip_cast_array
     //--------------------------------------------------------------------------
 
     SLIP_info info ;
-    if (n <= 0)
+    if (n <= 0)  //TODO n has been checked in SLIP_matrix_copy
     {
         // nothing to do
         return (SLIP_OK) ;
@@ -85,7 +85,7 @@ SLIP_info slip_cast_array
                 case SLIP_MPQ: // mpq_t to mpz_t
                 {
                     mpq_t *x = (mpq_t *) X ;
-                    SLIP_CHECK (slip_expand_mpq_array (Y, X, scale, n, option2)) ;
+                    SLIP_CHECK (slip_expand_mpq_array(Y, X, scale, n, option2));
                 }
                 break ;
 
@@ -271,8 +271,7 @@ SLIP_info slip_cast_array
                     mpz_t *x = (mpz_t *) X ;
                     for (int64_t k = 0 ; k < n ; k++)
                     {
-                        SLIP_CHECK(SLIP_mpz_get_si( &(y[k]), 
-                                                    x[k]));
+                        SLIP_CHECK(SLIP_mpz_get_si( &(y[k]), x[k]));
                     }
                 }
                 break ;
@@ -387,6 +386,8 @@ SLIP_info slip_cast_array
     }
 
     if (option == NULL)
+    {
         SLIP_FREE(option2);
+    }
     return (SLIP_OK) ;
 }

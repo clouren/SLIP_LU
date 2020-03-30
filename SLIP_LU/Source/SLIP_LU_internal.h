@@ -119,6 +119,12 @@
 
 #include "SLIP_LU.h"
 
+#ifdef SLIP_LU_TCOV 
+    /* include this header to redefine SLIP_MEMORY_REALLOC (used in SLIP_gmp.c) 
+     * for memory test and to use macro GOTCHA */ 
+    #include "../Tcov/tcov_malloc_test.h" 
+#endif
+
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //-------------------------functions for GMP wrapper----------------------------
@@ -321,7 +327,7 @@ SLIP_info slip_forward_sub
 (
     const SLIP_matrix *L,   // lower triangular matrix
     SLIP_matrix *x,         // right hand side matrix 
-    SLIP_matrix *rhos,      // sequence of pivots used in factorization
+    const SLIP_matrix *rhos,// sequence of pivots used in factorization
     SLIP_options *option    // Command options
 );
 
@@ -383,10 +389,10 @@ mpz_t* slip_create_mpz_array
  */
 SLIP_info slip_check_solution
 (
-    SLIP_matrix *A,           // input matrix
-    SLIP_matrix *x,           // solution vector
-    SLIP_matrix *b,          // right hand side
-    SLIP_options* option    // Command options, currently unused
+    const SLIP_matrix *A,          // input matrix
+    const SLIP_matrix *x,          // solution vector
+    const SLIP_matrix *b,          // right hand side
+    SLIP_options* option           // Command options, currently unused
 );
 
 /* Purpose: p [0..n] = cumulative sum of c [0..n-1], and then copy p [0..n-1]

@@ -38,6 +38,8 @@ SLIP_info slip_get_nonzero_pivot // find the first eligible nonzero pivot
     SLIP_REQUIRE(x, SLIP_DENSE, SLIP_MPZ);
     
     SLIP_info info ;
+    // TODO just add option as input arg for user-callable functions, unless
+    // it is needed by that specific internal function?
     if (!pivs || !xi || !option) {return SLIP_INCORRECT_INPUT;}
 
     //--------------------------------------------------------------------------
@@ -61,21 +63,11 @@ SLIP_info slip_get_nonzero_pivot // find the first eligible nonzero pivot
         {
             (*pivot) = inew;
             // End the loop
-            break;
+            return SLIP_OK;
         }
     }
 
-    //--------------------------------------------------------------------------
-    // return result
-    //--------------------------------------------------------------------------
-
-    if ((*pivot) == -1)
-    {
-        return SLIP_SINGULAR;
-    }
-    else
-    {
-        return SLIP_OK;
-    }
+    // return error code since no qualified pivot found
+    return SLIP_SINGULAR;
 }
 

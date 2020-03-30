@@ -25,7 +25,7 @@ mpq_t* slip_create_mpq_array
     // check inputs
     //--------------------------------------------------------------------------
 
-    if (n <= 0 || !option) {return NULL;}
+    if (n <= 0 || !option) {return NULL;}// TODO create default option?
 
     //--------------------------------------------------------------------------
 
@@ -40,11 +40,11 @@ mpq_t* slip_create_mpq_array
             SLIP_MPQ_SET_NULL(x[i]);
             for (int64_t j = 0; j < n; j++)
             {
-                    if ( x[j] != NULL)
-                    {
-                        SLIP_MPQ_CLEAR( x[j]);
-                    }
+                if ( x[j] != NULL)
+                {
+                    SLIP_MPQ_CLEAR( x[j]);
                 }
+            }
             SLIP_FREE(x);
             return NULL;
         }

@@ -37,8 +37,13 @@ SLIP_info slip_expand_double_array
     // check inputs
     //--------------------------------------------------------------------------
 
-    if (!x_out || !x || !option)
+    // inputs have been checked in the only caller slip_cast_array
+    /*
+    if (!x_out || !x || !option)// TODO create default option?
+    {
         return SLIP_INCORRECT_INPUT;
+    }
+    */
     
     //--------------------------------------------------------------------------
 
@@ -53,17 +58,13 @@ SLIP_info slip_expand_double_array
     SLIP_matrix* x3 = NULL;
     mpz_t gcd, one; SLIP_MPZ_SET_NULL(gcd); SLIP_MPZ_SET_NULL(one);
     mpq_t temp; SLIP_MPQ_SET_NULL(temp);
+
     SLIP_CHECK(SLIP_mpq_init(temp));
     SLIP_CHECK(SLIP_mpz_init(gcd));
     SLIP_CHECK(SLIP_mpz_init(one));
 
-    SLIP_matrix_allocate(&x3, SLIP_DENSE, SLIP_MPFR, n, 1, n, false, true, option);
-    if (!x3)
-    {
-        SLIP_FREE_ALL;
-        return SLIP_OUT_OF_MEMORY;
-    }
-
+    SLIP_CHECK (SLIP_matrix_allocate(&x3, SLIP_DENSE, SLIP_MPFR, n, 1, n,
+        false, true, option));
     
     SLIP_CHECK(SLIP_mpq_set_d(scale, expon));           // scale = 10^17
     for (i = 0; i < n; i++)
@@ -73,7 +74,7 @@ SLIP_info slip_expand_double_array
 
         // x3[i] = x[i] * 10^17
         SLIP_CHECK(SLIP_mpfr_mul_d(x3->x.mpfr[i], x3->x.mpfr[i], expon,
-            option->round));
+                                   option->round));
 
         // x_out[i] = x3[i]
         SLIP_CHECK(SLIP_mpfr_get_z(x_out[i], x3->x.mpfr[i], option->round));

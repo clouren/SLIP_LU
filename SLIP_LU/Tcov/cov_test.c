@@ -41,34 +41,20 @@
  * to properly use this code
  */
 
-#define SLIP_FREE_ALL                      \
+#define SLIP_FREE_ALL                            \
 {                                                \
-    SLIP_delete_LU_analysis(&S);                 \
-    SLIP_delete_sparse(&A);                      \
+    SLIP_LU_analysis_free(&S);                   \
+    SLIP_matrix_free(&A,option);                 \
+    SLIP_matrix_free(&b, option);                \
+    SLIP_matrix_free(&B, option);                \
+    SLIP_matrix_free(&Ax, option);               \
+    SLIP_matrix_free(&sol, option);              \
     SLIP_FREE(option);                           \
-    SLIP_delete_dense(&b);                       \
-    SLIP_delete_mpz_mat(&B_mpz, n, numRHS);      \
-    SLIP_delete_mpz_array(&Ax_mpz,nz);           \
-    SLIP_FREE(Ax_doub);                          \
-    SLIP_delete_double_mat(&B_doub, n, numRHS);  \
-    SLIP_delete_int64_mat(&B_int64, n, numRHS);  \
-    SLIP_FREE(Ax_int64);                         \
-    SLIP_delete_mpq_mat(&B_mpq , n, numRHS);     \
-    SLIP_delete_mpq_array(&Ax_mpq ,nz);          \
-    SLIP_delete_mpfr_mat(&B_mpfr, n, numRHS);    \
-    SLIP_delete_mpfr_array(&Ax_mpfr,nz);         \
-    SLIP_delete_mpq_mat(&sol_mpq, n, numRHS);    \
-    SLIP_delete_double_mat(&sol_doub, n, numRHS);\
-    SLIP_delete_mpfr_mat(&sol_mpfr, n, numRHS);  \
-    SLIP_free(x_doub);                           \
-    SLIP_delete_mpz_array(&x_mpz, nz);           \
-    SLIP_delete_mpq_array(&x_mpq, nz);           \
-    SLIP_delete_mpfr_array(&x_mpfr, nz);         \
     if (mat_file != NULL) {fclose(mat_file);}    \
     SLIP_finalize() ;                            \
 }
 
-#include "demos.h"
+#include "SLIP_LU_internal.h"
 
 #define TEST_CHECK(method)                       \
 {                                                \
@@ -96,8 +82,10 @@
     }                                            \
 }
 
+#define MAX_MALLOC_COUNT 10000
+
 int64_t Ap[5] = {0, 3, 5, 8, 11};
-int64_t Ai[11]       = {0, 1, 2, 2, 3, 1, 2, 3, 0, 1,  2};
+int64_t Ai[11]   = {0, 1, 2, 2, 3, 1, 2, 3, 0, 1,  2};
 double Axnum[11] = {1, 2, 7, 1, 2, 4, 1, 3, 1, 12, 1};  // Numerator of x
 double Axden[11] = {3, 3, 6, 1, 7, 1, 1, 1, 5, 1,  1};  // Denominator of x
 double bxnum[4] = {170, 1820, 61, 670};                // Numerator of b
@@ -172,7 +160,7 @@ int main( int argc, char* argv[])
         {
             NUM_OF_MALLOC_T=1;
             malloc_trials_list=SLIP_malloc(NUM_OF_MALLOC_T* sizeof(int64_t));
-            malloc_trials_list[0]=1000;//INT_MAX;
+            malloc_trials_list[0]=MAX_MALLOC_COUNT;//INT_MAX;
         }
         else
         {
@@ -188,7 +176,7 @@ int main( int argc, char* argv[])
                 {
                     fprintf(stderr, "WARNING: MISSING malloc trial\n");
                     NUM_OF_MALLOC_T=1;
-                    malloc_trials_list[0]=1000;//INT_MAX;
+                    malloc_trials_list[0]=MAX_MALLOC_COUNT;//INT_MAX;
                 }
             }
         }
@@ -218,8 +206,8 @@ int main( int argc, char* argv[])
     //
     // For non SIMPLE_TEST, outter loop iterates for Ab_type from 0 to 5, and
     // set xtype correspondingly, and inner loop iterates for malloc_count
-    // initialized from 0 to 1000, break when malloc_count>0 at the end of
-    // inner loop.
+    // initialized from 0 to MAX_MALLOC_COUNT, break when malloc_count>0 at the
+    // end of inner loop.
 
     for (int64_t k=0; k<NUM_OF_TRIALS; k++)
     {
@@ -236,7 +224,7 @@ int main( int argc, char* argv[])
             Ab_type = k;
             //if(k == 1){return 0;} Ab_type = 4;
             xtype = rat_list[Ab_type];
-            NUM_OF_MALLOC_T = 1000;
+            NUM_OF_MALLOC_T = MAX_MALLOC_COUNT;
         }
 
         for (int64_t kk=0; kk<NUM_OF_MALLOC_T; kk++)
@@ -271,275 +259,188 @@ int main( int argc, char* argv[])
             SLIP_info info ;
             SLIP_options* option = SLIP_create_default_options();
             if (!option) {continue;}
+            option->print_level = 3;
             FILE* mat_file = NULL;
 
-            // used in Ab_type = 0
-            mpz_t   **B_mpz    = NULL;
-            mpz_t   *Ax_mpz    = NULL;
+            // used in as source in different Ab_type for A and b
+            SLIP_matrix *B   = NULL;
+            SLIP_matrix *Ax  = NULL;
 
-            // used in Ab_type = 1
-            double  **B_doub   = NULL;
-            double  *Ax_doub   = NULL;
-
-            // used in Ab_type = 2
-            int64_t **B_int64    = NULL;
-            int64_t *Ax_int64    = NULL;
-
-            // used in Ab_type = 3
-            mpq_t   **B_mpq    = NULL;
-            mpq_t   *Ax_mpq    = NULL;
-
-            // used in Ab_type = 4
-            mpfr_t  **B_mpfr   = NULL;
-            mpfr_t  *Ax_mpfr   = NULL;
-
-            // used in Ab_type = 5
-            mpz_t  *x_mpz  = NULL;
-            mpq_t  *x_mpq  = NULL;
-            mpfr_t *x_mpfr = NULL;
-            double *x_doub = NULL;
-
-            // used in xtype = 1, 2, 3 correspondingly
-            mpq_t   **sol_mpq  = NULL;
-            double  **sol_doub = NULL;
-            mpfr_t  **sol_mpfr = NULL;
-
-            SLIP_sparse *A = NULL ;
-            SLIP_dense *b = NULL ;
+            // matrix A, b and solution
+            SLIP_matrix *A = NULL ;
+            SLIP_matrix *b = NULL ;
+            SLIP_matrix *sol = NULL;
 
             // for Column ordering
             SLIP_LU_analysis* S = NULL ;
-            option->print_level = 0;
 
-            if (Ab_type==0)
+            if (Ab_type >= 0 && Ab_type <= 4)
             {
 
                 //--------------------------------------------------------------
                 // Solve A*x=b where A and b are created from mpz entries
                 //--------------------------------------------------------------
 
-                B_mpz = SLIP_create_mpz_mat(n, numRHS);
-                Ax_mpz = SLIP_create_mpz_array(nz);
-                if (!B_mpz || !Ax_mpz) {SLIP_FREE_ALL; continue;}
+                TEST_CHECK(SLIP_matrix_allocate(&B, SLIP_DENSE,
+                    (SLIP_type) Ab_type, n,
+                    numRHS, n*numRHS, false, true, option));
+                TEST_CHECK(SLIP_matrix_allocate(&Ax, SLIP_CSC,
+                    (SLIP_type) Ab_type, n,
+                    n, nz, false, true, option));
 
+                // fill Ax->i and Ax->p
+                for (j = 0; j < n+1; j++)
+                {
+                    Ax->p[j] = Ap[j];
+                }
+                for (j = 0; j < nz; j++)
+                {
+                    Ax->i[j] = Ai[j];
+                }
+
+                // special failure cases
+                if (Ab_type == 2)// MPFR
+                {
+                    // create empty A and b using uninitialized double mat/array
+                    // to trigger all-zero array condition
+                    TEST_CHECK(SLIP_matrix_copy(&A, SLIP_CSC, SLIP_MPZ, Ax,
+                        option));
+                    TEST_CHECK(SLIP_matrix_copy(&b, SLIP_DENSE, SLIP_MPZ, B,
+                        option));
+                    // to trigger SLIP_SINGULAR
+                    TEST_CHECK_FAILURE(SLIP_backslash(&sol, SLIP_MPQ, A, b,
+                        option));
+                    option->pivot = SLIP_LARGEST;
+                    TEST_CHECK_FAILURE(SLIP_backslash(&sol, SLIP_MPQ, A, b,
+                        option));
+                    option->pivot = SLIP_FIRST_NONZERO;
+                    TEST_CHECK_FAILURE(SLIP_backslash(&sol, SLIP_MPQ, A, b,
+                       option));
+                    // incorrect solution type
+                    TEST_CHECK_FAILURE(SLIP_backslash(&sol, SLIP_MPZ, A, b,
+                       option));
+
+                    // A->p = NULL
+                    SLIP_FREE(A->p);
+                    TEST_CHECK_FAILURE(SLIP_backslash(&sol, SLIP_MPQ, A, b,
+                       option));
+
+                    //free the memory alloc'd
+                    SLIP_matrix_free (&A, option) ;
+                    SLIP_matrix_free (&b, option) ;
+
+                    // trigger gcd == 1
+                    uint64_t prec = option->prec;
+                    option->prec = 17;
+                    double pow2_17 = pow(2,17);
+                    for (j = 0; j < n; j++)                             // Get B
+                    {
+                        TEST_CHECK(SLIP_mpfr_set_d(SLIP_2D(B,j,0,mpfr),
+                            bxnum[j]/pow2_17, MPFR_RNDN));
+                    }
+                    TEST_CHECK (SLIP_matrix_check (B, option)) ;
+                    TEST_CHECK(SLIP_matrix_copy(&b, SLIP_DENSE, SLIP_MPZ,B,
+                        option));
+                    SLIP_matrix_free (&A, option) ;
+                    SLIP_matrix_free (&b, option) ;
+
+                    // restore default precision
+                    option->prec = prec;
+                }
+                else if (Ab_type == 4)// double
+                {
+                    // create empty A using uninitialized double mat/array
+                    // to trigger all-zero array condition
+                    TEST_CHECK(SLIP_matrix_copy(&A, SLIP_CSC, SLIP_MPZ, Ax,
+                        option));
+
+                    // trigger gcd == 1
+                    for (j = 0; j < n; j++)                           // Get b
+                    {
+                        SLIP_2D(B,j,0,fp64) = bxnum[j]/1e17;
+                    }
+                    TEST_CHECK(SLIP_matrix_copy(&b, SLIP_DENSE, SLIP_MPZ, B,
+                        option));
+                    SLIP_matrix_free (&b, option) ;
+
+                    // failure case: Ax->x = NULL
+                    double *tmp_Ax_fp64 = Ax->x.fp64;
+                    Ax->x.fp64 = NULL;
+                    TEST_CHECK_FAILURE(SLIP_matrix_copy(&A, SLIP_CSC, SLIP_MPZ,
+                        Ax,option));
+                    Ax->x.fp64 = tmp_Ax_fp64;
+                }
+
+                // fill Ax->x and b->x
                 for (j = 0; j < n; j++)                           // Get b
                 {
-                    TEST_CHECK(SLIP_mpz_set_ui(B_mpz[j][0],bxnum3[j]));
+                    if (Ab_type == 0) //MPZ
+                    {
+                        TEST_CHECK(SLIP_mpz_set_ui(SLIP_2D(B, j, 0, mpz),
+                            bxnum3[j]));
+                    }
+                    else if (Ab_type == 1)// MPQ
+                    {
+                        TEST_CHECK(SLIP_mpq_set_ui(SLIP_2D(B,j,0,mpq),
+                            bxnum3[j], bxden3[j]));
+                    }
+                    else if (Ab_type == 2)// MPFR
+                    {
+                        TEST_CHECK(SLIP_mpfr_set_d(SLIP_2D(B,j,0,mpfr),bxnum[j],
+                            MPFR_RNDN));
+                        TEST_CHECK(SLIP_mpfr_div_d(SLIP_2D(B,j,0,mpfr),
+                            SLIP_2D(B,j,0,mpfr), bxden[j], MPFR_RNDN));
+                    }
+                    else if (Ab_type == 3)// INT64
+                    {
+                        SLIP_2D(B,j,0,int64)=bxnum3[j];
+                    }
+                    else // double
+                    {
+                        SLIP_2D(B,j,0,fp64) = bxnum[j];
+                    }
                 }
                 for (j = 0; j < nz; j++)                          // Get Ax
                 {
-                    TEST_CHECK(SLIP_mpz_set_ui(Ax_mpz[j],Axnum3[j]));
+                    if (Ab_type == 0)
+                    {
+                        TEST_CHECK(SLIP_mpz_set_ui(Ax->x.mpz[j],Axnum3[j]));
+                    }
+                    else if (Ab_type == 1)
+                    {
+                        TEST_CHECK(SLIP_mpq_set_ui(Ax->x.mpq[j],Axnum3[j],
+                            Axden3[j]));
+                    }
+                    else if (Ab_type == 2)
+                    {
+                        TEST_CHECK(SLIP_mpfr_set_d(Ax->x.mpfr[j], Axnum[j],
+                            MPFR_RNDN));
+                        TEST_CHECK(SLIP_mpfr_div_d(Ax->x.mpfr[j], Ax->x.mpfr[j],
+                            Axden[j], MPFR_RNDN))
+                    }
+                    else if (Ab_type == 3)
+                    {
+                        Ax->x.int64[j]=Axnum3[j];
+                    }
+                    else
+                    {
+                        Ax->x.fp64[j] = Axnum[j]/Axden[j];
+                    }
                 }
-
-                //failure due to invalid input
-                TEST_CHECK_FAILURE(SLIP_build_dense_mpz(&b, NULL, n, numRHS));
-                TEST_CHECK_FAILURE(SLIP_build_dense_mpz(&b, B_mpz, 0, numRHS));
-                TEST_CHECK_FAILURE(SLIP_build_sparse_csc_mpz(&A, Ap, Ai, NULL,
-                    n, nz));
 
                 // successful case
-                TEST_CHECK(SLIP_build_sparse_csc_mpz(&A, Ap, Ai, Ax_mpz, n,
-                    nz));
-                TEST_CHECK (SLIP_spok (A, option)) ;
-                TEST_CHECK(SLIP_build_dense_mpz(&b, B_mpz, n, numRHS));
-                option->pivot = SLIP_DIAGONAL;
-
-            }
-            else if (Ab_type==1)
-            {
-
-                //--------------------------------------------------------------
-                // create A and b from double entries (see example4.c)
-                //--------------------------------------------------------------
-
-                //failure due to NULL input
-                TEST_CHECK_FAILURE(SLIP_build_dense_double(&b, NULL, n, numRHS,
-                    option));
-                TEST_CHECK_FAILURE(SLIP_build_sparse_csc_double(&A, Ap, Ai,
-                    NULL, n, nz, option));
-
-                Ax_doub = (double*) SLIP_calloc(nz, sizeof(double));
-                B_doub = SLIP_create_double_mat(n, numRHS);
-                if (!B_doub || !Ax_doub) {SLIP_FREE_ALL; continue;}
-
-                // create empty A and b using uninitialized double mat/array
-                TEST_CHECK(SLIP_build_sparse_csc_double(&A, Ap, Ai,
-                    Ax_doub, n, nz, option));
-                SLIP_delete_sparse (&A) ;
-
-                TEST_CHECK(SLIP_build_dense_double(&b, B_doub, n,
-                    numRHS, option));
-                SLIP_delete_dense (&b) ;
-
-                // trigger gcd == 1
-                for (j = 0; j < n; j++)                           // Get b
+                TEST_CHECK(SLIP_matrix_copy(&A, SLIP_CSC, SLIP_MPZ, Ax,option));
+                TEST_CHECK(SLIP_matrix_copy(&b, SLIP_DENSE, SLIP_MPZ,B,option));
+                TEST_CHECK (SLIP_matrix_check (A, option)) ;
+                TEST_CHECK (SLIP_matrix_check (b, option)) ;
+                if (Ab_type == 0)
                 {
-                    B_doub[j][0] = bxnum[j]/1e17;
+                    option->pivot = SLIP_DIAGONAL;
                 }
-                TEST_CHECK(SLIP_build_dense_double(&b, B_doub, n, numRHS,
-                    option));
-                SLIP_delete_dense (&b) ;
-
-                // trigger gcd != 1
-                for (j = 0; j < n; j++)                           // Get b
+                else if (Ab_type == 1)
                 {
-                    B_doub[j][0] = bxnum[j];
+                    option->pivot = SLIP_SMALLEST;
                 }
-                TEST_CHECK(SLIP_build_dense_double(&b, B_doub, n, numRHS,
-                    option));
-                //B_doub[0][0] = 0;
-                for (j = 0; j < nz; j++)                          // Get Ax
-                {
-                    Ax_doub[j] = Axnum[j]/Axden[j];
-                }
-                TEST_CHECK(SLIP_build_sparse_csc_double(&A, Ap, Ai, Ax_doub, n,
-                    nz, option));
-                TEST_CHECK (SLIP_spok (A, option)) ;
-                option->pivot = SLIP_SMALLEST;
-
-            }
-            else if (Ab_type==2)
-            {
-
-                //--------------------------------------------------------------
-                // create A and b from int64 entries
-                //--------------------------------------------------------------
-
-                //failure due to NULL input
-                TEST_CHECK_FAILURE(SLIP_build_dense_int64(&b, NULL, n, numRHS));
-                TEST_CHECK_FAILURE(SLIP_build_sparse_csc_int64(&A, Ap, Ai, NULL,
-                    n, nz));
-
-                B_int64 = SLIP_create_int64_mat(n, numRHS);
-                Ax_int64 = (int64_t*) SLIP_calloc(nz, sizeof(int64_t));
-                if (!B_int64 || !Ax_int64) {SLIP_FREE_ALL; continue;}
-
-                for (j = 0; j < n; j++)                           // Get b
-                {
-                    B_int64[j][0]=bxnum3[j];
-                }
-                for (j = 0; j < nz; j++)                          // Get Ax
-                {
-                    Ax_int64[j]=Axnum3[j];
-                }
-
-                TEST_CHECK(SLIP_build_sparse_csc_int64(&A, Ap, Ai, Ax_int64, n,
-                    nz));
-                TEST_CHECK (SLIP_spok (A, option)) ;
-                TEST_CHECK(SLIP_build_dense_int64(&b, B_int64, n, numRHS));
-
-            }
-            else if (Ab_type==3)
-            {
-
-                //--------------------------------------------------------------
-                // create A and b from mpq entries
-                //--------------------------------------------------------------
-
-                TEST_CHECK_FAILURE(SLIP_build_dense_mpq(&b, NULL, n, numRHS));
-                TEST_CHECK_FAILURE(SLIP_build_sparse_csc_mpq(&A, Ap, Ai, NULL,
-                    n, nz));
-
-                B_mpq = SLIP_create_mpq_mat(n, numRHS);
-                Ax_mpq = SLIP_create_mpq_array(nz);
-                if (!B_mpq || !Ax_mpq) {SLIP_FREE_ALL; continue;}
-
-                for (j = 0; j < n; j++)                           // Get b
-                {
-                    TEST_CHECK(SLIP_mpq_set_ui(B_mpq [j][0], bxnum3[j],
-                        bxden3[j]));
-                }
-                for (j = 0; j < nz; j++)                          // Get Ax
-                {
-                    TEST_CHECK(SLIP_mpq_set_ui(Ax_mpq [j],Axnum3[j],Axden3[j]));
-                }
-
-                TEST_CHECK(SLIP_build_sparse_csc_mpq(&A, Ap, Ai, Ax_mpq, n,
-                    nz));
-                TEST_CHECK (SLIP_spok (A, option)) ;
-                TEST_CHECK(SLIP_build_dense_mpq(&b, B_mpq, n, numRHS));
-
-            }
-            else if (Ab_type==4)
-            {
-
-                //--------------------------------------------------------------
-                // create A and b from mpfr entries (see example3.c)
-                //--------------------------------------------------------------
-
-                //failure due to NULL input
-                TEST_CHECK_FAILURE(SLIP_build_dense_mpfr(&b, NULL, n, numRHS,
-                    option));
-                TEST_CHECK_FAILURE(SLIP_build_sparse_csc_mpfr(&A, Ap, Ai, NULL,
-                    n, nz, option));
-
-                B_mpfr = SLIP_create_mpfr_mat(n, numRHS, option);
-                Ax_mpfr = SLIP_create_mpfr_array(nz, option);
-                if (!B_mpfr|| !Ax_mpfr) {SLIP_FREE_ALL; continue;}
-
-                // create empty A and b using uninitialized double mat/array
-                TEST_CHECK(SLIP_build_sparse_csc_mpfr(&A, Ap, Ai,
-                    Ax_mpfr, n, nz, option));
-                TEST_CHECK(SLIP_build_dense_mpfr(&b, B_mpfr, n,
-                    numRHS, option));
-                // to trigger SLIP_SINGULAR
-                TEST_CHECK(SLIP_LU_analyze(&S, A, option));
-                sol_mpq = SLIP_create_mpq_mat(n, numRHS);
-                TEST_CHECK_FAILURE(SLIP_solve_mpq(sol_mpq, A, S, b, option));
-                option->pivot = SLIP_LARGEST;
-                TEST_CHECK_FAILURE(SLIP_solve_mpq(sol_mpq, A, S, b, option));
-                option->pivot = SLIP_FIRST_NONZERO;
-                TEST_CHECK_FAILURE(SLIP_solve_mpq(sol_mpq, A, S, b, option));
-                //free the memory alloc'd
-                SLIP_delete_mpq_mat(&sol_mpq, n, numRHS);
-                SLIP_delete_LU_analysis(&S) ;
-                SLIP_delete_sparse (&A) ;
-                SLIP_delete_dense (&b) ;
-
-                // trigger gcd == 1
-                uint64_t prec = option->prec;
-                option->prec = 17;
-                for (j = 0; j < n; j++)                               // Get B
-                {
-                    TEST_CHECK(SLIP_mpfr_set_d(B_mpfr[j][0], bxnum[j]/1e17,
-                        MPFR_RNDN));
-                }
-                for (j = 0; j < nz; j++)                             // Get Ax
-                {
-                    TEST_CHECK(SLIP_mpfr_set_d(Ax_mpfr[j], Axnum[j]/1e17,
-                        MPFR_RNDN));
-                    TEST_CHECK(SLIP_mpfr_div_d(Ax_mpfr[j], Ax_mpfr[j], Axden[j],
-                        MPFR_RNDN));
-                }
-                TEST_CHECK(SLIP_build_dense_mpfr(&b, B_mpfr, n, numRHS,
-                    option));
-                TEST_CHECK(SLIP_build_sparse_csc_mpfr(&A, Ap, Ai, Ax_mpfr,
-                    n, nz, option));
-                SLIP_delete_sparse (&A) ;
-                SLIP_delete_dense (&b) ;
-
-                option->prec = prec;
-
-                // trigger gcd != 1
-                for (j = 0; j < n; j++)                               // Get B
-                {
-                    TEST_CHECK(SLIP_mpfr_set_d(B_mpfr[j][0], bxnum[j],
-                        MPFR_RNDN));
-                    TEST_CHECK(SLIP_mpfr_div_d(B_mpfr[j][0], B_mpfr[j][0],
-                        bxden[j], MPFR_RNDN));
-                }
-                for (j = 0; j < nz; j++)                             // Get Ax
-                {
-                    TEST_CHECK(SLIP_mpfr_set_d(Ax_mpfr[j], Axnum[j],MPFR_RNDN));
-                    TEST_CHECK(SLIP_mpfr_div_d(Ax_mpfr[j], Ax_mpfr[j], Axden[j],
-                        MPFR_RNDN));
-                }
-                TEST_CHECK(SLIP_build_sparse_csc_mpfr(&A, Ap, Ai, Ax_mpfr,
-                    n, nz, option));
-                TEST_CHECK (SLIP_spok (A, option)) ;
-                TEST_CHECK(SLIP_build_dense_mpfr(&b, B_mpfr, n, numRHS,
-                    option));
-
             }
             else
             {
@@ -551,34 +452,174 @@ int main( int argc, char* argv[])
                 // test for SLIP_build_sparse_trip*
                 // and failure of some functions
                 n = 4, nz = 11;
+                int64_t m1, n1, nz1;
                 int64_t I[11]={0, 1, 2, 2, 3, 1, 2, 3, 0, 1, 2};
                 int64_t J[11]={0, 0, 0, 1, 1, 2, 2, 2, 3, 3, 3};
+                int64_t P[11]={0, 3, 5, 8, 11};
+                // failure case: incorrect index array input
+                int64_t I1[11]={0, -1, -2, 2, 3, 1, 2, 3, 0, 1, 2};
 
                 double x_doub2[11] = {1, 1, 1, 2, 2, 3, 3, 3, 4, 4, 4};
                 int64_t x_int64[11] = {1, 1, 1, 2, 2, 3, 3, 3, 4, 4, 4};
-                x_mpz  = SLIP_create_mpz_array(nz);
-                x_mpq  = SLIP_create_mpq_array(nz);
-                x_mpfr = SLIP_create_mpfr_array(nz, option);
-                x_doub = (double*) SLIP_calloc(nz, sizeof(double));
-                if (!x_mpz || !x_mpq || !x_mpfr || !x_doub)
+                for (int tk = 0; tk < 15; tk++)
                 {
-                    SLIP_FREE_ALL;
-                    continue;
+                    int type = tk%5;
+                    int kind = tk/5;
+                    if (kind != 2)
+                    {
+                        m1 = n;
+                        n1 = n;
+                        nz1 = nz;
+                    }
+                    else
+                    {
+                        m1 = nz1;
+                        n1 = 1;
+                        nz1 = nz1;
+                    }
+                    TEST_CHECK(SLIP_matrix_allocate(&Ax, (SLIP_type) kind,
+                        (SLIP_type)type, m1, n1, nz1, false, true, option));
+
+                    // fill Ax->p
+                    if(kind == 0)
+                    {
+                        for (j = 0; j < n+1; j++)
+                        {
+                            Ax->p[j] = P[j];
+                        }
+                    }
+                    // fill Ax->i and Ax->j
+                    for (j = 0; j < nz; j++)
+                    {
+                        if (kind != 2) {Ax->i[j] = I[j];}
+                        // triplet
+                        if (kind == 1){  Ax->j[j] = J[j];}
+                        switch (type)
+                        {
+                            case 0: // MPZ
+                            {
+                                TEST_CHECK(SLIP_mpz_set_si(Ax->x.mpz[j],
+                                    x_int64[j]));
+                            }
+                            break;
+
+                            case 1: // MPQ
+                            {
+                                TEST_CHECK(SLIP_mpq_set_ui(Ax->x.mpq[j],
+                                    2*x_int64[j],2));
+                            }
+                            break;
+
+                            case 2: // MPFR
+                            {
+                                TEST_CHECK(SLIP_mpfr_set_d(Ax->x.mpfr[j],
+                                    x_doub2[j], MPFR_RNDN));
+                                TEST_CHECK(SLIP_mpfr_div_d(Ax->x.mpfr[j],
+                                    Ax->x.mpfr[j], 1, MPFR_RNDN));
+                            }
+                            break;
+
+                            case 3: // INT64
+                            {
+                                Ax->x.int64[j] = x_int64[j];
+                            }
+                            break;
+
+                            case 4: // double
+                            {
+                                Ax->x.fp64[j] = x_doub2[j];
+                            }
+                            break;
+
+                            default: break;
+                        }
+                    }
+                    TEST_CHECK (SLIP_matrix_check (Ax, option));
+
+                    // convert to all different type of matrix
+                    for (int tk1 = 0; tk1 < 15; tk1++)
+                    {
+                        // successful cases
+                        int type1 = tk1%5;
+                        int kind1 = tk1/5;
+                        printf("converting from %s(%d) %s(%d) to %s(%d) "
+                            "%s(%d)\n",kind < 1 ? "CSC" : kind < 2 ? "Triplet" :
+                            "Dense",kind, type < 1 ? "MPZ" : type < 2 ? "MPQ" :
+                            type <3 ?  "MPFR" : type < 4 ? "int64" :
+                            "double",type, kind1 < 1 ?  "CSC" : kind1 < 2 ?
+                            "Triplet" : "Dense", kind1,type1 < 1 ? "MPZ" :
+                            type1 < 2 ? "MPQ" : type1 < 3 ?  "MPFR" : type1 < 4
+                            ? "int64" : "double",type1) ;
+
+                        TEST_CHECK(SLIP_matrix_copy(&A, (SLIP_kind)kind1,
+                            (SLIP_type) type1, Ax, option));
+
+                        // just perform once to perform some failure cases
+                        if (tk == 0 && tk1 == 0)
+                        {
+                            // test SLIP_matrix_check
+                            A->i[0] = -1;
+                            TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
+                            for (int64_t i = 0; i < A->nzmax; i++) 
+                            { 
+                                if ( A->x.mpz[i] != NULL) 
+                                { 
+                                    SLIP_MPZ_CLEAR( A->x.mpz[i]); 
+                                } 
+                            }
+
+                            TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
+                            A->p[1] = 2;
+                            A->p[2] = 1;
+                            TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
+                            A->p[0] = 1;
+                            TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
+                            A->nzmax = -1;
+                            TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
+                            A->n = -1;
+                            TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
+                            A->m = -1;
+                            TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
+
+                            //test coverage for slip_gmp_reallocate()
+                            void *p_new = NULL;
+                            TEST_CHECK(slip_gmp_realloc_test(&p_new, NULL,0,1));
+                            TEST_CHECK(slip_gmp_realloc_test(&p_new,p_new,1,0));
+                            printf("test\n");
+
+                            // Incorrect calling with NULL pointer(s)
+                            TEST_CHECK_FAILURE(SLIP_LU_analyze(NULL,NULL,NULL));
+                            TEST_CHECK_FAILURE(SLIP_LU_analyze(&S, NULL, NULL));
+                            TEST_CHECK_FAILURE(SLIP_LU_factorize(NULL, NULL,
+                                NULL, NULL, A, NULL, NULL));
+                            SLIP_matrix *L, *U, *rhos;
+                            int64_t *pinv ;
+                            TEST_CHECK_FAILURE(SLIP_LU_factorize(&L, &U, &rhos,
+                                &pinv, A, NULL, NULL));
+
+                            TEST_CHECK(SLIP_matrix_allocate(&b, SLIP_DENSE,
+                                SLIP_MPZ, 1, 1, 1, true, true, option));
+                            TEST_CHECK(SLIP_matrix_allocate(&L, SLIP_CSC,
+                                SLIP_MPZ, 1, 1, 1, true, true, option));
+                            TEST_CHECK(SLIP_matrix_allocate(&U, SLIP_CSC,
+                                SLIP_MPZ, 1, 1, 1, true, true, option));
+                            TEST_CHECK(SLIP_matrix_allocate(&rhos, SLIP_DENSE,
+                                SLIP_MPZ, 1, 1, 1, true, true, option));
+                            TEST_CHECK_FAILURE(SLIP_LU_solve(NULL, b, A, L, U,
+                                rhos, NULL, pinv, option));
+                            SLIP_matrix_free (&b, option) ;
+                            SLIP_matrix_free (&L, option) ;
+                            SLIP_matrix_free (&U, option) ;
+                            SLIP_matrix_free (&rhos, option) ;
+                            TEST_CHECK_FAILURE(SLIP_LU_solve(NULL, NULL, NULL,
+                                NULL, NULL, NULL, NULL, NULL, NULL));
+                        }
+                        SLIP_matrix_free (&A, option) ;
+                    }
+                    SLIP_matrix_free (&Ax, option) ;
                 }
 
-                for (j = 0; j < nz; j++)
-                {
-                    TEST_CHECK(SLIP_mpq_set_ui(x_mpq[j],2*x_int64[j],2));
-                    TEST_CHECK(SLIP_mpfr_set_d(x_mpfr[j],x_doub2[j],MPFR_RNDN));
-                    TEST_CHECK(SLIP_mpfr_div_d(x_mpfr[j], x_mpfr[j], 1,
-                        MPFR_RNDN));
-                    x_doub[j] = x_doub2[j];
-                    TEST_CHECK(SLIP_mpz_set_si(x_mpz[j], x_int64[j]));
-                }
-
-                // failure case: incorrect index array input
-                int64_t I1[11]={0, -1, -2, 2, 3, 1, 2, 3, 0, 1, 2};
-                int64_t P1[11]={0, 3, 5, 8, 11};
+#if 0
                 TEST_CHECK_FAILURE(SLIP_build_sparse_trip_mpz(&A, I1, J, x_mpz,
                     n, nz));
                 SLIP_delete_sparse (&A) ;
@@ -598,72 +639,8 @@ int main( int argc, char* argv[])
                     n, nz));
                 TEST_CHECK_FAILURE(SLIP_build_sparse_trip_mpfr  (&A, I, J, NULL,
                     n, nz, option));
+#endif
 
-                // successful cases
-                TEST_CHECK(SLIP_build_sparse_trip_mpz(&A, I, J, x_mpz, n, nz));
-                SLIP_delete_sparse (&A) ;
-
-                TEST_CHECK(SLIP_build_sparse_trip_double(&A, I, J, x_doub, n,
-                    nz, option));
-                SLIP_delete_sparse (&A) ;
-
-                TEST_CHECK(SLIP_build_sparse_trip_int64(&A, I, J, x_int64, n,
-                    nz));
-                info  = SLIP_gmp_printf("scale = %Qd\n",A->scale);
-                if (info  < 0) {TEST_CHECK(info );}
-                option->print_level = 3;
-                TEST_CHECK(SLIP_spok (A, option));
-                SLIP_delete_sparse (&A) ;
-
-                TEST_CHECK(SLIP_build_sparse_trip_mpq(&A, I, J, x_mpq, n, nz));
-                info  = SLIP_gmp_printf("scale = %Qd\n",A->scale);
-                if (info  < 0) {TEST_CHECK(info );}
-                TEST_CHECK(SLIP_spok (A, option));
-                SLIP_delete_sparse (&A) ;
-
-                TEST_CHECK(SLIP_build_sparse_trip_mpfr(&A, I, J, x_mpfr, n, nz,
-                    option));
-                info  = SLIP_gmp_printf("scale = %Qd\n",A->scale);
-                if (info  < 0) {TEST_CHECK(info );}
-                TEST_CHECK(SLIP_spok (A, option));
-
-                //test coverage for SLIP_spok()
-                A->i[0] = -1;
-                option->print_level = 1;
-                TEST_CHECK_FAILURE(SLIP_spok(A, option));
-                SLIP_delete_mpz_array(&(A->x), A->nzmax);
-                TEST_CHECK_FAILURE(SLIP_spok(A, option));
-                A->p[1] = 2;
-                A->p[2] = 1;
-                TEST_CHECK_FAILURE(SLIP_spok(A, option));
-                A->p[0] = 1;
-                TEST_CHECK_FAILURE(SLIP_spok(A, option));
-                A->nzmax = -1;
-                TEST_CHECK_FAILURE(SLIP_spok(A, option));
-                A->n = -1;
-                TEST_CHECK_FAILURE(SLIP_spok(A, option));
-                A->m = -1;
-                TEST_CHECK_FAILURE(SLIP_spok(A, option));
-                SLIP_delete_sparse (&A) ;
-
-                //test coverage for slip_gmp_reallocate()
-                void *p_new = NULL;
-                TEST_CHECK(slip_gmp_realloc_test(&p_new, NULL , 0, 1));
-                TEST_CHECK(slip_gmp_realloc_test(&p_new, p_new, 1, 0));
-                printf("test\n");
-
-                // Incorrect calling with NULL pointer(s)
-                TEST_CHECK_FAILURE(SLIP_LU_analyze(NULL, NULL, NULL));
-                TEST_CHECK_FAILURE(SLIP_LU_analyze(&S, NULL, NULL));
-                TEST_CHECK_FAILURE(SLIP_LU_factorize(NULL, NULL, NULL, NULL,
-                    NULL, NULL, NULL));
-                SLIP_sparse *L, *U ;
-                int64_t *pinv ;
-                mpz_t *rhos ;
-                TEST_CHECK_FAILURE(SLIP_LU_factorize(&L, &U, &rhos, &pinv,
-                    NULL, NULL, NULL));
-                TEST_CHECK_FAILURE(SLIP_LU_solve(NULL, NULL, NULL, NULL, NULL,
-                    NULL));
 
                 SLIP_FREE_ALL;
 
@@ -684,13 +661,13 @@ int main( int argc, char* argv[])
             }
 
             //------------------------------------------------------------------
-            // SLIP LU symbolic analysis
+            // SLIP LU backslash
+            // solve Ax=b in full precision rational arithmetic
             //------------------------------------------------------------------
 
-            // Column ordering using either AMD, COLAMD or nothing
-            TEST_CHECK(SLIP_LU_analyze(&S, A, option));
-            option->print_level = 3;
-            int64_t check2;
+            GOTCHA;
+            TEST_CHECK(SLIP_backslash(&sol, SLIP_MPQ, A, b, option));
+            GOTCHA;
 
             //------------------------------------------------------------------
             // SLIP LU Factorization, Solve and verification
@@ -699,42 +676,13 @@ int main( int argc, char* argv[])
             if (xtype==1)
             {
 
-                //--------------------------------------------------------------
-                // Solve Ax=b in full precision rational arithmetic
-                //--------------------------------------------------------------
-
-                sol_mpq = SLIP_create_mpq_mat(n, numRHS);
-                TEST_CHECK(SLIP_solve_mpq(sol_mpq, A, S, b, option));
-                if (Ab_type == 0)
+                if (Ab_type == 4)
                 {
-                    //failure case: NULL pointer input
-                    TEST_CHECK_FAILURE(SLIP_check_solution(A, NULL, b));
-                    TEST_CHECK_FAILURE(SLIP_get_double_soln(NULL, sol_mpq, n,
-                        numRHS));
-                    TEST_CHECK_FAILURE(SLIP_get_mpfr_soln(NULL, sol_mpq, n,
-                        numRHS, option));
-
-                    TEST_CHECK(SLIP_check_solution(A, sol_mpq, b));
-                    check2 = info ;  // track the status of SLIP_check_solution
-                    TEST_CHECK(SLIP_print_stats_mpq(sol_mpq, n, numRHS,
-                        check2, option));
-                    option->print_level = 3;
-                    TEST_CHECK(SLIP_spok (A, option));
-
-                    //intentionally change b to fail SLIP_LU_Check()
-                    TEST_CHECK(SLIP_mpz_set_ui (b->x[0][0], 1000));
-                    check2=SLIP_check_solution(A, sol_mpq, b);
-
-                    // Print result using SLIP_print_stats, which should return
-                    // SLIP_INCORRECT since check2 == SLIP_INCORRECT
-                    info = SLIP_print_stats_mpq (sol_mpq, n, numRHS, check2,
-                        option);
-                    if (info != SLIP_INCORRECT)
-                    {
-                        SLIP_PRINT_INFO (info);
-                        SLIP_FREE_ALL;
-                        continue;
-                    }
+                    // This would return SLIP_INCORRECT since sol has been
+                    // scaled down so that sol->scale = 1. Therefore sol is
+                    // solution for original unscaled Ax=b, while this is
+                    // checking if x is the solution for scaled Ax=b
+                    TEST_CHECK(slip_check_solution(A, sol, b, option));
                 }
 
             }
@@ -742,24 +690,26 @@ int main( int argc, char* argv[])
             {
 
                 //--------------------------------------------------------------
-                // Solve Ax=b in double
+                // copy sol to double
                 //--------------------------------------------------------------
 
-                sol_doub = SLIP_create_double_mat(n, numRHS);
-                TEST_CHECK(SLIP_solve_double(sol_doub, A, S, b, option));
+                SLIP_matrix *sol_doub;
+                TEST_CHECK(SLIP_matrix_copy(&sol_doub, SLIP_DENSE, SLIP_FP64,
+                    sol, option));
+                SLIP_matrix_free(&sol_doub, option);
 
             }
             else
             {
 
                 //--------------------------------------------------------------
-                // Solve Ax=b in with user-specified precision
+                // copy sol to mpfr with user-specified precision
                 //--------------------------------------------------------------
 
-                sol_mpfr = SLIP_create_mpfr_mat(n, numRHS, option);
-                TEST_CHECK(SLIP_solve_mpfr(sol_mpfr, A, S, b, option));
-                TEST_CHECK(SLIP_print_stats_mpfr(sol_mpfr, n, numRHS,
-                    SLIP_OK, option));
+                SLIP_matrix *sol_mpfr;
+                TEST_CHECK(SLIP_matrix_copy(&sol_mpfr, SLIP_DENSE, SLIP_MPFR,
+                    sol, option));
+                SLIP_matrix_free(&sol_mpfr, option);
             }
 
             //------------------------------------------------------------------
@@ -790,9 +740,9 @@ int main( int argc, char* argv[])
     }
     else
     {
-        printf("malloc_count for Ab_type = 0 ~ 5 are %d %d %d %d %d %d\n",
-            rat_list[0], rat_list[1], rat_list[2], rat_list[3], rat_list[4],
-            rat_list[5]);
+        printf("remaining malloc_count for Ab_type = 0~5 are %d %d %d %d "
+            "%d %d\n", rat_list[0], rat_list[1], rat_list[2], rat_list[3],
+            rat_list[4], rat_list[5]);
     }
     return 0;
 }

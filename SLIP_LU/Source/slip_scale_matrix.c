@@ -8,11 +8,13 @@
 
 //------------------------------------------------------------------------------
 
-// When making a copy of matrix, if the output matrix is either mpq, mpfr, int64_t,
-// or fp64, the scaling factor associated with this matrix must be 0. Scaling factors
-// are only valid for mpz_t matrices. This function serves as the final component of 
-// SLIP_matrix_copy. It accepts as input the final (copied) C matrix and the original
-// A matrix. It then applies the scaling factor if necessary.
+// When making a copy of matrix, if the output matrix is either mpq, mpfr,
+// int64_t, or fp64, the scaling factor associated with this matrix must be 0.
+// (TODO 0? Also, doesn't it make more sense to handle int64_t as mpz?)
+// Scaling factors are only valid for mpz_t matrices. This function serves as
+// the final component of SLIP_matrix_copy. It accepts as input the final
+// (copied) C matrix and the original A matrix. It then applies the scaling
+// factor if necessary.
 
 #define SLIP_FREE_ALL   \
 SLIP_MPQ_CLEAR(temp);   \
@@ -33,13 +35,14 @@ SLIP_info slip_scale_matrix
 
     SLIP_info info = SLIP_OK ;
     
-    if (C->type == SLIP_MPZ)    // Already has been accounted for
+    if (C->type == SLIP_MPZ || // Already has been accounted for
+        A->type != SLIP_MPZ || // A is not mpz means A has no scaling factor
+        C->x_shallow)          // Not modifying shallow arrays Matrix copy is
+                               // never shallow So this should never be
+                               // triggered TODO but C is never shallow
+    {
         return info;
-    if (A->type != SLIP_MPZ)   // A is not mpz means A has no scaling factor
-        return info;
-    if (C->x_shallow)             // Not modifying shallow arrays Matrix copy is never shallow
-                                // So this should never be triggered
-        return info;
+    }
     
     int r;
     int64_t i;

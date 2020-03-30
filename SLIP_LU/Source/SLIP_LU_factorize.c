@@ -37,7 +37,7 @@
     SLIP_matrix_free(&L, NULL);     \
     SLIP_matrix_free(&U, NULL);     \
     SLIP_matrix_free(&rhos, NULL);  \
-    SLIP_free(pinv);
+    SLIP_FREE(pinv);
 
 #include "SLIP_LU_internal.h"
 
@@ -59,6 +59,27 @@ SLIP_info SLIP_LU_factorize
     // check inputs
     //--------------------------------------------------------------------------
 
+    SLIP_REQUIRE (A, SLIP_CSC, SLIP_MPZ) ;
+
+    if (!L_handle || !U_handle || !rhos_handle || !pinv_handle)
+    {
+        return SLIP_INCORRECT_INPUT;
+    }
+
+    (*L_handle) = NULL ;
+    (*U_handle) = NULL ;
+    (*rhos_handle) = NULL ;
+    (*pinv_handle) = NULL ;
+
+    if (!S || !option || !A->p || !A->i) // TODO create default option?
+    {
+        return SLIP_INCORRECT_INPUT;
+    }
+
+    //--------------------------------------------------------------------------
+    // Declare and initialize workspace
+    //--------------------------------------------------------------------------
+
     SLIP_matrix *L = NULL ;    
     SLIP_matrix *U = NULL ;    
     SLIP_matrix *rhos = NULL ;       
@@ -71,27 +92,6 @@ SLIP_info SLIP_LU_factorize
 
     mpz_t sigma; SLIP_MPZ_SET_NULL(sigma);
     mpfr_t temp; SLIP_MPFR_SET_NULL(temp);
-
-    if (!L_handle || !U_handle || !rhos_handle || !pinv_handle)
-    {
-        return SLIP_INCORRECT_INPUT;
-    }
-
-    (*L_handle) = NULL ;
-    (*U_handle) = NULL ;
-    (*rhos_handle) = NULL ;
-    (*pinv_handle) = NULL ;
-
-    SLIP_REQUIRE (A, SLIP_CSC, SLIP_MPZ) ;
-
-    if (!A || !S || !option || !A->p || !A->i)
-    {
-        return SLIP_INCORRECT_INPUT;
-    }
-
-    //--------------------------------------------------------------------------
-    // Declare and initialize workspace
-    //--------------------------------------------------------------------------
 
     SLIP_info info ;
     int64_t n = A->n ;
@@ -138,12 +138,12 @@ SLIP_info SLIP_LU_factorize
     }
     // Initialize pivs and h; that is set pivs[i] = -1 and
     // h[i] = -1 for all i
-    for (int64_t i = 0; i < n; i++)
+    for (i = 0; i < n; i++)
     {
         h[i] = -1;
         pivs[i] = -1;
     }
-    
+
     //--------------------------------------------------------------------------
     // This section of the code computes a bound for the worst case bit-length
     // of each entry in the matrix. This bound is used to allocate the size of
@@ -193,8 +193,7 @@ SLIP_info SLIP_LU_factorize
     //--------------------------------------------------------------------------
 
     // temp = sigma*sqrt(gamma)
-    SLIP_CHECK(SLIP_mpfr_mul_d(temp, temp, (double) sqrt(gamma),
-        option->round));
+    SLIP_CHECK(SLIP_mpfr_mul_d(temp, temp, (double)sqrt(gamma), option->round));
     // temp = log2(temp)
     SLIP_CHECK(SLIP_mpfr_log2(temp, temp, option->round));
     // inner2 = temp
@@ -215,41 +214,32 @@ SLIP_info SLIP_LU_factorize
     //--------------------------------------------------------------------------
 
     // Create rhos, a global dense mpz_t matrix of dimension n*1
-    SLIP_matrix_allocate(&rhos, SLIP_DENSE, SLIP_MPZ, n, 1, n, false, true, option);
-    
-    // Create x, a global dense mpz_t matrix of dimension n*1. Unlike rhos, the second
-    // boolean parameter, x->init is set to false.
-    SLIP_matrix_allocate(&x, SLIP_DENSE, SLIP_MPZ, n, 1, n, false, false, option);
-    
-    if (!rhos || !x)
-    {
-        // out of memory: free everything and return
-        SLIP_FREE_ALL ;
-        return SLIP_OUT_OF_MEMORY;
-    }
-    
-    // Allocate the values of x
+    SLIP_CHECK (SLIP_matrix_allocate(&rhos, SLIP_DENSE, SLIP_MPZ, n, 1, n,
+        false, true, option));
+
+    // Create x, a global dense mpz_t matrix of dimension n*1. Unlike rhos, the
+    // second boolean parameter, x->init is set to false to avoid initializing
+    // each mpz entry of x with default size, which should be bound calculated
+    // above as gamma*log2(sigma sqrt(gamma)) instead
+    SLIP_CHECK (SLIP_matrix_allocate(&x, SLIP_DENSE, SLIP_MPZ, n, 1, n,
+        false, false, option));
+
+    // Allocate L and U without initializing each entry.
+    SLIP_CHECK (SLIP_matrix_allocate(&L, SLIP_CSC, SLIP_MPZ, n, n, S->lnz,
+        false, false, option));
+    SLIP_CHECK (SLIP_matrix_allocate(&U, SLIP_CSC, SLIP_MPZ, n, n, S->unz,
+        false, false, option));
+
     for (i = 0; i < n; i++)
+    {
+        // Allocate memory for entries of x
         SLIP_CHECK(SLIP_mpz_init2(x->x.mpz[i], bound));
-    
-    // Initialize location based vectors
-    for (i = 0; i < n; i++)
-    {
+
+        // Initialize location based vectors
         pinv[i] = i;
         row_perm[i] = i;
     }
 
-    // Allocate L and U. 
-    SLIP_matrix_allocate(&L, SLIP_CSC, SLIP_MPZ, n, n, S->lnz, false, false, option);
-    SLIP_matrix_allocate(&U, SLIP_CSC, SLIP_MPZ, n, n, S->unz, false, false, option);
-    
-    if (!L || !U)
-    {
-        // out of memory: free everything and return
-        SLIP_FREE_ALL ;
-        return SLIP_OUT_OF_MEMORY;
-    }
-    
     //--------------------------------------------------------------------------
     // Iterations 0:n-1 (1:n in standard)
     //--------------------------------------------------------------------------
@@ -284,7 +274,7 @@ SLIP_info SLIP_LU_factorize
             (const int64_t *) row_perm,
             h, x, option)) ;
 
-        // Obtain pivot index
+        // Obtain pivot index// TODO reduce arg for following function?
         SLIP_CHECK(slip_get_pivot(&pivot, x, pivs, n, top, xi, option->pivot,
             col, k, rhos, pinv, row_perm, option->tol, option));
 
@@ -304,6 +294,7 @@ SLIP_info SLIP_LU_factorize
             {
                 // Place the i location of the U->nz nonzero
                 U->i[unz] = jnew;
+                // TODO: try SLIP_mpz_init_set(U->x.mpz[unz], x->x.mpz[jnew]);
                 SLIP_CHECK(SLIP_mpz_sizeinbase(&size, x->x.mpz[jnew], 2));
                 // GMP manual: Allocated size should be size+2
                 SLIP_CHECK(SLIP_mpz_init2(U->x.mpz[unz], size+2));
@@ -320,6 +311,7 @@ SLIP_info SLIP_LU_factorize
             {
                 // Place the i location of the L->nz nonzero
                 L->i[lnz] = jnew;
+                // TODO try mpz_init_set?
                 SLIP_CHECK(SLIP_mpz_sizeinbase(&size, x->x.mpz[jnew], 2));
                 // GMP manual: Allocated size should be size+2
                 SLIP_CHECK(SLIP_mpz_init2(L->x.mpz[lnz], size+2));

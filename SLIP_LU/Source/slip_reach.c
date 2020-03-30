@@ -24,13 +24,13 @@ void slip_reach    // compute the reach of column k of A on the graph of L
     int64_t k,              // column of A of interest
     int64_t* xi,            // nonzero pattern
     const int64_t* pinv,    // row permutation
-    SLIP_options* option    // Command options
+    SLIP_options* option    // Command options// TODO remove?
 )
 {
 
     //--------------------------------------------------------------------------
     // check inputs
-    //-------------------------------------------------------------------------- 
+    //--------------------------------------------------------------------------
 
     // inputs have been checked in slip_ref_triangular_solve
     int64_t p, n = L->n;

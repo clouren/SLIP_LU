@@ -36,7 +36,10 @@ SLIP_info slip_back_sub  // performs sparse REF backward substitution
     SLIP_info info ;
     SLIP_REQUIRE (U,  SLIP_CSC,   SLIP_MPZ) ;
     SLIP_REQUIRE (bx, SLIP_DENSE, SLIP_MPZ) ;
-    if (!option) return SLIP_INCORRECT_INPUT;
+    if (!option)
+    {
+        return SLIP_INCORRECT_INPUT;//TODO create default option?
+    }
 
     //--------------------------------------------------------------------------
 

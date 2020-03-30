@@ -17,7 +17,7 @@ SLIP_info slip_scale_x
     SLIP_matrix *x,         // Solution matrix
     SLIP_matrix *A,         // matrix A
     SLIP_matrix *b,         // right hand side
-    SLIP_options* option    // command options
+    SLIP_options* option    // command options// TODO remove?
 )
 {
 
@@ -29,7 +29,7 @@ SLIP_info slip_scale_x
     SLIP_REQUIRE (A, SLIP_CSC,   SLIP_MPZ) ;
     SLIP_REQUIRE (b, SLIP_DENSE, SLIP_MPZ) ;
     SLIP_REQUIRE (x, SLIP_DENSE, SLIP_MPQ) ;
-    if (!option)
+    if (!option)// TODO create default?
     {
         return SLIP_INCORRECT_INPUT;
     }

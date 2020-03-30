@@ -31,15 +31,15 @@ SLIP_info slip_sparse_realloc
     
     ASSERT (A != NULL && A->kind = SLIP_CSC && A->type == SLIP_MPZ) ;
 
+    // TODO create default option or remove option as input
     if (!A || !A->p || !A->i || !option){return SLIP_INCORRECT_INPUT;}
 
-    //--------------------------------------------------------------------------
-
     int64_t nzmax = A->nzmax;
+    mpz_t *Ax_new = NULL;
 
     // Double size of A->x and A->i without initializing the new entries in A->x
     // cannot use SLIP_realloc here, since it frees its input on failure.
-    mpz_t *Ax_new = (mpz_t*) SLIP_MEMORY_REALLOC (A->x.mpz, 2*nzmax*sizeof(mpz_t));
+    Ax_new = (mpz_t*) SLIP_MEMORY_REALLOC (A->x.mpz, 2*nzmax*sizeof(mpz_t));
     if (!Ax_new)
     {
         return (SLIP_OUT_OF_MEMORY) ;

@@ -63,15 +63,17 @@ int main (void)
     // Generate a random dense 50*50 matrix
     //--------------------------------------------------------------------------
 
-    // R is a n*n triplet matrix whose entries are FP64 
-    // Note that the first boolean parameter says that the matrix is not shallow,
-    // so that A->i, A->j, and A->x are calloc'd. The second boolean parameter is
-    // meaningless for FP64 matrices, but it tells SLIP LU to allocate the values of
-    // A->x for the mpz_t, mpq_t, and mpfr_t entries
-    SLIP_matrix_allocate(&R, SLIP_TRIPLET, SLIP_FP64, n, n, nz, false, true, option);
+    // R is a n*n triplet matrix whose entries are FP64 Note that the first
+    // boolean parameter says that the matrix is not shallow, so that A->i,
+    // A->j, and A->x are calloc'd. The second boolean parameter is meaningless
+    // for FP64 matrices, but it tells SLIP LU to allocate the values of A->x
+    // for the mpz_t, mpq_t, and mpfr_t entries
+    SLIP_matrix_allocate(&R, SLIP_TRIPLET, SLIP_FP64, n, n, nz,
+        false, true, option);
     
     // Rb is a n*1 dense matrix whose entries are FP64
-    SLIP_matrix_allocate(&Rb, SLIP_DENSE, SLIP_FP64, n, 1, n, false, true, option);
+    SLIP_matrix_allocate(&Rb, SLIP_DENSE, SLIP_FP64, n, 1, n,
+        false, true, option);
     
     
     // Randomly generate the input

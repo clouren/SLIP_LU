@@ -26,11 +26,12 @@
 
 SLIP_info slip_expand_mpfr_array
 (
-    mpz_t* x_out,          // full precision mpz array
+    mpz_t* x_out,         // full precision mpz array
     mpfr_t* x,            // mpfr array to be expanded
     mpq_t scale,          // scaling factor used (x_out = scale*x)
     int64_t n,            // size of x
-    SLIP_options *option  // command options containing the prec and rounding for mpfr
+    SLIP_options *option  // command options containing the prec
+                          // and rounding for mpfr
 )
 {
 
@@ -39,7 +40,14 @@ SLIP_info slip_expand_mpfr_array
     //--------------------------------------------------------------------------
 
     SLIP_info info ;
-    if (!x || !x_out || !scale || n <= 0 || !option) {return SLIP_INCORRECT_INPUT;}
+    // inputs have been checked in the only caller slip_cast_array
+    /*
+    // TODO create default option?
+    if (!x || !x_out || !scale || n <= 0 || !option)
+    {
+        return SLIP_INCORRECT_INPUT;
+    }
+    */
 
     //--------------------------------------------------------------------------
     // initializations
@@ -55,29 +63,23 @@ SLIP_info slip_expand_mpfr_array
     SLIP_MPZ_SET_NULL(gcd);
     SLIP_MPZ_SET_NULL(one);
     mpq_t temp; SLIP_MPQ_SET_NULL(temp);
+
     SLIP_CHECK(SLIP_mpq_init(temp));
     SLIP_CHECK(SLIP_mpfr_init2(expon, option->prec));
     SLIP_CHECK(SLIP_mpz_init(temp_expon));
     SLIP_CHECK(SLIP_mpz_init(gcd));
     SLIP_CHECK(SLIP_mpz_init(one));
     
+    SLIP_CHECK (SLIP_matrix_allocate(&x3, SLIP_DENSE, SLIP_MPFR, n, 1, n,
+        false, true, option));
     
-    SLIP_matrix_allocate(&x3, SLIP_DENSE, SLIP_MPFR, n, 1, n, false, true, option);
-    
-    if (!x3)
-    {
-        SLIP_FREE_ALL;
-        return SLIP_OUT_OF_MEMORY;
-    }
-
     // expon = 2^prec (overestimate)
     SLIP_CHECK(SLIP_mpfr_ui_pow_ui(expon, 2, option->prec, option->round));
 
     for (i = 0; i < n; i++)
     {
         // x3[i] = x[i]*2^prec
-        SLIP_CHECK(SLIP_mpfr_mul(x3->x.mpfr[i], x[i], expon,
-            option->round));
+        SLIP_CHECK(SLIP_mpfr_mul(x3->x.mpfr[i], x[i], expon, option->round));
 
         // x_out[i] = x3[i]
         SLIP_CHECK(SLIP_mpfr_get_z(x_out[i], x3->x.mpfr[i], option->round));

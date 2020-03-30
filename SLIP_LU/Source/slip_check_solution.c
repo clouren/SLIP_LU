@@ -25,10 +25,10 @@
 
 SLIP_info slip_check_solution
 (
-    SLIP_matrix *A,         // Input matrix
-    SLIP_matrix *x,         // Solution vectors
-    SLIP_matrix *b,         // Right hand side vectors
-    SLIP_options* option    // Command options, currently unused
+    const SLIP_matrix *A,         // Input matrix
+    const SLIP_matrix *x,         // Solution vectors
+    const SLIP_matrix *b,         // Right hand side vectors
+    SLIP_options* option          // Command options, currently unused
 )
 {
 
@@ -37,35 +37,31 @@ SLIP_info slip_check_solution
     //--------------------------------------------------------------------------
 
     SLIP_info info ;
+    // TODO Inputs have been checked in the only caller SLIP_LU_solve
+    /*
     SLIP_REQUIRE (A, SLIP_CSC,   SLIP_MPZ) ;
     SLIP_REQUIRE (x, SLIP_DENSE, SLIP_MPQ) ;
     SLIP_REQUIRE (b, SLIP_DENSE, SLIP_MPZ) ;
 
-    if ( !A->p || !A->i || !option)
+    if ( !A->p || !A->i || !option) // TODO create default option? check A->x?
     {
         return SLIP_INCORRECT_INPUT;
     }
+    */
 
     //--------------------------------------------------------------------------
     // Declare vars
     //--------------------------------------------------------------------------
 
     int64_t p, j, i ;
-    SLIP_matrix *b2 = NULL;
-     SLIP_matrix_allocate(&b2, SLIP_DENSE, SLIP_MPQ, b->m, b->n, b->nzmax, 
-                         false, true, option);
-
+    SLIP_matrix *b2 = NULL;   // b2 stores the solution of A*x
     mpq_t temp; SLIP_MPQ_SET_NULL(temp);
-    SLIP_CHECK(SLIP_mpq_init(temp));
 
-     // b2 stores the solution of A*x
-    if (!b2)
-    {
-        SLIP_FREE_ALL;
-        return SLIP_OUT_OF_MEMORY;
-    }
+    SLIP_CHECK (SLIP_mpq_init(temp));
+    SLIP_CHECK (SLIP_matrix_allocate(&b2, SLIP_DENSE, SLIP_MPQ, b->m, b->n,
+        b->nzmax, false, true, option));
 
-     //--------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     // perform SLIP_mpq_addmul in loops
     //--------------------------------------------------------------------------
     

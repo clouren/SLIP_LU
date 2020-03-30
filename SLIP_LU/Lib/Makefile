@@ -27,7 +27,7 @@ C = $(CC) $(CF) -I../Include -I../../COLAMD/Include -I../../AMD/Include -I../../
 all: install
 
 OBJ = \
-    slip_array_div.o  slip_create_mpq_array.o SLIP_free.o SLIP_LU_factorize.o \
+    slip_array_div.o slip_create_mpq_array.o SLIP_free.o SLIP_LU_factorize.o \
     SLIP_realloc.o slip_array_mul.o  slip_get_largest_pivot.o slip_scale_matrix.o  \
     slip_ref_triangular_solve.o SLIP_backslash.o slip_create_mpz_array.o slip_get_nonzero_pivot.o SLIP_LU_solve.o \
     slip_scale_x.o slip_back_sub.o slip_cumsum.o slip_get_pivot.o SLIP_malloc.o slip_sparse_collapse.o \
@@ -45,7 +45,7 @@ $(OBJ): ../Include/SLIP_LU.h ../Source/SLIP_LU_internal.h Makefile
 	$(C) $(I) -c $<
 
 #-------------------------------------------------------------------------------
-# Create the din
+# Create the bin
 #-------------------------------------------------------------------------------
 
 library:
@@ -61,7 +61,7 @@ $(AR_TARGET): $(OBJ)
 # install (shared C version only)
 #-------------------------------------------------------------------------------
 
-# install SLIP_LUI
+# install SLIP_LU
 install: $(AR_TARGET) $(INSTALL_LIB)/$(SO_TARGET)
 
 $(INSTALL_LIB)/$(SO_TARGET): $(OBJ)

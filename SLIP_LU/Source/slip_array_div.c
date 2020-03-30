@@ -21,6 +21,7 @@
 
 #include "SLIP_LU_internal.h"
 
+// TODO rename slip_matrix_div?
 SLIP_info slip_array_div // divides the x vector by the determinant
 (
     SLIP_matrix* x2,     // solution of x/det
@@ -37,7 +38,7 @@ SLIP_info slip_array_div // divides the x vector by the determinant
     SLIP_info info ;
     SLIP_REQUIRE (x2, SLIP_DENSE, SLIP_MPQ) ;
     SLIP_REQUIRE (x,  SLIP_DENSE, SLIP_MPZ) ;
-    if (!option)
+    if (!option)// TODO create default option?
     {
         return SLIP_INCORRECT_INPUT;
     }

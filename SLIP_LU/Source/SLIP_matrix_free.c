@@ -23,6 +23,9 @@ SLIP_info SLIP_matrix_free
     // check inputs
     //--------------------------------------------------------------------------
 
+    // TODO SLIP_matrix_copy does not allow option==NULL either, but default
+    // option is created in slip_cast_array/matrix when option==NULL
+    // several functions call SLIP_matrix_free(*,NULL)
     if (option == NULL)
     {
         // option is currently unused, but it's checked anyway

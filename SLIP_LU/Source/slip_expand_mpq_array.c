@@ -16,7 +16,7 @@
 #define SLIP_FREE_ALL               \
     SLIP_MPZ_CLEAR(temp);           \
     SLIP_matrix_free(&x3, NULL);    \
-    SLIP_matrix_free(&x4, NULL);    \
+    SLIP_matrix_free(&x4, NULL);
 
 #include "SLIP_LU_internal.h"
 
@@ -33,8 +33,13 @@ SLIP_info slip_expand_mpq_array
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
-    
-    if(!x_out || !x || n <0 || !option) return SLIP_INCORRECT_INPUT;
+    // inputs have checked in the only caller slip_cast_array
+    /*
+    if(!x_out || !x || n <0 || !option)// TODO create default option?
+    {
+        return SLIP_INCORRECT_INPUT;
+    }
+    */
     
     SLIP_info info ;
 
@@ -46,21 +51,18 @@ SLIP_info slip_expand_mpq_array
     SLIP_MPZ_SET_NULL(temp);
     SLIP_CHECK (SLIP_mpz_init(temp)) ;
         
-    SLIP_matrix_allocate(&x3, SLIP_DENSE, SLIP_MPZ, n, 1, n, false, true, option);
-    SLIP_matrix_allocate(&x4, SLIP_DENSE, SLIP_MPQ, n, 1, n, false, true, option);
-    if (!x3 || !x4)
-    {
-        SLIP_FREE_ALL;
-        return SLIP_OUT_OF_MEMORY;
-    }
+    SLIP_CHECK (SLIP_matrix_allocate(&x3, SLIP_DENSE, SLIP_MPZ, n, 1, n,
+        false, true, option));
+    SLIP_CHECK (SLIP_matrix_allocate(&x4, SLIP_DENSE, SLIP_MPQ, n, 1, n,
+        false, true, option));
 
     for (int64_t i = 0; i < n; i++)                  // x3 = denominators of x
     {
         SLIP_CHECK(SLIP_mpq_get_den(x3->x.mpz[i], x[i]));
     }
-    SLIP_CHECK(SLIP_mpz_set(temp,x3->x.mpz[0]));
 
     // Find LCM of denominators of x
+    SLIP_CHECK(SLIP_mpz_set(temp,x3->x.mpz[0]));
     for (int64_t i = 1; i < n; i++)
     {
         SLIP_CHECK(SLIP_mpz_lcm(temp, x3->x.mpz[i], temp));

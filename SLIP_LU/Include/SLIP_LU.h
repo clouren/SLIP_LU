@@ -643,12 +643,6 @@ SLIP_info SLIP_matrix_check  // returns a SLIP_LU status code
 // returned to GMP.  Instead, all allocated blocks in the list are freed,
 // and slip_gmp_allocate returns directly to wrapper.
 
-#ifdef SLIP_LU_TCOV
-    /* include this header to redefine SLIP_MEMORY_REALLOC (used in SLIP_gmp.c)
-     * for memory test and to use macro GOTCHA */
-    #include "../Tcov/tcov_malloc_test.h"
-#endif
-
 SLIP_info SLIP_gmp_fprintf(FILE *fp, const char *format, ... );
 
 SLIP_info SLIP_gmp_printf(const char *format, ... );
@@ -663,6 +657,9 @@ SLIP_info SLIP_mpfr_free_str (char *str);
 #endif
 
 SLIP_info SLIP_mpfr_fprintf(FILE *fp, const char *format, ... );
+
+SLIP_info SLIP_mpfr_printf( const char *format, ... );
+
 
 SLIP_info SLIP_mpz_init(mpz_t x) ;
 
