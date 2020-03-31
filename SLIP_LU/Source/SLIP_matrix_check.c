@@ -100,20 +100,6 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
     }
 
     //--------------------------------------------------------------------------
-    // check data type
-    //--------------------------------------------------------------------------
-
-    if (nzmax > 0 && ((A->type == SLIP_MPZ && A->x.mpz == NULL) ||
-        (A->type == SLIP_MPQ && A->x.mpq == NULL) ||
-        (A->type == SLIP_MPFR && A->x.mpfr == NULL) ||
-        (A->type == SLIP_INT64 && A->x.int64 == NULL) ||
-        (A->type == SLIP_FP64 && A->x.fp64 == NULL)))
-    {
-        if (print_level > 0) printf("x invalid\n");
-        return SLIP_INCORRECT_INPUT;
-    }
-
-    //--------------------------------------------------------------------------
     // Now check column/row indices
     //--------------------------------------------------------------------------
     switch (A->kind)
@@ -149,10 +135,10 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
             // check the row indices && print values
             //------------------------------------------------------------------
 
-            if (nzmax > 0 && Ai == NULL)
+            if (nzmax > 0 && (Ai == NULL || SLIP_X(A) == NULL))
             {
                 // row indices or values not present
-                if (print_level > 0) {printf ("i  invalid\n") ;}
+                if (print_level > 0) {printf ("i or x invalid\n") ;}
                 return (SLIP_INCORRECT_INPUT) ;
             }
 
@@ -243,10 +229,10 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
             // basic pointer checking
             //------------------------------------------------------------------
 
-            if (nzmax > 0 && Ai == NULL && Aj == NULL)
+            if (nzmax > 0 && (Ai == NULL || Aj == NULL || SLIP_X(A) == NULL))
             {
                 // row indices or values not present
-                if (print_level > 0) printf ("i or j invalid\n") ;
+                if (print_level > 0) printf ("i or j or x invalid\n") ;
                 return (SLIP_INCORRECT_INPUT) ;
             }
 
@@ -327,6 +313,12 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
             // to check that its dimensions are correct and print the values if
             // desired.
 
+            if (nzmax > 0 && SLIP_X(A) == NULL)
+            {
+                // row indices or values not present
+                if (print_level > 0) {printf ("x invalid\n") ;}
+                return (SLIP_INCORRECT_INPUT) ;
+            }
             //------------------------------------------------------------------
             // print values
             //------------------------------------------------------------------

@@ -49,7 +49,7 @@ SLIP_info SLIP_LU_analyze
     }
     (*S_handle) = NULL ;
 
-    if (!A || !(A->i) || !(A->p) || A->n != A->m)
+    if (!(A->i) || !(A->p) || A->n != A->m)
     {
         return SLIP_INCORRECT_INPUT;
     }

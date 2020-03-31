@@ -363,6 +363,9 @@ void slip_gmp_failure
  * characters written) upon success, otherwise return negative value (error
  * code) */
 
+#if 0
+/* This function is currently unused, but kept here for future reference. */
+
 SLIP_info SLIP_gmp_fprintf
 (
     FILE *fp,
@@ -384,6 +387,7 @@ SLIP_info SLIP_gmp_fprintf
     // gmp_vfprintf returns -1 if an error occurred.
     return ((n < 0) ? SLIP_INCORRECT_INPUT : SLIP_OK) ;
 }
+#endif
 
 //------------------------------------------------------------------------------
 // SLIP_gmp_printf
@@ -508,6 +512,9 @@ SLIP_info SLIP_mpfr_free_str (char *str)
  * characters written) upon success, otherwise return negative value (error
  * code) */
 
+#if 0
+/* This function is currently unused, but kept here for future reference. */
+
 SLIP_info SLIP_mpfr_fprintf
 (
     FILE *fp,
@@ -533,6 +540,7 @@ SLIP_info SLIP_mpfr_fprintf
     // mpfr_vfprintf returns -1 if an error occurred.
     return ((n < 0) ? SLIP_INCORRECT_INPUT : SLIP_OK) ;
 }
+#endif
 
 //------------------------------------------------------------------------------
 // SLIP_mpfr_printf
@@ -661,7 +669,8 @@ SLIP_info SLIP_mpz_set_si
     SLIP_GMP_WRAPPER_FINISH ;
     return (SLIP_OK) ;
 }
-
+#if 0
+/* This function is currently unused, but kept here for future reference. */
 //------------------------------------------------------------------------------
 // SLIP_mpz_set_d
 //------------------------------------------------------------------------------
@@ -679,6 +688,7 @@ SLIP_info SLIP_mpz_set_d
     SLIP_GMP_WRAPPER_FINISH ;
     return (SLIP_OK) ;
 }
+#endif
 
 //------------------------------------------------------------------------------
 // SLIP_mpz_get_d
