@@ -346,6 +346,9 @@ int main( int argc, char* argv[])
 
                     // restore default precision
                     option->prec = prec;
+
+                    // use diagonal entries as pivot
+                    option->pivot = SLIP_DIAGONAL;
                 }
                 else if (Ab_type == 4)// double
                 {
@@ -369,6 +372,9 @@ int main( int argc, char* argv[])
                     TEST_CHECK_FAILURE(SLIP_matrix_copy(&A, SLIP_CSC, SLIP_MPZ,
                         Ax,option));
                     Ax->x.fp64 = tmp_Ax_fp64;
+
+                    // use smallest entry as pivot
+                    option->pivot = SLIP_SMALLEST;
                 }
 
                 // fill Ax->x and b->x
@@ -433,31 +439,20 @@ int main( int argc, char* argv[])
                 TEST_CHECK(SLIP_matrix_copy(&b, SLIP_DENSE, SLIP_MPZ,B,option));
                 TEST_CHECK (SLIP_matrix_check (A, option)) ;
                 TEST_CHECK (SLIP_matrix_check (b, option)) ;
-                if (Ab_type == 0)
-                {
-                    option->pivot = SLIP_DIAGONAL;
-                }
-                else if (Ab_type == 1)
-                {
-                    option->pivot = SLIP_SMALLEST;
-                }
             }
             else
             {
 
                 //--------------------------------------------------------------
-                // create A and b from triplets
+                // Test SLIP_matrix_copy and SLIP_matrix_check brutally
+                // and some special failure cases
                 //--------------------------------------------------------------
 
-                // test for SLIP_build_sparse_trip*
-                // and failure of some functions
                 n = 4, nz = 11;
                 int64_t m1, n1, nz1;
                 int64_t I[11]={0, 1, 2, 2, 3, 1, 2, 3, 0, 1, 2};
                 int64_t J[11]={0, 0, 0, 1, 1, 2, 2, 2, 3, 3, 3};
                 int64_t P[11]={0, 3, 5, 8, 11};
-                // failure case: incorrect index array input
-                int64_t I1[11]={0, -1, -2, 2, 3, 1, 2, 3, 0, 1, 2};
 
                 double x_doub2[11] = {1, 1, 1, 2, 2, 3, 3, 3, 4, 4, 4};
                 int64_t x_int64[11] = {1, 1, 1, 2, 2, 3, 3, 3, 4, 4, 4};
@@ -555,19 +550,12 @@ int main( int argc, char* argv[])
                             (SLIP_type) type1, Ax, option));
 
                         // just perform once to perform some failure cases
-                        if (tk == 0 && tk1 == 0)
+                        if (tk == 0 && tk1 == 3)
                         {
                             // test SLIP_matrix_check
                             A->i[0] = -1;
                             TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
-                            for (int64_t i = 0; i < A->nzmax; i++) 
-                            { 
-                                if ( A->x.mpz[i] != NULL) 
-                                { 
-                                    SLIP_MPZ_CLEAR( A->x.mpz[i]); 
-                                } 
-                            }
-
+                            SLIP_FREE(A->x.int64);
                             TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
                             A->p[1] = 2;
                             A->p[2] = 1;
@@ -580,16 +568,17 @@ int main( int argc, char* argv[])
                             TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
                             A->m = -1;
                             TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
+                            A->type = -1;// invalid type
+                            TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
+                            TEST_CHECK_FAILURE(SLIP_matrix_check(NULL, option));
 
                             //test coverage for slip_gmp_reallocate()
                             void *p_new = NULL;
                             TEST_CHECK(slip_gmp_realloc_test(&p_new, NULL,0,1));
                             TEST_CHECK(slip_gmp_realloc_test(&p_new,p_new,1,0));
-                            printf("test\n");
 
                             // Incorrect calling with NULL pointer(s)
-                            TEST_CHECK_FAILURE(SLIP_LU_analyze(NULL,NULL,NULL));
-                            TEST_CHECK_FAILURE(SLIP_LU_analyze(&S, NULL, NULL));
+                            TEST_CHECK_FAILURE(SLIP_LU_analyze(NULL,A,NULL));
                             TEST_CHECK_FAILURE(SLIP_LU_factorize(NULL, NULL,
                                 NULL, NULL, A, NULL, NULL));
                             SLIP_matrix *L, *U, *rhos;
@@ -613,6 +602,22 @@ int main( int argc, char* argv[])
                             SLIP_matrix_free (&rhos, option) ;
                             TEST_CHECK_FAILURE(SLIP_LU_solve(NULL, NULL, NULL,
                                 NULL, NULL, NULL, NULL, NULL, NULL));
+                            SLIP_FREE(A->i);
+                            TEST_CHECK_FAILURE(SLIP_LU_analyze(&S,A,NULL));
+
+                        }
+                        else if (tk == 0 && tk1 == 8)
+                        {
+                            // test SLIP_matrix_check
+                            A->i[0] = -1;
+                            TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
+                            SLIP_FREE(A->x.int64);
+                            TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
+                        }
+                        else if (tk == 0 && tk1 == 13)
+                        {
+                            SLIP_FREE(A->x.int64);
+                            TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
                         }
                         SLIP_matrix_free (&A, option) ;
                     }
@@ -620,6 +625,8 @@ int main( int argc, char* argv[])
                 }
 
 #if 0
+                // failure case: incorrect index array input
+                int64_t I1[11]={0, -1, -2, 2, 3, 1, 2, 3, 0, 1, 2};
                 TEST_CHECK_FAILURE(SLIP_build_sparse_trip_mpz(&A, I1, J, x_mpz,
                     n, nz));
                 SLIP_delete_sparse (&A) ;
