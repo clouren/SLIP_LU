@@ -9,8 +9,7 @@
 //------------------------------------------------------------------------------
 
 // When making a copy of matrix, if the output matrix is either mpq, mpfr,
-// int64_t, or fp64, the scaling factor associated with this matrix must be 0.
-// (TODO 0? Also, doesn't it make more sense to handle int64_t as mpz?)
+// int64_t, or fp64, the scaling factor associated with this matrix must be 1.
 // Scaling factors are only valid for mpz_t matrices. This function serves as
 // the final component of SLIP_matrix_copy. It accepts as input the final
 // (copied) C matrix and the original A matrix. It then applies the scaling
