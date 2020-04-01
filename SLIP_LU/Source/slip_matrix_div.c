@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/slip_array_div: divide a vector by a scalar
+// SLIP_LU/slip_matrix_div: divide a matrix by a scalar
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -20,14 +20,11 @@
     SLIP_MPQ_CLEAR(det2);
 
 #include "SLIP_LU_internal.h"
-// Test this is a test
-// TODO rename slip_matrix_div?
-SLIP_info slip_array_div // divides the x vector by the determinant
+SLIP_info slip_matrix_div // divides the x matrix by the determinant
 (
     SLIP_matrix* x2,     // solution of x/det
     SLIP_matrix* x,      // input vector
-    const mpz_t det,     // given determinant of matrix
-    SLIP_options* option // Command options, currently unused
+    const mpz_t det      // given determinant of matrix
 )
 {
 
@@ -38,10 +35,6 @@ SLIP_info slip_array_div // divides the x vector by the determinant
     SLIP_info info ;
     SLIP_REQUIRE (x2, SLIP_DENSE, SLIP_MPQ) ;
     SLIP_REQUIRE (x,  SLIP_DENSE, SLIP_MPZ) ;
-    if (!option)// TODO create default option?
-    {
-        return SLIP_INCORRECT_INPUT;
-    }
     
     //--------------------------------------------------------------------------
     // Set det2 = det

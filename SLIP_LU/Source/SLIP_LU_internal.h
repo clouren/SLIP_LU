@@ -298,7 +298,7 @@ void slip_gmp_failure (int status) ;
  *
  * On output, the contents of the matrix x2 are modified
  */
-SLIP_info slip_array_div // divides the x vector by the determinant
+SLIP_info slip_matrix_div // divides the x matrix by the determinant
 (
     SLIP_matrix* x2,    // solution of x/det
     SLIP_matrix* x,     // input vector

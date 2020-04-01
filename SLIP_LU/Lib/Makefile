@@ -27,7 +27,7 @@ C = $(CC) $(CF) -I../Include -I../../COLAMD/Include -I../../AMD/Include -I../../
 all: install
 
 OBJ = \
-    slip_array_div.o slip_create_mpq_array.o SLIP_free.o SLIP_LU_factorize.o \
+    slip_matrix_div.o slip_create_mpq_array.o SLIP_free.o SLIP_LU_factorize.o \
     SLIP_realloc.o slip_array_mul.o  slip_get_largest_pivot.o slip_scale_matrix.o  \
     slip_ref_triangular_solve.o SLIP_backslash.o slip_create_mpz_array.o slip_get_nonzero_pivot.o SLIP_LU_solve.o \
     slip_scale_x.o slip_back_sub.o slip_cumsum.o slip_get_pivot.o SLIP_malloc.o slip_sparse_collapse.o \
