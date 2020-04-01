@@ -28,8 +28,7 @@ SLIP_info slip_forward_sub
 (
     const SLIP_matrix *L,   // lower triangular matrix
     SLIP_matrix *x,         // right hand side matrix of size n*numRHS
-    const SLIP_matrix *rhos,// sequence of pivots used in factorization
-    SLIP_options* option    // Command options, currently unused
+    const SLIP_matrix *rhos // sequence of pivots used in factorization
 )
 {
 
@@ -41,11 +40,7 @@ SLIP_info slip_forward_sub
     SLIP_REQUIRE(L, SLIP_CSC, SLIP_MPZ);
     SLIP_REQUIRE(x, SLIP_DENSE, SLIP_MPZ);
     SLIP_REQUIRE(rhos, SLIP_DENSE, SLIP_MPZ);
-    if (!option)// TODO create default option?
-    {
-        return SLIP_INCORRECT_INPUT;
-    }
-    
+   
     //--------------------------------------------------------------------------
 
     int64_t i, hx, k, j, jnew;

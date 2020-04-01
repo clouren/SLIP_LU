@@ -16,8 +16,7 @@
 
 mpz_t* slip_create_mpz_array
 (
-    int64_t n,            // size of the array
-    SLIP_options* option  // Command options, currently unused
+    int64_t n            // size of the array
 )
 {
 
@@ -25,7 +24,7 @@ mpz_t* slip_create_mpz_array
     // check inputs
     //--------------------------------------------------------------------------
 
-    if (n <= 0 || !option) {return NULL;} // TODO create default option
+    if (n <= 0) {return NULL;}
 
     //--------------------------------------------------------------------------
 

@@ -32,11 +32,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
     // check inputs
     //--------------------------------------------------------------------------
 
-    if (option == NULL)// TODO create default option?
-    {
-        return (SLIP_INCORRECT_INPUT) ;
-    }
-    int print_level = option->print_level;
+    int print_level = SLIP_GET_PRINT_LEVEL(option);
     if (A == NULL)
     {
         if (print_level > 0)
@@ -75,7 +71,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
             "%"PRId64", nzmax: %"PRId64", kind: %s, type: %s\n", m, n, nz,
             nzmax, A->kind < 1 ? "CSC" : A->kind < 2 ? "Triplet" : "Dense",
             A->type < 1 ? "MPZ" : A->type < 2 ? "MPQ" : A->type < 3 ?
-            "MPFR" : A->type < 4 ? "int64" : "double") ;//TODO print scale?
+            "MPFR" : A->type < 4 ? "int64" : "double") ;
         }
     }
 
@@ -189,7 +185,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                             case SLIP_MPFR:
                             {
                                 status = SLIP_mpfr_printf("%.*Rf \n",
-                                                          option->prec,
+                                                          SLIP_GET_PRECISION(option)
                                                           A->x.mpfr [p]);
                                 break;
                             }
@@ -279,7 +275,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                         }
                         case SLIP_MPFR:
                         {
-                            status = SLIP_mpfr_printf("%.*Rf \n", option->prec,
+                            status = SLIP_mpfr_printf("%.*Rf \n", SLIP_GET_PRECISION(option),
                                                       A->x.mpfr [p]);
                             break;
                         }
@@ -353,7 +349,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                             case SLIP_MPFR:
                             {
                                 status = SLIP_mpfr_printf ( "%.*Rf \n",
-                                    option->prec, SLIP_2D(A, i, j, mpfr));
+                                    SLIP_GET_PRECISION(option), SLIP_2D(A, i, j, mpfr));
                                 break;
                             }
                             case SLIP_FP64:

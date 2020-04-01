@@ -22,8 +22,7 @@ void slip_dfs // performs a dfs of the graph of the matrix starting at node j
     SLIP_matrix* L,        // matrix which represents the Graph of L
     int64_t* xi,           // the nonzero pattern
     int64_t* pstack,       // workspace vector
-    const int64_t* pinv,   // row permutation
-    SLIP_options* option   // Command options, currently unused
+    const int64_t* pinv   // row permutation
 )
 {
 
@@ -31,11 +30,8 @@ void slip_dfs // performs a dfs of the graph of the matrix starting at node j
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT (type != NULL && xi != NULL && pstack != NULL && pinv != NULL) ;
-    ASSERT (L != NULL && L->kind == SLIP_CSC) ;
-    // TODO just add option as input arg for user-callable functions, unless
-    // it is needed by that specific internal function?
-    if (!top || !xi || !pstack || !option) return;
+    SLIP_REQUIRE(L, SLIP_CSC, SLIP_MPZ);
+    // Top xi etc already checked
 
     //--------------------------------------------------------------------------
 

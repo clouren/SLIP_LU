@@ -38,12 +38,6 @@ SLIP_info slip_expand_double_array
     //--------------------------------------------------------------------------
 
     // inputs have been checked in the only caller slip_cast_array
-    /*
-    if (!x_out || !x || !option)// TODO create default option?
-    {
-        return SLIP_INCORRECT_INPUT;
-    }
-    */
     
     //--------------------------------------------------------------------------
 
@@ -70,14 +64,14 @@ SLIP_info slip_expand_double_array
     for (i = 0; i < n; i++)
     {
         // Set x3[i] = x[i]
-        SLIP_CHECK(SLIP_mpfr_set_d(x3->x.mpfr[i], x[i], option->round));
+        SLIP_CHECK(SLIP_mpfr_set_d(x3->x.mpfr[i], x[i], SLIP_GET_ROUND(option)));
 
         // x3[i] = x[i] * 10^17
         SLIP_CHECK(SLIP_mpfr_mul_d(x3->x.mpfr[i], x3->x.mpfr[i], expon,
-                                   option->round));
+                                   SLIP_GET_ROUND(option)));
 
         // x_out[i] = x3[i]
-        SLIP_CHECK(SLIP_mpfr_get_z(x_out[i], x3->x.mpfr[i], option->round));
+        SLIP_CHECK(SLIP_mpfr_get_z(x_out[i], x3->x.mpfr[i], SLIP_GET_ROUND(option)));
     }
 
     //--------------------------------------------------------------------------

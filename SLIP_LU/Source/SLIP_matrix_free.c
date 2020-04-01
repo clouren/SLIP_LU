@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 // Free a SLIP_matrix.  Any shallow component is not freed.
-
+#pragma GCC diagnostic ignored "-Wunused-variable"
 #include "SLIP_LU_internal.h"
 
 SLIP_info SLIP_matrix_free
@@ -22,15 +22,7 @@ SLIP_info SLIP_matrix_free
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
-
-    // TODO SLIP_matrix_copy does not allow option==NULL either, but default
-    // option is created in slip_cast_array/matrix when option==NULL
-    // several functions call SLIP_matrix_free(*,NULL)
-    if (option == NULL)
-    {
-        // option is currently unused, but it's checked anyway
-        return (SLIP_INCORRECT_INPUT) ;
-    }
+    
     if (A_handle == NULL || (*A_handle) == NULL)
     {
         // nothing to free (not an error)

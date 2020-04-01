@@ -71,7 +71,7 @@ SLIP_info SLIP_LU_factorize
     (*rhos_handle) = NULL ;
     (*pinv_handle) = NULL ;
 
-    if (!S || !option || !A->p || !A->i) // TODO create default option?
+    if (!S  || !A->p || !A->i) 
     {
         return SLIP_INCORRECT_INPUT;
     }
@@ -187,19 +187,19 @@ SLIP_info SLIP_LU_factorize
     }
 
     // temp = sigma
-    SLIP_CHECK(SLIP_mpfr_set_z(temp, sigma, option->round));
+    SLIP_CHECK(SLIP_mpfr_set_z(temp, sigma, SLIP_GET_ROUND(option)));
 
     //--------------------------------------------------------------------------
     // The bound is given as: gamma*log2(sigma sqrt(gamma))
     //--------------------------------------------------------------------------
 
     // temp = sigma*sqrt(gamma)
-    SLIP_CHECK(SLIP_mpfr_mul_d(temp, temp, (double)sqrt(gamma), option->round));
+    SLIP_CHECK(SLIP_mpfr_mul_d(temp, temp, (double)sqrt(gamma), SLIP_GET_ROUND(round)));
     // temp = log2(temp)
-    SLIP_CHECK(SLIP_mpfr_log2(temp, temp, option->round));
+    SLIP_CHECK(SLIP_mpfr_log2(temp, temp, SLIP_GET_ROUND(round)));
     // inner2 = temp
     double inner2;
-    SLIP_CHECK(SLIP_mpfr_get_d(&inner2, temp, option->round));
+    SLIP_CHECK(SLIP_mpfr_get_d(&inner2, temp, SLIP_GET_ROUND(round)));
     // Free cache from log2. Even though mpfr_free_cache is called in
     // SLIP_LU_final(), it has to be called here to prevent memory leak in
     // some rare situations.
@@ -273,9 +273,9 @@ SLIP_info SLIP_LU_factorize
             (const int64_t *) row_perm,
             h, x, option)) ;
 
-        // Obtain pivot index// TODO reduce arg for following function?
+        // Obtain pivot index
         SLIP_CHECK(slip_get_pivot(&pivot, x, pivs, n, top, xi, option->pivot,
-            col, k, rhos, pinv, row_perm, option->tol, option));
+            col, k, rhos, pinv, row_perm, option->tol));
 
         //----------------------------------------------------------------------
         // Iterate accross the nonzeros in x
@@ -293,7 +293,7 @@ SLIP_info SLIP_LU_factorize
             {
                 // Place the i location of the unz nonzero
                 U->i[unz] = jnew;
-                // TODO: try SLIP_mpz_init_set(U->x.mpz[unz], x->x.mpz[jnew]);
+                // Find the size in bits of x[j]
                 SLIP_CHECK(SLIP_mpz_sizeinbase(&size, x->x.mpz[jnew], 2));
                 // GMP manual: Allocated size should be size+2
                 SLIP_CHECK(SLIP_mpz_init2(U->x.mpz[unz], size+2));
@@ -310,7 +310,7 @@ SLIP_info SLIP_LU_factorize
             {
                 // Place the i location of the lnz nonzero
                 L->i[lnz] = jnew;
-                // TODO try mpz_init_set?
+                // Set the size of x[j]
                 SLIP_CHECK(SLIP_mpz_sizeinbase(&size, x->x.mpz[jnew], 2));
                 // GMP manual: Allocated size should be size+2
                 SLIP_CHECK(SLIP_mpz_init2(L->x.mpz[lnz], size+2));
@@ -335,9 +335,9 @@ SLIP_info SLIP_LU_factorize
 
     // This cannot fail since the size of L and U are shrinking.
     // Collapse L
-    slip_sparse_collapse(L, option);
+    slip_sparse_collapse(L);
     // Collapse U
-    slip_sparse_collapse(U, option);
+    slip_sparse_collapse(U);
 
     //--------------------------------------------------------------------------
     // finalize the row indices in L and U

@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 /* Purpose: This function performs sparse REF backward substitution, solving
- * the sysem Ux = b. Note that prior to this, x is multiplied by
+ * the system Ux = b. Note that prior to this, x is multiplied by
  * the determinant of A.
  *
  * U is a sparse mpz matrix, and bx is a dense mpz matrix.  The diagonal entry

@@ -14,8 +14,9 @@
  *
  * Input/Output arguments:
  *
- * X_handle:    A pointer to the solution of the linear system. May be given in
- *              either double precision, mpfr_t, or rational mpq_t
+ * X_handle:    A pointer to the solution of the linear system. The output is 
+ *              allowed to be returned in either double precision, mpfr_t, or 
+ *              rational mpq_t
  * 
  * type:        Data structure of output desired. Must be either SLIP_MPQ,
  *              SLIP_FP64, or SLIP_MPFR
@@ -83,12 +84,15 @@ SLIP_info SLIP_backslash
     //--------------------------------------------------------------------------
     // Symbolic Analysis
     //--------------------------------------------------------------------------
+    
     SLIP_CHECK(SLIP_LU_analyze(&S, A, option));
+    
     //--------------------------------------------------------------------------
     // LU Factorization
     //--------------------------------------------------------------------------
 
     SLIP_CHECK(SLIP_LU_factorize(&L, &U, &rhos, &pinv, A, S, option));
+    
     //--------------------------------------------------------------------------
     // Solve
     //--------------------------------------------------------------------------

@@ -7,7 +7,7 @@
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
-
+#pragma GCC diagnostic ignored "-Wunused-variable"
 #include "SLIP_LU_internal.h"
 
 int64_t SLIP_matrix_nnz     // return # of entries in A, or -1 on error
@@ -21,7 +21,7 @@ int64_t SLIP_matrix_nnz     // return # of entries in A, or -1 on error
     // check inputs
     //--------------------------------------------------------------------------
 
-    if (A == NULL || !option)// TODO ignore option or create default option?
+    if (A == NULL ) 
     {
         return (-1) ;
     }

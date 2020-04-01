@@ -147,29 +147,6 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     if (option->check)
     {
         SLIP_info checker = slip_check_solution(A, x, b, option);
-        if (checker == SLIP_OK)
-        {
-            if (option->print_level)
-            {
-                printf ("Solution is verified to be exact.\n") ;
-            }
-        }
-        else if (checker == SLIP_INCORRECT)
-        {
-            // This can never happen.
-            if (option->print_level)
-            {
-                printf ("ERROR! Solution is wrong. This is a bug; please"
-                    "contact the authors of SLIP LU.\n") ;
-            }
-            abort ( ) ;
-        }
-        else
-        {
-            // Out of memory or bad input.
-            SLIP_FREE_ALL;
-            return checker;
-        }
     }
 
     //--------------------------------------------------------------------------

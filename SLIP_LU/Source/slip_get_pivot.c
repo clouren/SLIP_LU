@@ -44,8 +44,7 @@ SLIP_info slip_get_pivot
     int64_t* pinv,          // row permutation
     int64_t* row_perm,      // opposite of pinv.
                             // if pinv[i] = j then row_perm[j] = i
-    double tolerance,       // tolerance used if some tol-based pivoting is used
-    SLIP_options* option    // Command options, currently unused
+    double tolerance        // tolerance used if some tol-based pivoting is used
 )
 {
 
@@ -56,8 +55,7 @@ SLIP_info slip_get_pivot
     SLIP_info info ;
     SLIP_REQUIRE(rhos, SLIP_DENSE, SLIP_MPZ);
     SLIP_REQUIRE(x, SLIP_DENSE, SLIP_MPZ);
-    // TODO create default option?
-    if (!pivot || !pivs || !xi || !pinv || !row_perm || !option)
+    if (!pivot || !pivs || !xi || !pinv || !row_perm )
     {
         return SLIP_INCORRECT_INPUT;
     }
@@ -77,7 +75,7 @@ SLIP_info slip_get_pivot
 
     if (order == SLIP_SMALLEST)
     {
-        SLIP_CHECK(slip_get_smallest_pivot(pivot, x, pivs, n, top, xi, option));
+        SLIP_CHECK(slip_get_smallest_pivot(pivot, x, pivs, n, top, xi));
     }
 
     //--------------------------------------------------------------------------
@@ -93,8 +91,7 @@ SLIP_info slip_get_pivot
         }
         else
         {
-            SLIP_CHECK (slip_get_smallest_pivot(pivot, x, pivs, n, top, xi,
-                                                option));
+            SLIP_CHECK (slip_get_smallest_pivot(pivot, x, pivs, n, top, xi));
         }
     }
 
@@ -103,7 +100,7 @@ SLIP_info slip_get_pivot
     //--------------------------------------------------------------------------
     else if (order == SLIP_FIRST_NONZERO)
     {
-        SLIP_CHECK (slip_get_nonzero_pivot(pivot, x, pivs, n, top, xi, option));
+        SLIP_CHECK (slip_get_nonzero_pivot(pivot, x, pivs, n, top, xi));
     }
 
     //--------------------------------------------------------------------------
@@ -111,7 +108,7 @@ SLIP_info slip_get_pivot
     //--------------------------------------------------------------------------
     else if (order == SLIP_TOL_LARGEST)
     {
-        SLIP_CHECK (slip_get_largest_pivot(pivot, x, pivs, n, top, xi, option));
+        SLIP_CHECK (slip_get_largest_pivot(pivot, x, pivs, n, top, xi));
 
         //----------------------------------------------------------------------
         // Check x[col] vs largest potential pivot
@@ -143,7 +140,7 @@ SLIP_info slip_get_pivot
     //--------------------------------------------------------------------------
     else if (order == SLIP_LARGEST)
     {
-        SLIP_CHECK (slip_get_largest_pivot(pivot, x, pivs, n, top, xi, option));
+        SLIP_CHECK (slip_get_largest_pivot(pivot, x, pivs, n, top, xi));
     }
 
     //--------------------------------------------------------------------------
@@ -151,8 +148,7 @@ SLIP_info slip_get_pivot
     //--------------------------------------------------------------------------
     else // if (order == SLIP_TOL_SMALLEST)
     {
-        SLIP_CHECK (slip_get_smallest_pivot(pivot, x, pivs, n, top, xi,
-                                            option)) ;
+        SLIP_CHECK (slip_get_smallest_pivot(pivot, x, pivs, n, top, xi)) ;
 
         //----------------------------------------------------------------------
         // Checking x[col] vs smallest pivot

@@ -36,18 +36,10 @@ SLIP_info slip_expand_mpfr_array
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
+    // Input has already been checked
     //--------------------------------------------------------------------------
 
     SLIP_info info ;
-    // inputs have been checked in the only caller slip_cast_array
-    /*
-    // TODO create default option?
-    if (!x || !x_out || !scale || n <= 0 || !option)
-    {
-        return SLIP_INCORRECT_INPUT;
-    }
-    */
 
     //--------------------------------------------------------------------------
     // initializations
@@ -65,7 +57,7 @@ SLIP_info slip_expand_mpfr_array
     mpq_t temp; SLIP_MPQ_SET_NULL(temp);
 
     SLIP_CHECK(SLIP_mpq_init(temp));
-    SLIP_CHECK(SLIP_mpfr_init2(expon, option->prec));
+    SLIP_CHECK(SLIP_mpfr_init2(expon, SLIP_GET_PRECISION(option)));
     SLIP_CHECK(SLIP_mpz_init(temp_expon));
     SLIP_CHECK(SLIP_mpz_init(gcd));
     SLIP_CHECK(SLIP_mpz_init(one));
@@ -74,17 +66,17 @@ SLIP_info slip_expand_mpfr_array
         false, true, option));
     
     // expon = 2^prec (overestimate)
-    SLIP_CHECK(SLIP_mpfr_ui_pow_ui(expon, 2, option->prec, option->round));
+    SLIP_CHECK(SLIP_mpfr_ui_pow_ui(expon, 2, SLIP_GET_PRECISION(option), SLIP_GET_ROUND(option)));
 
     for (i = 0; i < n; i++)
     {
         // x3[i] = x[i]*2^prec
-        SLIP_CHECK(SLIP_mpfr_mul(x3->x.mpfr[i], x[i], expon, option->round));
+        SLIP_CHECK(SLIP_mpfr_mul(x3->x.mpfr[i], x[i], expon, SLIP_GET_ROUND(option)));
 
         // x_out[i] = x3[i]
-        SLIP_CHECK(SLIP_mpfr_get_z(x_out[i], x3->x.mpfr[i], option->round));
+        SLIP_CHECK(SLIP_mpfr_get_z(x_out[i], x3->x.mpfr[i], SLIP_GET_ROUND(option)));
     }
-    SLIP_CHECK(SLIP_mpfr_get_z(temp_expon, expon, option->round));
+    SLIP_CHECK(SLIP_mpfr_get_z(temp_expon, expon, SLIP_GET_ROUND(option)));
     SLIP_CHECK(SLIP_mpq_set_z(scale, temp_expon));
 
     //--------------------------------------------------------------------------

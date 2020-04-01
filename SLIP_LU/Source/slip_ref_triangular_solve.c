@@ -64,8 +64,6 @@
  *  x:          Dense mpz_t matrix Workspace of size n*1, unitialized on input. 
  *              On output, x[i] is the value of L(i,k) here i is in the nonzero 
  *              pattern xi[top...n-1]. Other entries of x are undefined on output.
- * 
- * option:      Command options
  */
 
 
@@ -98,8 +96,7 @@ SLIP_info slip_ref_triangular_solve // performs the sparse REF triangular solve
     const int64_t* pinv,      // inverse row permutation
     const int64_t* row_perm,  // row permutation
     int64_t* h,               // history vector
-    SLIP_matrix* x,           // solution of system ==> kth column of L and U
-    SLIP_options* option      // Command options
+    SLIP_matrix* x           // solution of system ==> kth column of L and U
 )
 {
 
@@ -133,7 +130,7 @@ SLIP_info slip_ref_triangular_solve // performs the sparse REF triangular solve
     col = q[k];
 
     // Obtain nonzero pattern of L(:,k) in xi[top..n]
-    slip_reach(&top, L, A, col, xi, pinv, option);
+    slip_reach(&top, L, A, col, xi, pinv);
 
     // Sort xi [top..n-1] wrt sequence of pivots
     // Convert xi vector with respect to pinv

@@ -30,10 +30,14 @@ SLIP_info slip_cast_matrix
     // check inputs
     //--------------------------------------------------------------------------
 
+    if (Y_handle == NULL || A == NULL)
+    {
+        return (SLIP_INCORRECT_INPUT) ;
+    }
     SLIP_info info = SLIP_OK ;
     int64_t nz = SLIP_matrix_nnz (A, option) ;
     SLIP_matrix *Y = NULL ;
-    if (Y_handle == NULL || A == NULL ||  nz < 0)
+    if (nz < 0)
     {
         return (SLIP_INCORRECT_INPUT) ;
     }

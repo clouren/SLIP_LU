@@ -10,11 +10,6 @@
 
 /* Purpose: Check the solution of the linear system by performing a quick
  * rational arithmetic A*x = b.
- *
- * WARNING: This function WILL produce incorrect results if called with the
- * final scaled x vector! This function assumes that A and b are in their
- * scaled integral form! Thus x is the solution to the scaled system Ax=b. Please
- * note the usage in SLIP_LU_solve
  */
 
 #define SLIP_FREE_ALL                       \
@@ -36,18 +31,10 @@ SLIP_info slip_check_solution
     // check inputs
     //--------------------------------------------------------------------------
 
-    SLIP_info info ;
-    // TODO Inputs have been checked in the only caller SLIP_LU_solve
-    /*
+    SLIP_info info, result ;
     SLIP_REQUIRE (A, SLIP_CSC,   SLIP_MPZ) ;
     SLIP_REQUIRE (x, SLIP_DENSE, SLIP_MPQ) ;
     SLIP_REQUIRE (b, SLIP_DENSE, SLIP_MPZ) ;
-
-    if ( !A->p || !A->i || !option) // TODO create default option? check A->x?
-    {
-        return SLIP_INCORRECT_INPUT;
-    }
-    */
 
     //--------------------------------------------------------------------------
     // Declare vars
@@ -102,9 +89,32 @@ SLIP_info slip_check_solution
             if (r == 0)
             {
                 SLIP_FREE_ALL;
-                return SLIP_INCORRECT;
+                result = SLIP_INCORRECT;
             }
         }
+    }
+    
+    result = SLIP_info;
+    //--------------------------------------------------------------------------
+    // Print info
+    //--------------------------------------------------------------------------
+    
+    if (result == SLIP_OK)
+    {
+        if (SLIP_GET_PRINT_LEVEL(option))
+        {
+            printf ("Solution is verified to be exact.\n") ;
+        }
+    }
+    else if (checker == SLIP_INCORRECT)
+    {
+        // This can never happen.
+        if (SLIP_GET_PRINT_LEVEL(option))
+        {
+            printf ("ERROR! Solution is wrong. This is a bug; please"
+                    "contact the authors of SLIP LU.\n") ;
+        }
+        abort ( ) ;
     }
 
     //--------------------------------------------------------------------------

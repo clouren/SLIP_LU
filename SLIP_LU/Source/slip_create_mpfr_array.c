@@ -25,17 +25,7 @@ mpfr_t* slip_create_mpfr_array
     //--------------------------------------------------------------------------
 
     if (n <= 0) {return NULL;}
-    int64_t prec;
-
-    // TODO option has been checked in the only caller SLIP_matrix_allocate
-    if (option == NULL)
-    {
-        prec = SLIP_DEFAULT_PRECISION;
-    }
-    else
-    {
-        prec = option->prec;
-    }
+    int64_t prec = SLIP_GET_PREC(option);
     //--------------------------------------------------------------------------
 
     mpfr_t* x = (mpfr_t*) SLIP_calloc(n, sizeof(mpfr_t));

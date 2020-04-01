@@ -18,8 +18,7 @@
 #include "SLIP_LU_internal.h"
 SLIP_info slip_sparse_collapse
 (
-    SLIP_matrix* A, // matrix to be shrunk
-    SLIP_options* option    // Command options currently unused
+    SLIP_matrix* A // matrix to be shrunk
 )
 {
 
@@ -27,12 +26,10 @@ SLIP_info slip_sparse_collapse
     // check inputs
     //--------------------------------------------------------------------------
     SLIP_REQUIRE(A, SLIP_CSC, SLIP_MPZ);
-    // TODO create default or remove option as input
-    if (!A || !A->p || !A->i || !option) {return SLIP_INCORRECT_INPUT;}
 
     //--------------------------------------------------------------------------
 
-    int64_t nz = A->nz;
+    int64_t nz = A->p[n];
     // Shrink A->i and A->x such that they're of size nz.  These calls to
     // SLIP_realloc cannot fail since the space is shrinking.
     A->i = (int64_t*) SLIP_realloc(A->i, A->nzmax*sizeof(int64_t),

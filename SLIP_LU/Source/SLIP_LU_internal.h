@@ -224,7 +224,7 @@ void slip_gmp_failure (int status) ;
 #define SLIP_GET_CHECK(option)      \
 {                                   \
     if(option == NULL)              \
-        return SLIP_DEFAULT_CHECK;  \
+        return false;               \
     else                            \
         return option->check;       \
 }                                   \
@@ -387,8 +387,7 @@ SLIP_info slip_forward_sub
 (
     const SLIP_matrix *L,   // lower triangular matrix
     SLIP_matrix *x,         // right hand side matrix 
-    const SLIP_matrix *rhos,// sequence of pivots used in factorization
-    SLIP_options *option    // Command options
+    const SLIP_matrix *rhos // sequence of pivots used in factorization
 );
 
 /* Purpose: This function performs sparse REF backward substitution. In essense
@@ -413,7 +412,7 @@ SLIP_info slip_back_sub  // performs sparse REF backward substitution
 mpfr_t* slip_create_mpfr_array
 (
     int64_t n,     // size of the array
-    SLIP_options *option  // command options containing the prec for mpfr
+    SLIP_options* option
 );
 
 // Creates a simple 1D array, where A[i] is an entry of type mpq_t.
@@ -423,8 +422,7 @@ mpfr_t* slip_create_mpfr_array
  */
 mpq_t* slip_create_mpq_array
 (
-    int64_t n,              // size of the array
-    SLIP_options* option    // Command options, currently unused
+    int64_t n              // size of the array
 );
 
 
@@ -439,8 +437,7 @@ mpq_t* slip_create_mpq_array
  */
 mpz_t* slip_create_mpz_array
 (
-    int64_t n,              // Size of x
-    SLIP_options* option    // Command options
+    int64_t n              // Size of x
 );
 
 /* SLIP_check_solution: checks the solution of the linear system.  Performs a
@@ -461,8 +458,7 @@ SLIP_info slip_cumsum
 (
     int64_t *p,          // vector to store the sum of c
     int64_t *c,          // vector which is summed
-    int64_t n,           // size of c
-    SLIP_options* option // Command options, currently unused
+    int64_t n           // size of c
 );
 
 /* Purpose: This function performs a depth first search of the graph of the
@@ -476,8 +472,7 @@ void slip_dfs // performs a dfs of the graph of the matrix starting at node j
     SLIP_matrix* L,        // matrix which represents the Graph of L
     int64_t* xi,           // the nonzero pattern
     int64_t* pstack,       // workspace vector
-    const int64_t* pinv,   // row permutation
-    SLIP_options* option   // Command options, currently unused
+    const int64_t* pinv   // row permutation
 );
 
 /* Purpose: This function converts a double array of size n to an appropriate
@@ -560,8 +555,7 @@ SLIP_info slip_get_pivot
     SLIP_matrix* rhos,   // vector of pivots
     int64_t* pinv,       // row permutation
     int64_t* row_perm,   // opposite of pinv. if pinv[i] = j then row_perm[j] = i
-    double tolerance,    // tolerance used if some tolerance based pivoting is used 
-    SLIP_options* option // Command options, currently unused
+    double tolerance    // tolerance used if some tolerance based pivoting is used 
 );
 
 /* Purpose: This function selects the pivot element as the largest in the
@@ -576,8 +570,7 @@ SLIP_info slip_get_largest_pivot
     int64_t* pivs,          // vector which indicates whether each row has been pivotal
     int64_t n,              // dimension of problem
     int64_t top,            // nonzero pattern is located in xi[top..n-1]
-    int64_t* xi,            // nonzero pattern of x
-    SLIP_options* option    // Command options, currently unused
+    int64_t* xi             // nonzero pattern of x
 );
 
 /* This function obtains the first eligible nonzero pivot.  This is enabled if
@@ -591,8 +584,7 @@ SLIP_info slip_get_nonzero_pivot // find the first eligible nonzero pivot
     int64_t* pivs,       // vector indicating which rows are pivotal
     int64_t n,           // size of x
     int64_t top,         // nonzero pattern is located in xi[top..n-1]
-    int64_t* xi,         // nonzero pattern of x
-    SLIP_options* option // Command options, currently unused
+    int64_t* xi          // nonzero pattern of x
 );
 
 /* Purpose: This function selects the pivot element as the smallest in the
@@ -607,8 +599,7 @@ SLIP_info slip_get_smallest_pivot
     int64_t* pivs,          // vector indicating whether each row has been pivotal
     int64_t n,              // dimension of problem
     int64_t top,            // nonzeros are stored in xi[top..n-1]
-    int64_t* xi,            // nonzero pattern of x
-    SLIP_options* option    // Command options, currently unused
+    int64_t* xi             // nonzero pattern of x
 );
 
 /* Purpose: This function prints the basic info about SLIP_LU library */
@@ -653,8 +644,7 @@ void slip_reach    // compute the reach of column k of A on the graph of L
     SLIP_matrix* A,         // input matrix
     int64_t k,              // column of A of interest
     int64_t* xi,            // nonzero pattern
-    const int64_t* pinv,    // row permutation
-    SLIP_options* option    // Command options
+    const int64_t* pinv     // row permutation
 )  ;
 
 /* Purpose: This function performs the sparse REF triangular solve; that is,
@@ -677,8 +667,7 @@ SLIP_info slip_ref_triangular_solve // performs the sparse REF triangular solve
     const int64_t* pinv,      // inverse row permutation
     const int64_t* row_perm,  // row permutation
     int64_t* h,               // history vector
-    SLIP_matrix* x,           // solution of system ==> kth column of L and U
-    SLIP_options* option
+    SLIP_matrix* x            // solution of system ==> kth column of L and U
 );
 
 // typecast a double value to int64, accounting for Infs and Nans

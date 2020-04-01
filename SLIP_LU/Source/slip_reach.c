@@ -23,8 +23,7 @@ void slip_reach    // compute the reach of column k of A on the graph of L
     SLIP_matrix* A,         // input matrix
     int64_t k,              // column of A of interest
     int64_t* xi,            // nonzero pattern
-    const int64_t* pinv,    // row permutation
-    SLIP_options* option    // Command options// TODO remove?
+    const int64_t* pinv     // row permutation
 )
 {
 

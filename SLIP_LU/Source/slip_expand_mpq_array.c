@@ -34,12 +34,6 @@ SLIP_info slip_expand_mpq_array
     // check inputs
     //--------------------------------------------------------------------------
     // inputs have checked in the only caller slip_cast_array
-    /*
-    if(!x_out || !x || n <0 || !option)// TODO create default option?
-    {
-        return SLIP_INCORRECT_INPUT;
-    }
-    */
     
     SLIP_info info ;
 

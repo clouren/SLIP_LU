@@ -13,8 +13,6 @@
 // X: an array of type xtype, of size n.
 // Y: an array of type ytype, of size n.
 
-// Y [0:n-1] = scale * X [0:n-1] ;
-
 // Note about the scaling factors:
 //
 // This function copies the scaled values of X into the array Y.

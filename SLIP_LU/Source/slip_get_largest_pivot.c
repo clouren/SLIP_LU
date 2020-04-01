@@ -30,8 +30,7 @@ SLIP_info slip_get_largest_pivot
                             // has been pivotal
     int64_t n,              // dimension of problem
     int64_t top,            // nonzero pattern is located in xi[top..n-1]
-    int64_t* xi,            // nonzero pattern of x
-    SLIP_options* option    // Command options, currently unused
+    int64_t* xi             // nonzero pattern of x
 )
 {
 
@@ -42,9 +41,7 @@ SLIP_info slip_get_largest_pivot
     SLIP_REQUIRE(x, SLIP_DENSE, SLIP_MPZ);
     
     SLIP_info info ;
-    // TODO just add option as input arg for user-callable functions, unless
-    // it is needed by that specific internal function?
-    if (!pivs || !xi || !pivot || !option) {return SLIP_INCORRECT_INPUT;}
+    if (!pivs || !xi || !pivot) {return SLIP_INCORRECT_INPUT;}
 
     //--------------------------------------------------------------------------
     // allocate workspace

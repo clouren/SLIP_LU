@@ -53,16 +53,6 @@ SLIP_info SLIP_LU_analyze
     {
         return SLIP_INCORRECT_INPUT;
     }
-    
-    SLIP_options* option2 = NULL;
-    if (option == NULL)
-    {
-        option2 = SLIP_create_default_options();
-    }
-    else
-    {
-        option2 = option;
-    }
 
     //--------------------------------------------------------------------------
     // allocate symbolic analysis object
@@ -90,7 +80,7 @@ SLIP_info SLIP_LU_analyze
     // is a very crude estimate on the nnz(L) and nnz(U)
     //--------------------------------------------------------------------------
 
-    if (option2->order == SLIP_NO_ORDERING)
+    if (SLIP_GET_ORDER(option) == SLIP_NO_ORDERING)
     {
         for (i = 0; i < n+1; i++)
         {
@@ -105,14 +95,14 @@ SLIP_info SLIP_LU_analyze
     // A+A'. The numer of nonzeros in L and U is given as AMD's computed
     // number of nonzeros in the Cholesky factor L of A+A'
     //--------------------------------------------------------------------------
-    else if (option2->order == SLIP_AMD)
+    else if (SLIP_GET_ORDER(option) == SLIP_AMD)
     {
         double Control [AMD_CONTROL];           // Declare AMD control
         amd_defaults(Control);                  // Set AMD defaults
         double Info [AMD_INFO];
         amd_l_order(n, A->p, A->i, S->q, Control, Info); // Perform AMD
         S->lnz = S->unz = Info[AMD_LNZ];        // Guess for unz and lnz
-        if (option2->print_level > 0)            // Output AMD info if desired
+        if (SLIP_GET_PRINT_LEVEL(option) > 0)            // Output AMD info if desired
         {
             printf("\n****Column Ordering Information****\n");
             amd_control(Control);
@@ -152,7 +142,7 @@ SLIP_info SLIP_LU_analyze
         S->lnz = S->unz = 10*A->nz;
 
         // Print stats if desired
-        if (option2->print_level > 0)
+        if (SLIP_GET_PRINT_LEVEL(option) > 0)
         {
             printf("\n****Column Ordering Information****\n");
             colamd_l_report(stats);
@@ -188,10 +178,6 @@ SLIP_info SLIP_LU_analyze
     //--------------------------------------------------------------------------
 
     (*S_handle) = S ;
-    if (option == NULL)
-    {
-        SLIP_FREE(option2);
-    }
     return SLIP_OK;
 }
 
