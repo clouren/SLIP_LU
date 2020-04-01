@@ -20,7 +20,7 @@
     SLIP_MPQ_CLEAR(det2);
 
 #include "SLIP_LU_internal.h"
-
+// Test this is a test
 // TODO rename slip_matrix_div?
 SLIP_info slip_array_div // divides the x vector by the determinant
 (
