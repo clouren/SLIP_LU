@@ -209,6 +209,68 @@ void slip_gmp_failure (int status) ;
 
 #define SLIP_DEFAULT_MPFR_ROUND MPFR_RNDN;
 
+//------------------------------------------------------------------------------
+// Macros to utilize the default if option is NULL
+//------------------------------------------------------------------------------
+
+#define SLIP_GET_TOL(option)        \
+{                                   \
+    if(option == NULL)              \
+        return SLIP_DEFAULT_TOL;    \
+    else                            \
+        return option->tol;         \
+}                                   \
+
+#define SLIP_GET_CHECK(option)      \
+{                                   \
+    if(option == NULL)              \
+        return SLIP_DEFAULT_CHECK;  \
+    else                            \
+        return option->check;       \
+}                                   \
+
+#define SLIP_GET_PIVOT(option)      \
+{                                   \
+    if(option == NULL)              \
+        return SLIP_DEFAULT_PIVOT;  \
+    else                            \
+        return option->pivot;       \
+}                                   \
+
+#define SLIP_GET_ORDER(option)      \
+{                                   \
+    if(option == NULL)              \
+        return SLIP_DEFAULT_ORDER;  \
+    else                            \
+        return option->order;       \
+}                                   \
+
+#define SLIP_GET_PRINT_LEVEL(option)        \
+{                                           \
+    if(option == NULL)                      \
+        return SLIP_DEFAULT_PRINT_LEVEL;    \
+    else                                    \
+        return option->print_level;         \
+}                                           \
+
+#define SLIP_GET_PREC(option)               \
+{                                           \
+    if(option == NULL)                      \
+        return SLIP_DEFAULT_PRECISION;      \
+    else                                    \
+        return option->prec;                \
+}                                           \
+
+#define SLIP_GET_ROUND(option)          \
+{                                       \
+    if(option == NULL)                  \
+        return SLIP_DEFAULT_round;      \
+    else                                \
+        return option->round;           \
+}                                       \
+
+
+
 // Field access macros for MPZ/MPQ/MPFR struct
 // (similar definition in gmp-impl.h and mpfr-impl.h)
 
@@ -302,18 +364,16 @@ SLIP_info slip_matrix_div // divides the x matrix by the determinant
 (
     SLIP_matrix* x2,    // solution of x/det
     SLIP_matrix* x,     // input vector
-    const mpz_t det,     // given determinant of matrix
-    SLIP_options* option // Command options, currently unused
+    const mpz_t det     // given determinant of matrix
 );
 
 /* Purpose: This function multiplies matrix x by the determinant of matrix.
  * On output the contents of the x matrix is modified.
  */
-SLIP_info slip_array_mul // multiplies vector x by the determinant of matrix
+SLIP_info slip_matrix_mul // multiplies vector x by the determinant of matrix
 (
     SLIP_matrix* x,         // matrix to be multiplied
-    const mpz_t det,        // given determinant of matrix
-    SLIP_options *option    // Command options. Currently unused
+    const mpz_t det        // given determinant of matrix
 );
 
 /* Purpose: This function performs sparse REF forward substitution. This is
@@ -339,8 +399,7 @@ SLIP_info slip_forward_sub
 SLIP_info slip_back_sub  // performs sparse REF backward substitution
 (
     const SLIP_matrix *U,   // input upper triangular matrix
-    SLIP_matrix *bx,        // right hand side matrix of size n*numRHS
-    SLIP_options* option    // Command options, currently unused
+    SLIP_matrix *bx        // right hand side matrix of size n*numRHS
 )  ;
 
 

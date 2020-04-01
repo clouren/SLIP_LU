@@ -24,8 +24,7 @@
 SLIP_info slip_back_sub  // performs sparse REF backward substitution
 (
     const SLIP_matrix *U,   // input upper triangular matrix
-    SLIP_matrix *bx,        // right hand side matrix
-    SLIP_options* option    // Command options, currently unused
+    SLIP_matrix *bx        // right hand side matrix
 )
 {
 
@@ -36,10 +35,6 @@ SLIP_info slip_back_sub  // performs sparse REF backward substitution
     SLIP_info info ;
     SLIP_REQUIRE (U,  SLIP_CSC,   SLIP_MPZ) ;
     SLIP_REQUIRE (bx, SLIP_DENSE, SLIP_MPZ) ;
-    if (!option)
-    {
-        return SLIP_INCORRECT_INPUT;//TODO create default option?
-    }
 
     //--------------------------------------------------------------------------
 

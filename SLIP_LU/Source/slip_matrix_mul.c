@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/slip_array_mul: multiplies a vector by a scalar
+// SLIP_LU/slip_matrix_mul: multiplies a matrix by a scalar
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -17,12 +17,10 @@
 
 #include "SLIP_LU_internal.h"
 
-// TODO rename slip_matrix_mul?
-SLIP_info slip_array_mul // multiplies vector x by the determinant of matrix
+SLIP_info slip_matrix_mul // multiplies vector x by the determinant of matrix
 (
     SLIP_matrix *x,         // matrix to be multiplied
-    const mpz_t det,        // given determinant of matrix
-    SLIP_options* option    // Command options, currently unused
+    const mpz_t det        // given determinant of matrix
 )
 {
 
@@ -32,10 +30,7 @@ SLIP_info slip_array_mul // multiplies vector x by the determinant of matrix
 
     SLIP_info info ;
     SLIP_REQUIRE (x, SLIP_DENSE, SLIP_MPZ) ;
-    if (!option)
-    {
-        return SLIP_INCORRECT_INPUT;// TODO create default option?
-    }
+    
     //--------------------------------------------------------------------------
     // x = x * det
     //--------------------------------------------------------------------------

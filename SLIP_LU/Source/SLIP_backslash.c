@@ -35,7 +35,6 @@
     SLIP_matrix_free(&U, NULL);     \
     SLIP_FREE(pinv);                \
     SLIP_matrix_free(&rhos, NULL);  \
-    SLIP_matrix_free(&x, NULL)      \
 
 #include "SLIP_LU_internal.h"
 
@@ -59,26 +58,21 @@ SLIP_info SLIP_backslash
     //-------------------------------------------------------------------------
 
     SLIP_info info ;
-    SLIP_REQUIRE (A, SLIP_CSC,   SLIP_MPZ) ;
-    SLIP_REQUIRE (b, SLIP_DENSE, SLIP_MPZ) ;
-
-    if ( !A->p || !A->i )//TODO check A->x?
+    
+    if (!X_handle) 
     {
         return SLIP_INCORRECT_INPUT;
     }
+    (*X_handle) = NULL;
+    
     if (type != SLIP_MPQ && type != SLIP_FP64 && type != SLIP_MPFR)
     {
         return SLIP_INCORRECT_INPUT;
     }
-    SLIP_options* option2 = NULL;
-    if (option == NULL)
-    {
-        option2 = SLIP_create_default_options();
-    }
-    else
-    {
-        option2 = option;
-    }
+    
+    SLIP_REQUIRE (A, SLIP_CSC,   SLIP_MPZ) ;
+    SLIP_REQUIRE (b, SLIP_DENSE, SLIP_MPZ) ;
+
     SLIP_matrix *L = NULL ;
     SLIP_matrix *U = NULL ;
     SLIP_matrix *x = NULL;
@@ -89,12 +83,12 @@ SLIP_info SLIP_backslash
     //--------------------------------------------------------------------------
     // Symbolic Analysis
     //--------------------------------------------------------------------------
-    SLIP_CHECK(SLIP_LU_analyze(&S, A, option2));
+    SLIP_CHECK(SLIP_LU_analyze(&S, A, option));
     //--------------------------------------------------------------------------
     // LU Factorization
     //--------------------------------------------------------------------------
 
-    SLIP_CHECK(SLIP_LU_factorize(&L, &U, &rhos, &pinv, A, S, option2));
+    SLIP_CHECK(SLIP_LU_factorize(&L, &U, &rhos, &pinv, A, S, option));
     //--------------------------------------------------------------------------
     // Solve
     //--------------------------------------------------------------------------
@@ -107,23 +101,31 @@ SLIP_info SLIP_backslash
         S,
         (const int64_t *) pinv, 
         option2));
-    //--------------------------------------------------------------------------
-    // Convert A to desired type// TODO only perform copy when it's not MPQ?
-    //--------------------------------------------------------------------------
-    SLIP_matrix* x2 = NULL;
-    SLIP_CHECK(SLIP_matrix_copy(&x2, SLIP_DENSE, type, x, option2));
     
+    //--------------------------------------------------------------------------
+    // Now, x contains the exact solution of the linear system in mpq_t precision
+    // set the output.
+    //--------------------------------------------------------------------------
+    
+    if (type == SLIP_MPQ)
+    {
+        (*X_handle) = x;
+    }
+    else
+    {
+        SLIP_matrix* x2 = NULL;
+        SLIP_CHECK(SLIP_matrix_copy(&x2, SLIP_DENSE, type, x, option));
+        (*X_handle) = x2;
+        SLIP_matrix_free(&x, NULL);
+        
+    }
+    
+        
     //--------------------------------------------------------------------------
     // Free memory
     //--------------------------------------------------------------------------
-
-    (*X_handle) = x2;
     
     SLIP_FREE_ALL;
-    if (option == NULL)
-    {
-        SLIP_FREE(option2);
-    }
     return (SLIP_OK) ;
 }
 

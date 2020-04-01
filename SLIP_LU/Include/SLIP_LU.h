@@ -603,12 +603,12 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     // Output
     SLIP_matrix **X_handle,  // rational solution to the system
     // input:
-    SLIP_matrix *b,         // right hand side vector
+    const SLIP_matrix *b,   // right hand side vector
     const SLIP_matrix *A,   // Input matrix
     const SLIP_matrix *L,   // lower triangular matrix
     const SLIP_matrix *U,   // upper triangular matrix
     const SLIP_matrix *rhos,// sequence of pivots
-    SLIP_LU_analysis *S,    // symbolic analysis struct
+    const SLIP_LU_analysis *S,// symbolic analysis struct
     const int64_t *pinv,    // row permutation
     SLIP_options* option    // Command options
 );

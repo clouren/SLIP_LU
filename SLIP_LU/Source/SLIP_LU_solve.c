@@ -53,12 +53,12 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     // Output
     SLIP_matrix **x_handle,  // rational solution to the system
     // input:
-    SLIP_matrix *b,         // right hand side vector// TODO const?
+    const SLIP_matrix *b,   // right hand side vector
     const SLIP_matrix *A,   // Input matrix
     const SLIP_matrix *L,   // lower triangular matrix
     const SLIP_matrix *U,   // upper triangular matrix
     const SLIP_matrix *rhos,// sequence of pivots
-    SLIP_LU_analysis *S,    // symbolic analysis struct// TODO const?
+    const SLIP_LU_analysis *S,// symbolic analysis struct
     const int64_t *pinv,    // row permutation
     SLIP_options* option    // Command options
 )
@@ -75,11 +75,7 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     SLIP_REQUIRE (U,    SLIP_CSC,   SLIP_MPZ) ;
     SLIP_REQUIRE (rhos, SLIP_DENSE, SLIP_MPZ) ;
 
-    if (!x_handle || !S || !pinv || !b->x.mpz || !rhos->x.mpz ||
-        !A->p || !A->i || !A->x.mpz || !L->p || !L->i || !L->x.mpz ||
-        !U->p || !U->i || !U->x.mpz || L->m != A->m || L->n != U->m ||
-        U->n != A->n || A->n != A->m || A->m != b->m ||
-        !option/* TODO create default option if option==NULL?*/)
+    if (!x_handle || !S || !pinv )
     {
         return SLIP_INCORRECT_INPUT;
     }
@@ -96,7 +92,6 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
         n*numRHS, false, true, option));
 
     // not need to perform deep copy, simply create an new dense matrix
-    //SLIP_matrix_copy(&b2, SLIP_DENSE, SLIP_MPZ, b, option);//TODO delete me
     SLIP_CHECK (SLIP_matrix_allocate(&b2, SLIP_DENSE, SLIP_MPZ, n, numRHS,
         n*numRHS, false, false, option));
 
@@ -123,7 +118,7 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     // b2 = b2 * det, where det=rhos[n-1]
     //--------------------------------------------------------------------------
 
-    SLIP_CHECK(slip_array_mul(b2, rhos->x.mpz[n-1], option));
+    SLIP_CHECK(slip_matrix_mul(b2, rhos->x.mpz[n-1]));
 
     //--------------------------------------------------------------------------
     // b2 = U\b2, via back substitution
@@ -134,7 +129,7 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     // x = b2/det, where det=rhos[n-1]
     //--------------------------------------------------------------------------
 
-    SLIP_CHECK(slip_array_div(x, b2, rhos->x.mpz[n-1], option));
+    SLIP_CHECK(slip_matrix_div(x, b2, rhos->x.mpz[n-1]));
 
     //--------------------------------------------------------------------------
     // Permute the solution vectors
