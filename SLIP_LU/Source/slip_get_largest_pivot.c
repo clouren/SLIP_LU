@@ -11,7 +11,7 @@
 /* Purpose: This function selects the pivot element as the largest in the
  * column This is activated if the user sets option->pivot = SLIP_LARGEST.
  *
- * NOTE: This pivoting scheme is NOT recommended for SLIP LU.  It is provided
+ * Note: This pivoting scheme is NOT recommended for SLIP LU.  It is provided
  * for comparison with other pivoting options.
  *
  * On output, the index of the largest pivot is returned.
@@ -20,7 +20,7 @@
 #define SLIP_FREE_ALL   \
     SLIP_MPZ_CLEAR(big);
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 
 SLIP_info slip_get_largest_pivot
 (

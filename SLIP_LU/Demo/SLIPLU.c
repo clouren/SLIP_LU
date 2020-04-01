@@ -130,7 +130,6 @@ int main (int argc, char* argv[])
     
     // Initialize option, command options for the factorization
     SLIP_options *option = SLIP_create_default_options();
-    option->print_level = 2;
     
     // Extra parameters used to obtain A, b, etc
     SLIP_info ok ;

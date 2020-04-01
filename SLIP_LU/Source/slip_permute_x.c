@@ -15,8 +15,13 @@
 #define SLIP_FREE_ALL                 \
     SLIP_matrix_free(&x2, NULL);
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 // TODO optimize to avoid copy twice and unnecessary memory alloc
+// Chris note: Is this possible to do here since it's a dense matrix and thus
+// has no indices? An alternate solution is to just pass in X_handle and set 
+// (*X_handle) = x2, eliminate lines 82-95 and free x in the overall solve function
+// since this is all internal anyway. If we have to do the copy anyway, why not 
+// just do it once, we don't have to preserve x here.  Thoughts?
 /*
     for ith_row
         j = q[i];

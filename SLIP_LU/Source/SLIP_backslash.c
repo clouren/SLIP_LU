@@ -37,7 +37,7 @@
     SLIP_FREE(pinv);                \
     SLIP_matrix_free(&rhos, NULL);  \
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 
 
 SLIP_info SLIP_backslash
@@ -45,12 +45,12 @@ SLIP_info SLIP_backslash
     // Output
     SLIP_matrix **X_handle, // Final solution vector
     // Input
-    SLIP_type type,         // Type of output desired
-                            // Must be SLIP_MPQ, SLIP_MPFR,
-                            // or SLIP_FP64
-    SLIP_matrix *A,         // Input matrix
-    SLIP_matrix *b,         // Right hand side vector(s)
-    SLIP_options* option    // Command options 
+    SLIP_type type,               // Type of output desired
+                                  // Must be SLIP_MPQ, SLIP_MPFR,
+                                  // or SLIP_FP64
+    const SLIP_matrix *A,         // Input matrix
+    const SLIP_matrix *b,         // Right hand side vector(s)
+    const SLIP_options* option    // Command options 
 )
 {
 

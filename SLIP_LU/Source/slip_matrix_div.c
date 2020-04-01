@@ -19,7 +19,7 @@
 #define SLIP_FREE_ALL             \
     SLIP_MPQ_CLEAR(det2);
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 SLIP_info slip_matrix_div // divides the x matrix by the determinant
 (
     SLIP_matrix* x2,     // solution of x/det

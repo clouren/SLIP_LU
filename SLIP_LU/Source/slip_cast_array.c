@@ -34,7 +34,7 @@
 //      y_scale = 1.
 //
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 #pragma GCC diagnostic ignored "-Wunused-variable"
 
 #define SLIP_FREE_WORKSPACE \
@@ -57,14 +57,15 @@ SLIP_info slip_cast_array
     // check inputs
     //--------------------------------------------------------------------------
 
-    SLIP_info info ;
-    int r;
-    mpq_t temp; SLIP_MPQ_SET_NULL(temp);
-    
     if (Y == NULL || X == NULL)
     {
         return (SLIP_INCORRECT_INPUT) ;
     }
+    SLIP_info info ;
+    int r;
+    mpq_t temp; SLIP_MPQ_SET_NULL(temp);
+    
+    
 
     //--------------------------------------------------------------------------
     // Y [0:n-1] = (ytype) X [0:n-1]
@@ -92,6 +93,8 @@ SLIP_info slip_cast_array
                     {
                         SLIP_CHECK (SLIP_mpz_set (y [k], x[k])) ;
                     }
+                    // y is a direct copy of x. Set y_scale = x_scale
+                    SLIP_CHECK(SLIP_mpq_set(y_scale, x_scale));
                 }
                 break ;
 

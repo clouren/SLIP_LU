@@ -12,7 +12,7 @@
  * This function must be called for all mpq arrays created.
  */
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 
 mpz_t* slip_create_mpz_array
 (

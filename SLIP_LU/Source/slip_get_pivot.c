@@ -14,7 +14,7 @@
  *  SLIP_SMALLEST = 0,      Smallest pivot
  *  SLIP_DIAGONAL = 1,      Diagonal pivoting
  *  SLIP_FIRST_NONZERO = 2, First nonzero per column chosen as pivot
- *  SLIP_TOL_SMALLEST = 3,  Diagonal pivoting with tolerance for pivot. Default
+ *  SLIP_TOL_SMALLEST = 3,  Diagonal pivoting with tolerance for pivot. (Default)
  *  SLIP_TOL_LARGEST = 4,   Diagonal pivoting with tolerance for largest pivot
  *  SLIP_LARGEST = 5        Largest pivot
  *
@@ -27,7 +27,7 @@
     SLIP_MPQ_CLEAR (tol) ;      \
     SLIP_MPQ_CLEAR (ratio) ; 
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 
 SLIP_info slip_get_pivot
 (

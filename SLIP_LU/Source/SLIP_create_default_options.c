@@ -9,10 +9,10 @@
 //------------------------------------------------------------------------------
 
 /* Purpose: Create and return SLIP_options pointer with default parameters
- * upon successful allocation, which are defined in SLIP_LU_internal.h
+ * upon successful allocation, which are defined in slip_LU_internal.h
  */
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 
 SLIP_options* SLIP_create_default_options ( void )
 {

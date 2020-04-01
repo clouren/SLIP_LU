@@ -215,8 +215,8 @@ void slip_gmp_failure (int status) ;
 // Macros to utilize the default if option is NULL
 //------------------------------------------------------------------------------
 
-
-//TODO Is this correct?
+//TODO I want to write a macro that uses the default if option is NULL.
+//     Is this the correct way to do it?
 #define SLIP_GET_TOL(option) ( ( (option==NULL) ) ? (SLIP_DEFAULT_TOL) : (option->tol))
 
 #define SLIP_GET_CHECK(option) ( ( (option==NULL) ) ? (false) : (option->check))

@@ -18,14 +18,14 @@
     SLIP_matrix_free(&x3, NULL);    \
     SLIP_matrix_free(&x4, NULL);
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 
 SLIP_info slip_expand_mpq_array
 (
-    mpz_t* x_out,   // mpz array
-    mpq_t* x,       // mpq array that needs to be converted
-    mpq_t scale,    // scaling factor. x_out = scale*x
-    int64_t n,      // size of x
+    mpz_t* x_out,        // mpz array, on output x_out = x*scale
+    mpq_t* x,            // mpq array that needs to be converted
+    mpq_t scale,         // scaling factor. x_out = scale*x
+    int64_t n,           // size of x
     SLIP_options* option // Command options
 )
 {

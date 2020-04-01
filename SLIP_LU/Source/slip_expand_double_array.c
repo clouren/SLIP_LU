@@ -15,20 +15,20 @@
  *
  */
 
-#define SLIP_FREE_ALL              \
+#define SLIP_FREE_ALL               \
     SLIP_MPZ_CLEAR(gcd);            \
     SLIP_MPZ_CLEAR(one);            \
     SLIP_MPQ_CLEAR(temp);           \
     SLIP_matrix_free(&x3, NULL);    \
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 
 SLIP_info slip_expand_double_array
 (
-    mpz_t* x_out,   // integral final array
-    double* x,      // double array that needs to be made integral
-    mpq_t scale,    // the scaling factor used (x_out = scale * x)
-    int64_t n,      // size of x
+    mpz_t* x_out,           // integral final array
+    double* x,              // double array that needs to be made integral
+    mpq_t scale,            // the scaling factor used (x_out = scale * x)
+    int64_t n,              // size of x
     SLIP_options* option    // Command options
 )
 {

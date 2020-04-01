@@ -19,7 +19,7 @@
 #define SLIP_FREE_ALL \
     SLIP_matrix_free (&A, option) ;
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 
 SLIP_info SLIP_matrix_allocate
 (

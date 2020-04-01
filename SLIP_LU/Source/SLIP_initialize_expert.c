@@ -58,7 +58,7 @@
  * mxMalloc, mxCalloc, mxRealloc, and mxFree functions.
  */
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 
 void SLIP_initialize_expert
 (

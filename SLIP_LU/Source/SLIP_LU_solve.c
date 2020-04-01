@@ -47,7 +47,7 @@
     SLIP_FREE_WORK                            \
     SLIP_matrix_free(&x, NULL);               \
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 
 SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
 (
@@ -140,6 +140,8 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     // Permute the solution vectors
     //--------------------------------------------------------------------------
 
+    // TODO Please refer to the comment in the below function. Once a solution is
+    // decided update the rest of this file.
     SLIP_CHECK(slip_permute_x(x, (SLIP_LU_analysis *) S, option));
 
     //--------------------------------------------------------------------------

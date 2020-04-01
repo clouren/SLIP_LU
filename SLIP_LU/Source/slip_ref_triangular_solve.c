@@ -67,7 +67,7 @@
  */
 
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 
 // Sorting function 
 static inline int compare (const void * a, const void * b)
@@ -96,7 +96,7 @@ SLIP_info slip_ref_triangular_solve // performs the sparse REF triangular solve
     const int64_t* pinv,      // inverse row permutation
     const int64_t* row_perm,  // row permutation
     int64_t* h,               // history vector
-    SLIP_matrix* x           // solution of system ==> kth column of L and U
+    SLIP_matrix* x            // solution of system ==> kth column of L and U
 )
 {
 

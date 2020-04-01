@@ -153,9 +153,9 @@
 #define SLIP_LU_VERSION_MINOR 0
 #define SLIP_LU_VERSION_SUB   0
 
+//TODO Delete these 2? Never used. 
 // Name of associated paper
 #define SLIP_PAPER "Algorithm 1xxx: SLIP LU: Sparse Left-looking Integer-Preserving LU Factorization"
-
 // Authors of code
 #define SLIP_AUTHOR "Christopher Lourenco, Jinhao Chen, Erick Moreno-Centeno, Timothy Davis"
 
@@ -547,7 +547,7 @@ void SLIP_finalize (void);
 SLIP_info SLIP_LU_analyze
 (
     SLIP_LU_analysis **S, // symbolic analysis (column permutation and nnz L,U)
-    SLIP_matrix *A,       // Input matrix
+    const SLIP_matrix *A, // Input matrix
     SLIP_options *option  // Control parameters
 );
 
@@ -573,9 +573,9 @@ SLIP_info SLIP_LU_factorize
     SLIP_matrix **rhos_handle,  // sequence of pivots
     int64_t **pinv_handle,      // inverse row permutation
     // input:
-    SLIP_matrix *A,             // matrix to be factored
-    SLIP_LU_analysis *S,        // stores guess on nnz and column permutation
-    SLIP_options* option        // command options
+    const SLIP_matrix *A,        // matrix to be factored
+    const SLIP_LU_analysis *S,   // stores guess on nnz and column permutation
+    const SLIP_options* option   // command options
 ) ;
 
 
@@ -587,14 +587,14 @@ SLIP_info SLIP_LU_factorize
 SLIP_info SLIP_backslash
 (
     // Output
-    SLIP_matrix **X_handle, // Final solution vector
+    SLIP_matrix **X_handle,       // Final solution vector
     // Input
-    SLIP_type type,         // Type of output desired
-                            // Must be SLIP_MPQ, SLIP_MPFR,
-                            // or SLIP_FP64
-    SLIP_matrix *A,         // Input matrix
-    SLIP_matrix *b,         // Right hand side vector(s)
-    SLIP_options* option    // Command options 
+    SLIP_type type,               // Type of output desired
+                                  // Must be SLIP_MPQ, SLIP_MPFR,
+                                  // or SLIP_FP64
+    const SLIP_matrix *A,         // Input matrix
+    const SLIP_matrix *b,         // Right hand side vector(s)
+    const SLIP_options* option    // Command options 
 );
 
 /* Purpose: SLIP_LU_solve solves the linear system LD^(-1)U x = b.*/

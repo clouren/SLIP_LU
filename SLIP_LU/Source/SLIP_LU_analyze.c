@@ -25,12 +25,12 @@
 // SLIP_LU_analyze creates the SLIP_LU_analysis object S.  Use
 // SLIP_delete_LU_analysis to delete it.
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 
 SLIP_info SLIP_LU_analyze
 (
     SLIP_LU_analysis** S_handle, // symbolic analysis (column perm. and nnz L,U)
-    SLIP_matrix *A,             // Input matrix
+    const SLIP_matrix *A,       // Input matrix
     SLIP_options *option        // Control parameters, if NULL, use default
 )
 {
@@ -92,7 +92,7 @@ SLIP_info SLIP_LU_analyze
 
     //--------------------------------------------------------------------------
     // The AMD ordering is used. S->q is set to AMD's column ordering on
-    // A+A'. The numer of nonzeros in L and U is given as AMD's computed
+    // A+A'. The number of nonzeros in L and U is given as AMD's computed
     // number of nonzeros in the Cholesky factor L of A+A'
     //--------------------------------------------------------------------------
     else if (SLIP_GET_ORDER(option) == SLIP_AMD)

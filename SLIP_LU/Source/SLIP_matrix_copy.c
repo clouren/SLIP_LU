@@ -25,7 +25,7 @@
     SLIP_FREE_WORK ;                    \
     SLIP_matrix_free (&C, option) ;
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 
 SLIP_info SLIP_matrix_copy
 (
@@ -43,8 +43,6 @@ SLIP_info SLIP_matrix_copy
     //--------------------------------------------------------------------------
 
     SLIP_info info ;
-    // TODO NULL option always return nz=-1, but it's awkward to create default
-    // option before basic input check
     int64_t nz = SLIP_matrix_nnz (A, option) ;
     if (A == NULL || option == NULL || C_handle == NULL || nz < 0)
     {
@@ -115,10 +113,6 @@ SLIP_info SLIP_matrix_copy
                     // allocate C
                     SLIP_CHECK (SLIP_matrix_allocate (&C, SLIP_CSC,
                         C_type, m, n, nz, false, true, option)) ;
-
-                    // C->scale = Y->scale
-                    //TODO Delete I think
-                    //SLIP_CHECK (SLIP_mpq_set (C->scale, Y->scale)) ;
 
                     // count the # of entries in each column
                     for (int64_t k = 0 ; k < nz ; k++)
@@ -254,10 +248,6 @@ SLIP_info SLIP_matrix_copy
                     // allocate C
                     SLIP_CHECK (SLIP_matrix_allocate (&C, SLIP_CSC, C_type,
                         m, n, actual, false, true, option)) ;
-
-                    // C->scale = Y->scale
-                    // TODO Delete after testing
-                    //SLIP_CHECK (SLIP_mpq_set (C->scale, Y->scale)) ;
 
                     // Construct C
                     nz = 0 ;
@@ -631,14 +621,6 @@ SLIP_info SLIP_matrix_copy
 
         default: SLIP_FREE_ALL ; return (SLIP_INCORRECT_INPUT) ;
     }
-    
-    //--------------------------------------------------------------------------
-    // Deal with scaling if necessary
-    //--------------------------------------------------------------------------
-
-    // TODO Delete this
-    //C->nz = A->nz;
-    //SLIP_CHECK(slip_scale_matrix(C, A, option));
     
     //--------------------------------------------------------------------------
     // free workspace and return result

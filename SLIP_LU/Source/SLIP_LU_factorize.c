@@ -39,7 +39,7 @@
     SLIP_matrix_free(&rhos, NULL);  \
     SLIP_FREE(pinv);
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 
 SLIP_info SLIP_LU_factorize
 (
@@ -49,9 +49,9 @@ SLIP_info SLIP_LU_factorize
     SLIP_matrix **rhos_handle, // sequence of pivots
     int64_t **pinv_handle,     // inverse row permutation
     // input:
-    SLIP_matrix *A,            // matrix to be factored
-    SLIP_LU_analysis *S,       // stores guess on nnz and column permutation
-    SLIP_options* option       // command options
+    const SLIP_matrix *A,      // matrix to be factored
+    const SLIP_LU_analysis *S, // stores guess on nnz and column permutation
+    const SLIP_options* option // command options
 )
 {
 
@@ -186,7 +186,6 @@ SLIP_info SLIP_LU_factorize
         }
     }
 
-    SLIP_GET_ROUND(option);
     // temp = sigma
     SLIP_CHECK(SLIP_mpfr_set_z(temp, sigma, SLIP_GET_ROUND(option)));
 
@@ -203,7 +202,8 @@ SLIP_info SLIP_LU_factorize
     SLIP_CHECK(SLIP_mpfr_get_d(&inner2, temp, SLIP_GET_ROUND(option)));
     // Free cache from log2. Even though mpfr_free_cache is called in
     // SLIP_LU_final(), it has to be called here to prevent memory leak in
-    // some rare situations.
+    // some rare situations due to the usage of the mpfr_log2 function.
+    // as per MPFR's documentation
     SLIP_mpfr_free_cache();
     // bound = gamma * inner2+1. We add 1 to inner2 because log2(1) = 0
     int64_t bound = ceil(gamma*(inner2+1));
@@ -227,6 +227,12 @@ SLIP_info SLIP_LU_factorize
         false, false, option));
 
     // Allocate L and U without initializing each entry.
+    // L and U are allocated to have nnz(L) = the estimate from symbolic 
+    // analysis. However, unlike traditional matrix allocation, the second
+    // boolean parameter here is set to false, so the individual values of 
+    // L and U are not allocated. Instead, a more efficient method to 
+    // allocate these values is done in the factorization to reduce 
+    // memory usage.
     SLIP_CHECK (SLIP_matrix_allocate(&L, SLIP_CSC, SLIP_MPZ, n, n, S->lnz,
         false, false, option));
     SLIP_CHECK (SLIP_matrix_allocate(&U, SLIP_CSC, SLIP_MPZ, n, n, S->unz,
@@ -254,6 +260,8 @@ SLIP_info SLIP_LU_factorize
 
         //----------------------------------------------------------------------
         // Reallocate memory if necessary
+        // if lnz+n > L->nzmax, L needs to expand to accomodate new nonzeros.
+        // To do so, we double the size of the L and U matrices.
         //----------------------------------------------------------------------
         if (lnz + n > L->nzmax)
         {
@@ -266,7 +274,9 @@ SLIP_info SLIP_LU_factorize
             SLIP_CHECK(slip_sparse_realloc(U));
         }
 
-        // LDx = A(:,k)
+        //----------------------------------------------------------------------
+        // Triangular solve to compute LDx = A(:,k)
+        //----------------------------------------------------------------------
         SLIP_CHECK(slip_ref_triangular_solve(&top, L, A, k, xi,
             (const int64_t *) (S->q),
             rhos,
@@ -274,12 +284,14 @@ SLIP_info SLIP_LU_factorize
             (const int64_t *) row_perm,
             h, x)) ;
 
-        // Obtain pivot index
+        //----------------------------------------------------------------------
+        // Obtain pivot
+        //----------------------------------------------------------------------
         SLIP_CHECK(slip_get_pivot(&pivot, x, pivs, n, top, xi, option->pivot,
             col, k, rhos, pinv, row_perm, option->tol));
 
         //----------------------------------------------------------------------
-        // Iterate accross the nonzeros in x
+        // Populate L and U. We iterate across all nonzeros in x
         //----------------------------------------------------------------------
         for (j = top; j < n; j++)
         {

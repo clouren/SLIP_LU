@@ -19,12 +19,12 @@
  * by the solution x.
  */
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 
 SLIP_info slip_back_sub  // performs sparse REF backward substitution
 (
     const SLIP_matrix *U,   // input upper triangular matrix
-    SLIP_matrix *bx        // right hand side matrix
+    SLIP_matrix *bx         // right hand side matrix
 )
 {
 

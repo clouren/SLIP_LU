@@ -11,7 +11,7 @@
     SLIP_FREE(mark);     \
     SLIP_FREE(bmark);
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 
 /* check the validity of a SLIP_matrix */
 

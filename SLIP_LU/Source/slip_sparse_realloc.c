@@ -14,7 +14,7 @@
  * for general sparse matrices
  */
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 
 SLIP_info slip_sparse_realloc
 (

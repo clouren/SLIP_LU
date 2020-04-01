@@ -13,7 +13,7 @@
  * indices in the xi vector.  This function is modified from CSparse/cs_dfs.
  */
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 
 void slip_dfs // performs a dfs of the graph of the matrix starting at node j
 (
@@ -22,7 +22,7 @@ void slip_dfs // performs a dfs of the graph of the matrix starting at node j
     SLIP_matrix* L,        // matrix which represents the Graph of L
     int64_t* xi,           // the nonzero pattern
     int64_t* pstack,       // workspace vector
-    const int64_t* pinv   // row permutation
+    const int64_t* pinv    // row permutation
 )
 {
 
@@ -32,7 +32,7 @@ void slip_dfs // performs a dfs of the graph of the matrix starting at node j
 
     ASSERT(L != NULL && L->kind == SLIP_CSC && L->type == SLIP_MPZ);
     
-    // Top xi etc already checked
+    // top xi etc already checked in the caller function
 
     //--------------------------------------------------------------------------
 

@@ -8,7 +8,7 @@
 
 //------------------------------------------------------------------------------
 #pragma GCC diagnostic ignored "-Wunused-variable"
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 
 int64_t SLIP_matrix_nnz     // return # of entries in A, or -1 on error
 (

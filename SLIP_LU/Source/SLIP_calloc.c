@@ -10,7 +10,7 @@
 
 // Purpose: calloc space of size n*size.  Returns NULL on failure.
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 
 void* SLIP_calloc
 (

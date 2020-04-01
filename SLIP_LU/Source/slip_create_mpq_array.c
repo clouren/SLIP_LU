@@ -12,7 +12,7 @@
  * This function is used internally for creating SLIP_MPQ matrices
  */
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 
 mpq_t* slip_create_mpq_array
 (

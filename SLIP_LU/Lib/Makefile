@@ -39,7 +39,7 @@ OBJ = \
     slip_forward_sub.o SLIP_LU_analyze.o slip_reach.o
 
 
-$(OBJ): ../Include/SLIP_LU.h ../Source/SLIP_LU_internal.h Makefile
+$(OBJ): ../Include/SLIP_LU.h ../Source/slip_LU_internal.h Makefile
 
 %.o: ../Source/%.c ../Include/SLIP_LU.h ../Source/SLIP_LU_internal.h
 	$(C) $(I) -c $<

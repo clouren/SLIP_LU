@@ -16,7 +16,7 @@
     SLIP_MPQ_CLEAR(temp);                   \
     SLIP_matrix_free(&b2, NULL);
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 
 SLIP_info slip_check_solution
 (

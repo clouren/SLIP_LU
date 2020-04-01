@@ -22,7 +22,7 @@
     SLIP_MPQ_CLEAR(temp);           \
     SLIP_matrix_free(&x3, NULL);    \
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 
 SLIP_info slip_expand_mpfr_array
 (

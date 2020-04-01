@@ -15,7 +15,7 @@
  * On output the contents of the x vector is modified.
  */
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 
 SLIP_info slip_matrix_mul // multiplies vector x by the determinant of matrix
 (

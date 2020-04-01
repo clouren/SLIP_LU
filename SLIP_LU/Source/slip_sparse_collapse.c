@@ -15,7 +15,7 @@
  * This is only valid in the factorization routines for sparse csc mpz matrices
  */
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 SLIP_info slip_sparse_collapse
 (
     SLIP_matrix* A // matrix to be shrunk

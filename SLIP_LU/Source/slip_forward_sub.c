@@ -22,7 +22,7 @@
 #define SLIP_FREE_ALL            \
     SLIP_matrix_free(&h, NULL)  ;
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 
 SLIP_info slip_forward_sub
 (

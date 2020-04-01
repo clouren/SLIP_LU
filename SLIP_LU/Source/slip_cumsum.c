@@ -12,13 +12,13 @@
  * in to c.  This function is lightly modified from CSparse.
  */
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 
 SLIP_info slip_cumsum
 (
     int64_t *p,          // vector to store the sum of c
     int64_t *c,          // vector which is summed
-    int64_t n           // size of c
+    int64_t n            // size of c
 )
 {
 

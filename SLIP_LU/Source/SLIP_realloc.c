@@ -8,7 +8,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 
 // Purpose:  A wrapper for realloc.  If p is non-NULL on input, it points to a
 // previously allocated object of size old_size * size_of_item.  The object is
