@@ -40,11 +40,12 @@
  */
 
 #define SLIP_FREE_WORK                        \
-    SLIP_matrix_free(&b2, NULL);
+    SLIP_matrix_free(&b2, NULL);              \
+    SLIP_MPQ_CLEAR(scale);                    \
 
 #define SLIP_FREE_ALL                         \
     SLIP_FREE_WORK                            \
-    SLIP_matrix_free(&x, NULL);
+    SLIP_matrix_free(&x, NULL);               \
 
 #include "SLIP_LU_internal.h"
 
@@ -85,6 +86,8 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     //--------------------------------------------------------------------------
 
     int64_t i, k, n = L->n, numRHS = b->n;
+    mpq_t scale;
+    SLIP_MPQ_SET_NULL(scale);
 
     SLIP_matrix *x = NULL;   // solution
     SLIP_matrix *b2 = NULL;  // permuted b
@@ -170,11 +173,25 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     }
 
     //--------------------------------------------------------------------------
-    // scale solution
+    // Scale the solution if necessary.
     //--------------------------------------------------------------------------
 
-    SLIP_CHECK(slip_scale_x(x, (SLIP_matrix*) A, b, option));
-
+    SLIP_CHECK(SLIP_mpq_init(scale));
+    
+    // set the scaling factor scale = A->scale / b->scale
+    SLIP_CHECK( SLIP_mpq_set(scale, A->scale));
+    SLIP_CHECK( SLIP_mpq_div(scale, b->scale));
+    
+    // Determine if the scaling factor is 1
+    SLIP_CHECK(SLIP_mpq_cmp_ui(&k, scale, 1, 1));
+    int64_t nz = x->m * x->n;
+    if (k != 0 )
+    {
+        for (i = 0; i < nz; i++)
+        {
+            SLIP_CHECK(SLIP_mpq_mul(x->x.mpq[i], x->x.mpq[i], scale));
+        }
+    }
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------

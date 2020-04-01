@@ -28,9 +28,9 @@ all: install
 
 OBJ = \
     slip_matrix_div.o slip_create_mpq_array.o SLIP_free.o SLIP_LU_factorize.o \
-    SLIP_realloc.o slip_matrix_mul.o  slip_get_largest_pivot.o slip_scale_matrix.o  \
+    SLIP_realloc.o slip_matrix_mul.o  slip_get_largest_pivot.o  \
     slip_ref_triangular_solve.o SLIP_backslash.o slip_create_mpz_array.o slip_get_nonzero_pivot.o SLIP_LU_solve.o \
-    slip_scale_x.o slip_back_sub.o slip_cumsum.o slip_get_pivot.o SLIP_malloc.o slip_sparse_collapse.o \
+    slip_back_sub.o slip_cumsum.o slip_get_pivot.o SLIP_malloc.o slip_sparse_collapse.o \
     SLIP_calloc.o slip_dfs.o slip_get_smallest_pivot.o  SLIP_matrix_allocate.o  slip_sparse_realloc.o \
     slip_cast_array.o slip_expand_double_array.o  SLIP_gmp.o SLIP_matrix_copy.o SLIP_matrix_check.o \
     slip_cast_matrix.o slip_expand_mpfr_array.o SLIP_initialize.o SLIP_matrix_free.o slip_check_solution.o \

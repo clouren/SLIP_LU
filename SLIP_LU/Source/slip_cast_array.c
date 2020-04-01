@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/slip_cast_array: scale and typecast an array
+// SLIP_LU/slip_cast_array: ` and typecast an array
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -15,8 +15,32 @@
 
 // Y [0:n-1] = scale * X [0:n-1] ;
 
+// Note about the scaling factors:
+//
+// This function copies the scaled values of X into the array Y.
+//  If Y is mpz_t, the values in X must be scaled to be integral
+//  if they are not already integral. As a result, this function
+//  will expand the values and set y_scale = this factor.
+//`
+//  Conversely, if Y is not mpz_t and X is, we apply X's scaling 
+//  factor here to get the final values of Y. For instance,
+//  if Y is FP64 and X is mpz_t, the values of Y are obtained
+//  as Y = X / x_scale. 
+//
+//  The final value of x_scale is not modified.
+//  The final value of y_scale is set as follows.
+//      If Y is mpz_t, y_scale is set to the appropriate value
+//      in order to make all of its entries integral.
+//
+//      If Y is any other data type, this function always sets
+//      y_scale = 1.
+//
+
 #include "SLIP_LU_internal.h"
 #pragma GCC diagnostic ignored "-Wunused-variable"
+
+#define SLIP_FREE_WORKSPACE \
+SLIP_MPQ_CLEAR(temp);       \
 
 SLIP_info slip_cast_array
 (
@@ -25,7 +49,8 @@ SLIP_info slip_cast_array
     void *X,                // input array, of size n
     SLIP_type xtype,        // type of X
     int64_t n,              // size of Y and X
-    mpq_t scale,            // scale factor applied if Y is mpz_t
+    mpq_t y_scale,          // scale factor applied if Y is mpz_t
+    mpq_t x_scale,          // scae factor applied if x is mpz_t
     SLIP_options *option    // Command options. If NULL, set to default values
 )
 {
@@ -35,6 +60,9 @@ SLIP_info slip_cast_array
     //--------------------------------------------------------------------------
 
     SLIP_info info ;
+    int r;
+    mpq_t temp; SLIP_MPQ_SET_NULL(temp);
+    
     if (Y == NULL || X == NULL)
     {
         return (SLIP_INCORRECT_INPUT) ;
@@ -49,6 +77,8 @@ SLIP_info slip_cast_array
 
         //----------------------------------------------------------------------
         // output array Y is mpz_t
+        // If X is not mpz_t or int64, the values of X are scaled and y_scale is
+        // set to be this scaling factor.
         //----------------------------------------------------------------------
 
         case SLIP_MPZ:
@@ -70,14 +100,14 @@ SLIP_info slip_cast_array
                 case SLIP_MPQ: // mpq_t to mpz_t
                 {
                     mpq_t *x = (mpq_t *) X ;
-                    SLIP_CHECK (slip_expand_mpq_array(Y, X, scale, n, option));
+                    SLIP_CHECK (slip_expand_mpq_array(Y, X, y_scale, n, option));
                 }
                 break ;
 
                 case SLIP_MPFR: // mpfr_t to mpz_t
                 {
                     mpfr_t *x = (mpfr_t *) X ;
-                    SLIP_CHECK (slip_expand_mpfr_array (Y, X, scale, n,
+                    SLIP_CHECK (slip_expand_mpfr_array (Y, X, y_scale, n,
                         option)) ;
                 }
                 break ;
@@ -89,14 +119,14 @@ SLIP_info slip_cast_array
                     {
                         SLIP_CHECK (SLIP_mpz_set_si (y [k], x [k])) ;
                     }
-                    SLIP_CHECK (SLIP_mpq_set_ui (scale, 1, 1)) ;
+                    SLIP_CHECK (SLIP_mpq_set_ui (y_scale, 1, 1)) ;
                 }
                 break ;
 
                 case SLIP_FP64: // double to mpz_t
                 {
                     double *x = (double *) X ;
-                    SLIP_CHECK (slip_expand_double_array (y, x, scale, n,
+                    SLIP_CHECK (slip_expand_double_array (y, x, y_scale, n,
                         option)) ;
                 }
                 break ;
@@ -118,12 +148,32 @@ SLIP_info slip_cast_array
 
                 case SLIP_MPZ: // mpz_t to mpq_t
                 {
-                    mpz_t *x = (mpz_t *) X ;
-                    for (int64_t k = 0 ; k < n ; k++)
-                    {
-                        SLIP_CHECK (SLIP_mpq_set_z (y [k], x [k])) ;
-                    }
+                    // In this case, x is mpz_t and y is mpq_t. the scaling factor
+                    // x_scale must be used. If x_scale is not equal to 1,
+                    // each value in y is divided by x_scale
                     
+                    // Check if x_scale == 1
+                    SLIP_CHECK(SLIP_mpq_cmp_ui(&r, x_scale, 1, 1));
+                    mpz_t *x = (mpz_t *) X ;
+                    
+                    if (r == 0)
+                    {
+                        // x_scale = 1. Simply do a direct copy.
+                        for (int64_t k = 0 ; k < n ; k++)
+                        {
+                            SLIP_CHECK (SLIP_mpq_set_z (y [k], x [k])) ;
+                        }
+                    }
+                    else
+                    {
+                        // x_scale != 1. In this case, we divide each entry
+                        // of Y by x_scale
+                        for (int64_t k = 0 ; k < n ; k++)
+                        {
+                            SLIP_CHECK (SLIP_mpq_set_z (y [k], x [k])) ;
+                            SLIP_CHECK (SLIP_mpq_div(y[k], y[k], x_scale));
+                        }
+                    }
                 }
                 break ;
 
@@ -184,11 +234,33 @@ SLIP_info slip_cast_array
 
                 case SLIP_MPZ: // mpz_t to mpfr_t
                 {
+                    // x is mpz_t and y is mpfr_t. Like in the above mpq_t case,
+                    // if the scaling factor of x is not equal to 1, the values of
+                    // y must be scaled.
                     mpz_t *x = (mpz_t *) X ;
-                    for (int64_t k = 0 ; k < n ; k++)
+                    SLIP_CHECK(SLIP_mpq_cmp_ui(&r, x_scale, 1, 1));
+                    
+                    if (r == 0)
                     {
-                        SLIP_CHECK (SLIP_mpfr_set_z (y [k], x [k],
+                        // x_scale = 1. Simply do a direct copy.
+                        for (int64_t k = 0 ; k < n ; k++)
+                        {
+                            SLIP_CHECK (SLIP_mpfr_set_z (y [k], x [k],
                             SLIP_GET_ROUND(option))) ;
+                        }
+                    }
+                    else
+                    {
+                        // x_scale != 1. In this case, we divide each entry
+                        // of Y by x_scale. To do this, we will cast each
+                        // x_k to mpq_t, then divide by the scale, then 
+                        // cast the result to mpfr_t
+                        for (int64_t k = 0 ; k < n ; k++)
+                        {
+                            SLIP_CHECK( SLIP_mpq_set_z( temp, x[k]));
+                            SLIP_CHECK( SLIP_mpq_div(temp, temp, x_scale));
+                            SLIP_CHECK(SLIP_mpfr_set_q(y[k], temp, SLIP_GET_ROUND(option));
+                        }
                     }
                 }
                 break ;
@@ -254,10 +326,33 @@ SLIP_info slip_cast_array
 
                 case SLIP_MPZ: // mpz_t to int64_t
                 {
+                    // x is mpz_t and y is int64_t. Same as above,
+                    // if x_scale > 1 it is applied
                     mpz_t *x = (mpz_t *) X ;
-                    for (int64_t k = 0 ; k < n ; k++)
+                    SLIP_CHECK(SLIP_mpq_cmp_ui(&r, x_scale, 1, 1));
+                    
+                    if (r == 0)
                     {
-                        SLIP_CHECK(SLIP_mpz_get_si( &(y[k]), x[k]));
+                        // x_scale = 1. Simply do a direct copy.
+                        for (int64_t k = 0 ; k < n ; k++)
+                        {
+                           SLIP_CHECK(SLIP_mpz_get_si( &(y[k]), x[k]));
+                        }
+                    }
+                    else
+                    {
+                        // x_scale != 1. In this case, we divide each entry
+                        // of Y by x_scale. To do this, we will cast each
+                        // x_k to mpq_t, then divide by the scale, then 
+                        // cast the result to double and cast the double to int
+                        for (int64_t k = 0 ; k < n ; k++)
+                        {
+                            SLIP_CHECK( SLIP_mpq_set_z( temp, x[k]));
+                            SLIP_CHECK( SLIP_mpq_div(temp, temp, x_scale));
+                            double temp2;
+                            SLIP_CHECK(SLIP_mpq_get_d(&temp2, temp));
+                            y[i] = slip_cast_double_to_int64(temp2);
+                        }
                     }
                 }
                 break ;
@@ -318,10 +413,31 @@ SLIP_info slip_cast_array
 
                 case SLIP_MPZ: // mpz_t to double
                 {
+                    // Same as above, x is mpz_t, y is double. Must
+                    // divide by x_scale if x_scale != 1.
                     mpz_t *x = (mpz_t *) X ;
-                    for (int64_t k = 0 ; k < n ; k++)
+                    SLIP_CHECK(SLIP_mpq_cmp_ui(&r, x_scale, 1, 1));
+                    
+                    if (r == 0)
                     {
-                        SLIP_CHECK (SLIP_mpz_get_d (&(y [k]), x [k])) ;
+                        // x_scale = 1. Simply do a direct copy.
+                        for (int64_t k = 0 ; k < n ; k++)
+                        {
+                           SLIP_CHECK(SLIP_mpz_get_d( &(y[k]), x[k]));
+                        }
+                    }
+                    else
+                    {
+                        // x_scale != 1. In this case, we divide each entry
+                        // of Y by x_scale. To do this, we will cast each
+                        // x_k to mpq_t, then divide by the scale, then 
+                        // cast the result to double
+                        for (int64_t k = 0 ; k < n ; k++)
+                        {
+                            SLIP_CHECK( SLIP_mpq_set_z( temp, x[k]));
+                            SLIP_CHECK( SLIP_mpq_div(temp, temp, x_scale));
+                            SLIP_CHECK(SLIP_mpq_get_d(&(y[i]), temp));
+                        }
                     }
                 }
                 break ;

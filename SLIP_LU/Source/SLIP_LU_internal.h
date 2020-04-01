@@ -640,8 +640,7 @@ SLIP_info slip_sparse_collapse
  */
 SLIP_info slip_sparse_realloc
 (
-    SLIP_matrix* A, // the matrix to be expanded
-    SLIP_options* option
+    SLIP_matrix* A // the matrix to be expanded
 );
 
 /* Purpose: This function computes the reach of column k of A on the graph of L
@@ -682,24 +681,6 @@ SLIP_info slip_ref_triangular_solve // performs the sparse REF triangular solve
     SLIP_options* option
 );
 
-/* Purpose: SLIP_scale_x scales the x matrix if necessary */
-SLIP_info slip_scale_x
-(
-    SLIP_matrix *x,         // Solution matrix
-    SLIP_matrix *A,         // matrix A
-    SLIP_matrix *b,         // right hand side
-    SLIP_options* option    // Command options
-);
-
-/* Purpose: Scale a matrix if necessary during matrix copy */
-SLIP_info slip_scale_matrix
-(
-    SLIP_matrix *C,             // Copied (output) matrix
-    SLIP_matrix *A,             // Matrix which was copied (input)
-    SLIP_options *option        // Command options, if NULL defaults are used
-);
-
-
 // typecast a double value to int64, accounting for Infs and Nans
 static inline int64_t slip_cast_double_to_int64 (double x)
 {
@@ -728,7 +709,8 @@ SLIP_info slip_cast_array
     void *X,                // input array, of size n
     SLIP_type xtype,        // type of X
     int64_t n,              // size of Y and X
-    mpq_t scale,            // scale factor applied if X is mpz_t
+    mpq_t y_scale,          // scale factor applied if y is mpz_t
+    mpq_t x_scale,          // scale factor applied if x is mpz_t
     SLIP_options *option
 ) ;
 

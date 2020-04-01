@@ -31,8 +31,6 @@ SLIP_info slip_cast_matrix
     //--------------------------------------------------------------------------
 
     SLIP_info info = SLIP_OK ;
-    // TODO NULL option always return nz=-1, but it's awkward to create default
-    // option before basic input check
     int64_t nz = SLIP_matrix_nnz (A, option) ;
     SLIP_matrix *Y = NULL ;
     if (Y_handle == NULL || A == NULL ||  nz < 0)
@@ -41,22 +39,13 @@ SLIP_info slip_cast_matrix
     }
     (*Y_handle) = NULL ;
 
-    SLIP_options* option2 = NULL;
-    if (option == NULL)
-    {
-        option2 = SLIP_create_default_options();
-    }
-    else
-    {
-        option2 = option;
-    }
     
     //--------------------------------------------------------------------------
     // allocate Y (shallow if Y_type is the same as A->type)
     //--------------------------------------------------------------------------
 
     SLIP_CHECK (SLIP_matrix_allocate (&Y, SLIP_DENSE, Y_type,
-        nz, 1, nz, Y_type == A->type, true, option2)) ;
+        nz, 1, nz, Y_type == A->type, true, option)) ;
 
     //--------------------------------------------------------------------------
     // typecast the values from A into Y
@@ -93,7 +82,7 @@ SLIP_info slip_cast_matrix
         //----------------------------------------------------------------------
 
         SLIP_CHECK (slip_cast_array (SLIP_X (Y), Y->type,
-            SLIP_X (A), A->type, nz, Y->scale, option2)) ;
+            SLIP_X (A), A->type, nz, Y->scale, A->scale, option)) ;
            
     }
 
@@ -101,12 +90,6 @@ SLIP_info slip_cast_matrix
     // return result
     //--------------------------------------------------------------------------
 
-    /*TODO add this?
-    if (option == NULL)
-    {
-        SLIP_FREE(option2);
-    }
-    */
     (*Y_handle) = Y;
     SLIP_CHECK (info) ;
     return (SLIP_OK) ;

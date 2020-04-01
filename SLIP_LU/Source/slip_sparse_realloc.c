@@ -18,8 +18,7 @@
 
 SLIP_info slip_sparse_realloc
 (
-    SLIP_matrix* A, // the matrix to be expanded
-    SLIP_options* option // Command options
+    SLIP_matrix* A // the matrix to be expanded
 )
 {
 
@@ -29,11 +28,6 @@ SLIP_info slip_sparse_realloc
 
     SLIP_REQUIRE(A, SLIP_CSC, SLIP_MPZ);
     
-    ASSERT (A != NULL && A->kind = SLIP_CSC && A->type == SLIP_MPZ) ;
-
-    // TODO create default option or remove option as input
-    if (!A || !A->p || !A->i || !option){return SLIP_INCORRECT_INPUT;}
-
     int64_t nzmax = A->nzmax;
     mpz_t *Ax_new = NULL;
 

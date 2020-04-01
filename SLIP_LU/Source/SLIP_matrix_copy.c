@@ -89,7 +89,7 @@ SLIP_info SLIP_matrix_copy
                     memcpy (C->i, A->i, nz * sizeof (int64_t)) ;
                     // copy and typecast A->x into C->x
                     SLIP_CHECK (slip_cast_array (SLIP_X (C), C->type,
-                        SLIP_X (A), A->type, nz, C->scale, option)) ;
+                        SLIP_X (A), A->type, nz, C->scale, A->scale, option)) ;
                 }
                 break ;
 
@@ -117,7 +117,8 @@ SLIP_info SLIP_matrix_copy
                         C_type, m, n, nz, false, true, option)) ;
 
                     // C->scale = Y->scale
-                    SLIP_CHECK (SLIP_mpq_set (C->scale, Y->scale)) ;
+                    //TODO Delete I think
+                    //SLIP_CHECK (SLIP_mpq_set (C->scale, Y->scale)) ;
 
                     // count the # of entries in each column
                     for (int64_t k = 0 ; k < nz ; k++)
@@ -255,7 +256,8 @@ SLIP_info SLIP_matrix_copy
                         m, n, actual, false, true, option)) ;
 
                     // C->scale = Y->scale
-                    SLIP_CHECK (SLIP_mpq_set (C->scale, Y->scale)) ;
+                    // TODO Delete after testing
+                    //SLIP_CHECK (SLIP_mpq_set (C->scale, Y->scale)) ;
 
                     // Construct C
                     nz = 0 ;
@@ -388,7 +390,7 @@ SLIP_info SLIP_matrix_copy
                         m, n, nz, false, true, option)) ;
                     // copy and typecast A->x into C->x
                     SLIP_CHECK (slip_cast_array (SLIP_X (C), C->type,
-                        SLIP_X (A), A->type, nz, C->scale, option)) ;
+                        SLIP_X (A), A->type, nz, C->scale, A->scale, option)) ;
                     // copy the row indices A->i into C->i
                     memcpy (C->i, A->i, nz * sizeof (int64_t)) ;
                     // construct C->j
@@ -416,7 +418,7 @@ SLIP_info SLIP_matrix_copy
                     memcpy (C->i, A->i, nz * sizeof (int64_t)) ;
                     // copy and typecast A->x into C->x
                     SLIP_CHECK (slip_cast_array (SLIP_X (C), C->type,
-                        SLIP_X (A), A->type, nz, C->scale, option)) ;
+                        SLIP_X (A), A->type, nz, C->scale, A->scale, option)) ;
                 }
                 break ;
 
@@ -617,7 +619,7 @@ SLIP_info SLIP_matrix_copy
                 {
                     // copy and typecast A->x into C->x
                     SLIP_CHECK (slip_cast_array (SLIP_X (C), C->type,
-                        SLIP_X (A), A->type, nz, C->scale, option)) ;
+                        SLIP_X (A), A->type, nz, C->scale, A->scale, option)) ;
                 }
                 break ;
 
@@ -634,11 +636,9 @@ SLIP_info SLIP_matrix_copy
     // Deal with scaling if necessary
     //--------------------------------------------------------------------------
 
-    // TODO why not simply apply scale in slip_cast_array? It is inefficient to
-    // set and divide seperately instead of setting C as division result
-    // directly
-    C->nz = A->nz;
-    SLIP_CHECK(slip_scale_matrix(C, A, option));
+    // TODO Delete this
+    //C->nz = A->nz;
+    //SLIP_CHECK(slip_scale_matrix(C, A, option));
     
     //--------------------------------------------------------------------------
     // free workspace and return result

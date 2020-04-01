@@ -104,9 +104,10 @@ SLIP_info SLIP_LU_factorize
         return SLIP_OUT_OF_MEMORY;
     }
 
-    int64_t k = 0, top, i, j, col, loc, lnz = 0, unz = 0, pivot, jnew ;
+    int64_t k = 0, top, i, j, col, loc, lnz = 0, unz = 0, anz, pivot, jnew ;
     size_t size ;
-
+    anz = A->p[n];
+    
     SLIP_CHECK(SLIP_mpz_init(sigma));
     SLIP_CHECK(SLIP_mpfr_init2(temp, 256));
 
@@ -159,7 +160,7 @@ SLIP_info SLIP_LU_factorize
     SLIP_CHECK(SLIP_mpz_set(sigma, A->x.mpz[0]));
 
     // Iterate throughout A and set sigma = max (A)
-    for (i = 1; i < A->nz; i++)
+    for (i = 1; i < anz; i++)
     {
         int r ;
         SLIP_CHECK (SLIP_mpz_cmpabs (&r, sigma, A->x.mpz [i])) ;
@@ -255,15 +256,13 @@ SLIP_info SLIP_LU_factorize
         //----------------------------------------------------------------------
         if (lnz + n > L->nzmax)
         {
-            // Set L->nz = lnz
-            L->nz = lnz;
-            SLIP_CHECK(slip_sparse_realloc(L, option));
+            // Double the size of L
+            SLIP_CHECK(slip_sparse_realloc(L));
         }
         if (unz + n > U->nzmax)
         {
-            // Set U->nz = unz
-            U->nz = unz;
-            SLIP_CHECK(slip_sparse_realloc(U, option));
+            // Double the size of U
+            SLIP_CHECK(slip_sparse_realloc(U));
         }
 
         // LDx = A(:,k)
@@ -292,15 +291,15 @@ SLIP_info SLIP_LU_factorize
             //------------------------------------------------------------------
             if (loc <= k)
             {
-                // Place the i location of the U->nz nonzero
+                // Place the i location of the unz nonzero
                 U->i[unz] = jnew;
                 // TODO: try SLIP_mpz_init_set(U->x.mpz[unz], x->x.mpz[jnew]);
                 SLIP_CHECK(SLIP_mpz_sizeinbase(&size, x->x.mpz[jnew], 2));
                 // GMP manual: Allocated size should be size+2
                 SLIP_CHECK(SLIP_mpz_init2(U->x.mpz[unz], size+2));
-                // Place the x value of the U->nz nonzero
+                // Place the x value of the unz nonzero
                 SLIP_CHECK(SLIP_mpz_set(U->x.mpz[unz], x->x.mpz[jnew]));
-                // Increment U->nz
+                // Increment unz
                 unz++;
             }
 
@@ -309,23 +308,20 @@ SLIP_info SLIP_LU_factorize
             //------------------------------------------------------------------
             if (loc >= k)
             {
-                // Place the i location of the L->nz nonzero
+                // Place the i location of the lnz nonzero
                 L->i[lnz] = jnew;
                 // TODO try mpz_init_set?
                 SLIP_CHECK(SLIP_mpz_sizeinbase(&size, x->x.mpz[jnew], 2));
                 // GMP manual: Allocated size should be size+2
                 SLIP_CHECK(SLIP_mpz_init2(L->x.mpz[lnz], size+2));
-                // Place the x value of the L->nz nonzero
+                // Place the x value of the lnz nonzero
                 SLIP_CHECK(SLIP_mpz_set(L->x.mpz[lnz], x->x.mpz[jnew]));
-                // Increment L->nz
+                // Increment lnz
                 lnz++;
             }
         }
     }
 
-    // Finalize L and U
-    L->nz = lnz;
-    U->nz = unz;
     // Finalize L->p, U->p
     L->p[n] = lnz;
     U->p[n] = unz;
@@ -348,12 +344,12 @@ SLIP_info SLIP_LU_factorize
     //--------------------------------------------------------------------------
 
     // Permute entries in L
-    for (i = 0; i < L->nz; i++)
+    for (i = 0; i < lnz; i++)
     {
         L->i[i] = pinv[L->i[i]];
     }
     // Permute entries in U
-    for (i = 0; i < U->nz; i++)
+    for (i = 0; i < unz; i++)
     {
         U->i[i] = pinv[U->i[i]];
     }
