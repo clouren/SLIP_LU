@@ -185,7 +185,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                             case SLIP_MPFR:
                             {
                                 status = SLIP_mpfr_printf("%.*Rf \n",
-                                                          SLIP_GET_PRECISION(option)
+                                                          SLIP_GET_PRECISION(option),
                                                           A->x.mpfr [p]);
                                 break;
                             }

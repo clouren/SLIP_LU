@@ -104,7 +104,7 @@ SLIP_info SLIP_backslash
         (const SLIP_matrix *) rhos,
         S,
         (const int64_t *) pinv, 
-        option2));
+        option));
     
     //--------------------------------------------------------------------------
     // Now, x contains the exact solution of the linear system in mpq_t precision

@@ -14,6 +14,8 @@
 #ifndef SLIP_LU_INTERNAL_H
 #define SLIP_LU_INTERNAL_H
 
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#pragma GCC diagnostic ignored "-Wunused-value"
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //-------------------------C Libraries------------------------------------------
@@ -207,67 +209,28 @@ void slip_gmp_failure (int status) ;
 //
 // SLIP LU utilizes MPFR_RNDN by default.
 
-#define SLIP_DEFAULT_MPFR_ROUND MPFR_RNDN;
+#define SLIP_DEFAULT_MPFR_ROUND MPFR_RNDN
 
 //------------------------------------------------------------------------------
 // Macros to utilize the default if option is NULL
 //------------------------------------------------------------------------------
 
-#define SLIP_GET_TOL(option)        \
-{                                   \
-    if(option == NULL)              \
-        return SLIP_DEFAULT_TOL;    \
-    else                            \
-        return option->tol;         \
-}                                   \
 
-#define SLIP_GET_CHECK(option)      \
-{                                   \
-    if(option == NULL)              \
-        return false;               \
-    else                            \
-        return option->check;       \
-}                                   \
+//TODO Is this correct?
+#define SLIP_GET_TOL(option) ( ( (option==NULL) ) ? (SLIP_DEFAULT_TOL) : (option->tol))
 
-#define SLIP_GET_PIVOT(option)      \
-{                                   \
-    if(option == NULL)              \
-        return SLIP_DEFAULT_PIVOT;  \
-    else                            \
-        return option->pivot;       \
-}                                   \
+#define SLIP_GET_CHECK(option) ( ( (option==NULL) ) ? (false) : (option->check))
 
-#define SLIP_GET_ORDER(option)      \
-{                                   \
-    if(option == NULL)              \
-        return SLIP_DEFAULT_ORDER;  \
-    else                            \
-        return option->order;       \
-}                                   \
+#define SLIP_GET_PIVOT(option) ( ( (option==NULL) ) ? (SLIP_DEFAULT_PIVOT) : (option->pivot))
 
-#define SLIP_GET_PRINT_LEVEL(option)        \
-{                                           \
-    if(option == NULL)                      \
-        return SLIP_DEFAULT_PRINT_LEVEL;    \
-    else                                    \
-        return option->print_level;         \
-}                                           \
+#define SLIP_GET_ORDER(option) ( ( (option==NULL) ) ? (SLIP_DEFAULT_ORDER) : (option->order))
 
-#define SLIP_GET_PREC(option)               \
-{                                           \
-    if(option == NULL)                      \
-        return SLIP_DEFAULT_PRECISION;      \
-    else                                    \
-        return option->prec;                \
-}                                           \
+#define SLIP_GET_PRECISION(option) ( ( (option==NULL) ) ? (SLIP_DEFAULT_PRECISION) : (option->prec))
 
-#define SLIP_GET_ROUND(option)          \
-{                                       \
-    if(option == NULL)                  \
-        return SLIP_DEFAULT_round;      \
-    else                                \
-        return option->round;           \
-}                                       \
+#define SLIP_GET_PRINT_LEVEL(option) ( ( (option==NULL) ) ? (SLIP_DEFAULT_PRINT_LEVEL) : (option->print_level))
+
+#define SLIP_GET_ROUND(option) ( ( (option==NULL) ) ? (SLIP_DEFAULT_MPFR_ROUND) : (option->round))
+
 
 
 
@@ -622,8 +585,7 @@ SLIP_info slip_permute_x
  */
 SLIP_info slip_sparse_collapse
 (
-    SLIP_matrix* A, // matrix to be shrunk
-    SLIP_options* option
+    SLIP_matrix* A // matrix to be shrunk
 );
 
 /* Purpose: This function expands a SLIP LU matrix by doubling its size. It

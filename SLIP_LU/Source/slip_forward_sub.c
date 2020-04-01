@@ -49,7 +49,7 @@ SLIP_info slip_forward_sub
     // Build the history matrix
     SLIP_matrix *h;
     SLIP_CHECK (SLIP_matrix_allocate(&h, SLIP_DENSE, SLIP_INT64, x->m, x->n,
-        x->nzmax, false, true, option));
+        x->nzmax, false, true, NULL));
 
     // initialize entries of history matrix to be -1
     for (i = 0; i < x->nzmax; i++)

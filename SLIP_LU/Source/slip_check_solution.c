@@ -94,22 +94,22 @@ SLIP_info slip_check_solution
         }
     }
     
-    result = SLIP_info;
+    result = info;
     //--------------------------------------------------------------------------
     // Print info
     //--------------------------------------------------------------------------
     
     if (result == SLIP_OK)
     {
-        if (SLIP_GET_PRINT_LEVEL(option))
+        if (SLIP_GET_PRINT_LEVEL(option)>=0)
         {
             printf ("Solution is verified to be exact.\n") ;
         }
     }
-    else if (checker == SLIP_INCORRECT)
+    else if (result == SLIP_INCORRECT)
     {
         // This can never happen.
-        if (SLIP_GET_PRINT_LEVEL(option))
+        if (SLIP_GET_PRINT_LEVEL(option)>=0)
         {
             printf ("ERROR! Solution is wrong. This is a bug; please"
                     "contact the authors of SLIP LU.\n") ;

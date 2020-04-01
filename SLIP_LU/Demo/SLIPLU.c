@@ -130,6 +130,7 @@ int main (int argc, char* argv[])
     
     // Initialize option, command options for the factorization
     SLIP_options *option = SLIP_create_default_options();
+    option->print_level = 2;
     
     // Extra parameters used to obtain A, b, etc
     SLIP_info ok ;
@@ -279,7 +280,7 @@ int main (int argc, char* argv[])
     double t_solve =  (double) (end_solve - start_solve) / CLOCKS_PER_SEC;
 
     printf("\nNumber of L+U nonzeros: \t\t%"PRId64,
-        (L->nz) + (U->nz) - (L->m));
+        (L->p[L->n]) + (U->p[U->n]) - (L->m));
     printf("\nSymbolic analysis time: \t\t%lf", t_sym);
     printf("\nSLIP LU Factorization time: \t\t%lf", t_factor);
     printf("\nFB Substitution time: \t\t\t%lf\n\n", t_solve);

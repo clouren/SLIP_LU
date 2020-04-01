@@ -25,7 +25,7 @@ mpfr_t* slip_create_mpfr_array
     //--------------------------------------------------------------------------
 
     if (n <= 0) {return NULL;}
-    int64_t prec = SLIP_GET_PREC(option);
+    int64_t prec = SLIP_GET_PRECISION(option);
     //--------------------------------------------------------------------------
 
     mpfr_t* x = (mpfr_t*) SLIP_calloc(n, sizeof(mpfr_t));

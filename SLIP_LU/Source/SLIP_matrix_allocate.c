@@ -53,7 +53,7 @@ SLIP_info SLIP_matrix_allocate
         return (SLIP_INCORRECT_INPUT) ;
     }
     (*A_handle) = NULL ;
-    if (m < 0 || n < 0 || option == NULL) // TODO create default option?
+    if (m < 0 || n < 0 ) 
     {
         return (SLIP_INCORRECT_INPUT) ;
     }
@@ -145,7 +145,7 @@ SLIP_info SLIP_matrix_allocate
                 // allocate the array but do not allocate the individual
                 // mpz, mpq, or mpfr
                 if (init)
-                    A->x.mpz = slip_create_mpz_array (nzmax, option) ;
+                    A->x.mpz = slip_create_mpz_array (nzmax) ;
                 else
                     A->x.mpz = SLIP_calloc(nzmax, sizeof(mpz_t));
                 ok = ok && (A->x.mpz != NULL) ;
@@ -153,7 +153,7 @@ SLIP_info SLIP_matrix_allocate
 
             case SLIP_MPQ:
                 if (init)
-                    A->x.mpq = slip_create_mpq_array (nzmax, option) ; 
+                    A->x.mpq = slip_create_mpq_array (nzmax) ; 
                 else
                     A->x.mpq = SLIP_calloc(nzmax, sizeof(mpq_t));
                 ok = ok && (A->x.mpq != NULL) ;

@@ -44,7 +44,7 @@ void slip_reach    // compute the reach of column k of A on the graph of L
         // DFS at unmarked node i
         if (!SLIP_MARKED(L->p, A->i[p]))
         {
-            slip_dfs(top, A->i[p], L, xi, xi+n, pinv, option);
+            slip_dfs(top, A->i[p], L, xi, xi+n, pinv);
         }
     }
 

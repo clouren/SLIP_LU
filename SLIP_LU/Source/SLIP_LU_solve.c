@@ -69,6 +69,7 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     // check inputs
     //--------------------------------------------------------------------------
 
+
     SLIP_info info ;
     SLIP_REQUIRE (b,    SLIP_DENSE, SLIP_MPZ) ;
     SLIP_REQUIRE (A,    SLIP_CSC,   SLIP_MPZ) ;
@@ -80,6 +81,7 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     {
         return SLIP_INCORRECT_INPUT;
     }
+
 
     //--------------------------------------------------------------------------
     // Declare and initialize workspace
@@ -115,8 +117,8 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     // b2 = L\b2, via forward substitution
     //--------------------------------------------------------------------------
 
-    SLIP_CHECK(slip_forward_sub(L, b2, (SLIP_matrix*) rhos, option));
-
+    SLIP_CHECK(slip_forward_sub(L, b2, (SLIP_matrix*) rhos));
+    
     //--------------------------------------------------------------------------
     // b2 = b2 * det, where det=rhos[n-1]
     //--------------------------------------------------------------------------
@@ -126,7 +128,7 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     //--------------------------------------------------------------------------
     // b2 = U\b2, via back substitution
     //--------------------------------------------------------------------------
-    SLIP_CHECK(slip_back_sub(U, b2, option));
+    SLIP_CHECK(slip_back_sub(U, b2));
 
     //--------------------------------------------------------------------------
     // x = b2/det, where det=rhos[n-1]
@@ -138,7 +140,7 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     // Permute the solution vectors
     //--------------------------------------------------------------------------
 
-    SLIP_CHECK(slip_permute_x(x, S, option));
+    SLIP_CHECK(slip_permute_x(x, (SLIP_LU_analysis *) S, option));
 
     //--------------------------------------------------------------------------
     // Check the solution if desired (debugging only)
@@ -146,7 +148,7 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
 
     if (option->check)
     {
-        SLIP_info checker = slip_check_solution(A, x, b, option);
+        SLIP_CHECK(slip_check_solution(A, x, b, option));
     }
 
     //--------------------------------------------------------------------------
@@ -156,19 +158,20 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     SLIP_CHECK(SLIP_mpq_init(scale));
     
     // set the scaling factor scale = A->scale / b->scale
-    SLIP_CHECK( SLIP_mpq_set(scale, A->scale));
-    SLIP_CHECK( SLIP_mpq_div(scale, b->scale));
+    SLIP_CHECK( SLIP_mpq_div(scale, A->scale, b->scale));
     
     // Determine if the scaling factor is 1
-    SLIP_CHECK(SLIP_mpq_cmp_ui(&k, scale, 1, 1));
+    int r;
+    SLIP_CHECK(SLIP_mpq_cmp_ui(&r, scale, 1, 1));
     int64_t nz = x->m * x->n;
-    if (k != 0 )
+    if (r != 0 )
     {
         for (i = 0; i < nz; i++)
         {
             SLIP_CHECK(SLIP_mpq_mul(x->x.mpq[i], x->x.mpq[i], scale));
         }
     }
+    
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------

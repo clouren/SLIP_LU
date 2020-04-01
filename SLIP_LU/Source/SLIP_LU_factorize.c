@@ -186,6 +186,7 @@ SLIP_info SLIP_LU_factorize
         }
     }
 
+    SLIP_GET_ROUND(option);
     // temp = sigma
     SLIP_CHECK(SLIP_mpfr_set_z(temp, sigma, SLIP_GET_ROUND(option)));
 
@@ -194,12 +195,12 @@ SLIP_info SLIP_LU_factorize
     //--------------------------------------------------------------------------
 
     // temp = sigma*sqrt(gamma)
-    SLIP_CHECK(SLIP_mpfr_mul_d(temp, temp, (double)sqrt(gamma), SLIP_GET_ROUND(round)));
+    SLIP_CHECK(SLIP_mpfr_mul_d(temp, temp, (double)sqrt(gamma), SLIP_GET_ROUND(option)));
     // temp = log2(temp)
-    SLIP_CHECK(SLIP_mpfr_log2(temp, temp, SLIP_GET_ROUND(round)));
+    SLIP_CHECK(SLIP_mpfr_log2(temp, temp, SLIP_GET_ROUND(option)));
     // inner2 = temp
     double inner2;
-    SLIP_CHECK(SLIP_mpfr_get_d(&inner2, temp, SLIP_GET_ROUND(round)));
+    SLIP_CHECK(SLIP_mpfr_get_d(&inner2, temp, SLIP_GET_ROUND(option)));
     // Free cache from log2. Even though mpfr_free_cache is called in
     // SLIP_LU_final(), it has to be called here to prevent memory leak in
     // some rare situations.
@@ -271,7 +272,7 @@ SLIP_info SLIP_LU_factorize
             rhos,
             (const int64_t *) pinv,
             (const int64_t *) row_perm,
-            h, x, option)) ;
+            h, x)) ;
 
         // Obtain pivot index
         SLIP_CHECK(slip_get_pivot(&pivot, x, pivs, n, top, xi, option->pivot,

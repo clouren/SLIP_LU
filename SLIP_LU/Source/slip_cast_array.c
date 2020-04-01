@@ -257,7 +257,7 @@ SLIP_info slip_cast_array
                         {
                             SLIP_CHECK( SLIP_mpq_set_z( temp, x[k]));
                             SLIP_CHECK( SLIP_mpq_div(temp, temp, x_scale));
-                            SLIP_CHECK(SLIP_mpfr_set_q(y[k], temp, SLIP_GET_ROUND(option));
+                            SLIP_CHECK(SLIP_mpfr_set_q(y[k], temp, SLIP_GET_ROUND(option)));
                         }
                     }
                 }
@@ -349,7 +349,7 @@ SLIP_info slip_cast_array
                             SLIP_CHECK( SLIP_mpq_div(temp, temp, x_scale));
                             double temp2;
                             SLIP_CHECK(SLIP_mpq_get_d(&temp2, temp));
-                            y[i] = slip_cast_double_to_int64(temp2);
+                            y[k] = slip_cast_double_to_int64(temp2);
                         }
                     }
                 }
@@ -434,7 +434,7 @@ SLIP_info slip_cast_array
                         {
                             SLIP_CHECK( SLIP_mpq_set_z( temp, x[k]));
                             SLIP_CHECK( SLIP_mpq_div(temp, temp, x_scale));
-                            SLIP_CHECK(SLIP_mpq_get_d(&(y[i]), temp));
+                            SLIP_CHECK(SLIP_mpq_get_d(&(y[k]), temp));
                         }
                     }
                 }

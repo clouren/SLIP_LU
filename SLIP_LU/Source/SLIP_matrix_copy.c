@@ -127,7 +127,7 @@ SLIP_info SLIP_matrix_copy
                     }
 
                     // C->p = cumulative sum of W
-                    slip_cumsum (C->p, W, n, option) ;
+                    slip_cumsum (C->p, W, n) ;
 
                     // build the matrix
                     switch (C->type)

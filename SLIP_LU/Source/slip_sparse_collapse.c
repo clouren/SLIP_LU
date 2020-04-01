@@ -29,7 +29,7 @@ SLIP_info slip_sparse_collapse
 
     //--------------------------------------------------------------------------
 
-    int64_t nz = A->p[n];
+    int64_t nz = A->p[A->n];
     // Shrink A->i and A->x such that they're of size nz.  These calls to
     // SLIP_realloc cannot fail since the space is shrinking.
     A->i = (int64_t*) SLIP_realloc(A->i, A->nzmax*sizeof(int64_t),
