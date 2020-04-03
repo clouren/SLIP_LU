@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 /* Purpose: This function multiplies the dense matrix x by the determinant of matrix.
- * 
+ *
  * This function requires that the matrix x is mpz_t and dense
  *
  * On output the contents of the x vector is modified.
@@ -30,7 +30,7 @@ SLIP_info slip_matrix_mul // multiplies vector x by the determinant of matrix
 
     SLIP_info info ;
     SLIP_REQUIRE (x, SLIP_DENSE, SLIP_MPZ) ;
-    
+
     //--------------------------------------------------------------------------
     // x = x * det
     //--------------------------------------------------------------------------

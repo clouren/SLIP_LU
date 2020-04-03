@@ -450,7 +450,8 @@ typedef struct
  */
 void SLIP_LU_analysis_free        
 (
-    SLIP_LU_analysis **S // Structure to be deleted
+    SLIP_LU_analysis **S, // Structure to be deleted
+    const SLIP_options *option
 );
 
 //------------------------------------------------------------------------------

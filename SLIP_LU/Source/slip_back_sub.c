@@ -53,7 +53,7 @@ SLIP_info slip_back_sub  // performs sparse REF backward substitution
             if (sgn == 0) {continue;}
 
             // Obtain bx[j]
-            SLIP_CHECK(SLIP_mpz_divexact( SLIP_2D(bx, j, k, mpz), 
+            SLIP_CHECK(SLIP_mpz_divexact( SLIP_2D(bx, j, k, mpz),
                                           SLIP_2D(bx, j, k, mpz),
                                           Ux[Up[j+1]-1]));
             for (int64_t i = Up[j]; i < Up[j+1]-1; i++)

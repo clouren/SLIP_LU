@@ -120,7 +120,7 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     //--------------------------------------------------------------------------
 
     SLIP_CHECK(slip_forward_sub(L, b2, (SLIP_matrix*) rhos));
-    
+
     //--------------------------------------------------------------------------
     // b2 = b2 * det, where det=rhos[n-1]
     //--------------------------------------------------------------------------
@@ -160,10 +160,10 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     //--------------------------------------------------------------------------
 
     SLIP_CHECK(SLIP_mpq_init(scale));
-    
+
     // set the scaling factor scale = A->scale / b->scale
     SLIP_CHECK( SLIP_mpq_div(scale, A->scale, b->scale));
-    
+
     // Determine if the scaling factor is 1
     int r;
     SLIP_CHECK(SLIP_mpq_cmp_ui(&r, scale, 1, 1));
@@ -175,7 +175,7 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
             SLIP_CHECK(SLIP_mpq_mul(x->x.mpq[i], x->x.mpq[i], scale));
         }
     }
-    
+
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------

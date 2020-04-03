@@ -75,9 +75,9 @@ SLIP_info SLIP_LU_factorize
     // Declare and initialize workspace
     //--------------------------------------------------------------------------
 
-    SLIP_matrix *L = NULL ;    
-    SLIP_matrix *U = NULL ;    
-    SLIP_matrix *rhos = NULL ;       
+    SLIP_matrix *L = NULL ;
+    SLIP_matrix *U = NULL ;
+    SLIP_matrix *rhos = NULL ;
     int64_t *pinv = NULL ;
     int64_t *xi = NULL ;
     int64_t *h = NULL ;
@@ -91,7 +91,7 @@ SLIP_info SLIP_LU_factorize
     SLIP_info info ;
     int64_t n = A->n ;
     pinv = (int64_t *) SLIP_malloc (n * sizeof (int64_t)) ;
-    
+
     if (!pinv)
     {
         // out of memory: free everything and return
@@ -102,7 +102,7 @@ SLIP_info SLIP_LU_factorize
     int64_t k = 0, top, i, j, col, loc, lnz = 0, unz = 0, anz, pivot, jnew ;
     size_t size ;
     anz = A->p[n];
-    
+
     SLIP_CHECK(SLIP_mpz_init(sigma));
     SLIP_CHECK(SLIP_mpfr_init2(temp, 256));
 
@@ -223,11 +223,11 @@ SLIP_info SLIP_LU_factorize
         false, false, option));
 
     // Allocate L and U without initializing each entry.
-    // L and U are allocated to have nnz(L) = the estimate from symbolic 
+    // L and U are allocated to have nnz(L) = the estimate from symbolic
     // analysis. However, unlike traditional matrix allocation, the second
-    // boolean parameter here is set to false, so the individual values of 
-    // L and U are not allocated. Instead, a more efficient method to 
-    // allocate these values is done in the factorization to reduce 
+    // boolean parameter here is set to false, so the individual values of
+    // L and U are not allocated. Instead, a more efficient method to
+    // allocate these values is done in the factorization to reduce
     // memory usage.
     SLIP_CHECK (SLIP_matrix_allocate(&L, SLIP_CSC, SLIP_MPZ, n, n, S->lnz,
         false, false, option));
@@ -334,7 +334,7 @@ SLIP_info SLIP_LU_factorize
     // Finalize L->p, U->p
     L->p[n] = lnz;
     U->p[n] = unz;
-    
+
     //--------------------------------------------------------------------------
     // Free memory
     //--------------------------------------------------------------------------

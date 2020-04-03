@@ -31,11 +31,16 @@
  *              NULL on input, default values are used.
  */
 
-# define SLIP_FREE_ALL              \
+# define SLIP_FREE_WORK             \
     SLIP_matrix_free(&L, NULL);     \
     SLIP_matrix_free(&U, NULL);     \
     SLIP_FREE(pinv);                \
     SLIP_matrix_free(&rhos, NULL);  \
+    SLIP_LU_analysis_free (&S, NULL);
+
+# define SLIP_FREE_ALL              \
+    SLIP_FREE_WORK                  \
+    SLIP_matrix_free(&x, NULL);     \
 
 #include "slip_LU_internal.h"
 
@@ -128,7 +133,7 @@ SLIP_info SLIP_backslash
     // Free memory
     //--------------------------------------------------------------------------
 
-    SLIP_FREE_ALL;
+    SLIP_FREE_WORK;
     return (SLIP_OK) ;
 }
 

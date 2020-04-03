@@ -51,7 +51,7 @@ SLIP_info slip_check_solution
     //--------------------------------------------------------------------------
     // perform SLIP_mpq_addmul in loops
     //--------------------------------------------------------------------------
-    
+
     for (j = 0; j < b->n; j++)
     {
         for (i = 0; i < b->m; i++)
@@ -62,7 +62,7 @@ SLIP_info slip_check_solution
                 SLIP_CHECK(SLIP_mpq_set_z(temp, A->x.mpz[p]));
 
                 // temp = temp*x[i]
-                SLIP_CHECK(SLIP_mpq_mul(temp, temp, 
+                SLIP_CHECK(SLIP_mpq_mul(temp, temp,
                                         SLIP_2D(x, i, j, mpq)));
 
                 // b2[p] = b2[p]-temp
@@ -94,11 +94,11 @@ SLIP_info slip_check_solution
             }
         }
     }
-    
+
     //--------------------------------------------------------------------------
     // Print info
     //--------------------------------------------------------------------------
-    
+
     if (info == SLIP_OK)
     {
         if (SLIP_GET_PRINT_LEVEL(option)>=0)

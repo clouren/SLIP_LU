@@ -34,7 +34,7 @@ SLIP_info SLIP_matrix_allocate
                             // by the caller.  All A->*_shallow are returned
                             // as true.
     bool init,              // If true, and the data types are mpz, mpq, or
-                            // mpfr, the entries are initialized (using the 
+                            // mpfr, the entries are initialized (using the
                             // appropriate SLIP_mp*_init function). If false,
                             // the mpz, mpq, and mpfr arrays are malloced but
                             // not initialized. Utilized internally to reduce
@@ -56,7 +56,7 @@ SLIP_info SLIP_matrix_allocate
     if (m < 0 || n < 0 ||
         kind  < SLIP_CSC || kind  > SLIP_DENSE ||
         type  < SLIP_MPZ || type  > SLIP_FP64)
- 
+
     {
         return (SLIP_INCORRECT_INPUT) ;
     }
@@ -153,7 +153,7 @@ SLIP_info SLIP_matrix_allocate
 
             case SLIP_MPQ:
                 if (init)
-                    A->x.mpq = slip_create_mpq_array (nzmax) ; 
+                    A->x.mpq = slip_create_mpq_array (nzmax) ;
                 else
                     A->x.mpq = SLIP_calloc(nzmax, sizeof(mpq_t));
                 ok = ok && (A->x.mpq != NULL) ;
@@ -161,7 +161,7 @@ SLIP_info SLIP_matrix_allocate
 
             case SLIP_MPFR:
                 if (init)
-                    A->x.mpfr = slip_create_mpfr_array (nzmax, option) ; 
+                    A->x.mpfr = slip_create_mpfr_array (nzmax, option) ;
                 else
                     A->x.mpfr = SLIP_calloc(nzmax, sizeof(mpfr_t));
                 ok = ok && (A->x.mpfr != NULL) ;

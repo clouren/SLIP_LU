@@ -10,7 +10,7 @@
 
 /* Purpose: This function expands a CSC SLIP_matrix by doubling its size. This
  * version merely expands x and i and does not initialize/allocate the values!
- * The only purpose of this function is for the factorization, it does not work 
+ * The only purpose of this function is for the factorization, it does not work
  * for general sparse matrices
  */
 
@@ -27,7 +27,7 @@ SLIP_info slip_sparse_realloc
     //--------------------------------------------------------------------------
 
     SLIP_REQUIRE(A, SLIP_CSC, SLIP_MPZ);
-    
+
     int64_t nzmax = A->nzmax;
     mpz_t *Ax_new = NULL;
 

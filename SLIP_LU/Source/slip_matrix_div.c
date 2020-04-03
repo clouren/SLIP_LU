@@ -10,7 +10,7 @@
 
 /* Purpose: This function takes as input a dense SLIP_matrix, x, which is MPZ,
  * and divides it by the determinant of the matrix. This division is then stored
- * in a dense MPQ matrix. This is used internally to divide the solution vector 
+ * in a dense MPQ matrix. This is used internally to divide the solution vector
  * by the determinant of the matrix.
  *
  * On output, the contents of the matrix x2 are modified.
@@ -35,7 +35,7 @@ SLIP_info slip_matrix_div // divides the x matrix by the determinant
     SLIP_info info ;
     SLIP_REQUIRE (x2, SLIP_DENSE, SLIP_MPQ) ;
     SLIP_REQUIRE (x,  SLIP_DENSE, SLIP_MPZ) ;
-    
+
     //--------------------------------------------------------------------------
     // Set det2 = det
     //--------------------------------------------------------------------------
@@ -47,7 +47,7 @@ SLIP_info slip_matrix_div // divides the x matrix by the determinant
     //--------------------------------------------------------------------------
     // iterate each entry of x, copy to x2 and divide it by det
     //--------------------------------------------------------------------------
-    
+
     int64_t nz = x->n * x->m;
     for (int64_t i = 0; i < nz; i++)
     {
@@ -56,7 +56,7 @@ SLIP_info slip_matrix_div // divides the x matrix by the determinant
         // x2[i] = x2[i] / det2
         SLIP_CHECK(SLIP_mpq_div( x2->x.mpq[i], x2->x.mpq[i], det2));
     }
-    
+
     //--------------------------------------------------------------------------
     // Free memory associated with det2
     //--------------------------------------------------------------------------

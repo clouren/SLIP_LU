@@ -41,14 +41,12 @@
 
 #define SLIP_FREE_ALL                            \
 {                                                \
-    SLIP_LU_analysis_free(&S);                   \
     SLIP_matrix_free(&A,option);                 \
     SLIP_matrix_free(&b, option);                \
     SLIP_matrix_free(&B, option);                \
     SLIP_matrix_free(&Ax, option);               \
     SLIP_matrix_free(&sol, option);              \
     SLIP_FREE(option);                           \
-    if (mat_file != NULL) {fclose(mat_file);}    \
     SLIP_finalize() ;                            \
 }
 
@@ -248,7 +246,6 @@ int main( int argc, char* argv[])
             SLIP_options* option = SLIP_create_default_options();
             if (!option) {continue;}
             option->print_level = 3;
-            FILE* mat_file = NULL;
 
             // used in as source in different Ab_type for A and b
             SLIP_matrix *B   = NULL;
@@ -258,9 +255,6 @@ int main( int argc, char* argv[])
             SLIP_matrix *A = NULL ;
             SLIP_matrix *b = NULL ;
             SLIP_matrix *sol = NULL;
-
-            // for Column ordering
-            SLIP_LU_analysis* S = NULL ;
 
             if (Ab_type >= 0 && Ab_type <= 4)
             {
@@ -415,6 +409,8 @@ int main( int argc, char* argv[])
                 // successful case
                 TEST_CHECK(SLIP_matrix_copy(&A, SLIP_CSC, SLIP_MPZ, Ax,option));
                 TEST_CHECK(SLIP_matrix_copy(&b, SLIP_DENSE, SLIP_MPZ,B,option));
+                SLIP_matrix_free(&B, option);
+                SLIP_matrix_free(&Ax, option);
             }
             else
             {

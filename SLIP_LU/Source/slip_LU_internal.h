@@ -121,10 +121,10 @@
 
 #include "SLIP_LU.h"
 
-#ifdef SLIP_LU_TCOV 
-    /* include this header to redefine SLIP_MEMORY_REALLOC (used in SLIP_gmp.c) 
-     * for memory test and to use macro GOTCHA */ 
-    #include "../Tcov/tcov_malloc_test.h" 
+#ifdef SLIP_LU_TCOV
+    /* include this header to redefine SLIP_MEMORY_REALLOC (used in SLIP_gmp.c)
+     * for memory test and to use macro GOTCHA */
+    #include "../Tcov/tcov_malloc_test.h"
 #endif
 
 //------------------------------------------------------------------------------
@@ -349,7 +349,7 @@ SLIP_info slip_matrix_mul // multiplies vector x by the determinant of matrix
 SLIP_info slip_forward_sub
 (
     const SLIP_matrix *L,   // lower triangular matrix
-    SLIP_matrix *x,         // right hand side matrix 
+    SLIP_matrix *x,         // right hand side matrix
     const SLIP_matrix *rhos // sequence of pivots used in factorization
 );
 

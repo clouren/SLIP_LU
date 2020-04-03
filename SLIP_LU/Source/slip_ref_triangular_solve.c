@@ -61,15 +61,15 @@
  *              on entries in x. During the triangular solve, h[i] indicates
  *              the last pivot in which entry x[i] was IPGE updated.
  *
- *  x:          Dense mpz_t matrix Workspace of size n*1, unitialized on input. 
- *              On output, x[i] is the value of L(i,k) here i is in the nonzero 
+ *  x:          Dense mpz_t matrix Workspace of size n*1, unitialized on input.
+ *              On output, x[i] is the value of L(i,k) here i is in the nonzero
  *              pattern xi[top...n-1]. Other entries of x are undefined on output.
  */
 
 
 #include "slip_LU_internal.h"
 
-// Sorting function 
+// Sorting function
 static inline int compare (const void * a, const void * b)
 {
     int64_t delta = ( *(int64_t*)a - *(int64_t*)b ) ;
@@ -109,7 +109,7 @@ SLIP_info slip_ref_triangular_solve // performs the sparse REF triangular solve
     SLIP_REQUIRE(L, SLIP_CSC, SLIP_MPZ);
     SLIP_REQUIRE(A, SLIP_CSC, SLIP_MPZ);
     SLIP_REQUIRE(rhos, SLIP_DENSE, SLIP_MPZ);
-    
+
     int64_t j, jnew, i, inew, p, m, n, col, top ;
     int sgn ;
     mpz_t *x_mpz = x->x.mpz, *Ax_mpz = A->x.mpz, *Lx_mpz = L->x.mpz,
@@ -166,15 +166,15 @@ SLIP_info slip_ref_triangular_solve // performs the sparse REF triangular solve
     {
         h[xi[i]] = -1;
     }
-    
+
     // Set x = A(:,q(k))
     for (i = A->p[col]; i < A->p[col + 1]; i++)
     {
         // Value of the ith nonzero
         SLIP_CHECK(SLIP_mpz_set(x_mpz[A->i[i]], Ax_mpz[i]));
     }
-    
-    
+
+
     //--------------------------------------------------------------------------
     // Iterate across nonzeros in x
     //--------------------------------------------------------------------------

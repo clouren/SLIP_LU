@@ -594,7 +594,7 @@ SLIP_info SLIP_matrix_copy
                                     SLIP_1D (Y, k, fp64) ;
                             }
                             break ;
-                    
+
                     }
                 }
                 break ;
@@ -617,7 +617,7 @@ SLIP_info SLIP_matrix_copy
         break ;
 
     }
-    
+
     //--------------------------------------------------------------------------
     // free workspace and return result
     //--------------------------------------------------------------------------

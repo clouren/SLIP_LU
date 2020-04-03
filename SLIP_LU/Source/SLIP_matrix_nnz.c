@@ -21,7 +21,7 @@ int64_t SLIP_matrix_nnz     // return # of entries in A, or -1 on error
     // check inputs
     //--------------------------------------------------------------------------
 
-    if (A == NULL ) 
+    if (A == NULL )
     {
         return (-1) ;
     }
