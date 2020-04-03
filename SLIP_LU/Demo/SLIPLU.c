@@ -74,7 +74,7 @@
     SLIP_matrix_free(&b, option);                \
     SLIP_matrix_free(&rhos, option);             \
     SLIP_free(pinv);                             \
-    SLIP_LU_analysis_free(&S);                   \
+    SLIP_LU_analysis_free(&S, option);           \
     SLIP_FREE(option);                           \
     SLIP_finalize( ) ;
 

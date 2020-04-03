@@ -24,7 +24,7 @@
 // out is file for output calculated result
 
 #define FREE_WORKSPACE              \
-    SLIP_LU_analysis_free(&S);      \
+    SLIP_LU_analysis_free(&S, option);\
     SLIP_matrix_free(&A, option);   \
     SLIP_FREE(option);              \
     SLIP_matrix_free(&b, option);   \

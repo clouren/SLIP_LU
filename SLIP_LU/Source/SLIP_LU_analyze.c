@@ -115,7 +115,7 @@ SLIP_info SLIP_LU_analyze
         if (!A2)
         {
             // out of memory
-            SLIP_LU_analysis_free (&S) ;
+            SLIP_LU_analysis_free (&S, option) ;
             return (SLIP_OUT_OF_MEMORY) ;
         }
         // Initialize S->q as per COLAMD documentation
