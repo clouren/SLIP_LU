@@ -14,8 +14,10 @@
  *
  * For simple test, the test needs to be run with command
  * ./cov_test Ab_type N list1[0] ... list1[N-1] M list2[0] ... list2[M-1]
- * Ab_type: type of Matrix A and vector b: 0 mpz, 1 double, 2 int64, 3 mpq,
- *      4 mpfr, 5 for miscellaneous test.
+ * Ab_type: type of original matrix A and vector b: 0 mpz, 1 mpq, 2 mpfr, 3
+ *     int64, 4 double. For Ab_type >= 5, it corresponds to 15 type of original
+ *     matrix A (i.e., (csc, triplet, dense) x (mpz, mpq, mpfr, int64, double)),
+ *     specifically, A->type=(Ab_type-5)%5, and A->kind=(Ab_type-5)/5.
  * N and list1 specify the test list for slip_gmp_ntrials (in SLIP_gmp.h)
  * M and list2 specify the test list for malloc_count (in tcov_malloc_test.h)
  * N, list1, M, list2 are optional, but N and list1 are required when M and
@@ -24,7 +26,7 @@
  * For brutal test, the test is run with command
  * ./cov_test
  * the test will run through all cases
- * (specifically, Ab_type={0, 1, 2, 3, 4, 5})
+ * (specifically, Ab_type={0, 1, 2, 3, 4, 5,...,20})
  * each case run from malloc_count = 0 to a number that can guarantee
  * malloc_count > 0 when the case finishes
  */
@@ -78,7 +80,7 @@
     }                                            \
 }
 
-#define MAX_MALLOC_COUNT 10000
+#define MAX_MALLOC_COUNT 1000
 
 int64_t Ap[5] = {0, 3, 5, 8, 11};
 int64_t Ai[11]   = {0, 1, 2, 2, 3, 1, 2, 3, 0, 1,  2};
@@ -95,7 +97,10 @@ int main( int argc, char* argv[])
 {
     bool IS_SIMPLE_TEST = true;
     int Ab_type = 0;
-    int64_t malloc_count_list[6]= { -1, -1, -1, -1, -1, -1};
+    int64_t malloc_count_list[20]= { -1, -1, -1, -1, -1,
+                                     -1, -1, -1, -1, -1,
+                                     -1, -1, -1, -1, -1,
+                                     -1, -1, -1, -1, -1};
     int64_t NUM_OF_TRIALS = 0 ;
     int64_t NUM_OF_MALLOC_T = 0;
     int64_t *gmp_ntrial_list=NULL;         // only used in simple test
@@ -108,7 +113,7 @@ int main( int argc, char* argv[])
     if (argc == 1)                         // brutal test
     {
         IS_SIMPLE_TEST = false;
-        NUM_OF_TRIALS = 6;
+        NUM_OF_TRIALS = 20;
     }
     else                                   // simple test
     {
@@ -328,6 +333,7 @@ int main( int argc, char* argv[])
                     // to trigger all-zero array condition
                     TEST_CHECK(SLIP_matrix_copy(&A, SLIP_CSC, SLIP_MPZ, Ax,
                         option));
+                    SLIP_matrix_free (&A, option) ;
 
                     // trigger gcd == 1
                     for (j = 0; j < n; j++)                           // Get b
@@ -428,197 +434,196 @@ int main( int argc, char* argv[])
 
                 double x_doub2[11] = {1, 1, 1, 2, 2, 3, 3, 3, 4, 4, 4};
                 int64_t x_int64[11] = {1, 1, 1, 2, 2, 3, 3, 3, 4, 4, 4};
-                for (int tk = 0; tk < 15; tk++)
+                
+                // find the type and kind of the source matrix to copy from
+                int tk = Ab_type-5;
+                int type = tk%5;
+                int kind = tk/5;
+                if (kind != 2)
                 {
-                    int type = tk%5;
-                    int kind = tk/5;
-                    if (kind != 2)
-                    {
-                        m1 = n;
-                        n1 = n;
-                        nz1 = nz;
-                    }
-                    else
-                    {
-                        m1 = nz1;
-                        n1 = 1;
-                        nz1 = nz1;
-                    }
-                    TEST_CHECK(SLIP_matrix_allocate(&Ax, (SLIP_type) kind,
-                        (SLIP_type)type, m1, n1, nz1, false, true, option));
+                    m1 = n;
+                    n1 = n;
+                    nz1 = nz;
+                }
+                else
+                {
+                    m1 = nz1;
+                    n1 = 1;
+                    nz1 = nz1;
+                }
+                TEST_CHECK(SLIP_matrix_allocate(&Ax, (SLIP_type) kind,
+                    (SLIP_type)type, m1, n1, nz1, false, true, option));
 
-                    // fill Ax->p
-                    if(kind == 0)
+                // fill Ax->p
+                if(kind == 0)
+                {
+                    for (j = 0; j < n+1; j++)
                     {
-                        for (j = 0; j < n+1; j++)
+                        Ax->p[j] = P[j];
+                    }
+                }
+                // fill Ax->i and Ax->j
+                for (j = 0; j < nz; j++)
+                {
+                    if (kind != 2) {Ax->i[j] = I[j];}
+                    // triplet
+                    if (kind == 1){  Ax->j[j] = J[j];}
+                    switch (type)
+                    {
+                        case 0: // MPZ
                         {
-                            Ax->p[j] = P[j];
+                            TEST_CHECK(SLIP_mpz_set_si(Ax->x.mpz[j],
+                                x_int64[j]));
                         }
-                    }
-                    // fill Ax->i and Ax->j
-                    for (j = 0; j < nz; j++)
-                    {
-                        if (kind != 2) {Ax->i[j] = I[j];}
-                        // triplet
-                        if (kind == 1){  Ax->j[j] = J[j];}
-                        switch (type)
+                        break;
+
+                        case 1: // MPQ
                         {
-                            case 0: // MPZ
-                            {
-                                TEST_CHECK(SLIP_mpz_set_si(Ax->x.mpz[j],
-                                    x_int64[j]));
-                            }
-                            break;
-
-                            case 1: // MPQ
-                            {
-                                TEST_CHECK(SLIP_mpq_set_ui(Ax->x.mpq[j],
-                                    2*x_int64[j],2));
-                            }
-                            break;
-
-                            case 2: // MPFR
-                            {
-                                TEST_CHECK(SLIP_mpfr_set_d(Ax->x.mpfr[j],
-                                    x_doub2[j], MPFR_RNDN));
-                                TEST_CHECK(SLIP_mpfr_div_d(Ax->x.mpfr[j],
-                                    Ax->x.mpfr[j], 1, MPFR_RNDN));
-                            }
-                            break;
-
-                            case 3: // INT64
-                            {
-                                Ax->x.int64[j] = x_int64[j];
-                            }
-                            break;
-
-                            case 4: // double
-                            {
-                                Ax->x.fp64[j] = x_doub2[j];
-                            }
-                            break;
-
-                            default: break;
+                            TEST_CHECK(SLIP_mpq_set_ui(Ax->x.mpq[j],
+                                2*x_int64[j],2));
                         }
+                        break;
+
+                        case 2: // MPFR
+                        {
+                            TEST_CHECK(SLIP_mpfr_set_d(Ax->x.mpfr[j],
+                                x_doub2[j], MPFR_RNDN));
+                            TEST_CHECK(SLIP_mpfr_div_d(Ax->x.mpfr[j],
+                                Ax->x.mpfr[j], 1, MPFR_RNDN));
+                        }
+                        break;
+
+                        case 3: // INT64
+                        {
+                            Ax->x.int64[j] = x_int64[j];
+                        }
+                        break;
+
+                        case 4: // double
+                        {
+                            Ax->x.fp64[j] = x_doub2[j];
+                        }
+                        break;
+
+                        default: break;
                     }
-                    TEST_CHECK (SLIP_matrix_check (Ax, option));
+                }
+                TEST_CHECK (SLIP_matrix_check (Ax, option));
 
-                    // convert to all different type of matrix
-                    for (int tk1 = 0; tk1 < 15; tk1++)
+                // convert to all different type of matrix
+                for (int tk1 = 0; tk1 < 15; tk1++)
+                {
+                    // successful cases
+                    int type1 = tk1%5;
+                    int kind1 = tk1/5;
+                    printf("converting from %s(%d) %s(%d) to %s(%d) "
+                        "%s(%d)\n",kind < 1 ? "CSC" : kind < 2 ? "Triplet" :
+                        "Dense",kind, type < 1 ? "MPZ" : type < 2 ? "MPQ" :
+                        type <3 ?  "MPFR" : type < 4 ? "int64" :
+                        "double",type, kind1 < 1 ?  "CSC" : kind1 < 2 ?
+                        "Triplet" : "Dense", kind1,type1 < 1 ? "MPZ" :
+                        type1 < 2 ? "MPQ" : type1 < 3 ?  "MPFR" : type1 < 4
+                        ? "int64" : "double",type1) ;
+
+                    TEST_CHECK(SLIP_matrix_copy(&A, (SLIP_kind)kind1,
+                        (SLIP_type) type1, Ax, option));
+
+                    TEST_CHECK (SLIP_matrix_check (A, NULL));
+
+                    // just perform once to try some failure cases
+                    if (tk == 0 && tk1 == 0)
                     {
-                        // successful cases
-                        int type1 = tk1%5;
-                        int kind1 = tk1/5;
-                        printf("converting from %s(%d) %s(%d) to %s(%d) "
-                            "%s(%d)\n",kind < 1 ? "CSC" : kind < 2 ? "Triplet" :
-                            "Dense",kind, type < 1 ? "MPZ" : type < 2 ? "MPQ" :
-                            type <3 ?  "MPFR" : type < 4 ? "int64" :
-                            "double",type, kind1 < 1 ?  "CSC" : kind1 < 2 ?
-                            "Triplet" : "Dense", kind1,type1 < 1 ? "MPZ" :
-                            type1 < 2 ? "MPQ" : type1 < 3 ?  "MPFR" : type1 < 4
-                            ? "int64" : "double",type1) ;
-
+                        // fail SLIP_LU_solve
+                        TEST_CHECK(SLIP_matrix_allocate(&b, SLIP_DENSE,
+                            SLIP_MPZ, 1, 1, 1, true, true, option));
+                        TEST_CHECK_FAILURE(SLIP_LU_solve(NULL, b, A, A, A,
+                            b, NULL, NULL, option));
+                        SLIP_matrix_free (&b, option) ;
+                    }
+                    else if (tk == 0 && (tk1 == 1 || tk1 == 2 || tk1 == 4))
+                    {
+                        // test SLIP_matrix_copy with scale
+                        SLIP_matrix_free (&A, option) ;
+                        SLIP_CHECK (SLIP_mpq_set_ui (Ax->scale, 2, 5)) ;
                         TEST_CHECK(SLIP_matrix_copy(&A, (SLIP_kind)kind1,
                             (SLIP_type) type1, Ax, option));
-
-                        TEST_CHECK (SLIP_matrix_check (A, NULL));
-
-                        // just perform once to try some failure cases
-                        if (tk == 0 && tk1 == 0)
-                        {
-                            // fail SLIP_LU_solve
-                            TEST_CHECK(SLIP_matrix_allocate(&b, SLIP_DENSE,
-                                SLIP_MPZ, 1, 1, 1, true, true, option));
-                            TEST_CHECK_FAILURE(SLIP_LU_solve(NULL, b, A, A, A,
-                                b, NULL, NULL, option));
-                            SLIP_matrix_free (&b, option) ;
-                        }
-                        else if (tk == 0 && (tk1 == 1 || tk1 == 2 || tk1 == 4))
-                        {
-                            // test SLIP_matrix_copy with scale
-                            SLIP_matrix_free (&A, option) ;
-                            SLIP_CHECK (SLIP_mpq_set_ui (Ax->scale, 2, 5)) ;
-                            TEST_CHECK(SLIP_matrix_copy(&A, (SLIP_kind)kind1,
-                                (SLIP_type) type1, Ax, option));
-                            SLIP_CHECK (SLIP_mpq_set_ui (Ax->scale, 1, 1)) ;
-                        }
-                        else if (tk == 0 && tk1 == 3)
-                        {
-                            // test SLIP_matrix_check
-                            A->i[0] = -1;
-                            TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
-                            SLIP_FREE(A->x.int64);
-                            TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
-                            A->p[1] = 2;
-                            A->p[2] = 1;
-                            TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
-                            A->p[0] = 1;
-                            TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
-                            A->nzmax = -1;
-                            TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
-                            A->n = -1;
-                            TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
-                            A->m = -1;
-                            TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
-                            A->type = -1;// invalid type
-                            TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
-                            TEST_CHECK_FAILURE(SLIP_matrix_check(NULL, option));
-
-                            // Incorrect calling with NULL pointer(s)
-                            TEST_CHECK_FAILURE(SLIP_LU_analyze(NULL,A,NULL));
-
-                            // test SLIP_matrix_copy with scale
-                            SLIP_matrix_free (&A, option) ;
-                            SLIP_CHECK (SLIP_mpq_set_ui (Ax->scale, 5, 2)) ;
-                            TEST_CHECK(SLIP_matrix_copy(&A, (SLIP_kind)kind1,
-                                (SLIP_type) type1, Ax, option));
-                            SLIP_CHECK (SLIP_mpq_set_ui (Ax->scale, 1, 1)) ;
-                        }
-                        else if (tk == 0 && tk1 == 8)
-                        {
-                            // test SLIP_matrix_check
-                            A->i[0] = -1;
-                            TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
-                            SLIP_FREE(A->x.int64);
-                            TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
-                        }
-                        else if (tk == 0 && tk1 == 13)
-                        {
-                            SLIP_FREE(A->x.int64);
-                            TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
-                        }
-                        SLIP_matrix_free (&A, option) ;
-
+                        SLIP_CHECK (SLIP_mpq_set_ui (Ax->scale, 1, 1)) ;
                     }
-                    if (tk == 0)
+                    else if (tk == 0 && tk1 == 3)
                     {
-                        // fail SLIP_matrix_copy
-                        TEST_CHECK_FAILURE(SLIP_matrix_copy(&A, 7,
-                            (SLIP_type) type, Ax, option));
+                        // test SLIP_matrix_check
+                        A->i[0] = -1;
+                        TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
+                        SLIP_FREE(A->x.int64);
+                        TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
+                        A->p[1] = 2;
+                        A->p[2] = 1;
+                        TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
+                        A->p[0] = 1;
+                        TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
+                        A->nzmax = -1;
+                        TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
+                        A->n = -1;
+                        TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
+                        A->m = -1;
+                        TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
+                        A->type = -1;// invalid type
+                        TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
+                        TEST_CHECK_FAILURE(SLIP_matrix_check(NULL, option));
+
+                        // Incorrect calling with NULL pointer(s)
+                        TEST_CHECK_FAILURE(SLIP_LU_analyze(NULL,A,NULL));
+
+                        // test SLIP_matrix_copy with scale
+                        SLIP_matrix_free (&A, option) ;
+                        SLIP_CHECK (SLIP_mpq_set_ui (Ax->scale, 5, 2)) ;
+                        TEST_CHECK(SLIP_matrix_copy(&A, (SLIP_kind)kind1,
+                            (SLIP_type) type1, Ax, option));
+                        SLIP_CHECK (SLIP_mpq_set_ui (Ax->scale, 1, 1)) ;
                     }
-                    SLIP_matrix_free (&Ax, option) ;
+                    else if (tk == 0 && tk1 == 8)
+                    {
+                        // test SLIP_matrix_check
+                        A->i[0] = -1;
+                        TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
+                        SLIP_FREE(A->x.int64);
+                        TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
+                    }
+                    else if (tk == 0 && tk1 == 13)
+                    {
+                        SLIP_FREE(A->x.int64);
+                        TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
+                    }
+                    SLIP_matrix_free (&A, option) ;
+
                 }
+                if (tk == 0)
+                {
+                    // fail SLIP_matrix_copy
+                    TEST_CHECK_FAILURE(SLIP_matrix_copy(&A, 7,
+                        (SLIP_type) type, Ax, option));
 
-                // fail SLIP_matrix_allocate
-                TEST_CHECK_FAILURE(SLIP_matrix_allocate(NULL,
-                    SLIP_DENSE, SLIP_MPZ, 1, 1, 1,
-                    true, true, option));
-                TEST_CHECK_FAILURE(SLIP_matrix_allocate(&b,
-                    SLIP_DENSE, SLIP_MPZ, -1, 1, 1,
-                    true, true, option));
+                    // fail SLIP_matrix_allocate
+                    TEST_CHECK_FAILURE(SLIP_matrix_allocate(NULL,
+                        SLIP_DENSE, SLIP_MPZ, 1, 1, 1,
+                        true, true, option));
+                    TEST_CHECK_FAILURE(SLIP_matrix_allocate(&b,
+                        SLIP_DENSE, SLIP_MPZ, -1, 1, 1,
+                        true, true, option));
 
-                // test SLIP_matrix_allocate
-                TEST_CHECK(SLIP_matrix_allocate(&b, SLIP_DENSE,
-                    SLIP_MPQ, 1, 1, 1, false, false, option));
-                SLIP_matrix_free (&b, option) ;
-                TEST_CHECK(SLIP_matrix_allocate(&b, SLIP_DENSE,
-                    SLIP_MPFR, 1, 1, 1, false, false, option));
-                SLIP_matrix_free (&b, option) ;
+                    // test SLIP_matrix_allocate
+                    TEST_CHECK(SLIP_matrix_allocate(&b, SLIP_DENSE,
+                        SLIP_MPQ, 1, 1, 1, false, false, option));
+                    SLIP_matrix_free (&b, option) ;
+                    TEST_CHECK(SLIP_matrix_allocate(&b, SLIP_DENSE,
+                        SLIP_MPFR, 1, 1, 1, false, false, option));
+                    SLIP_matrix_free (&b, option) ;
 
-                //test coverage for slip_gmp_reallocate()
-                void *p_new = NULL;
-                TEST_CHECK(slip_gmp_realloc_test(&p_new, NULL,0,1));
-                TEST_CHECK(slip_gmp_realloc_test(&p_new,p_new,1,0));
+                    //test coverage for slip_gmp_reallocate()
+                    void *p_new = NULL;
+                    TEST_CHECK(slip_gmp_realloc_test(&p_new, NULL,0,1));
+                    TEST_CHECK(slip_gmp_realloc_test(&p_new,p_new,1,0));
+                }
 
                 SLIP_FREE_ALL;
 
@@ -627,7 +632,7 @@ int main( int argc, char* argv[])
                 {
                     if (malloc_count > 0)
                     {
-                        malloc_count_list[5] = kk;
+                        malloc_count_list[Ab_type] = kk;
                         break;
                     }
                     else {continue;}
@@ -715,10 +720,12 @@ int main( int argc, char* argv[])
     }
     else
     {
-        printf("least required malloc_count for Ab_type = 0~5 are %ld %ld %ld "
-            "%ld %ld %ld\n", malloc_count_list[0], malloc_count_list[1], 
-            malloc_count_list[2], malloc_count_list[3],
-            malloc_count_list[4], malloc_count_list[5]);
+        printf("least required malloc_count for Ab_type = 0~20 are ");
+        for (int i = 0; i < 20; i++)
+        {
+            printf("%ld ", malloc_count_list[i]);
+        }
+        printf("\n");
     }
     return 0;
 }
