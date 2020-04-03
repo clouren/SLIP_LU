@@ -25,7 +25,7 @@
 
 #define SLIP_FREE_ALL           \
     SLIP_MPQ_CLEAR (tol) ;      \
-    SLIP_MPQ_CLEAR (ratio) ; 
+    SLIP_MPQ_CLEAR (ratio) ;
 
 #include "slip_LU_internal.h"
 
@@ -37,14 +37,13 @@ SLIP_info slip_get_pivot
     int64_t n,              // dimension of the problem
     int64_t top,            // nonzero pattern is located in xi[top..n-1]
     int64_t* xi,            // nonzero pattern of x
-    SLIP_pivot order,       // pivoting method to use (see above description)
     int64_t col,            // current column of A (real kth column i.e., q[k])
     int64_t k,              // iteration of the algorithm
     SLIP_matrix* rhos,      // vector of pivots
     int64_t* pinv,          // row permutation
     int64_t* row_perm,      // opposite of pinv.
                             // if pinv[i] = j then row_perm[j] = i
-    double tolerance        // tolerance used if some tol-based pivoting is used
+    const SLIP_options* option // command options
 )
 {
 
@@ -55,10 +54,19 @@ SLIP_info slip_get_pivot
     SLIP_info info ;
     SLIP_REQUIRE(rhos, SLIP_DENSE, SLIP_MPZ);
     SLIP_REQUIRE(x, SLIP_DENSE, SLIP_MPZ);
+
+    // inputs have been checked in the only caller SLIP_LU_factorize
+    // they are kept here for future reference
+#if 0
     if (!pivot || !pivs || !xi || !pinv || !row_perm )
     {
         return SLIP_INCORRECT_INPUT;
     }
+#endif
+    // pivoting method to use (see above description)
+    SLIP_pivot order = SLIP_GET_PIVOT(option);
+    // tolerance used if some tol-based pivoting is used
+    double tolerance = SLIP_GET_TOL(option);
 
     //--------------------------------------------------------------------------
     // allocate workspace

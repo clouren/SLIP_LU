@@ -35,9 +35,9 @@ SLIP_info slip_get_nonzero_pivot // find the first eligible nonzero pivot
     //--------------------------------------------------------------------------
 
     SLIP_REQUIRE(x, SLIP_DENSE, SLIP_MPZ);
-    
+
     SLIP_info info ;
-    if (!pivs || !xi) {return SLIP_INCORRECT_INPUT;}
+    if (!pivs || !xi || !pivot) {return SLIP_INCORRECT_INPUT;}
 
     //--------------------------------------------------------------------------
     // initializations

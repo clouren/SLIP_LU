@@ -30,7 +30,7 @@ SLIP_info slip_expand_mpfr_array
     mpfr_t* x,            // mpfr array to be expanded
     mpq_t scale,          // scaling factor used (x_out = scale*x)
     int64_t n,            // size of x
-    SLIP_options *option  // command options containing the prec
+    const SLIP_options *option  // command options containing the prec
                           // and rounding for mpfr
 )
 {
@@ -61,20 +61,23 @@ SLIP_info slip_expand_mpfr_array
     SLIP_CHECK(SLIP_mpz_init(temp_expon));
     SLIP_CHECK(SLIP_mpz_init(gcd));
     SLIP_CHECK(SLIP_mpz_init(one));
-    
+
     SLIP_CHECK (SLIP_matrix_allocate(&x3, SLIP_DENSE, SLIP_MPFR, n, 1, n,
         false, true, option));
-    
+
     // expon = 2^prec (overestimate)
-    SLIP_CHECK(SLIP_mpfr_ui_pow_ui(expon, 2, SLIP_GET_PRECISION(option), SLIP_GET_ROUND(option)));
+    SLIP_CHECK(SLIP_mpfr_ui_pow_ui(expon, 2, SLIP_GET_PRECISION(option),
+        SLIP_GET_ROUND(option)));
 
     for (i = 0; i < n; i++)
     {
         // x3[i] = x[i]*2^prec
-        SLIP_CHECK(SLIP_mpfr_mul(x3->x.mpfr[i], x[i], expon, SLIP_GET_ROUND(option)));
+        SLIP_CHECK(SLIP_mpfr_mul(x3->x.mpfr[i], x[i], expon,
+            SLIP_GET_ROUND(option)));
 
         // x_out[i] = x3[i]
-        SLIP_CHECK(SLIP_mpfr_get_z(x_out[i], x3->x.mpfr[i], SLIP_GET_ROUND(option)));
+        SLIP_CHECK(SLIP_mpfr_get_z(x_out[i], x3->x.mpfr[i],
+            SLIP_GET_ROUND(option)));
     }
     SLIP_CHECK(SLIP_mpfr_get_z(temp_expon, expon, SLIP_GET_ROUND(option)));
     SLIP_CHECK(SLIP_mpq_set_z(scale, temp_expon));

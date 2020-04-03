@@ -39,7 +39,7 @@ SLIP_info SLIP_matrix_allocate
                             // the mpz, mpq, and mpfr arrays are malloced but
                             // not initialized. Utilized internally to reduce
                             // memory
-    SLIP_options *option
+    const SLIP_options *option
 )
 {
 
@@ -53,7 +53,10 @@ SLIP_info SLIP_matrix_allocate
         return (SLIP_INCORRECT_INPUT) ;
     }
     (*A_handle) = NULL ;
-    if (m < 0 || n < 0 ) 
+    if (m < 0 || n < 0 ||
+        kind  < SLIP_CSC || kind  > SLIP_DENSE ||
+        type  < SLIP_MPZ || type  > SLIP_FP64)
+ 
     {
         return (SLIP_INCORRECT_INPUT) ;
     }
@@ -131,9 +134,6 @@ SLIP_info SLIP_matrix_allocate
                 // nothing to do
                 break ;
 
-            default:
-                SLIP_FREE_ALL ;
-                return (SLIP_INCORRECT_INPUT) ;
         }
 
         // allocate the values
@@ -177,9 +177,6 @@ SLIP_info SLIP_matrix_allocate
                 ok = ok && (A->x.fp64 != NULL) ;
                 break ;
 
-            default:
-                SLIP_FREE_ALL ;
-                return (SLIP_INCORRECT_INPUT) ;
         }
 
         if (!ok)

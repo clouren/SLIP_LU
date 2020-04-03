@@ -11,7 +11,7 @@
 #ifndef SLIP_TCOV_MALLOC_TEST_H
 #define SLIP_TCOV_MALLOC_TEST_H
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 
 #ifdef SLIP_MEMORY_REALLOC
 #undef SLIP_MEMORY_REALLOC

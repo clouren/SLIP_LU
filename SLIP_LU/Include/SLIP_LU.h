@@ -372,7 +372,7 @@ SLIP_info SLIP_matrix_allocate
                             // appropriate SLIP_mp*_init function). If false,
                             // the mpz, mpq, and mpfr arrays are malloced but not 
                             // initialized. Utilized internally to reduce memory
-    SLIP_options *option
+    const SLIP_options *option
 ) ;
 
 //------------------------------------------------------------------------------
@@ -382,7 +382,7 @@ SLIP_info SLIP_matrix_allocate
 SLIP_info SLIP_matrix_free
 (
     SLIP_matrix **A_handle, // matrix to free
-    SLIP_options *option
+    const SLIP_options *option
 ) ;
 
 //------------------------------------------------------------------------------
@@ -391,8 +391,8 @@ SLIP_info SLIP_matrix_free
 
 int64_t SLIP_matrix_nnz     // return # of entries in A, or -1 on error
 (
-    SLIP_matrix *A,         // matrix to query
-    SLIP_options *option
+    const SLIP_matrix *A,         // matrix to query
+    const SLIP_options *option
 ) ;
 
 //------------------------------------------------------------------------------
@@ -408,7 +408,7 @@ SLIP_info SLIP_matrix_copy
     SLIP_kind kind,         // CSC, triplet, or dense
     SLIP_type type,         // mpz_t, mpq_t, mpfr_t, int64_t, or double
     SLIP_matrix *A,         // matrix to make a copy of (may be shallow)
-    SLIP_options *option
+    const SLIP_options *option
 ) ;
 
 //------------------------------------------------------------------------------
@@ -548,7 +548,7 @@ SLIP_info SLIP_LU_analyze
 (
     SLIP_LU_analysis **S, // symbolic analysis (column permutation and nnz L,U)
     const SLIP_matrix *A, // Input matrix
-    SLIP_options *option  // Control parameters
+    const SLIP_options *option  // Control parameters
 );
 
 /* Purpose: SLIP_LU_factorize performs the SLIP LU factorization. This
@@ -610,14 +610,14 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     const SLIP_matrix *rhos,// sequence of pivots
     const SLIP_LU_analysis *S,// symbolic analysis struct
     const int64_t *pinv,    // row permutation
-    SLIP_options* option    // Command options
+    const SLIP_options* option    // Command options
 );
 
 // SLIP_matrix_check: check and print a SLIP_sparse matrix
 SLIP_info SLIP_matrix_check  // returns a SLIP_LU status code
 (
-    SLIP_matrix *A,       // matrix to check
-    SLIP_options* option  // Determine print level
+    const SLIP_matrix *A,       // matrix to check
+    const SLIP_options* option  // Determine print level
 ) ;
 
 

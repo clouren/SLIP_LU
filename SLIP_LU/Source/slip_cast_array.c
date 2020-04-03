@@ -20,10 +20,10 @@
 //  if they are not already integral. As a result, this function
 //  will expand the values and set y_scale = this factor.
 //`
-//  Conversely, if Y is not mpz_t and X is, we apply X's scaling 
+//  Conversely, if Y is not mpz_t and X is, we apply X's scaling
 //  factor here to get the final values of Y. For instance,
 //  if Y is FP64 and X is mpz_t, the values of Y are obtained
-//  as Y = X / x_scale. 
+//  as Y = X / x_scale.
 //
 //  The final value of x_scale is not modified.
 //  The final value of y_scale is set as follows.
@@ -34,11 +34,11 @@
 //      y_scale = 1.
 //
 
+#define SLIP_FREE_ALL \
+SLIP_MPQ_CLEAR(temp);       \
+
 #include "slip_LU_internal.h"
 #pragma GCC diagnostic ignored "-Wunused-variable"
-
-#define SLIP_FREE_WORKSPACE \
-SLIP_MPQ_CLEAR(temp);       \
 
 SLIP_info slip_cast_array
 (
@@ -48,13 +48,14 @@ SLIP_info slip_cast_array
     SLIP_type xtype,        // type of X
     int64_t n,              // size of Y and X
     mpq_t y_scale,          // scale factor applied if Y is mpz_t
-    mpq_t x_scale,          // scae factor applied if x is mpz_t
-    SLIP_options *option    // Command options. If NULL, set to default values
+    mpq_t x_scale,          // scale factor applied if x is mpz_t
+    const SLIP_options *option// Command options. If NULL, set to default values
 )
 {
 
     //--------------------------------------------------------------------------
     // check inputs
+    // xtype and ytype are checked in SLIP_matrix_copy
     //--------------------------------------------------------------------------
 
     if (Y == NULL || X == NULL)
@@ -64,8 +65,7 @@ SLIP_info slip_cast_array
     SLIP_info info ;
     int r;
     mpq_t temp; SLIP_MPQ_SET_NULL(temp);
-    
-    
+
 
     //--------------------------------------------------------------------------
     // Y [0:n-1] = (ytype) X [0:n-1]
@@ -101,7 +101,7 @@ SLIP_info slip_cast_array
                 case SLIP_MPQ: // mpq_t to mpz_t
                 {
                     mpq_t *x = (mpq_t *) X ;
-                    SLIP_CHECK (slip_expand_mpq_array(Y, X, y_scale, n, option));
+                    SLIP_CHECK (slip_expand_mpq_array(Y, X, y_scale, n,option));
                 }
                 break ;
 
@@ -132,7 +132,6 @@ SLIP_info slip_cast_array
                 }
                 break ;
 
-                default: return (SLIP_INCORRECT_INPUT) ;
             }
         }
         break ;
@@ -149,14 +148,14 @@ SLIP_info slip_cast_array
 
                 case SLIP_MPZ: // mpz_t to mpq_t
                 {
-                    // In this case, x is mpz_t and y is mpq_t. the scaling factor
-                    // x_scale must be used. If x_scale is not equal to 1,
-                    // each value in y is divided by x_scale
-                    
+                    // In this case, x is mpz_t and y is mpq_t. the scaling
+                    // factor x_scale must be used. If x_scale is not equal to
+                    // 1, each value in y is divided by x_scale
+
                     // Check if x_scale == 1
                     SLIP_CHECK(SLIP_mpq_cmp_ui(&r, x_scale, 1, 1));
                     mpz_t *x = (mpz_t *) X ;
-                    
+
                     if (r == 0)
                     {
                         // x_scale = 1. Simply do a direct copy.
@@ -218,7 +217,6 @@ SLIP_info slip_cast_array
                 }
                 break ;
 
-                default: return (SLIP_INCORRECT_INPUT) ;
             }
         }
         break ;
@@ -235,32 +233,34 @@ SLIP_info slip_cast_array
 
                 case SLIP_MPZ: // mpz_t to mpfr_t
                 {
-                    // x is mpz_t and y is mpfr_t. Like in the above mpq_t case,
-                    // if the scaling factor of x is not equal to 1, the values of
-                    // y must be scaled.
+                    // x is mpz_t and y is mpfr_t. Like in the above mpq_t
+                    // case, if the scaling factor of x is not equal to 1, the
+                    // values of y must be scaled.
                     mpz_t *x = (mpz_t *) X ;
                     SLIP_CHECK(SLIP_mpq_cmp_ui(&r, x_scale, 1, 1));
-                    
+
                     if (r == 0)
                     {
                         // x_scale = 1. Simply do a direct copy.
                         for (int64_t k = 0 ; k < n ; k++)
                         {
                             SLIP_CHECK (SLIP_mpfr_set_z (y [k], x [k],
-                            SLIP_GET_ROUND(option))) ;
+                                SLIP_GET_ROUND(option))) ;
                         }
                     }
                     else
                     {
                         // x_scale != 1. In this case, we divide each entry
                         // of Y by x_scale. To do this, we will cast each
-                        // x_k to mpq_t, then divide by the scale, then 
+                        // x_k to mpq_t, then divide by the scale, then
                         // cast the result to mpfr_t
+                        SLIP_CHECK(SLIP_mpq_init(temp));
                         for (int64_t k = 0 ; k < n ; k++)
                         {
                             SLIP_CHECK( SLIP_mpq_set_z( temp, x[k]));
                             SLIP_CHECK( SLIP_mpq_div(temp, temp, x_scale));
-                            SLIP_CHECK(SLIP_mpfr_set_q(y[k], temp, SLIP_GET_ROUND(option)));
+                            SLIP_CHECK(SLIP_mpfr_set_q(y[k], temp,
+                                SLIP_GET_ROUND(option)));
                         }
                     }
                 }
@@ -310,7 +310,6 @@ SLIP_info slip_cast_array
                 }
                 break ;
 
-                default: return (SLIP_INCORRECT_INPUT) ;
             }
         }
         break ;
@@ -331,7 +330,7 @@ SLIP_info slip_cast_array
                     // if x_scale > 1 it is applied
                     mpz_t *x = (mpz_t *) X ;
                     SLIP_CHECK(SLIP_mpq_cmp_ui(&r, x_scale, 1, 1));
-                    
+
                     if (r == 0)
                     {
                         // x_scale = 1. Simply do a direct copy.
@@ -344,8 +343,9 @@ SLIP_info slip_cast_array
                     {
                         // x_scale != 1. In this case, we divide each entry
                         // of Y by x_scale. To do this, we will cast each
-                        // x_k to mpq_t, then divide by the scale, then 
+                        // x_k to mpq_t, then divide by the scale, then
                         // cast the result to double and cast the double to int
+                        SLIP_CHECK(SLIP_mpq_init(temp));
                         for (int64_t k = 0 ; k < n ; k++)
                         {
                             SLIP_CHECK( SLIP_mpq_set_z( temp, x[k]));
@@ -397,7 +397,6 @@ SLIP_info slip_cast_array
                 }
                 break ;
 
-                default: return (SLIP_INCORRECT_INPUT) ;
             }
         }
         break ;
@@ -418,7 +417,7 @@ SLIP_info slip_cast_array
                     // divide by x_scale if x_scale != 1.
                     mpz_t *x = (mpz_t *) X ;
                     SLIP_CHECK(SLIP_mpq_cmp_ui(&r, x_scale, 1, 1));
-                    
+
                     if (r == 0)
                     {
                         // x_scale = 1. Simply do a direct copy.
@@ -431,8 +430,9 @@ SLIP_info slip_cast_array
                     {
                         // x_scale != 1. In this case, we divide each entry
                         // of Y by x_scale. To do this, we will cast each
-                        // x_k to mpq_t, then divide by the scale, then 
+                        // x_k to mpq_t, then divide by the scale, then
                         // cast the result to double
+                        SLIP_CHECK(SLIP_mpq_init(temp));
                         for (int64_t k = 0 ; k < n ; k++)
                         {
                             SLIP_CHECK( SLIP_mpq_set_z( temp, x[k]));
@@ -480,12 +480,10 @@ SLIP_info slip_cast_array
                 }
                 break ;
 
-                default: return (SLIP_INCORRECT_INPUT) ;
             }
         }
             break ;
 
-        default: return (SLIP_INCORRECT_INPUT) ;
     }
     return (SLIP_OK) ;
 }

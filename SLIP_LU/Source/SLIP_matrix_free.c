@@ -15,7 +15,7 @@
 SLIP_info SLIP_matrix_free
 (
     SLIP_matrix **A_handle, // matrix to free
-    SLIP_options *option
+    const SLIP_options *option
 )
 {
 

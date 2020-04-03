@@ -30,8 +30,8 @@ void slip_dfs // performs a dfs of the graph of the matrix starting at node j
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT(L != NULL && L->kind == SLIP_CSC && L->type == SLIP_MPZ);
-    
+    ASSERT_REQUIRE_KIND(L, SLIP_CSC);
+
     // top xi etc already checked in the caller function
 
     //--------------------------------------------------------------------------

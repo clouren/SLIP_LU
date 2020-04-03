@@ -23,8 +23,8 @@
 
 SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
 (
-    SLIP_matrix *A,     // matrix to check
-    SLIP_options* option
+    const SLIP_matrix *A,     // matrix to check
+    const SLIP_options* option
 )
 {
 
@@ -33,6 +33,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
     //--------------------------------------------------------------------------
 
     int print_level = SLIP_GET_PRINT_LEVEL(option);
+    uint64_t prec = SLIP_GET_PRECISION(option);
     if (A == NULL)
     {
         if (print_level > 0)
@@ -55,7 +56,8 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
     int64_t nzmax = A->nzmax ;
     int64_t nz = SLIP_matrix_nnz(A, option);    // Number of nonzeros in A
 
-    if (A->kind < 0 || A->kind > 2 || A->type < 0 || A->type > 4)
+    if (A->kind < SLIP_CSC || A->kind > SLIP_DENSE ||
+        A->type < SLIP_MPZ || A->type > SLIP_FP64)
     {
         if (print_level > 0)
         {
@@ -139,7 +141,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
             }
 
             // allocate workspace to check for duplicates
-            mark = SLIP_calloc (n, sizeof (int64_t)) ;
+            mark = (int64_t *) SLIP_calloc (m, sizeof (int64_t)) ;
             if (mark == NULL)
             {
                 // out of memory
@@ -185,8 +187,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                             case SLIP_MPFR:
                             {
                                 status = SLIP_mpfr_printf("%.*Rf \n",
-                                                          SLIP_GET_PRECISION(option),
-                                                          A->x.mpfr [p]);
+                                    prec, A->x.mpfr [p]);
                                 break;
                             }
                             case SLIP_FP64:
@@ -199,7 +200,6 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                                 printf("%ld \n", A->x.int64[p]);
                                 break;
                             }
-                            default: return SLIP_INCORRECT_INPUT;
                         }
                         if (status < 0)
                         {
@@ -233,7 +233,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
             }
 
             // allocate workspace to check for duplicates
-            bmark = SLIP_calloc (m*n, sizeof (bool)) ;
+            bmark = (bool *) SLIP_calloc (m*n, sizeof (bool)) ;
             if (bmark == NULL)
             {
                 // out of memory
@@ -275,8 +275,8 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                         }
                         case SLIP_MPFR:
                         {
-                            status = SLIP_mpfr_printf("%.*Rf \n", SLIP_GET_PRECISION(option),
-                                                      A->x.mpfr [p]);
+                            status = SLIP_mpfr_printf("%.*Rf \n",
+                                prec, A->x.mpfr [p]);
                             break;
                         }
                         case SLIP_FP64:
@@ -289,7 +289,6 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                             printf("%ld \n", A->x.int64[p]);
                             break;
                         }
-                        default: return SLIP_INCORRECT_INPUT;
                     }
                     if (status < 0)
                     {
@@ -349,7 +348,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                             case SLIP_MPFR:
                             {
                                 status = SLIP_mpfr_printf ( "%.*Rf \n",
-                                    SLIP_GET_PRECISION(option), SLIP_2D(A, i, j, mpfr));
+                                    prec, SLIP_2D(A, i, j, mpfr));
                                 break;
                             }
                             case SLIP_FP64:
@@ -362,7 +361,6 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                                 printf("%ld \n", SLIP_2D(A, i, j, int64));
                                 break;
                             }
-                            default: return SLIP_INCORRECT_INPUT;
                         }
                         if (status < 0)
                         {
@@ -374,7 +372,6 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
             }
             break;
         }
-        default: return SLIP_INCORRECT_INPUT;
     }
 
     //--------------------------------------------------------------------------

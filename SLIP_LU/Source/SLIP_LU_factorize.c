@@ -61,7 +61,7 @@ SLIP_info SLIP_LU_factorize
 
     SLIP_REQUIRE (A, SLIP_CSC, SLIP_MPZ) ;
 
-    if (!L_handle || !U_handle || !rhos_handle || !pinv_handle)
+    if (!L_handle || !U_handle || !rhos_handle || !pinv_handle || !S)
     {
         return SLIP_INCORRECT_INPUT;
     }
@@ -70,11 +70,6 @@ SLIP_info SLIP_LU_factorize
     (*U_handle) = NULL ;
     (*rhos_handle) = NULL ;
     (*pinv_handle) = NULL ;
-
-    if (!S  || !A->p || !A->i) 
-    {
-        return SLIP_INCORRECT_INPUT;
-    }
 
     //--------------------------------------------------------------------------
     // Declare and initialize workspace
@@ -194,7 +189,8 @@ SLIP_info SLIP_LU_factorize
     //--------------------------------------------------------------------------
 
     // temp = sigma*sqrt(gamma)
-    SLIP_CHECK(SLIP_mpfr_mul_d(temp, temp, (double)sqrt(gamma), SLIP_GET_ROUND(option)));
+    SLIP_CHECK(SLIP_mpfr_mul_d(temp, temp, (double)sqrt(gamma),
+        SLIP_GET_ROUND(option)));
     // temp = log2(temp)
     SLIP_CHECK(SLIP_mpfr_log2(temp, temp, SLIP_GET_ROUND(option)));
     // inner2 = temp
@@ -287,8 +283,8 @@ SLIP_info SLIP_LU_factorize
         //----------------------------------------------------------------------
         // Obtain pivot
         //----------------------------------------------------------------------
-        SLIP_CHECK(slip_get_pivot(&pivot, x, pivs, n, top, xi, option->pivot,
-            col, k, rhos, pinv, row_perm, option->tol));
+        SLIP_CHECK(slip_get_pivot(&pivot, x, pivs, n, top, xi,
+            col, k, rhos, pinv, row_perm, option));
 
         //----------------------------------------------------------------------
         // Populate L and U. We iterate across all nonzeros in x

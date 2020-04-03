@@ -16,7 +16,7 @@
 mpfr_t* slip_create_mpfr_array
 (
     int64_t n,           // size of the array
-    SLIP_options *option // command options containing the prec for mpfr
+    const SLIP_options *option // command options containing the prec for mpfr
 )
 {
 

@@ -88,7 +88,7 @@ SLIP_info slip_ref_triangular_solve // performs the sparse REF triangular solve
 (
     int64_t *top_output,      // Output the beginning of nonzero pattern
     SLIP_matrix* L,           // partial L matrix
-    SLIP_matrix* A,           // input matrix
+    const SLIP_matrix* A,     // input matrix
     int64_t k,                // constructing L(:,k)
     int64_t* xi,              // nonzero pattern vector
     const int64_t* q,         // column permutation, not modified

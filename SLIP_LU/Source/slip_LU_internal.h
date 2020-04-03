@@ -375,7 +375,7 @@ SLIP_info slip_back_sub  // performs sparse REF backward substitution
 mpfr_t* slip_create_mpfr_array
 (
     int64_t n,     // size of the array
-    SLIP_options* option
+    const SLIP_options* option
 );
 
 // Creates a simple 1D array, where A[i] is an entry of type mpq_t.
@@ -411,7 +411,7 @@ SLIP_info slip_check_solution
     const SLIP_matrix *A,          // input matrix
     const SLIP_matrix *x,          // solution vector
     const SLIP_matrix *b,          // right hand side
-    SLIP_options* option           // Command options, currently unused
+    const SLIP_options* option           // Command options
 );
 
 /* Purpose: p [0..n] = cumulative sum of c [0..n-1], and then copy p [0..n-1]
@@ -449,7 +449,7 @@ SLIP_info slip_expand_double_array
     double* x,      // double array that needs to be made integral
     mpq_t scale,    // the scaling factor used (x_out = scale * x)
     int64_t n,      // size of x
-    SLIP_options* option
+    const SLIP_options* option
 );
 
 /* Purpose: This function converts a mpfr array of size n and precision prec to
@@ -463,7 +463,7 @@ SLIP_info slip_expand_mpfr_array
     mpfr_t* x,      // mpfr array to be expanded
     mpq_t scale,    // scaling factor used (x_out = scale*x)
     int64_t n,      // size of x
-    SLIP_options *option // command options containing the prec for mpfr
+    const SLIP_options *option // command options containing the prec for mpfr
 );
 
 /* Purpose: This function converts a mpq array of size n into an appropriate mpz
@@ -476,7 +476,7 @@ SLIP_info slip_expand_mpq_array
     mpq_t* x,     // mpq array that needs to be converted
     mpq_t scale,  // scaling factor. x_out = scale*x
     int64_t n,     // size of x
-    SLIP_options* option // Command options
+    const SLIP_options* option // Command options
 );
 
 /* Purpose: This function converts a mpq matrix of size m*n into an appropriate
@@ -512,13 +512,12 @@ SLIP_info slip_get_pivot
     int64_t n,           // dimension of the problem
     int64_t top,         // nonzero pattern is located in xi[top..n-1]
     int64_t* xi,         // nonzero pattern of x
-    SLIP_pivot order,    // pivoting method to use (see above description)
     int64_t col,         // current column of A (real kth column i.e., q[k])
     int64_t k,           // iteration of the algorithm
     SLIP_matrix* rhos,   // vector of pivots
     int64_t* pinv,       // row permutation
     int64_t* row_perm,   // opposite of pinv. if pinv[i] = j then row_perm[j] = i
-    double tolerance    // tolerance used if some tolerance based pivoting is used 
+    const SLIP_options *option // command option
 );
 
 /* Purpose: This function selects the pivot element as the largest in the
@@ -574,8 +573,8 @@ void slip_lu_info(void);
 SLIP_info slip_permute_x
 (
     SLIP_matrix *x,            // Solution vector
-    SLIP_LU_analysis *S,      // symbolic analysis with the column ordering Q
-    SLIP_options* option      // Command options
+    SLIP_LU_analysis *S,       // symbolic analysis with the column ordering Q
+    const SLIP_options* option // Command options
 );
 
 /* Purpose: This function collapses a SLIP matrix. Essentially it shrinks the
@@ -603,7 +602,7 @@ void slip_reach    // compute the reach of column k of A on the graph of L
 (
     int64_t *top,
     SLIP_matrix* L,         // matrix representing graph of L
-    SLIP_matrix* A,         // input matrix
+    const SLIP_matrix* A,   // input matrix
     int64_t k,              // column of A of interest
     int64_t* xi,            // nonzero pattern
     const int64_t* pinv     // row permutation
@@ -621,7 +620,7 @@ SLIP_info slip_ref_triangular_solve // performs the sparse REF triangular solve
 (
     int64_t *top_output,      // Output the beginning of nonzero pattern
     SLIP_matrix* L,           // partial L matrix
-    SLIP_matrix* A,           // input matrix
+    const SLIP_matrix* A,     // input matrix
     int64_t k,                // iteration of algorithm
     int64_t* xi,              // nonzero pattern vector
     const int64_t* q,         // column permutation
@@ -662,7 +661,7 @@ SLIP_info slip_cast_array
     int64_t n,              // size of Y and X
     mpq_t y_scale,          // scale factor applied if y is mpz_t
     mpq_t x_scale,          // scale factor applied if x is mpz_t
-    SLIP_options *option
+    const SLIP_options *option
 ) ;
 
 SLIP_info slip_cast_matrix
@@ -670,7 +669,7 @@ SLIP_info slip_cast_matrix
     SLIP_matrix **Y_handle,     // nz-by-1 dense matrix to create
     SLIP_type Y_type,           // type of Y
     SLIP_matrix *A,             // matrix with nz entries
-    SLIP_options *option
+    const SLIP_options *option
 ) ;
 
 // (void *) pointer to the values of A.  A must be non-NULL with a valid type
@@ -680,31 +679,29 @@ SLIP_info slip_cast_matrix
     ((A->type == SLIP_MPFR ) ? (void *) A->x.mpfr  :                        \
     ((A->type == SLIP_INT64) ? (void *) A->x.int64 : (void *) A->x.fp64))))
 
-#if 0
 
-
+// return an error if A->kind (csc, triplet, dense) is wrong
 #define SLIP_REQUIRE_KIND(A,required_kind) \
     if (A == NULL || A->kind != required_kind) return (SLIP_INCORRECT_INPUT) ;
 
+#define ASSERT_REQUIRE_KIND(A,required_kind) \
+    ASSERT (A != NULL && A->kind == required_kind)
+
 // return an error if A->type (mpz, mpq, mpfr, int64, or double) is wrong
 #define SLIP_REQUIRE_TYPE(A,required_type) \
-    if (A == NULL || A->type == required_type) return (SLIP_INCORRECT_INPUT) ;
+    if (A == NULL || A->type != required_type) return (SLIP_INCORRECT_INPUT) ;
 
-#else
-
-// disabled for now
-#define SLIP_REQUIRE_KIND(A,required_kind) \
-    if (A == NULL) return (SLIP_INCORRECT_INPUT) ;
-
-#define SLIP_REQUIRE_TYPE(A,required_type) \
-    if (A == NULL) return (SLIP_INCORRECT_INPUT) ;
-
-#endif
+#define ASSERT_REQUIRE_TYPE(A,required_type) \
+    ASSERT (A != NULL && A->type == required_type)
 
 // return an error if A->kind or A->type is wrong
 #define SLIP_REQUIRE(A,required_kind,required_type)     \
     SLIP_REQUIRE_KIND (A,required_kind) ;              \
     SLIP_REQUIRE_TYPE (A,required_type) ;
+
+#define ASSERT_REQUIRE(A,required_kind,required_type)     \
+    ASSERT_REQUIRE_KIND (A,required_kind) ;              \
+    ASSERT_REQUIRE_TYPE (A,required_type) ;
 
 #endif
 

@@ -37,7 +37,7 @@ SLIP_info slip_get_smallest_pivot
 
     SLIP_REQUIRE(x, SLIP_DENSE, SLIP_MPZ);
     SLIP_info info ;
-    if (!pivs || !xi) {return SLIP_INCORRECT_INPUT;}
+    if (!pivs || !xi || !pivot) {return SLIP_INCORRECT_INPUT;}
 
     //--------------------------------------------------------------------------
     // allocate workspace

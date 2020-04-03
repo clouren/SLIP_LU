@@ -34,7 +34,7 @@ SLIP_info SLIP_matrix_copy
     SLIP_kind C_kind,       // C->kind: CSC, triplet, or dense
     SLIP_type C_type,       // C->type: mpz_t, mpq_t, mpfr_t, int64_t, or double
     SLIP_matrix *A,         // matrix to make a copy of (may be shallow)
-    SLIP_options *option
+    const SLIP_options *option
 )
 {
 
@@ -44,7 +44,11 @@ SLIP_info SLIP_matrix_copy
 
     SLIP_info info ;
     int64_t nz = SLIP_matrix_nnz (A, option) ;
-    if (A == NULL || option == NULL || C_handle == NULL || nz < 0)
+    if (A == NULL || option == NULL || C_handle == NULL || nz < 0 ||
+        A->kind < SLIP_CSC || A->kind > SLIP_DENSE ||
+        A->type < SLIP_MPZ || A->type > SLIP_FP64  ||
+        C_kind  < SLIP_CSC || C_kind  > SLIP_DENSE ||
+        C_type  < SLIP_MPZ || C_type  > SLIP_FP64)
     {
         return (SLIP_INCORRECT_INPUT) ;
     }
@@ -180,7 +184,6 @@ SLIP_info SLIP_matrix_copy
                             }
                             break ;
 
-                        default: SLIP_FREE_ALL ; return (SLIP_INCORRECT_INPUT) ;
                     }
 
                 }
@@ -242,7 +245,6 @@ SLIP_info SLIP_matrix_copy
                             }
                             break ;
 
-                        default: SLIP_FREE_ALL ; return (SLIP_INCORRECT_INPUT) ;
                     }
 
                     // allocate C
@@ -353,7 +355,6 @@ SLIP_info SLIP_matrix_copy
                 }
                 break ;
 
-                default: SLIP_FREE_ALL ; return (SLIP_INCORRECT_INPUT) ;
             }
 
         }
@@ -428,7 +429,6 @@ SLIP_info SLIP_matrix_copy
                 }
                 break ;
 
-                default: SLIP_FREE_ALL ; return (SLIP_INCORRECT_INPUT) ;
             }
 
         }
@@ -524,7 +524,6 @@ SLIP_info SLIP_matrix_copy
                             }
                             break ;
 
-                        default: SLIP_FREE_ALL ; return (SLIP_INCORRECT_INPUT) ;
                     }
 
                 }
@@ -596,7 +595,6 @@ SLIP_info SLIP_matrix_copy
                             }
                             break ;
                     
-                        default: SLIP_FREE_ALL ; return (SLIP_INCORRECT_INPUT) ;
                     }
                 }
                 break ;
@@ -613,13 +611,11 @@ SLIP_info SLIP_matrix_copy
                 }
                 break ;
 
-                default: SLIP_FREE_ALL ; return (SLIP_INCORRECT_INPUT) ;
             }
 
         }
         break ;
 
-        default: SLIP_FREE_ALL ; return (SLIP_INCORRECT_INPUT) ;
     }
     
     //--------------------------------------------------------------------------

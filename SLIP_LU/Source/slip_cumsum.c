@@ -23,7 +23,7 @@ SLIP_info slip_cumsum
 {
 
     if (!p || !c) return SLIP_INCORRECT_INPUT;
-    
+
     int64_t i, nz = 0 ;
     for (i = 0 ; i < n ; i++)
     {

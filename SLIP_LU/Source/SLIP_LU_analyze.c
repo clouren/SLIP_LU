@@ -30,8 +30,8 @@
 SLIP_info SLIP_LU_analyze
 (
     SLIP_LU_analysis** S_handle, // symbolic analysis (column perm. and nnz L,U)
-    const SLIP_matrix *A,       // Input matrix
-    SLIP_options *option        // Control parameters, if NULL, use default
+    const SLIP_matrix *A,        // Input matrix
+    const SLIP_options *option   // Control parameters, if NULL, use default
 )
 {
 
@@ -42,23 +42,18 @@ SLIP_info SLIP_LU_analyze
     // A can have any data type, but must be in sparse CSC format
     SLIP_REQUIRE_KIND (A, SLIP_CSC) ;
 
-    SLIP_LU_analysis *S = NULL ;
-    if (!S_handle)
+    if (!S_handle || A->n != A->m)
     {
         return SLIP_INCORRECT_INPUT;
     }
     (*S_handle) = NULL ;
 
-    if (!(A->i) || !(A->p) || A->n != A->m)
-    {
-        return SLIP_INCORRECT_INPUT;
-    }
-
     //--------------------------------------------------------------------------
     // allocate symbolic analysis object
     //--------------------------------------------------------------------------
 
-    int64_t n = A->n, nz = A->nz, i;
+    SLIP_LU_analysis *S = NULL ;
+    int64_t i, n = A->n, nz = SLIP_matrix_nnz(A, option);
     // ALlocate memory for S
     S = (SLIP_LU_analysis*) SLIP_malloc(sizeof(SLIP_LU_analysis));
     if (S == NULL) {return SLIP_OUT_OF_MEMORY;}
@@ -70,9 +65,6 @@ SLIP_info SLIP_LU_analyze
         SLIP_FREE(S);
         return SLIP_OUT_OF_MEMORY;
     }
-
-    S->lnz = 0;
-    S->unz = 0;
 
     //--------------------------------------------------------------------------
     // No ordering is used. S->q is set to [0 ... n] and the number of nonzeros
@@ -102,7 +94,7 @@ SLIP_info SLIP_LU_analyze
         double Info [AMD_INFO];
         amd_l_order(n, A->p, A->i, S->q, Control, Info); // Perform AMD
         S->lnz = S->unz = Info[AMD_LNZ];        // Guess for unz and lnz
-        if (SLIP_GET_PRINT_LEVEL(option) > 0)            // Output AMD info if desired
+        if (SLIP_GET_PRINT_LEVEL(option) > 0)   // Output AMD info if desired
         {
             printf("\n****Column Ordering Information****\n");
             amd_control(Control);

@@ -26,7 +26,7 @@ SLIP_info slip_expand_mpq_array
     mpq_t* x,            // mpq array that needs to be converted
     mpq_t scale,         // scaling factor. x_out = scale*x
     int64_t n,           // size of x
-    SLIP_options* option // Command options
+    const SLIP_options* option // Command options
 )
 {
 
@@ -34,7 +34,7 @@ SLIP_info slip_expand_mpq_array
     // check inputs
     //--------------------------------------------------------------------------
     // inputs have checked in the only caller slip_cast_array
-    
+
     SLIP_info info ;
 
     //--------------------------------------------------------------------------
@@ -44,7 +44,7 @@ SLIP_info slip_expand_mpq_array
     SLIP_matrix *x4 = NULL;;
     SLIP_MPZ_SET_NULL(temp);
     SLIP_CHECK (SLIP_mpz_init(temp)) ;
-        
+
     SLIP_CHECK (SLIP_matrix_allocate(&x3, SLIP_DENSE, SLIP_MPZ, n, 1, n,
         false, true, option));
     SLIP_CHECK (SLIP_matrix_allocate(&x4, SLIP_DENSE, SLIP_MPQ, n, 1, n,

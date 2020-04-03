@@ -12,8 +12,8 @@
 
 int64_t SLIP_matrix_nnz     // return # of entries in A, or -1 on error
 (
-    SLIP_matrix *A,         // matrix to query
-    SLIP_options *option    // command options, currently unused
+    const SLIP_matrix *A,      // matrix to query
+    const SLIP_options *option // command options, currently unused
 )
 {
 

@@ -20,7 +20,7 @@ void slip_reach    // compute the reach of column k of A on the graph of L
 (
     int64_t *top,
     SLIP_matrix* L,         // matrix representing graph of L
-    SLIP_matrix* A,         // input matrix
+    const SLIP_matrix* A,   // input matrix
     int64_t k,              // column of A of interest
     int64_t* xi,            // nonzero pattern
     const int64_t* pinv     // row permutation
@@ -30,7 +30,7 @@ void slip_reach    // compute the reach of column k of A on the graph of L
     //--------------------------------------------------------------------------
     // check inputs
     //--------------------------------------------------------------------------
-
+    if (top == NULL) { return ;}
     // inputs have been checked in slip_ref_triangular_solve
     int64_t p, n = L->n;
     *top = n;

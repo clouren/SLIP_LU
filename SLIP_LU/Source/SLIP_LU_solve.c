@@ -61,7 +61,7 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     const SLIP_matrix *rhos,// sequence of pivots
     const SLIP_LU_analysis *S,// symbolic analysis struct
     const int64_t *pinv,    // row permutation
-    SLIP_options* option    // Command options
+    const SLIP_options* option // Command options
 )
 {
 
@@ -77,10 +77,12 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     SLIP_REQUIRE (U,    SLIP_CSC,   SLIP_MPZ) ;
     SLIP_REQUIRE (rhos, SLIP_DENSE, SLIP_MPZ) ;
 
-    if (!x_handle || !S || !pinv )
+    if (!x_handle || !S || !pinv || L->m != A->m || L->n != U->m ||
+        U->n != A->n || A->n != A->m || A->m != b->m )
     {
         return SLIP_INCORRECT_INPUT;
     }
+    *x_handle = NULL;
 
 
     //--------------------------------------------------------------------------
@@ -140,8 +142,8 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     // Permute the solution vectors
     //--------------------------------------------------------------------------
 
-    // TODO Please refer to the comment in the below function. Once a solution is
-    // decided update the rest of this file.
+    // TODO Please refer to the comment in the below function. Once a solution
+    // is decided update the rest of this file.
     SLIP_CHECK(slip_permute_x(x, (SLIP_LU_analysis *) S, option));
 
     //--------------------------------------------------------------------------

@@ -23,7 +23,7 @@ SLIP_info slip_check_solution
     const SLIP_matrix *A,         // Input matrix
     const SLIP_matrix *x,         // Solution vectors
     const SLIP_matrix *b,         // Right hand side vectors
-    SLIP_options* option          // Command options, currently unused
+    const SLIP_options* option    // Command options
 )
 {
 
@@ -31,7 +31,7 @@ SLIP_info slip_check_solution
     // check inputs
     //--------------------------------------------------------------------------
 
-    SLIP_info info, result ;
+    SLIP_info info ;
     SLIP_REQUIRE (A, SLIP_CSC,   SLIP_MPZ) ;
     SLIP_REQUIRE (x, SLIP_DENSE, SLIP_MPQ) ;
     SLIP_REQUIRE (b, SLIP_DENSE, SLIP_MPZ) ;
@@ -88,33 +88,33 @@ SLIP_info slip_check_solution
             SLIP_CHECK(SLIP_mpq_equal(&r, temp, SLIP_2D(b2, i, j, mpq)));
             if (r == 0)
             {
-                SLIP_FREE_ALL;
-                result = SLIP_INCORRECT;
+                info = SLIP_INCORRECT;
+                j = b->n;
+                break;
             }
         }
     }
     
-    result = info;
     //--------------------------------------------------------------------------
     // Print info
     //--------------------------------------------------------------------------
     
-    if (result == SLIP_OK)
+    if (info == SLIP_OK)
     {
         if (SLIP_GET_PRINT_LEVEL(option)>=0)
         {
             printf ("Solution is verified to be exact.\n") ;
         }
     }
-    else if (result == SLIP_INCORRECT)
+    else if (info == SLIP_INCORRECT)
     {
         // This can never happen.
         if (SLIP_GET_PRINT_LEVEL(option)>=0)
         {
-            printf ("ERROR! Solution is wrong. This is a bug; please"
+            printf ("ERROR! Solution is wrong. This is a bug; please "
                     "contact the authors of SLIP LU.\n") ;
         }
-        abort ( ) ;
+        //abort ( ) ;TODO remove?
     }
 
     //--------------------------------------------------------------------------
@@ -122,6 +122,6 @@ SLIP_info slip_check_solution
     //--------------------------------------------------------------------------
 
     SLIP_FREE_ALL;
-    return SLIP_OK;
+    return info;
 }
 

@@ -9,15 +9,15 @@
 //------------------------------------------------------------------------------
 
 /* Purpose: This code utilizes the SLIP LU factorization to exactly solve the
- *          linear system Ax = b. This is essentially an exact version of 
+ *          linear system Ax = b. This is essentially an exact version of
  *          MATLAB sparse backslash
  *
  * Input/Output arguments:
  *
- * X_handle:    A pointer to the solution of the linear system. The output is 
- *              allowed to be returned in either double precision, mpfr_t, or 
+ * X_handle:    A pointer to the solution of the linear system. The output is
+ *              allowed to be returned in either double precision, mpfr_t, or
  *              rational mpq_t
- * 
+ *
  * type:        Data structure of output desired. Must be either SLIP_MPQ,
  *              SLIP_FP64, or SLIP_MPFR
  *
@@ -43,14 +43,14 @@
 SLIP_info SLIP_backslash
 (
     // Output
-    SLIP_matrix **X_handle, // Final solution vector
+    SLIP_matrix **X_handle,       // Final solution vector
     // Input
     SLIP_type type,               // Type of output desired
                                   // Must be SLIP_MPQ, SLIP_MPFR,
                                   // or SLIP_FP64
     const SLIP_matrix *A,         // Input matrix
     const SLIP_matrix *b,         // Right hand side vector(s)
-    const SLIP_options* option    // Command options 
+    const SLIP_options* option    // Command options
 )
 {
 
@@ -59,18 +59,18 @@ SLIP_info SLIP_backslash
     //-------------------------------------------------------------------------
 
     SLIP_info info ;
-    
-    if (!X_handle) 
+
+    if (!X_handle)
     {
         return SLIP_INCORRECT_INPUT;
     }
     (*X_handle) = NULL;
-    
+
     if (type != SLIP_MPQ && type != SLIP_FP64 && type != SLIP_MPFR)
     {
         return SLIP_INCORRECT_INPUT;
     }
-    
+
     SLIP_REQUIRE (A, SLIP_CSC,   SLIP_MPZ) ;
     SLIP_REQUIRE (b, SLIP_DENSE, SLIP_MPZ) ;
 
@@ -80,37 +80,36 @@ SLIP_info SLIP_backslash
     int64_t *pinv = NULL ;
     SLIP_matrix *rhos = NULL ;
     SLIP_LU_analysis *S = NULL;
-    
+
     //--------------------------------------------------------------------------
     // Symbolic Analysis
     //--------------------------------------------------------------------------
-    
+
     SLIP_CHECK(SLIP_LU_analyze(&S, A, option));
-    
+
     //--------------------------------------------------------------------------
     // LU Factorization
     //--------------------------------------------------------------------------
 
     SLIP_CHECK(SLIP_LU_factorize(&L, &U, &rhos, &pinv, A, S, option));
-    
+
     //--------------------------------------------------------------------------
     // Solve
     //--------------------------------------------------------------------------
 
-    SLIP_CHECK(SLIP_LU_solve(&x, b,
-        (const SLIP_matrix *) A,
+    SLIP_CHECK(SLIP_LU_solve(&x, b, A,
         (const SLIP_matrix *) L,
         (const SLIP_matrix *) U,
         (const SLIP_matrix *) rhos,
         S,
-        (const int64_t *) pinv, 
+        (const int64_t *) pinv,
         option));
-    
+
     //--------------------------------------------------------------------------
-    // Now, x contains the exact solution of the linear system in mpq_t precision
-    // set the output.
+    // Now, x contains the exact solution of the linear system in mpq_t
+    // precision set the output.
     //--------------------------------------------------------------------------
-    
+
     if (type == SLIP_MPQ)
     {
         (*X_handle) = x;
@@ -121,14 +120,14 @@ SLIP_info SLIP_backslash
         SLIP_CHECK(SLIP_matrix_copy(&x2, SLIP_DENSE, type, x, option));
         (*X_handle) = x2;
         SLIP_matrix_free(&x, NULL);
-        
+
     }
-    
-        
+
+
     //--------------------------------------------------------------------------
     // Free memory
     //--------------------------------------------------------------------------
-    
+
     SLIP_FREE_ALL;
     return (SLIP_OK) ;
 }

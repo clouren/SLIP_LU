@@ -13,11 +13,9 @@
  * test otherwise. Read the following for detailed instruction and information
  *
  * For simple test, the test needs to be run with command
- * ./cov_test Ab_type xtype N list1[0] ... list1[N-1] M list2[0] ... list2[M-1]
+ * ./cov_test Ab_type N list1[0] ... list1[N-1] M list2[0] ... list2[M-1]
  * Ab_type: type of Matrix A and vector b: 0 mpz, 1 double, 2 int64, 3 mpq,
  *      4 mpfr, 5 for miscellaneous test.
- * xtype: type of solution: 1: full precision rational arithmetic,
- *                        2: double, 3:  user specified precision.
  * N and list1 specify the test list for slip_gmp_ntrials (in SLIP_gmp.h)
  * M and list2 specify the test list for malloc_count (in tcov_malloc_test.h)
  * N, list1, M, list2 are optional, but N and list1 are required when M and
@@ -26,7 +24,7 @@
  * For brutal test, the test is run with command
  * ./cov_test
  * the test will run through all cases
- * (specifically, [Ab_type xtype]={[0 1], [1 1], [2 2], [3 3], [4 3], [5 3]})
+ * (specifically, Ab_type={0, 1, 2, 3, 4, 5})
  * each case run from malloc_count = 0 to a number that can guarantee
  * malloc_count > 0 when the case finishes
  */
@@ -54,7 +52,7 @@
     SLIP_finalize() ;                            \
 }
 
-#include "SLIP_LU_internal.h"
+#include "slip_LU_internal.h"
 
 #define TEST_CHECK(method)                       \
 {                                                \
@@ -98,8 +96,8 @@ int64_t bxden3[4] = {15,  3,   6,  7};                      // Denominator of b
 int main( int argc, char* argv[])
 {
     bool IS_SIMPLE_TEST = true;
-    int rat_list[6] = {1, 1, 2, 3, 3, 3};  // only used in brutal test
-    int Ab_type = 0, xtype = 1 ;
+    int Ab_type = 0;
+    int64_t malloc_count_list[6]= { -1, -1, -1, -1, -1, -1};
     int64_t NUM_OF_TRIALS = 0 ;
     int64_t NUM_OF_MALLOC_T = 0;
     int64_t *gmp_ntrial_list=NULL;         // only used in simple test
@@ -114,11 +112,6 @@ int main( int argc, char* argv[])
         IS_SIMPLE_TEST = false;
         NUM_OF_TRIALS = 6;
     }
-    else if (argc == 2)                     // incorrect input
-    {
-        fprintf(stderr, "incorrect input\n");
-        return 0;
-    }
     else                                   // simple test
     {
         IS_SIMPLE_TEST = true;
@@ -127,9 +120,6 @@ int main( int argc, char* argv[])
         // type of Matrix A and vector b:
         // 0 mpz, 1 double, 2 int64_t, 3 mpq, 4 mpfr
         Ab_type = atoi(argv[++arg_count]);
-        //type of solution: 1: full precision rational arithmetic,
-        //                  2: double, 3:  user specified precision.
-        xtype=atoi(argv[++arg_count]);
         if (!argv[++arg_count])
         {
             NUM_OF_TRIALS=1;
@@ -205,14 +195,14 @@ int main( int argc, char* argv[])
     // malloc_count initialized from list2 (input for cov_test).
     //
     // For non SIMPLE_TEST, outter loop iterates for Ab_type from 0 to 5, and
-    // set xtype correspondingly, and inner loop iterates for malloc_count
-    // initialized from 0 to MAX_MALLOC_COUNT, break when malloc_count>0 at the
-    // end of inner loop.
+    // inner loop iterates for malloc_count initialized from 0 to
+    // MAX_MALLOC_COUNT, break when malloc_count>0 at the end of inner loop.
 
     for (int64_t k=0; k<NUM_OF_TRIALS; k++)
     {
         if (IS_SIMPLE_TEST)
         {
+            // only the first outter loop will iterate across all list2
             if (k == 1)
             {
                 NUM_OF_MALLOC_T=1;
@@ -222,8 +212,6 @@ int main( int argc, char* argv[])
         else
         {
             Ab_type = k;
-            //if(k == 1){return 0;} Ab_type = 4;
-            xtype = rat_list[Ab_type];
             NUM_OF_MALLOC_T = MAX_MALLOC_COUNT;
         }
 
@@ -241,8 +229,8 @@ int main( int argc, char* argv[])
             else
             {
                 malloc_count = kk;
-                printf("[Ab_type xtype malloc_count] = "
-                    "[%d %d %"PRId64"]\n", Ab_type, xtype, malloc_count);
+                printf("[Ab_type malloc_count] = [%d %"PRId64"]\n",
+                    Ab_type, malloc_count);
             }
 
             //------------------------------------------------------------------
@@ -307,21 +295,13 @@ int main( int argc, char* argv[])
                         option));
                     TEST_CHECK(SLIP_matrix_copy(&b, SLIP_DENSE, SLIP_MPZ, B,
                         option));
-                    // to trigger SLIP_SINGULAR
+                    // to trigger SLIP_SINGULAR 
                     TEST_CHECK_FAILURE(SLIP_backslash(&sol, SLIP_MPQ, A, b,
                         option));
                     option->pivot = SLIP_LARGEST;
                     TEST_CHECK_FAILURE(SLIP_backslash(&sol, SLIP_MPQ, A, b,
                         option));
                     option->pivot = SLIP_FIRST_NONZERO;
-                    TEST_CHECK_FAILURE(SLIP_backslash(&sol, SLIP_MPQ, A, b,
-                       option));
-                    // incorrect solution type
-                    TEST_CHECK_FAILURE(SLIP_backslash(&sol, SLIP_MPZ, A, b,
-                       option));
-
-                    // A->p = NULL
-                    SLIP_FREE(A->p);
                     TEST_CHECK_FAILURE(SLIP_backslash(&sol, SLIP_MPQ, A, b,
                        option));
 
@@ -338,10 +318,8 @@ int main( int argc, char* argv[])
                         TEST_CHECK(SLIP_mpfr_set_d(SLIP_2D(B,j,0,mpfr),
                             bxnum[j]/pow2_17, MPFR_RNDN));
                     }
-                    TEST_CHECK (SLIP_matrix_check (B, option)) ;
                     TEST_CHECK(SLIP_matrix_copy(&b, SLIP_DENSE, SLIP_MPZ,B,
                         option));
-                    SLIP_matrix_free (&A, option) ;
                     SLIP_matrix_free (&b, option) ;
 
                     // restore default precision
@@ -437,8 +415,6 @@ int main( int argc, char* argv[])
                 // successful case
                 TEST_CHECK(SLIP_matrix_copy(&A, SLIP_CSC, SLIP_MPZ, Ax,option));
                 TEST_CHECK(SLIP_matrix_copy(&b, SLIP_DENSE, SLIP_MPZ,B,option));
-                TEST_CHECK (SLIP_matrix_check (A, option)) ;
-                TEST_CHECK (SLIP_matrix_check (b, option)) ;
             }
             else
             {
@@ -549,8 +525,28 @@ int main( int argc, char* argv[])
                         TEST_CHECK(SLIP_matrix_copy(&A, (SLIP_kind)kind1,
                             (SLIP_type) type1, Ax, option));
 
-                        // just perform once to perform some failure cases
-                        if (tk == 0 && tk1 == 3)
+                        TEST_CHECK (SLIP_matrix_check (A, NULL));
+
+                        // just perform once to try some failure cases
+                        if (tk == 0 && tk1 == 0)
+                        {
+                            // fail SLIP_LU_solve
+                            TEST_CHECK(SLIP_matrix_allocate(&b, SLIP_DENSE,
+                                SLIP_MPZ, 1, 1, 1, true, true, option));
+                            TEST_CHECK_FAILURE(SLIP_LU_solve(NULL, b, A, A, A,
+                                b, NULL, NULL, option));
+                            SLIP_matrix_free (&b, option) ;
+                        }
+                        else if (tk == 0 && (tk1 == 1 || tk1 == 2 || tk1 == 4))
+                        {
+                            // test SLIP_matrix_copy with scale
+                            SLIP_matrix_free (&A, option) ;
+                            SLIP_CHECK (SLIP_mpq_set_ui (Ax->scale, 2, 5)) ;
+                            TEST_CHECK(SLIP_matrix_copy(&A, (SLIP_kind)kind1,
+                                (SLIP_type) type1, Ax, option));
+                            SLIP_CHECK (SLIP_mpq_set_ui (Ax->scale, 1, 1)) ;
+                        }
+                        else if (tk == 0 && tk1 == 3)
                         {
                             // test SLIP_matrix_check
                             A->i[0] = -1;
@@ -572,39 +568,15 @@ int main( int argc, char* argv[])
                             TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
                             TEST_CHECK_FAILURE(SLIP_matrix_check(NULL, option));
 
-                            //test coverage for slip_gmp_reallocate()
-                            void *p_new = NULL;
-                            TEST_CHECK(slip_gmp_realloc_test(&p_new, NULL,0,1));
-                            TEST_CHECK(slip_gmp_realloc_test(&p_new,p_new,1,0));
-
                             // Incorrect calling with NULL pointer(s)
                             TEST_CHECK_FAILURE(SLIP_LU_analyze(NULL,A,NULL));
-                            TEST_CHECK_FAILURE(SLIP_LU_factorize(NULL, NULL,
-                                NULL, NULL, A, NULL, NULL));
-                            SLIP_matrix *L, *U, *rhos;
-                            int64_t *pinv ;
-                            TEST_CHECK_FAILURE(SLIP_LU_factorize(&L, &U, &rhos,
-                                &pinv, A, NULL, NULL));
 
-                            TEST_CHECK(SLIP_matrix_allocate(&b, SLIP_DENSE,
-                                SLIP_MPZ, 1, 1, 1, true, true, option));
-                            TEST_CHECK(SLIP_matrix_allocate(&L, SLIP_CSC,
-                                SLIP_MPZ, 1, 1, 1, true, true, option));
-                            TEST_CHECK(SLIP_matrix_allocate(&U, SLIP_CSC,
-                                SLIP_MPZ, 1, 1, 1, true, true, option));
-                            TEST_CHECK(SLIP_matrix_allocate(&rhos, SLIP_DENSE,
-                                SLIP_MPZ, 1, 1, 1, true, true, option));
-                            TEST_CHECK_FAILURE(SLIP_LU_solve(NULL, b, A, L, U,
-                                rhos, NULL, pinv, option));
-                            SLIP_matrix_free (&b, option) ;
-                            SLIP_matrix_free (&L, option) ;
-                            SLIP_matrix_free (&U, option) ;
-                            SLIP_matrix_free (&rhos, option) ;
-                            TEST_CHECK_FAILURE(SLIP_LU_solve(NULL, NULL, NULL,
-                                NULL, NULL, NULL, NULL, NULL, NULL));
-                            SLIP_FREE(A->i);
-                            TEST_CHECK_FAILURE(SLIP_LU_analyze(&S,A,NULL));
-
+                            // test SLIP_matrix_copy with scale
+                            SLIP_matrix_free (&A, option) ;
+                            SLIP_CHECK (SLIP_mpq_set_ui (Ax->scale, 5, 2)) ;
+                            TEST_CHECK(SLIP_matrix_copy(&A, (SLIP_kind)kind1,
+                                (SLIP_type) type1, Ax, option));
+                            SLIP_CHECK (SLIP_mpq_set_ui (Ax->scale, 1, 1)) ;
                         }
                         else if (tk == 0 && tk1 == 8)
                         {
@@ -620,34 +592,37 @@ int main( int argc, char* argv[])
                             TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
                         }
                         SLIP_matrix_free (&A, option) ;
+
+                    }
+                    if (tk == 0)
+                    {
+                        // fail SLIP_matrix_copy
+                        TEST_CHECK_FAILURE(SLIP_matrix_copy(&A, 7,
+                            (SLIP_type) type, Ax, option));
                     }
                     SLIP_matrix_free (&Ax, option) ;
                 }
 
-#if 0
-                // failure case: incorrect index array input
-                int64_t I1[11]={0, -1, -2, 2, 3, 1, 2, 3, 0, 1, 2};
-                TEST_CHECK_FAILURE(SLIP_build_sparse_trip_mpz(&A, I1, J, x_mpz,
-                    n, nz));
-                SLIP_delete_sparse (&A) ;
+                // fail SLIP_matrix_allocate
+                TEST_CHECK_FAILURE(SLIP_matrix_allocate(NULL,
+                    SLIP_DENSE, SLIP_MPZ, 1, 1, 1,
+                    true, true, option));
+                TEST_CHECK_FAILURE(SLIP_matrix_allocate(&b,
+                    SLIP_DENSE, SLIP_MPZ, -1, 1, 1,
+                    true, true, option));
 
-                TEST_CHECK_FAILURE(SLIP_build_sparse_csc_mpz(&A, P1, I1, x_mpz,
-                    n, nz));
-                SLIP_delete_sparse (&A) ;
+                // test SLIP_matrix_allocate
+                TEST_CHECK(SLIP_matrix_allocate(&b, SLIP_DENSE,
+                    SLIP_MPQ, 1, 1, 1, false, false, option));
+                SLIP_matrix_free (&b, option) ;
+                TEST_CHECK(SLIP_matrix_allocate(&b, SLIP_DENSE,
+                    SLIP_MPFR, 1, 1, 1, false, false, option));
+                SLIP_matrix_free (&b, option) ;
 
-                // failure cases: input NULL pointer
-                TEST_CHECK_FAILURE(SLIP_build_sparse_trip_mpz (&A, I, J, NULL,
-                    n, nz));
-                TEST_CHECK_FAILURE(SLIP_build_sparse_trip_double(&A, I, J, NULL,
-                    n, nz, option));
-                TEST_CHECK_FAILURE(SLIP_build_sparse_trip_int64 (&A, I, J, NULL,
-                    n, nz));
-                TEST_CHECK_FAILURE(SLIP_build_sparse_trip_mpq   (&A, I, J, NULL,
-                    n, nz));
-                TEST_CHECK_FAILURE(SLIP_build_sparse_trip_mpfr  (&A, I, J, NULL,
-                    n, nz, option));
-#endif
-
+                //test coverage for slip_gmp_reallocate()
+                void *p_new = NULL;
+                TEST_CHECK(slip_gmp_realloc_test(&p_new, NULL,0,1));
+                TEST_CHECK(slip_gmp_realloc_test(&p_new,p_new,1,0));
 
                 SLIP_FREE_ALL;
 
@@ -656,7 +631,7 @@ int main( int argc, char* argv[])
                 {
                     if (malloc_count > 0)
                     {
-                        rat_list[5] = kk;
+                        malloc_count_list[5] = kk;
                         break;
                     }
                     else {continue;}
@@ -667,56 +642,53 @@ int main( int argc, char* argv[])
                 }
             }
 
-            //------------------------------------------------------------------
-            // SLIP LU backslash
-            // solve Ax=b in full precision rational arithmetic
-            //------------------------------------------------------------------
-
-            GOTCHA;
-            TEST_CHECK(SLIP_backslash(&sol, SLIP_MPQ, A, b, option));
-            GOTCHA;
-
-            //------------------------------------------------------------------
-            // SLIP LU Factorization, Solve and verification
-            //------------------------------------------------------------------
-
-            if (xtype==1)
+            if (Ab_type%2 == 0)
             {
+                //--------------------------------------------------------------
+                // SLIP LU backslash
+                // solve Ax=b in full precision rational arithmetic
+                //--------------------------------------------------------------
+		TEST_CHECK(SLIP_backslash(&sol, SLIP_MPQ, A, b, option));
 
-                if (Ab_type == 4)
+		if (Ab_type == 4)
                 {
                     // This would return SLIP_INCORRECT since sol has been
                     // scaled down so that sol->scale = 1. Therefore sol is
                     // solution for original unscaled Ax=b, while this is
                     // checking if x is the solution for scaled Ax=b
-                    TEST_CHECK(slip_check_solution(A, sol, b, option));
+                    info = slip_check_solution(A, sol, b, option);
+		    if (info == SLIP_INCORRECT) {;}
+                    else {TEST_CHECK(info);}
                 }
-
-            }
-            else if (xtype==2)
-            {
-
-                //--------------------------------------------------------------
-                // copy sol to double
-                //--------------------------------------------------------------
-
-                SLIP_matrix *sol_doub;
-                TEST_CHECK(SLIP_matrix_copy(&sol_doub, SLIP_DENSE, SLIP_FP64,
-                    sol, option));
-                SLIP_matrix_free(&sol_doub, option);
 
             }
             else
             {
-
                 //--------------------------------------------------------------
-                // copy sol to mpfr with user-specified precision
+                // SLIP LU backslash
+                // solve Ax=b in double precision
                 //--------------------------------------------------------------
+                SLIP_matrix *sol_doub;
+		TEST_CHECK(SLIP_backslash(&sol_doub, SLIP_FP64, A, b, option));
+                SLIP_matrix_free(&sol_doub, option);
 
-                SLIP_matrix *sol_mpfr;
-                TEST_CHECK(SLIP_matrix_copy(&sol_mpfr, SLIP_DENSE, SLIP_MPFR,
-                    sol, option));
-                SLIP_matrix_free(&sol_mpfr, option);
+                // failure case
+                if (Ab_type == 1)
+                {
+                    TEST_CHECK_FAILURE(SLIP_LU_factorize(NULL, NULL,
+                        NULL, NULL, A, NULL, NULL));
+                    // incorrect solution type
+                    TEST_CHECK_FAILURE(SLIP_backslash(&sol, SLIP_MPZ, A, b,
+                       option));
+                    // NULL solution pointer
+                    TEST_CHECK_FAILURE(SLIP_backslash(NULL, SLIP_MPZ, A, b,
+                       option));
+                    // invalid kind
+                    A->kind = 4;
+                    SLIP_matrix_nnz(A, NULL);
+                    A->kind = SLIP_CSC;
+                }
+
             }
 
             //------------------------------------------------------------------
@@ -728,7 +700,7 @@ int main( int argc, char* argv[])
             {
                 if (malloc_count > 0)
                 {
-                    rat_list[k] = kk;
+                    malloc_count_list[k] = kk;
                     break;
                 }
                 else {continue;}
@@ -747,9 +719,10 @@ int main( int argc, char* argv[])
     }
     else
     {
-        printf("remaining malloc_count for Ab_type = 0~5 are %d %d %d %d "
-            "%d %d\n", rat_list[0], rat_list[1], rat_list[2], rat_list[3],
-            rat_list[4], rat_list[5]);
+        printf("least required malloc_count for Ab_type = 0~5 are %ld %ld %ld "
+            "%ld %ld %ld\n", malloc_count_list[0], malloc_count_list[1], 
+            malloc_count_list[2], malloc_count_list[3],
+            malloc_count_list[4], malloc_count_list[5]);
     }
     return 0;
 }

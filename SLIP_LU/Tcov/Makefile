@@ -30,7 +30,7 @@ run: runtests
 all: test SLIPLU
 
 CS = \
-    slip_array_div.o slip_array_mul.o slip_back_sub.o \
+    slip_matrix_div.o slip_matrix_mul.o slip_back_sub.o \
     SLIP_backslash.o \
     slip_cast_array.o \
     slip_cast_matrix.o \
@@ -66,13 +66,11 @@ CS = \
     slip_permute_x.o \
     slip_reach.o \
     slip_ref_triangular_solve.o \
-    slip_scale_matrix.o \
-    slip_scale_x.o \
     slip_sparse_collapse.o \
     slip_sparse_realloc.o \
     tcov_malloc_test.o
 
-$(CS): ../Include/SLIP_LU.h ../Source/SLIP_LU_internal.h tcov_malloc_test.h ../Demo/demos.h
+$(CS): ../Include/SLIP_LU.h ../Source/slip_LU_internal.h tcov_malloc_test.h ../Demo/demos.h
 
 .PRECIOUS: SLIP_%.c slip_%.c SLIPLU.c demos.c
 
@@ -101,7 +99,7 @@ runtests: all
 	- ./SLIPLU p 4 q 2 o2 1 f ../ExampleMats/test_mat.txt ../ExampleMats/test_rhs.txt
 	- ./SLIPLU p 5
 	- ./cov_test
-	- ./cov_test 0 1 1 1
+	- ./cov_test 0 1 1
 
 # To run with valgrind:
 V = valgrind
@@ -113,7 +111,7 @@ vtests: all
 	- $(V) ./SLIPLU p 4 q 2 o2 1 f ../ExampleMats/test_mat.txt ../ExampleMats/test_rhs.txt
 	- $(V) ./SLIPLU p 5
 	- $(V) ./cov_test
-	- $(V) ./cov_test 0 1 1 1
+	- $(V) ./cov_test 0 1 1
 
 # remove all files not in the original distribution, including symbolic links
 clean:

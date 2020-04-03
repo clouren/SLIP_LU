@@ -47,8 +47,9 @@ SLIP_info slip_matrix_div // divides the x matrix by the determinant
     //--------------------------------------------------------------------------
     // iterate each entry of x, copy to x2 and divide it by det
     //--------------------------------------------------------------------------
-
-    for (int64_t i = 0; i < x->n * x->m; i++)
+    
+    int64_t nz = x->n * x->m;
+    for (int64_t i = 0; i < nz; i++)
     {
         // Set x2[i] = x[i]
         SLIP_CHECK( SLIP_mpq_set_num( x2->x.mpq[i], x->x.mpz[i]));

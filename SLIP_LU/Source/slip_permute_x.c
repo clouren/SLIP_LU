@@ -18,10 +18,13 @@
 #include "slip_LU_internal.h"
 // TODO optimize to avoid copy twice and unnecessary memory alloc
 // Chris note: Is this possible to do here since it's a dense matrix and thus
-// has no indices? An alternate solution is to just pass in X_handle and set 
-// (*X_handle) = x2, eliminate lines 82-95 and free x in the overall solve function
-// since this is all internal anyway. If we have to do the copy anyway, why not 
-// just do it once, we don't have to preserve x here.  Thoughts?
+// has no indices?(Jinhao: you can easily get the index of entry since matrix
+// is dense) An alternate solution is to just pass in X_handle and set
+// (*X_handle) = x2, eliminate lines 82-95 and free x in the overall solve
+// function since this is all internal anyway. If we have to do the copy
+// anyway, why not just do it once, we don't have to preserve x here.
+// Thoughts?(Jinhao: just feel it will be better to avoid allocating large
+// chunk of memory when you can)
 /*
     for ith_row
         j = q[i];
@@ -46,7 +49,7 @@ SLIP_info slip_permute_x
 (
     SLIP_matrix *x,       // Solution vector
     SLIP_LU_analysis *S,  // symbolic analysis with the column ordering Q
-    SLIP_options* option  // Command options
+    const SLIP_options* option  // Command options
                           // has been checked in the only caller SLIP_LU_solve
 )
 {

@@ -40,12 +40,12 @@ SLIP_info slip_forward_sub
     SLIP_REQUIRE(L, SLIP_CSC, SLIP_MPZ);
     SLIP_REQUIRE(x, SLIP_DENSE, SLIP_MPZ);
     SLIP_REQUIRE(rhos, SLIP_DENSE, SLIP_MPZ);
-   
+
     //--------------------------------------------------------------------------
 
     int64_t i, hx, k, j, jnew;
     int sgn ;
-    
+
     // Build the history matrix
     SLIP_matrix *h;
     SLIP_CHECK (SLIP_matrix_allocate(&h, SLIP_DENSE, SLIP_INT64, x->m, x->n,
@@ -56,7 +56,7 @@ SLIP_info slip_forward_sub
     {
         h->x.int64[i] = -1;
     }
-    
+
 
     //--------------------------------------------------------------------------
     // Iterate across each RHS vector
@@ -89,8 +89,8 @@ SLIP_info slip_forward_sub
                 // x[i] = x[i] / rhos[hx]
                 if (hx > -1)
                 {
-                    SLIP_CHECK(SLIP_mpz_divexact( SLIP_2D(x, i, k, mpz), 
-                                                  SLIP_2D(x, i, k, mpz), 
+                    SLIP_CHECK(SLIP_mpz_divexact( SLIP_2D(x, i, k, mpz),
+                                                  SLIP_2D(x, i, k, mpz),
                                                   SLIP_1D(rhos, hx, mpz)));
                 }
             }
@@ -125,7 +125,7 @@ SLIP_info slip_forward_sub
                         {
                             SLIP_CHECK(
                                 SLIP_mpz_divexact(SLIP_2D(x, jnew, k, mpz),
-                                                  SLIP_2D(x, jnew, k, mpz), 
+                                                  SLIP_2D(x, jnew, k, mpz),
                                                   SLIP_1D(rhos, i-1, mpz)));
                         }
                     }
@@ -136,7 +136,7 @@ SLIP_info slip_forward_sub
                         if (hx < i-1)
                         {
                             // x[j] = x[j] * rhos[i-1]
-                            SLIP_CHECK(SLIP_mpz_mul(SLIP_2D(x, jnew, k, mpz), 
+                            SLIP_CHECK(SLIP_mpz_mul(SLIP_2D(x, jnew, k, mpz),
                                                     SLIP_2D(x, jnew, k, mpz),
                                                     SLIP_1D(rhos, i-1, mpz)));
                             // x[j] = x[j] / rhos[hx]
@@ -160,8 +160,8 @@ SLIP_info slip_forward_sub
                         if (i > 0)
                         {
                             SLIP_CHECK(
-                                SLIP_mpz_divexact(SLIP_2D(x, jnew, k, mpz), 
-                                                  SLIP_2D(x, jnew, k, mpz), 
+                                SLIP_mpz_divexact(SLIP_2D(x, jnew, k, mpz),
+                                                  SLIP_2D(x, jnew, k, mpz),
                                                   SLIP_1D(rhos, i-1, mpz)));
                         }
                     }

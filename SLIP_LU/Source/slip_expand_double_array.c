@@ -29,7 +29,7 @@ SLIP_info slip_expand_double_array
     double* x,              // double array that needs to be made integral
     mpq_t scale,            // the scaling factor used (x_out = scale * x)
     int64_t n,              // size of x
-    SLIP_options* option    // Command options
+    const SLIP_options* option // Command options
 )
 {
 
@@ -38,14 +38,14 @@ SLIP_info slip_expand_double_array
     //--------------------------------------------------------------------------
 
     // inputs have been checked in the only caller slip_cast_array
-    
+
     //--------------------------------------------------------------------------
 
     int64_t i, k ;
     int r1, r2 = 1;
     bool nz_found = false;
     SLIP_info info ;
-    // Double precision accurate to about 2e-16. We multiply by 10e17 to convert 
+    // Double precision accurate to about 2e-16. We multiply by 10e17 to convert
     // (overestimate to be safe)
     double expon = pow(10, 17);
     // Quad precision in case input is huge
@@ -59,19 +59,21 @@ SLIP_info slip_expand_double_array
 
     SLIP_CHECK (SLIP_matrix_allocate(&x3, SLIP_DENSE, SLIP_MPFR, n, 1, n,
         false, true, option));
-    
+
     SLIP_CHECK(SLIP_mpq_set_d(scale, expon));           // scale = 10^17
     for (i = 0; i < n; i++)
     {
         // Set x3[i] = x[i]
-        SLIP_CHECK(SLIP_mpfr_set_d(x3->x.mpfr[i], x[i], SLIP_GET_ROUND(option)));
+        SLIP_CHECK(SLIP_mpfr_set_d(x3->x.mpfr[i], x[i],
+            SLIP_GET_ROUND(option)));
 
         // x3[i] = x[i] * 10^17
         SLIP_CHECK(SLIP_mpfr_mul_d(x3->x.mpfr[i], x3->x.mpfr[i], expon,
                                    SLIP_GET_ROUND(option)));
 
         // x_out[i] = x3[i]
-        SLIP_CHECK(SLIP_mpfr_get_z(x_out[i], x3->x.mpfr[i], SLIP_GET_ROUND(option)));
+        SLIP_CHECK(SLIP_mpfr_get_z(x_out[i], x3->x.mpfr[i],
+            SLIP_GET_ROUND(option)));
     }
 
     //--------------------------------------------------------------------------

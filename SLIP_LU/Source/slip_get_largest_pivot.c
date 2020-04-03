@@ -39,7 +39,7 @@ SLIP_info slip_get_largest_pivot
     //--------------------------------------------------------------------------
 
     SLIP_REQUIRE(x, SLIP_DENSE, SLIP_MPZ);
-    
+
     SLIP_info info ;
     if (!pivs || !xi || !pivot) {return SLIP_INCORRECT_INPUT;}
 
