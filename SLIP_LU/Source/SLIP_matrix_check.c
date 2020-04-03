@@ -27,41 +27,46 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
     const SLIP_options* option
 )
 {
-
     //--------------------------------------------------------------------------
-    // check inputs
+    // check the dimensions
     //--------------------------------------------------------------------------
-
     int print_level = SLIP_GET_PRINT_LEVEL(option);
-    uint64_t prec = SLIP_GET_PRECISION(option);
-    if (A == NULL)
+    int64_t nz = SLIP_matrix_nnz(A, option);    // Number of nonzeros in A
+    if (nz < 0)
     {
-        if (print_level > 0)
-        {
-            printf ("A is NULL.\n") ;
-        }
+        if (print_level > 0) {printf ("A is NULL or nz invalid\n") ;}
         return (SLIP_INCORRECT_INPUT) ;
     }
-
-    //--------------------------------------------------------------------------
-    // get the input matrix
-    //--------------------------------------------------------------------------
-
-    int64_t i, j, p, pend ;
-    int64_t* mark = NULL;   // used for checking duplicate index of CSC
-    bool* bmark = NULL;     // used for checking duplicate index of triplet
 
     int64_t m = A->m ;
     int64_t n = A->n ;
     int64_t nzmax = A->nzmax ;
-    int64_t nz = SLIP_matrix_nnz(A, option);    // Number of nonzeros in A
 
-    if (A->kind < SLIP_CSC || A->kind > SLIP_DENSE ||
-        A->type < SLIP_MPZ || A->type > SLIP_FP64)
+    if (m < 0)
+    {
+        if (print_level > 0) {printf ("m invalid\n") ;}
+        return (SLIP_INCORRECT_INPUT) ;
+    }
+    if (n < 0)
+    {
+        if (print_level > 0) {printf ("n invalid\n") ;}
+        return (SLIP_INCORRECT_INPUT) ;
+    }
+    if (nzmax < 0)
+    {
+        if (print_level > 0) {printf ("nzmax invalid\n") ;}
+        return (SLIP_INCORRECT_INPUT) ;
+    }
+
+    //--------------------------------------------------------------------------
+    // check the dimensions
+    //--------------------------------------------------------------------------
+    if (A->type < SLIP_MPZ || A->type > SLIP_FP64)
+    //  A->kind < SLIP_CSC || A->kind > SLIP_DENSE // checked in SLIP_matrix_nnz
     {
         if (print_level > 0)
         {
-            printf ("A has invalid kind or type.\n") ;
+            printf ("A has invalid type.\n") ;
         }
         return (SLIP_INCORRECT_INPUT) ;
     }
@@ -78,24 +83,14 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
     }
 
     //--------------------------------------------------------------------------
-    // check the dimensions
+    // initialize workspace
     //--------------------------------------------------------------------------
 
-    if (m < 0)      // or (m <= 0) ?
-    {
-        if (print_level > 0) {printf ("m invalid\n") ;}
-        return (SLIP_INCORRECT_INPUT) ;
-    }
-    if (n < 0)      // or (n <= 0) ?
-    {
-        if (print_level > 0) {printf ("n invalid\n") ;}
-        return (SLIP_INCORRECT_INPUT) ;
-    }
-    if (nzmax < 0)      // or (nzmax <= 0) ?
-    {
-        if (print_level > 0) {printf ("nzmax invalid\n") ;}
-        return (SLIP_INCORRECT_INPUT) ;
-    }
+    int64_t i, j, p, pend ;
+    int64_t* mark = NULL;   // used for checking duplicate index of CSC
+    bool* bmark = NULL;     // used for checking duplicate index of triplet
+    uint64_t prec = SLIP_GET_PRECISION(option);
+ 
 
     //--------------------------------------------------------------------------
     // Now check column/row indices
@@ -111,7 +106,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
             // check the column pointers
             //------------------------------------------------------------------
 
-            if (nz > 0 && (Ap == NULL || Ap [0] != 0 || Ap [n] != nz))
+            if (nzmax > 0 && (Ap == NULL || Ap [0] != 0))// nz set to Ap [n]
             {
                 // column pointers invalid
                 if (print_level > 0) {printf ("p invalid\n") ;}

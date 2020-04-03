@@ -32,9 +32,11 @@ int64_t SLIP_matrix_nnz     // return # of entries in A, or -1 on error
 
     switch (A->kind)
     {
-        case SLIP_CSC:     return (A->p == NULL ? (-1) : A->p [A->n]) ;
+        case SLIP_CSC:     return ((A->p == NULL || A->n < 0) ? (-1) :
+                                                                A->p [A->n]) ;
         case SLIP_TRIPLET: return (A->nz) ;
-        case SLIP_DENSE:   return (A->m * A->n) ;
+        case SLIP_DENSE:   return ((A->m < 0 || A->n < 0)? (-1) :
+                                                           (A->m * A->n)) ;
         default:           return (-1) ;
     }
 }

@@ -344,13 +344,6 @@ int main( int argc, char* argv[])
                         option));
                     SLIP_matrix_free (&b, option) ;
 
-                    // failure case: Ax->x = NULL
-                    double *tmp_Ax_fp64 = Ax->x.fp64;
-                    Ax->x.fp64 = NULL;
-                    TEST_CHECK_FAILURE(SLIP_matrix_copy(&A, SLIP_CSC, SLIP_MPZ,
-                        Ax,option));
-                    Ax->x.fp64 = tmp_Ax_fp64;
-
                     // use smallest entry as pivot
                     option->pivot = SLIP_SMALLEST;
                 }
@@ -511,7 +504,7 @@ int main( int argc, char* argv[])
                 TEST_CHECK (SLIP_matrix_check (Ax, option));
 
                 // convert to all different type of matrix
-                for (int tk1 = 0; tk1 < 15; tk1++)
+                for (int tk1 = 0; tk1 < 15 && info == SLIP_OK; tk1++)
                 {
                     // successful cases
                     int type1 = tk1%5;
@@ -544,12 +537,12 @@ int main( int argc, char* argv[])
                     {
                         // test SLIP_matrix_copy with scale
                         SLIP_matrix_free (&A, option) ;
-                        SLIP_CHECK (SLIP_mpq_set_ui (Ax->scale, 2, 5)) ;
+                        TEST_CHECK (SLIP_mpq_set_ui (Ax->scale, 2, 5)) ;
                         TEST_CHECK(SLIP_matrix_copy(&A, (SLIP_kind)kind1,
                             (SLIP_type) type1, Ax, option));
-                        SLIP_CHECK (SLIP_mpq_set_ui (Ax->scale, 1, 1)) ;
+                        TEST_CHECK (SLIP_mpq_set_ui (Ax->scale, 1, 1)) ;
                     }
-                    else if (tk == 0 && tk1 == 3)
+                    else if (tk == 0 && tk1 == 3)//A = CSC int64
                     {
                         // test SLIP_matrix_check
                         A->i[0] = -1;
@@ -561,13 +554,11 @@ int main( int argc, char* argv[])
                         TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
                         A->p[0] = 1;
                         TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
+                        A->type = -1;// invalid type
+                        TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
                         A->nzmax = -1;
                         TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
-                        A->n = -1;
-                        TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
                         A->m = -1;
-                        TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
-                        A->type = -1;// invalid type
                         TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
                         TEST_CHECK_FAILURE(SLIP_matrix_check(NULL, option));
 
@@ -576,32 +567,40 @@ int main( int argc, char* argv[])
 
                         // test SLIP_matrix_copy with scale
                         SLIP_matrix_free (&A, option) ;
-                        SLIP_CHECK (SLIP_mpq_set_ui (Ax->scale, 5, 2)) ;
+                        TEST_CHECK (SLIP_mpq_set_ui (Ax->scale, 5, 2)) ;
                         TEST_CHECK(SLIP_matrix_copy(&A, (SLIP_kind)kind1,
                             (SLIP_type) type1, Ax, option));
-                        SLIP_CHECK (SLIP_mpq_set_ui (Ax->scale, 1, 1)) ;
+                        TEST_CHECK (SLIP_mpq_set_ui (Ax->scale, 1, 1)) ;
                     }
-                    else if (tk == 0 && tk1 == 8)
+                    else if (tk == 0 && tk1 == 8) // A= Triplet int64
                     {
                         // test SLIP_matrix_check
                         A->i[0] = -1;
                         TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
                         SLIP_FREE(A->x.int64);
                         TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
+                        A->n = -1;
+                        TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
                     }
-                    else if (tk == 0 && tk1 == 13)
+                    else if (tk == 0 && tk1 == 13)//A= dense int64
                     {
                         SLIP_FREE(A->x.int64);
                         TEST_CHECK_FAILURE(SLIP_matrix_check(A, option));
                     }
                     SLIP_matrix_free (&A, option) ;
+                    info = SLIP_OK;
 
                 }
-                if (tk == 0)
+                TEST_CHECK(info);
+                if (tk == 3)
                 {
                     // fail SLIP_matrix_copy
                     TEST_CHECK_FAILURE(SLIP_matrix_copy(&A, 7,
                         (SLIP_type) type, Ax, option));
+                    // failure case: Ax->x = NULL
+                    SLIP_FREE(Ax->x.int64);
+                    TEST_CHECK_FAILURE(SLIP_matrix_copy(&A, SLIP_CSC, SLIP_MPZ,
+                        Ax,option));
 
                     // fail SLIP_matrix_allocate
                     TEST_CHECK_FAILURE(SLIP_matrix_allocate(NULL,

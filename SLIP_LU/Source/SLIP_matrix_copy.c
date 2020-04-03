@@ -44,7 +44,7 @@ SLIP_info SLIP_matrix_copy
 
     SLIP_info info ;
     int64_t nz = SLIP_matrix_nnz (A, option) ;
-    if (A == NULL || option == NULL || C_handle == NULL || nz < 0 ||
+    if (A == NULL || C_handle == NULL || nz < 0 ||
         A->kind < SLIP_CSC || A->kind > SLIP_DENSE ||
         A->type < SLIP_MPZ || A->type > SLIP_FP64  ||
         C_kind  < SLIP_CSC || C_kind  > SLIP_DENSE ||

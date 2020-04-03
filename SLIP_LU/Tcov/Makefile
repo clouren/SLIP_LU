@@ -102,7 +102,7 @@ runtests: all
 	- ./cov_test 0 1 1
 
 # To run with valgrind:
-V = valgrind --leak-check=full
+V = valgrind #--leak-check=full
 
 # run all statement coverage tests but with valgrind
 vtests: all

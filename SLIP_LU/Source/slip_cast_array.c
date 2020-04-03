@@ -485,5 +485,6 @@ SLIP_info slip_cast_array
             break ;
 
     }
+    SLIP_FREE_ALL
     return (SLIP_OK) ;
 }

@@ -41,7 +41,7 @@ OBJ = \
 
 $(OBJ): ../Include/SLIP_LU.h ../Source/slip_LU_internal.h Makefile
 
-%.o: ../Source/%.c ../Include/SLIP_LU.h ../Source/SLIP_LU_internal.h
+%.o: ../Source/%.c ../Include/SLIP_LU.h ../Source/slip_LU_internal.h
 	$(C) $(I) -c $<
 
 #-------------------------------------------------------------------------------
