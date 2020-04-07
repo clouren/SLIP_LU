@@ -41,6 +41,7 @@
 
 #define SLIP_FREE_WORK                        \
     SLIP_matrix_free(&b2, NULL);              \
+    SLIP_matrix_free(&x2, NULL);              \
     SLIP_MPQ_CLEAR(scale);                    \
 
 #define SLIP_FREE_ALL                         \
@@ -93,9 +94,10 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     mpq_t scale;
     SLIP_MPQ_SET_NULL(scale);
 
-    SLIP_matrix *x = NULL;   // solution
+    SLIP_matrix *x = NULL;   // final solution
+    SLIP_matrix *x2 = NULL;  // unpermuted solution
     SLIP_matrix *b2 = NULL;  // permuted b
-    SLIP_CHECK (SLIP_matrix_allocate(&x, SLIP_DENSE, SLIP_MPQ, n, numRHS,
+    SLIP_CHECK (SLIP_matrix_allocate(&x2, SLIP_DENSE, SLIP_MPQ, n, numRHS,
         n*numRHS, false, true, option));
 
     // not need to perform deep copy, simply create an new dense matrix
@@ -133,18 +135,19 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     SLIP_CHECK(slip_back_sub(U, b2));
 
     //--------------------------------------------------------------------------
-    // x = b2/det, where det=rhos[n-1]
+    // x2 = b2/det, where det=rhos[n-1]
     //--------------------------------------------------------------------------
 
-    SLIP_CHECK(slip_matrix_div(x, b2, rhos->x.mpz[n-1]));
+    SLIP_CHECK(slip_matrix_div(x2, b2, rhos->x.mpz[n-1]));
 
     //--------------------------------------------------------------------------
-    // Permute the solution vectors
+    // x = permute (x2), or x = Q*x
     //--------------------------------------------------------------------------
 
     // TODO Please refer to the comment in the below function. Once a solution
     // is decided update the rest of this file.
-    SLIP_CHECK(slip_permute_x(x, (SLIP_LU_analysis *) S, option));
+    SLIP_CHECK(slip_permute_x(&x, x2, (SLIP_LU_analysis *) S, option));
+    SLIP_matrix_free (&x2, NULL) ;
 
     //--------------------------------------------------------------------------
     // Check the solution if desired (debugging only)

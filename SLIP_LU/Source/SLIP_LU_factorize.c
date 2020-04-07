@@ -60,8 +60,9 @@ SLIP_info SLIP_LU_factorize
     //--------------------------------------------------------------------------
 
     SLIP_REQUIRE (A, SLIP_CSC, SLIP_MPZ) ;
+    int64_t anz = SLIP_matrix_nnz (A, option) ;
 
-    if (!L_handle || !U_handle || !rhos_handle || !pinv_handle || !S)
+    if (!L_handle || !U_handle || !rhos_handle || !pinv_handle || !S || anz < 0)
     {
         return SLIP_INCORRECT_INPUT;
     }
@@ -99,9 +100,8 @@ SLIP_info SLIP_LU_factorize
         return SLIP_OUT_OF_MEMORY;
     }
 
-    int64_t k = 0, top, i, j, col, loc, lnz = 0, unz = 0, anz, pivot, jnew ;
+    int64_t k = 0, top, i, j, col, loc, lnz = 0, unz = 0, pivot, jnew ;
     size_t size ;
-    anz = A->p[n];
 
     SLIP_CHECK(SLIP_mpz_init(sigma));
     SLIP_CHECK(SLIP_mpfr_init2(temp, 256));
@@ -150,12 +150,11 @@ SLIP_info SLIP_LU_factorize
     // This bound is based on a relaxation of sparse Hadamard's bound
     //--------------------------------------------------------------------------
 
-    // sigma is the largest initial entry in A. First we initialize sigma to be
-    // the first nonzero in A
-    SLIP_CHECK(SLIP_mpz_set(sigma, A->x.mpz[0]));
+    // sigma is the largest initial entry in A
+    SLIP_CHECK(SLIP_mpz_set_si (sigma, 0));
 
     // Iterate throughout A and set sigma = max (A)
-    for (i = 1; i < anz; i++)
+    for (i = 0; i < anz; i++)
     {
         int r ;
         SLIP_CHECK (SLIP_mpz_cmpabs (&r, sigma, A->x.mpz [i])) ;
@@ -170,10 +169,10 @@ SLIP_info SLIP_LU_factorize
 
     // gamma is the number of nonzeros in the most dense column of A. First, we
     // initialize gamma to be the number of nonzeros in A(:,1).
-    int64_t gamma = A->p[1];
+    int64_t gamma = 0 ;
 
     // Iterate throughout A and obtain gamma as the most dense column of A
-    for (i = 1; i<n; i++)
+    for (i = 0; i<n; i++)
     {
         if( gamma < A->p[i+1] - A->p[i])
         {
@@ -187,6 +186,8 @@ SLIP_info SLIP_LU_factorize
     //--------------------------------------------------------------------------
     // The bound is given as: gamma*log2(sigma sqrt(gamma))
     //--------------------------------------------------------------------------
+
+    // TODO let's discuss this bound
 
     // temp = sigma*sqrt(gamma)
     SLIP_CHECK(SLIP_mpfr_mul_d(temp, temp, (double)sqrt(gamma),

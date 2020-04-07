@@ -68,6 +68,7 @@
 //-------------------------Common Macros----------------------------------------
 //------------------------------------------------------------------------------
 
+// TODO fix the memory manager
 
 #ifdef MATLAB_MEX_FILE
 
@@ -215,8 +216,6 @@ void slip_gmp_failure (int status) ;
 // Macros to utilize the default if option is NULL
 //------------------------------------------------------------------------------
 
-//TODO I want to write a macro that uses the default if option is NULL.
-//     Is this the correct way to do it?
 #define SLIP_GET_TOL(option) ( ( (option==NULL) ) ? (SLIP_DEFAULT_TOL) : (option->tol))
 
 #define SLIP_GET_CHECK(option) ( ( (option==NULL) ) ? (false) : (option->check))
@@ -231,10 +230,10 @@ void slip_gmp_failure (int status) ;
 
 #define SLIP_GET_ROUND(option) ( ( (option==NULL) ) ? (SLIP_DEFAULT_MPFR_ROUND) : (option->round))
 
-
-
-
+//------------------------------------------------------------------------------
 // Field access macros for MPZ/MPQ/MPFR struct
+//------------------------------------------------------------------------------
+
 // (similar definition in gmp-impl.h and mpfr-impl.h)
 
 #define SLIP_MPZ_SIZ(x)   ((x)->_mp_size)
@@ -572,10 +571,12 @@ void slip_lu_info(void);
  */
 SLIP_info slip_permute_x
 (
-    SLIP_matrix *x,            // Solution vector
-    SLIP_LU_analysis *S,       // symbolic analysis with the column ordering Q
-    const SLIP_options* option // Command options
-);
+    SLIP_matrix **x_handle,    // permuted Solution vector
+    SLIP_matrix *x2,           // unpermuted Solution vector (not modified)
+    SLIP_LU_analysis *S,  // symbolic analysis with the column ordering Q
+    const SLIP_options* option  // Command options
+                          // has been checked in the only caller SLIP_LU_solve
+) ;
 
 /* Purpose: This function collapses a SLIP matrix. Essentially it shrinks the
  * size of x and i. so that they only take up the number of elements in the

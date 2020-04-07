@@ -45,9 +45,11 @@
         end
     end
 */
+
 SLIP_info slip_permute_x
 (
-    SLIP_matrix *x,       // Solution vector
+    SLIP_matrix **x_handle,    // permuted Solution vector
+    SLIP_matrix *x2,           // unpermuted Solution vector (not modified)
     SLIP_LU_analysis *S,  // symbolic analysis with the column ordering Q
     const SLIP_options* option  // Command options
                           // has been checked in the only caller SLIP_LU_solve
@@ -59,39 +61,27 @@ SLIP_info slip_permute_x
     //--------------------------------------------------------------------------
 
     SLIP_info info ;
-    SLIP_REQUIRE (x, SLIP_DENSE, SLIP_MPQ) ;
+    SLIP_REQUIRE (x2, SLIP_DENSE, SLIP_MPQ) ;
 
-    if (!x || !S || !S->q) {return SLIP_INCORRECT_INPUT;}
+    if (x_handle == NULL || !S || !S->q) {return SLIP_INCORRECT_INPUT;}
+    (*x_handle) = NULL ;
 
     //--------------------------------------------------------------------------
-    // x2 (q) = x
+    // x (q) = x2
     //--------------------------------------------------------------------------
 
-    int64_t *q = S->q, n = x->m, numRHS = x->n;     // column permutation
-    // Declare temp x
-    SLIP_matrix *x2;
-    SLIP_CHECK (SLIP_matrix_allocate(&x2, SLIP_DENSE, SLIP_MPQ, x->m, x->n,
-        x->nzmax, false, true, option));
-    // Set x2 = Q*x
+    int64_t *q = S->q, n = x2->m, numRHS = x2->n;     // column permutation
+    // allocate x
+    SLIP_matrix *x;
+    SLIP_CHECK (SLIP_matrix_allocate(&x, SLIP_DENSE, SLIP_MPQ, x2->m, x2->n,
+        x2->nzmax, false, true, option));
+    // Set x = Q*x2
     for (int64_t i = 0; i < n; i++)
     {
         for (int64_t j = 0; j < numRHS; j++)
         {
-            SLIP_CHECK(SLIP_mpq_set(SLIP_2D(x2, q[i], j, mpq),
-                                    SLIP_2D(x,    i,  j, mpq)));
-        }
-    }
-
-    //--------------------------------------------------------------------------
-    // x = x2
-    //--------------------------------------------------------------------------
-
-    for (int64_t i = 0; i < n; i++)
-    {
-        for (int64_t j = 0; j < numRHS; j++)
-        {
-            SLIP_CHECK(SLIP_mpq_set(SLIP_2D(x,  i, j, mpq),
-                                    SLIP_2D(x2, i, j, mpq)));
+            SLIP_CHECK(SLIP_mpq_set(SLIP_2D(x,  q[i], j, mpq),
+                                    SLIP_2D(x2,   i,  j, mpq)));
         }
     }
 
@@ -99,7 +89,7 @@ SLIP_info slip_permute_x
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    SLIP_FREE_ALL;
+    (*x_handle) = x ;
     return SLIP_OK;
 }
 

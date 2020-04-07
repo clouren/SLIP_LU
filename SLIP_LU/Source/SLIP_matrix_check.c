@@ -21,6 +21,8 @@
 //      2: errors and terse output
 //      3: verbose
 
+// TODO allow redirection of printf
+
 SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
 (
     const SLIP_matrix *A,     // matrix to check
