@@ -27,7 +27,8 @@ void mexFunction
     //--------------------------------------------------------------------------
 
     SLIP_initialize_expert (mxMalloc, mxCalloc, mxRealloc, mxFree) ;
-    SLIP_info status;
+    SuiteSparse_config.printf_func = mexPrintf ;
+    SLIP_info status ;
 
     //--------------------------------------------------------------------------
     // Check inputs

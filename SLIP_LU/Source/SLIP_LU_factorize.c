@@ -189,7 +189,7 @@ SLIP_info SLIP_LU_factorize
     // The bound is given as: gamma*log2(sigma sqrt(gamma))
     //--------------------------------------------------------------------------
 
-    // TODO let's discuss this bound
+    // TODO let's discuss this bound.  It seems very high to me (Tim)
 
     // temp = sigma*sqrt(gamma)
     SLIP_CHECK(SLIP_mpfr_mul_d(temp, temp, (double)sqrt(gamma), round));

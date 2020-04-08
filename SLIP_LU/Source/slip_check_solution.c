@@ -102,19 +102,13 @@ SLIP_info slip_check_solution
     int pr = SLIP_OPTION_PRINT_LEVEL (option) ;
     if (info == SLIP_OK)
     {
-        if (pr >= 0)
-        {
-            printf ("Solution is verified to be exact.\n") ;
-        }
+        SLIP_PR1 ("Solution is verified to be exact.\n") ;
     }
     else if (info == SLIP_INCORRECT)
     {
         // This can never happen.
-        if (pr >= 0)
-        {
-            printf ("ERROR! Solution is wrong. This is a bug; please "
-                    "contact the authors of SLIP LU.\n") ;
-        }
+        SLIP_PR1 ("ERROR! Solution is wrong. This is a bug; please "
+                  "contact the authors of SLIP LU.\n") ;
     }
 
     //--------------------------------------------------------------------------

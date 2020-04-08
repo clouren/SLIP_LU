@@ -22,8 +22,6 @@
 //      2: errors and terse output
 //      3: verbose
 
-// TODO allow redirection of printf
-
 SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
 (
     const SLIP_matrix *A,     // matrix to check
@@ -35,11 +33,11 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
     // check the dimensions
     //--------------------------------------------------------------------------
 
-    int print_level = SLIP_OPTION_PRINT_LEVEL(option);
+    int pr = SLIP_OPTION_PRINT_LEVEL (option) ;
     int64_t nz = SLIP_matrix_nnz(A, option);    // Number of nonzeros in A
     if (nz < 0)
     {
-        if (print_level > 0) {printf ("A is NULL or nz invalid\n") ;}
+        SLIP_PR1 ("A is NULL or nz invalid\n") ;
         return (SLIP_INCORRECT_INPUT) ;
     }
 
@@ -49,17 +47,17 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
 
     if (m < 0)
     {
-        if (print_level > 0) {printf ("m invalid\n") ;}
+        SLIP_PR1 ("m invalid\n") ;
         return (SLIP_INCORRECT_INPUT) ;
     }
     if (n < 0)
     {
-        if (print_level > 0) {printf ("n invalid\n") ;}
+        SLIP_PR1 ("n invalid\n") ;
         return (SLIP_INCORRECT_INPUT) ;
     }
     if (nzmax < 0)
     {
-        if (print_level > 0) {printf ("nzmax invalid\n") ;}
+        SLIP_PR1 ("nzmax invalid\n") ;
         return (SLIP_INCORRECT_INPUT) ;
     }
 
@@ -70,22 +68,16 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
     if (A->type < SLIP_MPZ || A->type > SLIP_FP64)
     //  A->kind < SLIP_CSC || A->kind > SLIP_DENSE // checked in SLIP_matrix_nnz
     {
-        if (print_level > 0)
-        {
-            printf ("A has invalid type.\n") ;
-        }
+        SLIP_PR1 ("A has invalid type.\n") ;
         return (SLIP_INCORRECT_INPUT) ;
     }
     else
     {
-        if (print_level > 1)
-        {
-            printf ("SLIP_matrix: nrows: %"PRId64", ncols: %"PRId64", nz:"
+        SLIP_PR2 ("SLIP_matrix: nrows: %"PRId64", ncols: %"PRId64", nz:"
             "%"PRId64", nzmax: %"PRId64", kind: %s, type: %s\n", m, n, nz,
             nzmax, A->kind < 1 ? "CSC" : A->kind < 2 ? "Triplet" : "Dense",
             A->type < 1 ? "MPZ" : A->type < 2 ? "MPQ" : A->type < 3 ?
             "MPFR" : A->type < 4 ? "int64" : "double") ;
-        }
     }
 
     //--------------------------------------------------------------------------
@@ -120,7 +112,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
             if (nzmax > 0 && (Ap == NULL || Ap [0] != 0))
             {
                 // column pointers invalid
-                if (print_level > 0) {printf ("p invalid\n") ;}
+                SLIP_PR1 ("p invalid\n") ;
                 return (SLIP_INCORRECT_INPUT) ;
             }
             for (j = 0 ; j < n ; j++)
@@ -130,7 +122,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                 if (pend < p || pend > nz)
                 {
                     // column pointers not monotonically non-decreasing
-                    if (print_level > 0) {printf ("p invalid\n") ;}
+                    SLIP_PR1 ("p invalid\n") ;
                     return (SLIP_INCORRECT_INPUT) ;
                 }
             }
@@ -142,7 +134,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
             if (nzmax > 0 && (Ai == NULL || SLIP_X(A) == NULL))
             {
                 // row indices or values not present
-                if (print_level > 0) {printf ("i or x invalid\n") ;}
+                SLIP_PR1 ("i or x invalid\n") ;
                 return (SLIP_INCORRECT_INPUT) ;
             }
 
@@ -151,17 +143,14 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
             if (mark == NULL)
             {
                 // out of memory
-                if (print_level > 0) printf ("out of memory\n") ;
+                SLIP_PR1 ("out of memory\n") ;
                 SLIP_FREE_ALL;
                 return (SLIP_OUT_OF_MEMORY) ;
             }
 
             for (j = 0 ; j < n ; j++)  // iterate across columns
             {
-                if (print_level >= 2)
-                {
-                    printf ("column %"PRId64" :\n", j) ;
-                }
+                SLIP_PR2 ("column %"PRId64" :\n", j) ;
                 int64_t marked = j+1 ;
                 for (p = Ap [j] ; p < Ap [j+1] ; p++)
                 {
@@ -169,13 +158,13 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                     if (i < 0 || i >= m || mark [i] == marked)
                     {
                         // row indices out of range, or duplicate
-                        if (print_level > 0) {printf ("invalid index\n") ;}
+                        SLIP_PR1 ("invalid index\n") ;
                         SLIP_FREE_ALL ;
                         return (SLIP_INCORRECT_INPUT) ;
                     }
-                    if (print_level > 1)
+                    if (pr > 1)
                     {
-                        printf ("  row %"PRId64" : ", i) ;
+                        SLIP_PRINTF ("  row %"PRId64" : ", i) ;
                         SLIP_info status = 0;
 
                         switch ( A->type)
@@ -198,19 +187,19 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                             }
                             case SLIP_FP64:
                             {
-                                printf("%lf \n", A->x.fp64[p]);
+                                SLIP_PRINTF ("%lf \n", A->x.fp64[p]);
                                 break;
                             }
                             case SLIP_INT64:
                             {
-                                printf("%ld \n", A->x.int64[p]);
+                                SLIP_PRINTF ("%ld \n", A->x.int64[p]);
                                 break;
                             }
                         }
                         if (status < 0)
                         {
                             SLIP_FREE_ALL ;
-                            printf (" error: %d\n", status) ;
+                            SLIP_PRINTF (" error: %d\n", status) ;
                             return (status) ;
                         }
                     }
@@ -237,7 +226,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
             if (nzmax > 0 && (Ai == NULL || Aj == NULL || SLIP_X(A) == NULL))
             {
                 // row indices or values not present
-                if (print_level > 0) printf ("i or j or x invalid\n") ;
+                SLIP_PR1 ("i or j or x invalid\n") ;
                 return (SLIP_INCORRECT_INPUT) ;
             }
 
@@ -246,7 +235,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
             if (bmark == NULL)
             {
                 // out of memory
-                if (print_level > 0) printf ("out of memory\n") ;
+                SLIP_PR1 ("out of memory\n") ;
                 SLIP_FREE_ALL;
                 return (SLIP_OUT_OF_MEMORY) ;
             }
@@ -261,13 +250,13 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                 if (i < 0 || i >= m || j < 0 || j >= n || bmark [j*m+i])
                 {
                     // row indices out of range, or duplicate
-                    if (print_level > 0) printf ("invalid index\n") ;
+                    SLIP_PR1 ("invalid index\n") ;
                     SLIP_FREE_ALL ;
                     return (SLIP_INCORRECT_INPUT) ;
                 }
-                if (print_level >= 2)
+                if (pr >= 2)
                 {
-                    printf ("  %"PRId64" %"PRId64" : ", i, j) ;
+                    SLIP_PRINTF ("  %"PRId64" %"PRId64" : ", i, j) ;
                     SLIP_info status = 0;
 
                     switch ( A->type)
@@ -290,19 +279,19 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                         }
                         case SLIP_FP64:
                         {
-                            printf("%lf \n", A->x.fp64[p]);
+                            SLIP_PRINTF ("%lf \n", A->x.fp64[p]);
                             break;
                         }
                         case SLIP_INT64:
                         {
-                            printf("%ld \n", A->x.int64[p]);
+                            SLIP_PRINTF ("%ld \n", A->x.int64[p]);
                             break;
                         }
                     }
                     if (status < 0)
                     {
                         SLIP_FREE_ALL ;
-                        printf (" error: %d\n", status) ;
+                        SLIP_PRINTF (" error: %d\n", status) ;
                         return (status) ;
                     }
                 }
@@ -324,7 +313,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
             if (nzmax > 0 && SLIP_X(A) == NULL)
             {
                 // row indices or values not present
-                if (print_level > 0) {printf ("x invalid\n") ;}
+                SLIP_PR1 ("x invalid\n") ;
                 return (SLIP_INCORRECT_INPUT) ;
             }
 
@@ -334,15 +323,12 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
 
             for (j = 0 ; j < n ; j++)
             {
-                if (print_level >= 2)
-                {
-                    printf ("column %"PRId64" :\n", j) ;
-                }
+                SLIP_PR2 ("column %"PRId64" :\n", j) ;
                 for (i = 0; i < m; i++)
                 {
-                    if (print_level >= 2)
+                    if (pr >= 2)
                     {
-                        printf ("  row %"PRId64" : ", i) ;
+                        SLIP_PRINTF ("  row %"PRId64" : ", i) ;
                         SLIP_info status = 0;
 
                         switch ( A->type)
@@ -367,18 +353,18 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                             }
                             case SLIP_FP64:
                             {
-                                printf("%lf \n", SLIP_2D(A, i, j, fp64));
+                                SLIP_PRINTF ("%lf \n", SLIP_2D(A, i, j, fp64));
                                 break;
                             }
                             case SLIP_INT64:
                             {
-                                printf("%ld \n", SLIP_2D(A, i, j, int64));
+                                SLIP_PRINTF ("%ld \n", SLIP_2D(A, i, j, int64));
                                 break;
                             }
                         }
                         if (status < 0)
                         {
-                            printf (" error: %d\n", status) ;
+                            SLIP_PRINTF (" error: %d\n", status) ;
                             return (status) ;
                         }
                     }

@@ -106,6 +106,29 @@
 #include "SLIP_LU.h"
 
 //------------------------------------------------------------------------------
+// printing control
+//------------------------------------------------------------------------------
+
+// SLIP_LU uses SuiteSparse_config.printf_func instead of a mere call to printf
+// (the default function is printf, or mexPrintf when in MATLAB).  If this
+// function pointer is NULL, no printing is done.
+
+// TODO figure out how to use SuiteSparse_config.printf_func inside GMP,
+// for gmp_vprintf for example.  See SLIP_gmp.c.
+
+#define SLIP_PRINTF(...)                                    \
+{                                                           \
+    if (SuiteSparse_config.printf_func != NULL)             \
+    {                                                       \
+        SuiteSparse_config.printf_func (__VA_ARGS__) ;      \
+    }                                                       \
+}
+
+#define SLIP_PR1(...) { if (pr >= 1) SLIP_PRINTF (__VA_ARGS__) }
+#define SLIP_PR2(...) { if (pr >= 2) SLIP_PRINTF (__VA_ARGS__) }
+#define SLIP_PR3(...) { if (pr >= 3) SLIP_PRINTF (__VA_ARGS__) }
+
+//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //-------------------------functions for GMP wrapper----------------------------
 //------------------------------------------------------------------------------

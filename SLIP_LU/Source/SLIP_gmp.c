@@ -132,7 +132,7 @@ void *slip_gmp_allocate
 {
 
     #ifdef SLIP_GMP_MEMORY_DEBUG
-    printf ("slip_gmp_malloc (%g): ", (double) size) ;
+    SLIP_PRINTF ("slip_gmp_malloc (%g): ", (double) size) ;
     #endif
 
     //--------------------------------------------------------------------------
@@ -143,7 +143,7 @@ void *slip_gmp_allocate
     {
         // pretend to fail
         #ifdef SLIP_GMP_MEMORY_DEBUG
-        printf ("slip_gmp_allocate pretends to fail\n") ;
+        SLIP_PRINTF ("slip_gmp_allocate pretends to fail\n") ;
         #endif
         longjmp (slip_gmp_environment, 1) ;
     }
@@ -206,7 +206,7 @@ void *slip_gmp_allocate
     slip_gmp_list [slip_gmp_nmalloc++] = p ;
 
     #ifdef SLIP_GMP_MEMORY_DEBUG
-    printf (" %p\n", p) ;
+    SLIP_PRINTF (" %p\n", p) ;
     slip_gmp_dump ( ) ;
     #endif
 
@@ -227,7 +227,7 @@ void slip_gmp_free
 )
 {
     #ifdef SLIP_GMP_MEMORY_DEBUG
-    printf ("\n=================== free %p\n", p) ;
+    SLIP_PRINTF ("\n=================== free %p\n", p) ;
     slip_gmp_dump ( ) ;
     #endif
 
@@ -239,7 +239,7 @@ void slip_gmp_free
             if (slip_gmp_list [i] == p)
             {
                 #ifdef SLIP_GMP_MEMORY_DEBUG
-                printf ("    found at i = %d\n", i) ;
+                SLIP_PRINTF ("    found at i = %d\n", i) ;
                 #endif
                 slip_gmp_list [i] = slip_gmp_list [--slip_gmp_nmalloc] ;
                 break ;
@@ -271,7 +271,7 @@ void *slip_gmp_reallocate
 )
 {
     #ifdef SLIP_GMP_MEMORY_DEBUG
-    printf ("slip_gmp_realloc (%p, %g, %g)\n", p_old,
+    SLIP_PRINTF ("slip_gmp_realloc (%p, %g, %g)\n", p_old,
         (double) old_size, (double) new_size) ;
     #endif
 
@@ -307,13 +307,13 @@ void *slip_gmp_reallocate
 void slip_gmp_dump ( )
 {
     // dump the SLIP_gmp_list
-    printf ("nmalloc = %g, SLIP_gmp_nlist = %g\n",
+    SLIP_PRINTF ("nmalloc = %g, SLIP_gmp_nlist = %g\n",
         (double) slip_gmp_nmalloc, (double) slip_gmp_nlist) ;
     if (slip_gmp_list != NULL)
     {
         for (int64_t i = 0 ; i < slip_gmp_nmalloc ; i++)
         {
-            printf ("    slip_gmp_list [%d] = %p\n", i, slip_gmp_list [i]) ;
+            SLIP_PRINTF ("    slip_gmp_list [%d] = %p\n", i, slip_gmp_list [i]);
         }
     }
 }
@@ -331,7 +331,7 @@ void slip_gmp_failure
 )
 {
     #ifdef SLIP_GMP_MEMORY_DEBUG
-    printf ("failure from longjmp: status: %d\n", status) ;
+    SLIP_PRINTF ("failure from longjmp: status: %d\n", status) ;
     #endif
 
     // first free all caches
@@ -408,7 +408,7 @@ SLIP_info SLIP_gmp_printf
     // call gmp_vprintf
     va_list args;
     va_start (args, format) ;
-    int n = gmp_vprintf (format, args) ;
+    int n = gmp_vprintf (format, args) ;    // TODO use SuiteSparse_config?
     va_end (args) ;
 
     // Finish the wrapper
@@ -561,7 +561,7 @@ SLIP_info SLIP_mpfr_printf
     // call mpfr_vprintf
     va_list args;
     va_start (args, format) ;
-    int n = mpfr_vprintf (format, args) ;
+    int n = mpfr_vprintf (format, args) ;   // TODO use SuiteSparse_config?
     va_end (args) ;
     // Free cache from mpfr_vprintf. Even though mpfr_free_cache is
     // called in SLIP_LU_final ( ), it has to be called here to

@@ -289,9 +289,6 @@ void SLIP_show_usage() //display the usage of the code
  *
  * The first line of the file contains three integers: m, n, nnz,
  * where the matrix is m-by-n with nnz entries.
-
-TODO: add a 4th integer on the first line: 0 if 0-based, 1 if 1-based.
-
  *
  * This is followed by nnz lines, each containing a single triplet: i, j, aij,
  * which defines the row index (i), column index (j), and value (aij) of
@@ -347,7 +344,8 @@ SLIP_info SLIP_tripread
     }
 
     // Is the matrix 1 or 0 based?
-    // TODO this is a very bad idea, even in a demo
+    // TODO this is a very bad idea, even in a demo.
+    // can we just assume all input matrices are 1-based?
     if (SLIP_MIN(A->i[0], A->j[0]) == 0)
     {
         decrement = 0;
@@ -451,8 +449,9 @@ SLIP_info SLIP_tripread_double
         return SLIP_INCORRECT_INPUT;
     }
 
-    // Is A 0 or 1 based?
+    // Is the matrix 1 or 0 based?
     // TODO this is a very bad idea, even in a demo
+    // can we just assume all input matrices are 1-based?
     if (SLIP_MIN(A->i[0], A->j[0]) == 0)
     {
         decrement = 0;
