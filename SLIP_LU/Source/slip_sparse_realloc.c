@@ -26,35 +26,35 @@ SLIP_info slip_sparse_realloc
     // check inputs
     //--------------------------------------------------------------------------
 
-    SLIP_REQUIRE(A, SLIP_CSC, SLIP_MPZ);
+    SLIP_REQUIRE (A, SLIP_CSC, SLIP_MPZ) ;
 
-    int64_t nzmax = A->nzmax;
-    mpz_t *Ax_new = NULL;
+    //--------------------------------------------------------------------------
+    // double the size of A->x and A->i
+    //--------------------------------------------------------------------------
 
-    // Double size of A->x and A->i without initializing the new entries in A->x
-    // cannot use SLIP_realloc here, since it frees its input on failure.
-    Ax_new = (mpz_t*) SLIP_MEMORY_REALLOC (A->x.mpz, 2*nzmax*sizeof(mpz_t));
-    if (!Ax_new)
+    int64_t nzmax = A->nzmax ;
+
+    bool okx, oki ;
+    A->x.mpz = (mpz_t *)
+        SLIP_realloc (2*nzmax, nzmax, sizeof (mpz_t), A->x.mpz, &okx) ;
+    A->i = (int64_t *)
+        SLIP_realloc (2*nzmax, nzmax, sizeof (int64_t), A->i, &oki) ;
+    if (!oki || !okx)
     {
         return (SLIP_OUT_OF_MEMORY) ;
     }
 
-    A->x.mpz = Ax_new;
+    A->nzmax = 2*nzmax ;
 
+    //--------------------------------------------------------------------------
     // set newly allocated mpz entries to NULL
-    for (int64_t i = nzmax; i < 2*nzmax; i++)
+    //--------------------------------------------------------------------------
+
+    for (int64_t p = nzmax ; p < 2*nzmax ; p++)
     {
-        SLIP_MPZ_SET_NULL (A->x.mpz[i]) ;
+        SLIP_MPZ_SET_NULL (A->x.mpz [p]) ;
     }
 
-    A->i = (int64_t*) SLIP_realloc (A->i, nzmax*sizeof(int64_t),
-        2*nzmax*sizeof(int64_t)) ;
-    if (!A->i)
-    {
-        return (SLIP_OUT_OF_MEMORY) ;
-    }
-
-    A->nzmax = nzmax*2;
     return (SLIP_OK) ;
 }
 

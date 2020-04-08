@@ -8,7 +8,7 @@
 
 //------------------------------------------------------------------------------
 
-// Purpose: SLIP_finalize frees the working environment for SLIP LU library.
+// SLIP_finalize frees the working environment for SLIP LU library.
 
 #include "slip_internal.h"
 

@@ -12,12 +12,13 @@ fprintf ('Testing SLIP_LU: ') ;
 
 % First, check if we can use a real life sparse matrix via ssget
 if (exist ('ssget') ~= 0)
-    fprintf ('.') ;
+    fprintf ('. (please wait) ') ;
     % 159 is a square SPD matrix
     prob = ssget(159);
     A = prob.A;
     [m n] = size(A);
     b = rand(m, 1);
+    fprintf ('.') ;
     x = SLIP_LU(A,b);
     x2 = A\b;
     err = norm(x-x2)/norm(x);
@@ -26,10 +27,12 @@ if (exist ('ssget') ~= 0)
     % now convert to an integer problem (x will not be integer)
     A = floor (2^20 * A) ;
     b = floor (2^20 * b) ;
+    fprintf ('.') ;
     x = SLIP_LU (A, b) ;
     x2 = A\b;
     err = norm(x-x2)/norm(x);
     maxerr = max (maxerr, err) ;
+    fprintf ('.') ;
 end
 
 for n = [1 10 100]

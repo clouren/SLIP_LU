@@ -8,23 +8,13 @@
 
 //------------------------------------------------------------------------------
 
-#ifndef SLIP_TCOV_MALLOC_TEST_H
-#define SLIP_TCOV_MALLOC_TEST_H
+#ifndef TCOV_SLIP_MALLOC_TEST_H
+#define TCOV_SLIP_MALLOC_TEST_H
 
 #include "slip_internal.h"
 
-#ifdef SLIP_MEMORY_REALLOC
-#undef SLIP_MEMORY_REALLOC
-#endif
-void* slip_realloc_wrapper
-(
-    void* p,           // Pointer to be realloced
-    size_t new_size    // Size to alloc
-);
-/* to be used in SLIP_gmp.c */
-#define SLIP_MEMORY_REALLOC slip_realloc_wrapper
+extern int64_t malloc_count ;
 
-extern int64_t malloc_count;
 #define GOTCHA \
     printf ("%s, line %d, slip_gmp_ntrials = %ld, malloc_count = %ld\n", \
     __FILE__, __LINE__, slip_gmp_ntrials, malloc_count);
@@ -58,12 +48,31 @@ extern int64_t malloc_count;
     }                               \
 }
 
-SLIP_info slip_gmp_realloc_test
+// wrapper for malloc
+void *tcov_malloc
 (
-    void **p_new,
-    void * p_old,
-    size_t old_size,
-    size_t new_size
+    size_t size        // Size to alloc
+) ;
+
+// wrapper for calloc
+void *tcov_calloc
+(
+    size_t n,          // Size of array
+    size_t size        // Size to alloc
+) ;
+
+// wrapper for realloc
+void *tcov_realloc
+(
+    void *p,           // Pointer to be realloced
+    size_t new_size    // Size to alloc
+) ;
+
+// wrapper for free
+void tcov_free
+(
+    void *p            // Pointer to be free
 ) ;
 
 #endif
+

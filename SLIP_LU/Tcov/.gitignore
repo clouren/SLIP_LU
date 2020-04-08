@@ -5,8 +5,7 @@ cover.out
 covs.out
 SLIPLU
 SLIPLU.c
-cov_test
-cov_test.c
+tcov_test
 demos.c
 SLIP_backslash.c
 slip_back_sub.c

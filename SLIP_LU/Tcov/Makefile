@@ -21,7 +21,7 @@ CFLAGS = -g -fprofile-arcs -ftest-coverage \
         -I../../SuiteSparse_config -I../../COLAMD/Include -I../../AMD/Include \
         -DSLIP_GMP_LIST_INIT=2 -DSLIP_LU_TCOV
 
-LDLIBS += -lm -lgmp -lmpfr -lcolamd -lamd
+LDLIBS += -lm -lgmp -lmpfr -lcolamd -lamd -lsuitesparseconfig
 
 # run all statement coverage tests, and then check for 100% coverage
 run: runtests
@@ -46,6 +46,9 @@ CS = \
     slip_expand_mpq_array.o \
     SLIP_finalize.o \
     slip_forward_sub.o \
+    SLIP_malloc.o \
+    SLIP_calloc.o \
+    SLIP_realloc.o \
     SLIP_free.o \
     slip_get_largest_pivot.o \
     slip_get_nonzero_pivot.o \
@@ -86,8 +89,8 @@ SLIPLU.c:
 demos.c:
 	- ln -s ../Demo/$@
 
-test: $(CS) cov_test.c demos.c
-	$(CC) $(LDFLAGS) cov_test.c demos.c $(CFLAGS) -o cov_test $(CS) $(LDLIBS)
+test: $(CS) tcov_test.c demos.c
+	$(CC) $(LDFLAGS) tcov_test.c demos.c $(CFLAGS) -o tcov_test $(CS) $(LDLIBS)
 
 SLIPLU: $(CS) SLIPLU.c demos.c
 	$(CC) $(LDFLAGS) SLIPLU.c demos.c $(CFLAGS) -o SLIPLU $(CS) $(LDLIBS)
@@ -98,8 +101,8 @@ runtests: all
 	- ./SLIPLU p 3 q 1 o2 1
 	- ./SLIPLU p 4 q 2 o2 1 f ../ExampleMats/test_mat.txt ../ExampleMats/test_rhs.txt
 	- ./SLIPLU p 5
-	- ./cov_test
-	- ./cov_test 0 1 1
+	- ./tcov_test
+	- ./tcov_test 0 1 1
 
 # To run with valgrind:
 V = valgrind #--leak-check=full
@@ -110,13 +113,13 @@ vtests: all
 	- $(V) ./SLIPLU p 3 q 1 o2 1
 	- $(V) ./SLIPLU p 4 q 2 o2 1 f ../ExampleMats/test_mat.txt ../ExampleMats/test_rhs.txt
 	- $(V) ./SLIPLU p 5
-	- $(V) ./cov_test
-	- $(V) ./cov_test 0 1 1
+	- $(V) ./tcov_test
+	- $(V) ./tcov_test 0 1 1
 
 # remove all files not in the original distribution, including symbolic links
 clean:
 	- $(RM) *.o *.bbg *.da *.gcov *.gcda *gcno
-	- $(RM) cov_test SLIPLU *.out *.a cov.sort out
+	- $(RM) tcov_test SLIPLU *.out *.a cov.sort out
 	- $(RM) -r SLIP_*.c slip_*.c *.dSYM SLIPLU.c demos.c
 
 purge: distclean

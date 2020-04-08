@@ -8,22 +8,15 @@
 
 //------------------------------------------------------------------------------
 
+// Allocate memory space for SLIP_LU.
+
 #include "slip_internal.h"
 
-/* Purpose: Define malloc and free for SLIP LU.
- *
- * Output arguments are not modified, returned is either a pointer to
- * size space or a NULL pointer in the case of failure.
- */
-
-void* SLIP_malloc
+void *SLIP_malloc
 (
-    size_t size        // Size to alloc
+    size_t size        // size of memory space to allocate
 )
 {
-    // ensure at least one byte is malloc'd
-    size = SLIP_MAX (size, 1) ;
-
-    return (SLIP_MEMORY_MALLOC (size)) ;
+    return (SuiteSparse_malloc (1, size)) ;
 }
 

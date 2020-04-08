@@ -69,28 +69,10 @@
 //-------------------------Common Macros----------------------------------------
 //------------------------------------------------------------------------------
 
-// TODO fix the memory manager
-
 #ifdef MATLAB_MEX_FILE
-
-    #include "mex.h"
-    #include "matrix.h"
-    // use the MATLAB memory manager
-    #define SLIP_MEMORY_MALLOC  mxMalloc
-    #define SLIP_MEMORY_CALLOC  mxCalloc
-    #define SLIP_MEMORY_REALLOC mxRealloc
-    #define SLIP_MEMORY_FREE    mxFree
-
-#else
-
-    // use the ANSI C memory manager
-    #define SLIP_MEMORY_MALLOC  malloc
-    #define SLIP_MEMORY_CALLOC  calloc
-    #define SLIP_MEMORY_REALLOC realloc
-    #define SLIP_MEMORY_FREE    free
-
+#include "mex.h"
+#include "matrix.h"
 #endif
-
 
 #define SLIP_MAX(a,b) (((a) > (b)) ? (a) : (b))
 #define SLIP_MIN(a,b) (((a) < (b)) ? (a) : (b))
@@ -122,12 +104,6 @@
 }
 
 #include "SLIP_LU.h"
-
-#ifdef SLIP_LU_TCOV
-    /* include this header to redefine SLIP_MEMORY_REALLOC (used in SLIP_gmp.c)
-     * for memory test and to use macro GOTCHA */
-    #include "../Tcov/tcov_malloc_test.h"
-#endif
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------

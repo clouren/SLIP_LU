@@ -8,19 +8,15 @@
 
 //------------------------------------------------------------------------------
 
-/* Purpose: Free the memory associated with the pointer x
- */
+// Free the memory allocated by SLIP_calloc, SLIP_malloc, or SLIP_realloc.
 
 #include "slip_internal.h"
 
 void SLIP_free
 (
-    void* p         // Pointer to be free'd
+    void *p         // pointer to memory space to free
 )
 {
-    if (p)
-    {
-        SLIP_MEMORY_FREE (p) ;
-    }
+    SuiteSparse_free (p) ;
 }
 

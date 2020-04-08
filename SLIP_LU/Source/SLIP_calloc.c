@@ -8,19 +8,16 @@
 
 //------------------------------------------------------------------------------
 
-// Purpose: calloc space of size n*size.  Returns NULL on failure.
+// Allocate and initialize memory space for SLIP_LU.
 
 #include "slip_internal.h"
 
-void* SLIP_calloc
+void *SLIP_calloc
 (
-    size_t n,          // Size of array
-    size_t size        // Size of each entry
+    size_t nitems,      // number of items to allocate
+    size_t size         // size of each item
 )
 {
-    // ensure at least one byte is calloc'd
-    n = SLIP_MAX (n, 1) ;
-    size = SLIP_MAX (size, 1) ;
-    return (SLIP_MEMORY_CALLOC (n, size)) ;
+    return (SuiteSparse_calloc (nitems, size)) ;
 }
 

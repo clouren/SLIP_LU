@@ -96,7 +96,7 @@ bool slip_gmp_init ( )
 {
     slip_gmp_nmalloc = 0 ;
     slip_gmp_nlist = SLIP_GMP_LIST_INIT ;
-    slip_gmp_list = (void**) SLIP_malloc (slip_gmp_nlist* sizeof (void *)) ;
+    slip_gmp_list = (void **) SLIP_malloc (slip_gmp_nlist * sizeof (void *)) ;
     return (slip_gmp_list != NULL) ;
 }
 
@@ -169,11 +169,12 @@ void *slip_gmp_allocate
     else if (slip_gmp_nmalloc == slip_gmp_nlist)
     {
         // double the size of the SLIP_gmp_list
-        size_t newsize = 2 * slip_gmp_nlist * sizeof (void *) ;
-        // cannot use SLIP_realloc here, since it frees its input on failure.
-        void **newlist = (void**) SLIP_MEMORY_REALLOC (slip_gmp_list, newsize) ;
-
-        if (newlist == NULL)
+        bool ok ;
+        int64_t newsize = 2 * slip_gmp_nlist ;
+        slip_gmp_list = (void **)
+            SLIP_realloc (newsize, slip_gmp_nlist, sizeof (void *),
+            slip_gmp_list, &ok) ;
+        if (!ok)
         {
             // failure to double the size of the SLIP_gmp_list.
             // The existing SLIP_gmp_list is still valid, with the old size,
@@ -181,11 +182,9 @@ void *slip_gmp_allocate
             // can traverse the SLIP_gmp_list to free all objects there.
             longjmp (slip_gmp_environment, 3) ;
         }
-
         // success; the old SLIP_gmp_list has been freed, and replaced with
         // the larger newlist.
-        slip_gmp_list = newlist ;
-        slip_gmp_nlist *= 2 ;
+        slip_gmp_nlist = newsize ;
     }
 
     //--------------------------------------------------------------------------

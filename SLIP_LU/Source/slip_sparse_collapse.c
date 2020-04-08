@@ -27,7 +27,7 @@ SLIP_info slip_sparse_collapse
     // check inputs
     //--------------------------------------------------------------------------
 
-    SLIP_REQUIRE(A, SLIP_CSC, SLIP_MPZ);
+    SLIP_REQUIRE (A, SLIP_CSC, SLIP_MPZ) ;
 
     //--------------------------------------------------------------------------
 
@@ -35,11 +35,17 @@ SLIP_info slip_sparse_collapse
 
     // Shrink A->i and A->x such that they're of size anz.  These calls to
     // SLIP_realloc cannot fail since the space is shrinking.
-    A->i = (int64_t*) SLIP_realloc(A->i, A->nzmax*sizeof(int64_t),
-        anz*sizeof(int64_t));
-    A->x.mpz = (mpz_t*) SLIP_realloc(A->x.mpz, A->nzmax*sizeof(mpz_t),
-        anz*sizeof(mpz_t));
-    A->nzmax = anz;
-    return SLIP_OK;
+
+    bool ok ;
+    A->i = (int64_t *)
+        SLIP_realloc (anz, A->nzmax, sizeof (int64_t), A->i, &ok) ;
+    ASSERT (ok) ;
+
+    A->x.mpz = (mpz_t *)
+        SLIP_realloc (anz, A->nzmax, sizeof (mpz_t), A->x.mpz, &ok) ;
+    ASSERT (ok) ;
+
+    A->nzmax = anz ;
+    return (SLIP_OK) ;
 }
 

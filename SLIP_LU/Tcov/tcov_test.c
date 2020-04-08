@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/Tcov/cov_test.c: test coverage for SLIP_LU
+// SLIP_LU/Tcov/tcov_test.c: test coverage for SLIP_LU
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -13,7 +13,7 @@
  * test otherwise. Read the following for detailed instruction and information
  *
  * For simple test, the test needs to be run with command
- * ./cov_test Ab_type N list1[0] ... list1[N-1] M list2[0] ... list2[M-1]
+ * ./tcov_test Ab_type N list1[0] ... list1[N-1] M list2[0] ... list2[M-1]
  * Ab_type: type of original matrix A and vector b: 0 mpz, 1 mpq, 2 mpfr, 3
  *     int64, 4 double. For Ab_type >= 5, it corresponds to 15 type of original
  *     matrix A (i.e., (csc, triplet, dense) x (mpz, mpq, mpfr, int64, double)),
@@ -24,7 +24,7 @@
  * list2 is wanted
  *
  * For brutal test, the test is run with command
- * ./cov_test
+ * ./tcov_test
  * the test will run through all cases
  * (specifically, Ab_type={0, 1, 2, 3, 4, 5,...,20})
  * each case run from malloc_count = 0 to a number that can guarantee
@@ -52,7 +52,7 @@
     SLIP_finalize() ;                            \
 }
 
-#include "slip_internal.h"
+#include "tcov_malloc_test.h"
 
 #define TEST_CHECK(method)                       \
 {                                                \
@@ -194,8 +194,8 @@ int main( int argc, char* argv[])
     //--------------------------------------------------------------------------
 
     // For SIMPLE_TEST, outter loop iterates for slip_gmp_ntrials initialized
-    // from list1 (input for cov_test) and inner loop interates for
-    // malloc_count initialized from list2 (input for cov_test).
+    // from list1 (input for tcov_test) and inner loop interates for
+    // malloc_count initialized from list2 (input for tcov_test).
     //
     // For non SIMPLE_TEST, outter loop iterates for Ab_type from 0 to 5, and
     // inner loop iterates for malloc_count initialized from 0 to
@@ -240,7 +240,8 @@ int main( int argc, char* argv[])
             // Initialize SLIP LU process
             //------------------------------------------------------------------
 
-            SLIP_initialize();
+            SLIP_initialize_expert (tcov_malloc, tcov_calloc,
+                tcov_realloc, tcov_free) ;
 
             //------------------------------------------------------------------
             // Allocate memory
@@ -617,11 +618,6 @@ int main( int argc, char* argv[])
                     TEST_CHECK(SLIP_matrix_allocate(&b, SLIP_DENSE,
                         SLIP_MPFR, 1, 1, 1, false, false, option));
                     SLIP_matrix_free (&b, option) ;
-
-                    //test coverage for slip_gmp_reallocate()
-                    void *p_new = NULL;
-                    TEST_CHECK(slip_gmp_realloc_test(&p_new, NULL,0,1));
-                    TEST_CHECK(slip_gmp_realloc_test(&p_new,p_new,1,0));
                 }
 
                 SLIP_FREE_ALL;
