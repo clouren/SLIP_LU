@@ -4,6 +4,7 @@ cov.sort
 cover.out
 covs.out
 SLIPLU
+SLIPLU.c
 cov_test
 cov_test.c
 demos.c
