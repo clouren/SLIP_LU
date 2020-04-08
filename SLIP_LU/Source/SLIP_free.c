@@ -11,7 +11,7 @@
 /* Purpose: Free the memory associated with the pointer x
  */
 
-#include "slip_LU_internal.h"
+#include "slip_internal.h"
 
 void SLIP_free
 (

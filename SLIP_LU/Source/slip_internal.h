@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// SLIP_LU/SLIP_LU_internal: include file for internal use in SLIP_LU
+// SLIP_LU/slip_internal: include file for internal use in SLIP_LU
 //------------------------------------------------------------------------------
 
 // SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
@@ -16,6 +16,7 @@
 
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #pragma GCC diagnostic ignored "-Wunused-value"
+
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //-------------------------C Libraries------------------------------------------
@@ -216,19 +217,29 @@ void slip_gmp_failure (int status) ;
 // Macros to utilize the default if option is NULL
 //------------------------------------------------------------------------------
 
-#define SLIP_GET_TOL(option) ( ( (option==NULL) ) ? (SLIP_DEFAULT_TOL) : (option->tol))
+#define SLIP_OPTION(option,parameter,default_value) \
+    ((option == NULL) ? (default_value) : (option->parameter))
 
-#define SLIP_GET_CHECK(option) ( ( (option==NULL) ) ? (false) : (option->check))
+#define SLIP_OPTION_TOL(option) \
+    SLIP_OPTION (option, tol, SLIP_DEFAULT_TOL)
 
-#define SLIP_GET_PIVOT(option) ( ( (option==NULL) ) ? (SLIP_DEFAULT_PIVOT) : (option->pivot))
+#define SLIP_OPTION_CHECK(option) \
+    SLIP_OPTION (option, check, false)
 
-#define SLIP_GET_ORDER(option) ( ( (option==NULL) ) ? (SLIP_DEFAULT_ORDER) : (option->order))
+#define SLIP_OPTION_PIVOT(option) \
+    SLIP_OPTION (option, pivot, SLIP_DEFAULT_PIVOT)
 
-#define SLIP_GET_PRECISION(option) ( ( (option==NULL) ) ? (SLIP_DEFAULT_PRECISION) : (option->prec))
+#define SLIP_OPTION_ORDER(option) \
+    SLIP_OPTION (option, order, SLIP_DEFAULT_ORDER)
 
-#define SLIP_GET_PRINT_LEVEL(option) ( ( (option==NULL) ) ? (SLIP_DEFAULT_PRINT_LEVEL) : (option->print_level))
+#define SLIP_OPTION_PREC(option) \
+    SLIP_OPTION (option, prec, SLIP_DEFAULT_PRECISION)
 
-#define SLIP_GET_ROUND(option) ( ( (option==NULL) ) ? (SLIP_DEFAULT_MPFR_ROUND) : (option->round))
+#define SLIP_OPTION_PRINT_LEVEL(option) \
+    SLIP_OPTION (option, print_level, SLIP_DEFAULT_PRINT_LEVEL)
+
+#define SLIP_OPTION_ROUND(option) \
+    SLIP_OPTION (option, round, SLIP_DEFAULT_MPFR_ROUND)
 
 //------------------------------------------------------------------------------
 // Field access macros for MPZ/MPQ/MPFR struct
@@ -316,27 +327,26 @@ void slip_gmp_failure (int status) ;
 //                           Internal Functions
 // ============================================================================
 
-/* Purpose: This function takes as input a mpz_t dense SLIP_matrix and divides it by a
- * mpz_t constant storing the solution in a mpq_t dense SLIP_matrix array. This is used
- * internally to divide the solution vector by the determinant of the matrix.
- *
- * On output, the contents of the matrix x2 are modified
+/* Purpose: This function takes as input a mpz_t SLIP_matrix and divides
+ * it by an mpz_t constant storing the solution in a mpq_t dense SLIP_matrix
+ * array. This is used internally to divide the solution vector by the
+ * determinant of the matrix.
  */
-SLIP_info slip_matrix_div // divides the x matrix by the determinant
+SLIP_info slip_matrix_div // divides the x matrix by a scalar
 (
-    SLIP_matrix* x2,    // solution of x/det
-    SLIP_matrix* x,     // input vector
-    const mpz_t det     // given determinant of matrix
-);
+    SLIP_matrix **x2_handle,    // x2 = x/scalar
+    SLIP_matrix* x,             // input vector x
+    const mpz_t scalar,         // the scalar
+    const SLIP_options *option
+) ;
 
-/* Purpose: This function multiplies matrix x by the determinant of matrix.
- * On output the contents of the x matrix is modified.
+/* Purpose: This function multiplies matrix x a scalar
  */
-SLIP_info slip_matrix_mul // multiplies vector x by the determinant of matrix
+SLIP_info slip_matrix_mul   // multiplies x by a scalar
 (
-    SLIP_matrix* x,         // matrix to be multiplied
-    const mpz_t det        // given determinant of matrix
-);
+    SLIP_matrix *x,         // matrix to be multiplied
+    const mpz_t scalar      // scalar to multiply by
+) ;
 
 /* Purpose: This function performs sparse REF forward substitution. This is
  * essentially the same as the sparse REF triangular solve applied to each
@@ -580,7 +590,7 @@ SLIP_info slip_permute_x
 
 /* Purpose: This function collapses a SLIP matrix. Essentially it shrinks the
  * size of x and i. so that they only take up the number of elements in the
- * matrix. For example if A->nzmax = 1000 but A->nz = 500, r and x are of size
+ * matrix. For example if A->nzmax = 1000 but nnz(A) = 500, r and x are of size
  * 1000, so this function shrinks them to size 500.
  */
 SLIP_info slip_sparse_collapse
@@ -685,24 +695,24 @@ SLIP_info slip_cast_matrix
 #define SLIP_REQUIRE_KIND(A,required_kind) \
     if (A == NULL || A->kind != required_kind) return (SLIP_INCORRECT_INPUT) ;
 
-#define ASSERT_REQUIRE_KIND(A,required_kind) \
+#define ASSERT_KIND(A,required_kind) \
     ASSERT (A != NULL && A->kind == required_kind)
 
 // return an error if A->type (mpz, mpq, mpfr, int64, or double) is wrong
 #define SLIP_REQUIRE_TYPE(A,required_type) \
     if (A == NULL || A->type != required_type) return (SLIP_INCORRECT_INPUT) ;
 
-#define ASSERT_REQUIRE_TYPE(A,required_type) \
+#define ASSERT_TYPE(A,required_type) \
     ASSERT (A != NULL && A->type == required_type)
 
 // return an error if A->kind or A->type is wrong
 #define SLIP_REQUIRE(A,required_kind,required_type)     \
-    SLIP_REQUIRE_KIND (A,required_kind) ;              \
+    SLIP_REQUIRE_KIND (A,required_kind) ;               \
     SLIP_REQUIRE_TYPE (A,required_type) ;
 
-#define ASSERT_REQUIRE(A,required_kind,required_type)     \
-    ASSERT_REQUIRE_KIND (A,required_kind) ;              \
-    ASSERT_REQUIRE_TYPE (A,required_type) ;
+#define ASSERT_MATRIX(A,required_kind,required_type)    \
+    ASSERT_KIND (A,required_kind) ;                     \
+    ASSERT_TYPE (A,required_type) ;
 
 #endif
 

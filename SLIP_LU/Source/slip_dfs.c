@@ -13,7 +13,7 @@
  * indices in the xi vector.  This function is modified from CSparse/cs_dfs.
  */
 
-#include "slip_LU_internal.h"
+#include "slip_internal.h"
 
 void slip_dfs // performs a dfs of the graph of the matrix starting at node j
 (
@@ -30,7 +30,7 @@ void slip_dfs // performs a dfs of the graph of the matrix starting at node j
     // check inputs
     //--------------------------------------------------------------------------
 
-    ASSERT_REQUIRE_KIND(L, SLIP_CSC);
+    ASSERT_KIND (L, SLIP_CSC) ;
 
     // top xi etc already checked in the caller function
 

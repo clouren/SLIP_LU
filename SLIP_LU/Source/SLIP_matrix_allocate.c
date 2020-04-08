@@ -19,7 +19,7 @@
 #define SLIP_FREE_ALL \
     SLIP_matrix_free (&A, option) ;
 
-#include "slip_LU_internal.h"
+#include "slip_internal.h"
 
 SLIP_info SLIP_matrix_allocate
 (
@@ -29,6 +29,7 @@ SLIP_info SLIP_matrix_allocate
     int64_t m,              // # of rows
     int64_t n,              // # of columns
     int64_t nzmax,          // max # of entries for CSC or triplet
+                            // (ignored if A is dense)
     bool shallow,           // if true, matrix is shallow.  A->p, A->i, A->j,
                             // A->x are all returned as NULL and must be set
                             // by the caller.  All A->*_shallow are returned
@@ -80,7 +81,7 @@ SLIP_info SLIP_matrix_allocate
     A->m = m ;
     A->n = n ;
     A->nzmax = nzmax ;
-    A->nz = nzmax ;
+    A->nz = 0 ;             // for triplet matrices only (no triplets yet)
     A->kind = kind ;
     A->type = type ;
 

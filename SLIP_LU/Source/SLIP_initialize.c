@@ -11,7 +11,7 @@
 /* Purpose: This function initializes the working evironment for SLIP_LU.
  */
 
-#include "slip_LU_internal.h"
+#include "slip_internal.h"
 
 void SLIP_initialize ( void )
 {

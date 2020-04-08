@@ -70,12 +70,11 @@ int main (void)
     // for the mpz_t, mpq_t, and mpfr_t entries
     SLIP_matrix_allocate(&R, SLIP_TRIPLET, SLIP_FP64, n, n, nz,
         false, true, option);
-    
+
     // Rb is a n*1 dense matrix whose entries are FP64
     SLIP_matrix_allocate(&Rb, SLIP_DENSE, SLIP_FP64, n, 1, n,
         false, true, option);
-    
-    
+
     // Randomly generate the input
     unsigned int seed = 10;
     srand(seed);
@@ -92,8 +91,7 @@ int main (void)
     }
 
     R->nz = n*n;
-    Rb->nz = n;
-    
+
     //--------------------------------------------------------------------------
     // Build A and b
     //--------------------------------------------------------------------------

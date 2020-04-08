@@ -32,11 +32,13 @@ void mexFunction
     //--------------------------------------------------------------------------
     // Check inputs
     //--------------------------------------------------------------------------
+
     slip_check_input(pargin, nargin);
     if (nargout > 1 || nargout <= 0 || nargin != 3)
     {
         mexErrMsgTxt("Usage: x = SLIP_LU(A,b,option)");
     }
+
     //--------------------------------------------------------------------------
     // Allocate memory
     //--------------------------------------------------------------------------
@@ -45,13 +47,11 @@ void mexFunction
     SLIP_matrix *b = NULL;
     SLIP_matrix *x = NULL;
     SLIP_options *option = SLIP_create_default_options();
-    
-    if (!option)
+    if (option == NULL)
     {
         slip_mex_error (SLIP_OUT_OF_MEMORY);
     }
-    
-    
+
     //--------------------------------------------------------------------------
     // Declare variables and process input
     //--------------------------------------------------------------------------
@@ -71,15 +71,18 @@ void mexFunction
     // Set outputs, free memory
     //--------------------------------------------------------------------------
 
-    mxArray* Xmatlab = mxCreateDoubleMatrix ((mwSize) x->m, (mwSize) x->n, mxREAL);
+    mxArray* Xmatlab = mxCreateDoubleMatrix ((mwSize) x->m, (mwSize) x->n,
+        mxREAL);
     double* x2 = mxGetPr(Xmatlab);
-    
+
     for (int k = 0; k < x->n*x->m; k++)
+    {
         x2[k] = x->x.fp64[k];
-    
-    //TODO Can this work?
+    }
+
+    //TODO Can this work?  Tim: no, but mxSetData* can do it.  FIXME
     //x2 = x->x.fp64;
-    
+
     pargout[0] =  Xmatlab;
     SLIP_matrix_free(&b, option);
     SLIP_matrix_free(&A, option);

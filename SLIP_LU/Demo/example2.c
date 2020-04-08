@@ -60,7 +60,7 @@ int main (int argc, char **argv)
     SLIP_matrix *x = NULL ;                     // Solution vectors
     SLIP_LU_analysis *S = NULL ;                // Column permutation
     SLIP_options *option = SLIP_create_default_options();
-    if (!option)
+    if (option == NULL)
     {
         fprintf (stderr, "Error! OUT of MEMORY!\n");
         FREE_WORKSPACE;
@@ -70,7 +70,9 @@ int main (int argc, char **argv)
     //--------------------------------------------------------------------------
     // Allocate memory, read in A and b
     //--------------------------------------------------------------------------
-    // Read in A
+
+    // Read in A. The output of this demo function is A in CSC format with
+    // mpz_t entries.
     FILE* mat_file = fopen(mat_name,"r");
     if( mat_file == NULL )
     {
@@ -78,11 +80,11 @@ int main (int argc, char **argv)
         FREE_WORKSPACE;
         return 0;
     }
-    // Read in A. The output of this demo function is A in CSC format with mpz_t entries
     OK(SLIP_tripread(&A, mat_file, option));
     fclose(mat_file);
 
-    // Read in right hand side
+    // Read in b. The output of this demo function is b in dense format with
+    // mpz_t entries
     FILE* rhs_file = fopen(rhs_name,"r");
     if( rhs_file == NULL )
     {
@@ -90,7 +92,6 @@ int main (int argc, char **argv)
         FREE_WORKSPACE;
         return 0;
     }
-    // Read in b. The output of this demo function is b in dense format with mpz_t entries
     OK(SLIP_read_dense(&b, rhs_file, option));
     fclose(rhs_file);
 
@@ -102,7 +103,7 @@ int main (int argc, char **argv)
         FREE_WORKSPACE;
         return 0;
     }
-    
+
     //--------------------------------------------------------------------------
     // solve
     //--------------------------------------------------------------------------

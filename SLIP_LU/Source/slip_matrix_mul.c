@@ -8,19 +8,18 @@
 
 //------------------------------------------------------------------------------
 
-/* Purpose: This function multiplies the dense matrix x by the determinant of matrix.
+/* Purpose: This function multiplies the matrix x (CSC, triplet, or dense) by a
+ * scalar.  This function requires x to have type mpz_t.
  *
- * This function requires that the matrix x is mpz_t and dense
- *
- * On output the contents of the x vector is modified.
+ * On output the values of x are modified.
  */
 
-#include "slip_LU_internal.h"
+#include "slip_internal.h"
 
-SLIP_info slip_matrix_mul // multiplies vector x by the determinant of matrix
+SLIP_info slip_matrix_mul   // multiplies x by a scalar
 (
     SLIP_matrix *x,         // matrix to be multiplied
-    const mpz_t det        // given determinant of matrix
+    const mpz_t scalar      // scalar to multiply by
 )
 {
 
@@ -29,16 +28,17 @@ SLIP_info slip_matrix_mul // multiplies vector x by the determinant of matrix
     //--------------------------------------------------------------------------
 
     SLIP_info info ;
-    SLIP_REQUIRE (x, SLIP_DENSE, SLIP_MPZ) ;
+    SLIP_REQUIRE_TYPE (x, SLIP_MPZ) ;
 
     //--------------------------------------------------------------------------
-    // x = x * det
+    // x = x * scalar
     //--------------------------------------------------------------------------
 
-    for (int64_t i = 0; i < x->n * x->m; i++)
+    int64_t nz = SLIP_matrix_nnz (x, NULL) ;
+    for (int64_t i = 0; i < nz; i++)
     {
-        // x[i] = x[i]*det
-        SLIP_CHECK( SLIP_mpz_mul( x->x.mpz[i], x->x.mpz[i], det));
+        // x[i] = x[i]*scalar
+        SLIP_CHECK( SLIP_mpz_mul( x->x.mpz[i], x->x.mpz[i], scalar));
     }
 
     return (SLIP_OK) ;

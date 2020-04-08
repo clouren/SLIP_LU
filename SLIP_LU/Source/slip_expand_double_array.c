@@ -9,9 +9,9 @@
 //------------------------------------------------------------------------------
 
 /* Purpose: This function converts a double array of size n to an appropriate
- * mpz array of size n. To do this, the number is multiplied by an appropriate power,
- * then, the GCD is found. This function allows the use of matrices in double precision
- * to work with SLIP LU.
+ * mpz array of size n. To do this, the number is multiplied by an appropriate
+ * power, then, the GCD is found. This function allows the use of matrices in
+ * double precision to work with SLIP LU.
  *
  */
 
@@ -21,7 +21,7 @@
     SLIP_MPQ_CLEAR(temp);           \
     SLIP_matrix_free(&x3, NULL);    \
 
-#include "slip_LU_internal.h"
+#include "slip_internal.h"
 
 SLIP_info slip_expand_double_array
 (
@@ -53,6 +53,8 @@ SLIP_info slip_expand_double_array
     mpz_t gcd, one; SLIP_MPZ_SET_NULL(gcd); SLIP_MPZ_SET_NULL(one);
     mpq_t temp; SLIP_MPQ_SET_NULL(temp);
 
+    mpfr_rnd_t round = SLIP_OPTION_ROUND (option) ;
+
     SLIP_CHECK(SLIP_mpq_init(temp));
     SLIP_CHECK(SLIP_mpz_init(gcd));
     SLIP_CHECK(SLIP_mpz_init(one));
@@ -64,16 +66,13 @@ SLIP_info slip_expand_double_array
     for (i = 0; i < n; i++)
     {
         // Set x3[i] = x[i]
-        SLIP_CHECK(SLIP_mpfr_set_d(x3->x.mpfr[i], x[i],
-            SLIP_GET_ROUND(option)));
+        SLIP_CHECK(SLIP_mpfr_set_d(x3->x.mpfr[i], x[i], round));
 
         // x3[i] = x[i] * 10^17
-        SLIP_CHECK(SLIP_mpfr_mul_d(x3->x.mpfr[i], x3->x.mpfr[i], expon,
-                                   SLIP_GET_ROUND(option)));
+        SLIP_CHECK(SLIP_mpfr_mul_d(x3->x.mpfr[i], x3->x.mpfr[i], expon, round));
 
         // x_out[i] = x3[i]
-        SLIP_CHECK(SLIP_mpfr_get_z(x_out[i], x3->x.mpfr[i],
-            SLIP_GET_ROUND(option)));
+        SLIP_CHECK(SLIP_mpfr_get_z(x_out[i], x3->x.mpfr[i], round));
     }
 
     //--------------------------------------------------------------------------

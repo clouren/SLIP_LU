@@ -1,6 +1,8 @@
 This software package is used to solve a sparse systems of linear equations
 exactly using the SLIP LU factorization.
 
+TODO FIXME: is this still valid?
+
 
 *********SLIPLU*********
 Purpose: Exactly solve a sparse system of linear equations using a given input

@@ -30,7 +30,7 @@
 
 void SLIP_print_options // display specified/default options to user
 (
-    SLIP_options* option // struct containing all of the options
+    SLIP_options* option    // options (cannot be NULL)
 )
 {
 
@@ -96,7 +96,7 @@ SLIP_info SLIP_process_command_line //processes the command line
 (
     int argc,               // number of command line arguments
     char* argv[],           // set of command line arguments
-    SLIP_options* option,   // struct containing the command options
+    SLIP_options* option,   // options (cannot be NULL)
     char** mat_name,        // Name of the matrix to be read in
     char** rhs_name,        // Name of the RHS vector to be read in
     SLIP_type *rat          // data type of output solution:
@@ -289,6 +289,9 @@ void SLIP_show_usage() //display the usage of the code
  *
  * The first line of the file contains three integers: m, n, nnz,
  * where the matrix is m-by-n with nnz entries.
+
+TODO: add a 4th integer on the first line: 0 if 0-based, 1 if 1-based.
+
  *
  * This is followed by nnz lines, each containing a single triplet: i, j, aij,
  * which defines the row index (i), column index (j), and value (aij) of
@@ -321,16 +324,15 @@ SLIP_info SLIP_tripread
         printf ("premature end-of-file\n") ;
         return SLIP_INCORRECT_INPUT;
     }
-    
+
     // Allocate memory for A
     // A is a triplet mpz_t matrix
     SLIP_matrix* A = NULL;
-    SLIP_matrix_allocate(&A, SLIP_TRIPLET, SLIP_MPZ, m, n, nz, false, true, option);
-    
-    if (!A->i || !A->j || !A->x.mpz)
+    info = SLIP_matrix_allocate(&A, SLIP_TRIPLET, SLIP_MPZ, m, n, nz,
+        false, true, option);
+    if (info != SLIP_OK)
     {
-        SLIP_matrix_free(&A, option);
-        return SLIP_OUT_OF_MEMORY;
+        return (info) ;
     }
 
     // Read in first values of A
@@ -345,6 +347,7 @@ SLIP_info SLIP_tripread
     }
 
     // Is the matrix 1 or 0 based?
+    // TODO this is a very bad idea, even in a demo
     if (SLIP_MIN(A->i[0], A->j[0]) == 0)
     {
         decrement = 0;
@@ -371,6 +374,8 @@ SLIP_info SLIP_tripread
         A->i[p] -= decrement;
         A->j[p] -= decrement;
     }
+
+    // the triplet matrix now has nz entries
     A->nz = nz;
 
     // A now contains our input matrix in triplet format. We now
@@ -378,7 +383,7 @@ SLIP_info SLIP_tripread
     // C is a copy of A which is CSC and mpz_t
     SLIP_matrix* C = NULL;
     SLIP_matrix_copy(&C, SLIP_CSC, SLIP_MPZ, A, option);
-    
+
     // Free A, set A_handle
     SLIP_matrix_free(&A, option);
     (*A_handle) = C;
@@ -429,12 +434,11 @@ SLIP_info SLIP_tripread_double
 
     // First, we create our A matrix which is triplet double
     SLIP_matrix *A = NULL;
-    SLIP_matrix_allocate(&A, SLIP_TRIPLET, SLIP_FP64, m, n, nz, false, true, option);
-    
-    if (!A->i || !A->j || !A->x.fp64 )
+    info = SLIP_matrix_allocate(&A, SLIP_TRIPLET, SLIP_FP64, m, n, nz,
+        false, true, option);
+    if (info != SLIP_OK)
     {
-        SLIP_matrix_free(&A, option);
-        return SLIP_OUT_OF_MEMORY;
+        return (info) ;
     }
 
     int64_t decrement;
@@ -448,6 +452,7 @@ SLIP_info SLIP_tripread_double
     }
 
     // Is A 0 or 1 based?
+    // TODO this is a very bad idea, even in a demo
     if (SLIP_MIN(A->i[0], A->j[0]) == 0)
     {
         decrement = 0;
@@ -458,7 +463,7 @@ SLIP_info SLIP_tripread_double
         A->i[0]-=decrement;
         A->j[0]-=decrement;
     }
-    
+
     // Read in the values from file
     for (int64_t k = 1; k < nz; k++)
     {
@@ -475,19 +480,20 @@ SLIP_info SLIP_tripread_double
         A->j[k] -= decrement;
     }
 
+    // the triplet matrix now has nz entries
     A->nz = nz;
+
     // At this point, A is a double triplet matrix. We make a copy of it with C
-    
+
     SLIP_matrix* C = NULL;
     SLIP_matrix_copy(&C, SLIP_CSC, SLIP_MPZ, A, option);
-    
+
     // Success. Set A_handle = C and free A
 
     SLIP_matrix_free(&A, option);
     (*A_handle) = C;
     return (info) ;
 }
-
 
 //------------------------------------------------------------------------------
 // SLIP_read_dense
@@ -497,8 +503,8 @@ SLIP_info SLIP_tripread_double
 
 SLIP_info SLIP_read_dense
 (
-    SLIP_matrix **b_handle,      // Matrix to be constructed
-    FILE* file,                  // file to read from (must already be open)
+    SLIP_matrix **b_handle, // Matrix to be constructed
+    FILE* file,             // file to read from (must already be open)
     SLIP_options* option
 )
 {
@@ -521,15 +527,19 @@ SLIP_info SLIP_read_dense
 
     // Now, we create our dense mpz_t matrix
     SLIP_matrix* A = NULL;
-    SLIP_matrix_allocate(&A, SLIP_DENSE, SLIP_MPZ, nrows, ncols, nrows*ncols, false, true, option);
+    info = SLIP_matrix_allocate(&A, SLIP_DENSE, SLIP_MPZ, nrows, ncols,
+        nrows*ncols, false, true, option);
+    if (info != SLIP_OK)
+    {
+        return (info) ;
+    }
 
     // We now populate the matrix b.
     for (int64_t i = 0; i < nrows; i++)
     {
         for (int64_t j = 0; j < ncols; j++)
         {
-            info = SLIP_gmp_fscanf(file, "%Zd", 
-                                   &(SLIP_2D(A, i, j, mpz)));
+            info = SLIP_gmp_fscanf(file, "%Zd", &(SLIP_2D(A, i, j, mpz)));
             if (info != SLIP_OK)
             {
                 printf("\n\nhere at i = %"PRId64" and j = %"PRId64"", i, j);
@@ -538,10 +548,9 @@ SLIP_info SLIP_read_dense
         }
     }
 
-    A->nz = nrows*ncols;
-    //------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     // Success, set b_handle = A
-    //------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 
     (*b_handle) = A;
     return (info) ;

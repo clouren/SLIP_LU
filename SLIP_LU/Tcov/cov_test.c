@@ -52,7 +52,7 @@
     SLIP_finalize() ;                            \
 }
 
-#include "slip_LU_internal.h"
+#include "slip_internal.h"
 
 #define TEST_CHECK(method)                       \
 {                                                \

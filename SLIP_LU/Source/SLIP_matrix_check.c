@@ -7,15 +7,16 @@
 // SLIP_LU/License for the license.
 
 //------------------------------------------------------------------------------
+
 #define SLIP_FREE_ALL    \
     SLIP_FREE(mark);     \
     SLIP_FREE(bmark);
 
-#include "slip_LU_internal.h"
+#include "slip_internal.h"
 
 /* check the validity of a SLIP_matrix */
 
-// option->print_level:
+// print_level from option struct:
 //      0: nothing
 //      1: just errors
 //      2: errors and terse output
@@ -29,10 +30,12 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
     const SLIP_options* option
 )
 {
+
     //--------------------------------------------------------------------------
     // check the dimensions
     //--------------------------------------------------------------------------
-    int print_level = SLIP_GET_PRINT_LEVEL(option);
+
+    int print_level = SLIP_OPTION_PRINT_LEVEL(option);
     int64_t nz = SLIP_matrix_nnz(A, option);    // Number of nonzeros in A
     if (nz < 0)
     {
@@ -63,6 +66,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
     //--------------------------------------------------------------------------
     // check the dimensions
     //--------------------------------------------------------------------------
+
     if (A->type < SLIP_MPZ || A->type > SLIP_FP64)
     //  A->kind < SLIP_CSC || A->kind > SLIP_DENSE // checked in SLIP_matrix_nnz
     {
@@ -91,14 +95,19 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
     int64_t i, j, p, pend ;
     int64_t* mark = NULL;   // used for checking duplicate index of CSC
     bool* bmark = NULL;     // used for checking duplicate index of triplet
-    uint64_t prec = SLIP_GET_PRECISION(option);
- 
+    uint64_t prec = SLIP_OPTION_PREC (option);
 
     //--------------------------------------------------------------------------
-    // Now check column/row indices
+    // check each kind of matrix: CSC, triplet, or dense
     //--------------------------------------------------------------------------
+
     switch (A->kind)
     {
+
+        //----------------------------------------------------------------------
+        // check a matrix in CSC format
+        //----------------------------------------------------------------------
+
         case SLIP_CSC:
         {
             int64_t* Ap = A->p;
@@ -108,7 +117,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
             // check the column pointers
             //------------------------------------------------------------------
 
-            if (nzmax > 0 && (Ap == NULL || Ap [0] != 0))// nz set to Ap [n]
+            if (nzmax > 0 && (Ap == NULL || Ap [0] != 0))
             {
                 // column pointers invalid
                 if (print_level > 0) {printf ("p invalid\n") ;}
@@ -208,10 +217,13 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                     mark [i] = marked ;
                 }
             }
-            break;
         }
+        break;
 
-        // Check triplet matrices
+        //----------------------------------------------------------------------
+        // check a matrix in triplet format
+        //----------------------------------------------------------------------
+
         case SLIP_TRIPLET:
         {
 
@@ -296,9 +308,13 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                 }
                 bmark [i+j*m] = true ;
             }
-            break;
         }
-        // Check dense matrices
+        break;
+
+        //----------------------------------------------------------------------
+        // check a matrix in dense format
+        //----------------------------------------------------------------------
+
         case SLIP_DENSE:
         {
             // If A is dense, A->i, A->j etc are all NULL. All we must do is
@@ -311,6 +327,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                 if (print_level > 0) {printf ("x invalid\n") ;}
                 return (SLIP_INCORRECT_INPUT) ;
             }
+
             //------------------------------------------------------------------
             // print values
             //------------------------------------------------------------------
@@ -367,8 +384,8 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                     }
                 }
             }
-            break;
         }
+        break;
     }
 
     //--------------------------------------------------------------------------

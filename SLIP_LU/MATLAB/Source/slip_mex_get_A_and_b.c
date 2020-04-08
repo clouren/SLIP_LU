@@ -102,9 +102,6 @@ void slip_mex_get_A_and_b
         A_matlab->p = Ap_int64;
         A_matlab->i = Ai_int64;
         A_matlab->x.int64 = Ax_int64;
-        A_matlab->nz = (int64_t) Anz;
-        // Create A
-        status = SLIP_matrix_copy(&A, SLIP_CSC, SLIP_MPZ, A_matlab, option);
     }
     else
     {
@@ -117,11 +114,10 @@ void slip_mex_get_A_and_b
         A_matlab->p = Ap_int64;
         A_matlab->i = Ai_int64;
         A_matlab->x.fp64 = Ax;
-        A_matlab->nz = (int64_t) Anz;
-        
-        // Create A with scaling
-        status = SLIP_matrix_copy(&A, SLIP_CSC, SLIP_MPZ, A_matlab, option);
     }
+
+    // Create A
+    status = SLIP_matrix_copy(&A, SLIP_CSC, SLIP_MPZ, A_matlab, option);
 
     if (status != SLIP_OK)
     {
@@ -171,9 +167,6 @@ void slip_mex_get_A_and_b
                 b_matlab->x.int64[j] = (int64_t) bx[j];
             }
         
-            b_matlab->nz = (int64_t) mb*nb;
-            // Create b
-            status = SLIP_matrix_copy(&b, SLIP_DENSE, SLIP_MPZ, b_matlab, option);
         }
         else
         {
@@ -183,10 +176,10 @@ void slip_mex_get_A_and_b
                                  (int64_t) nb, (int64_t) mb*nb, true, true, option);
         
             b_matlab->x.fp64 = bx;
-            b_matlab->nz = (int64_t) mb*nb;
-            // Create b
-            status = SLIP_matrix_copy(&b, SLIP_DENSE, SLIP_MPZ, b_matlab, option);
         }
+
+        // Create b
+        status = SLIP_matrix_copy(&b, SLIP_DENSE, SLIP_MPZ, b_matlab, option);
 
         if (status != SLIP_OK)
         {

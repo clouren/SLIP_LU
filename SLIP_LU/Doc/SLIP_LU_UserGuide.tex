@@ -524,6 +524,8 @@ function/macro name & description & section \\
 \label{ss:SLIP_sparse}
 %-------------------------------------------------------------------------------
 
+TODO: fixme; describe the \verb'SLIP_matrix'. % TODO
+
 All internal sparse matrices are stored in compressed sparse column (CSC)
 form via the \verb|SLIP_sparse| structure. A sparse matrix
 \verb|SLIP_sparse *A| has the following components:
@@ -535,14 +537,16 @@ $m=n$.  Data Type: \verb|int64_t|
 \item \verb|A->n|: Number of columns in the matrix. It is typically assumed
 that $m=n$. Data Type: \verb|int64_t|
 
-\item \verb|A->nz|: The number of nonzeros in the matrix $A$. Data Type:
+\item \verb|A->nz|: The number of nonzeros in the matrix $A$, if $A$ is
+a triplet matrix (ignored for matrices in CSC or dense formats). Data Type:
 \verb|int64_t|
 
 \item \verb|A->nzmax|: The allocated size of the vectors \verb|A->x| and
-\verb|A->i|. Note that \verb|A->nzmax| $\geq$ \verb|A->nz|. Internally, this
-parameter serves as an estimate on the amount of memory needed and is used to
-reduce the number of intermediate reallocations performed in the library. Data
-Type: \verb|int64_t|
+\verb|A->i|. Note that \verb|A->nzmax| $\geq$ \verb|nnz(A)|, where
+\verb'nnz(A)' is the return value of \verb'SLIP_matrix_nnz(A,option)'.
+Internally, this parameter serves as an estimate on the amount of memory needed
+and is used to reduce the number of intermediate reallocations performed in the
+library. Data Type: \verb|int64_t|
 
 \item \verb|A->p|: An array of size $n+1$ which contains column pointers of
 $A$. Data Type: \verb|int64_t*|

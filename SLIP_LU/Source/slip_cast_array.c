@@ -37,7 +37,7 @@
 #define SLIP_FREE_ALL \
 SLIP_MPQ_CLEAR(temp);       \
 
-#include "slip_LU_internal.h"
+#include "slip_internal.h"
 #pragma GCC diagnostic ignored "-Wunused-variable"
 
 SLIP_info slip_cast_array
@@ -66,6 +66,7 @@ SLIP_info slip_cast_array
     int r;
     mpq_t temp; SLIP_MPQ_SET_NULL(temp);
 
+    mpfr_rnd_t round = SLIP_OPTION_ROUND (option) ;
 
     //--------------------------------------------------------------------------
     // Y [0:n-1] = (ytype) X [0:n-1]
@@ -192,7 +193,8 @@ SLIP_info slip_cast_array
                     mpfr_t *x = (mpfr_t *) X ;
                     for (int64_t k = 0 ; k < n ; k++)
                     {
-                        SLIP_mpfr_get_q( y[k], x[k], SLIP_GET_ROUND(option));
+                        // TODO why no SLIP_CHECK here ??
+                        SLIP_mpfr_get_q( y[k], x[k], round);
                     }
                 }
                 break ;
@@ -244,8 +246,7 @@ SLIP_info slip_cast_array
                         // x_scale = 1. Simply do a direct copy.
                         for (int64_t k = 0 ; k < n ; k++)
                         {
-                            SLIP_CHECK (SLIP_mpfr_set_z (y [k], x [k],
-                                SLIP_GET_ROUND(option))) ;
+                            SLIP_CHECK (SLIP_mpfr_set_z (y [k], x [k], round)) ;
                         }
                     }
                     else
@@ -259,8 +260,7 @@ SLIP_info slip_cast_array
                         {
                             SLIP_CHECK( SLIP_mpq_set_z( temp, x[k]));
                             SLIP_CHECK( SLIP_mpq_div(temp, temp, x_scale));
-                            SLIP_CHECK(SLIP_mpfr_set_q(y[k], temp,
-                                SLIP_GET_ROUND(option)));
+                            SLIP_CHECK(SLIP_mpfr_set_q(y[k], temp, round));
                         }
                     }
                 }
@@ -271,8 +271,7 @@ SLIP_info slip_cast_array
                     mpq_t *x = (mpq_t *) X ;
                     for (int64_t k = 0 ; k < n ; k++)
                     {
-                        SLIP_CHECK (SLIP_mpfr_set_q (y [k], x [k],
-                            SLIP_GET_ROUND(option))) ;
+                        SLIP_CHECK (SLIP_mpfr_set_q (y [k], x [k], round)) ;
                     }
                 }
                 break ;
@@ -282,8 +281,7 @@ SLIP_info slip_cast_array
                     mpfr_t *x = (mpfr_t *) X ;
                     for (int64_t k = 0 ; k < n ; k++)
                     {
-                        SLIP_CHECK (SLIP_mpfr_set (y [k], x [k],
-                            SLIP_GET_ROUND(option))) ;
+                        SLIP_CHECK (SLIP_mpfr_set (y [k], x [k], round)) ;
                     }
                 }
                 break ;
@@ -293,8 +291,7 @@ SLIP_info slip_cast_array
                     int64_t *x = (int64_t *) X ;
                     for (int64_t k = 0 ; k < n ; k++)
                     {
-                        SLIP_CHECK(SLIP_mpfr_set_si(y[k], x[k],
-                                                    SLIP_GET_ROUND(option)));
+                        SLIP_CHECK(SLIP_mpfr_set_si(y[k], x[k], round));
                     }
                 }
                 break ;
@@ -304,8 +301,7 @@ SLIP_info slip_cast_array
                     double *x = (double *) X ;
                     for (int64_t k = 0 ; k < n ; k++)
                     {
-                        SLIP_CHECK (SLIP_mpfr_set_d (y [k], x [k],
-                            SLIP_GET_ROUND(option))) ;
+                        SLIP_CHECK (SLIP_mpfr_set_d (y [k], x [k], round)) ;
                     }
                 }
                 break ;
@@ -375,8 +371,7 @@ SLIP_info slip_cast_array
                     mpfr_t *x = (mpfr_t *) X ;
                     for (int64_t k = 0 ; k < n ; k++)
                     {
-                        SLIP_CHECK( SLIP_mpfr_get_si( &(y[k]),x[k],
-                                                      SLIP_GET_ROUND(option)));
+                        SLIP_CHECK( SLIP_mpfr_get_si( &(y[k]),x[k], round));
                     }
                 }
                 break ;
@@ -459,7 +454,7 @@ SLIP_info slip_cast_array
                     for (int64_t k = 0 ; k < n ; k++)
                     {
                         SLIP_CHECK (SLIP_mpfr_get_d (&(y [k]), x [k],
-                            SLIP_GET_ROUND(option)));
+                            round));
                     }
                 }
                 break ;

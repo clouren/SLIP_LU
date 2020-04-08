@@ -70,7 +70,7 @@ CS = \
     slip_sparse_realloc.o \
     tcov_malloc_test.o
 
-$(CS): ../Include/SLIP_LU.h ../Source/slip_LU_internal.h tcov_malloc_test.h ../Demo/demos.h
+$(CS): ../Include/SLIP_LU.h ../Source/slip_internal.h tcov_malloc_test.h ../Demo/demos.h
 
 .PRECIOUS: SLIP_%.c slip_%.c SLIPLU.c demos.c
 

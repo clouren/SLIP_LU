@@ -39,16 +39,16 @@
  * option:   command options
  */
 
-#define SLIP_FREE_WORK                        \
-    SLIP_matrix_free(&b2, NULL);              \
-    SLIP_matrix_free(&x2, NULL);              \
-    SLIP_MPQ_CLEAR(scale);                    \
+#define SLIP_FREE_WORK                  \
+    SLIP_matrix_free (&b2, NULL) ;      \
+    SLIP_matrix_free (&x2, NULL) ;      \
+    SLIP_MPQ_CLEAR (scale) ;
 
-#define SLIP_FREE_ALL                         \
-    SLIP_FREE_WORK                            \
-    SLIP_matrix_free(&x, NULL);               \
+#define SLIP_FREE_ALL                   \
+    SLIP_FREE_WORK                      \
+    SLIP_matrix_free (&x, NULL) ;
 
-#include "slip_LU_internal.h"
+#include "slip_internal.h"
 
 SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
 (
@@ -70,7 +70,6 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     // check inputs
     //--------------------------------------------------------------------------
 
-
     SLIP_info info ;
     SLIP_REQUIRE (b,    SLIP_DENSE, SLIP_MPZ) ;
     SLIP_REQUIRE (A,    SLIP_CSC,   SLIP_MPZ) ;
@@ -85,29 +84,25 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     }
     *x_handle = NULL;
 
-
     //--------------------------------------------------------------------------
     // Declare and initialize workspace
     //--------------------------------------------------------------------------
 
-    int64_t i, k, n = L->n, numRHS = b->n;
-    mpq_t scale;
-    SLIP_MPQ_SET_NULL(scale);
+    int64_t i, k, n = L->n, numRHS = b->n ;
+    mpq_t scale ;
+    SLIP_MPQ_SET_NULL (scale) ;
 
     SLIP_matrix *x = NULL;   // final solution
     SLIP_matrix *x2 = NULL;  // unpermuted solution
     SLIP_matrix *b2 = NULL;  // permuted b
-    SLIP_CHECK (SLIP_matrix_allocate(&x2, SLIP_DENSE, SLIP_MPQ, n, numRHS,
-        n*numRHS, false, true, option));
 
-    // not need to perform deep copy, simply create an new dense matrix
+    //--------------------------------------------------------------------------
+    // b2 (pinv) = b
+    //--------------------------------------------------------------------------
+
+    // TODO make this a function: slip_permute_b (like slip_permute_x)
     SLIP_CHECK (SLIP_matrix_allocate(&b2, SLIP_DENSE, SLIP_MPZ, n, numRHS,
         n*numRHS, false, false, option));
-
-    //--------------------------------------------------------------------------
-    // Set workspace b
-    //--------------------------------------------------------------------------
-
     for (k = 0; k < numRHS; k++)
     {
         for (i = 0; i < n; i++)
@@ -138,24 +133,23 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     // x2 = b2/det, where det=rhos[n-1]
     //--------------------------------------------------------------------------
 
-    SLIP_CHECK(slip_matrix_div(x2, b2, rhos->x.mpz[n-1]));
+    SLIP_CHECK (slip_matrix_div (&x2, b2, rhos->x.mpz[n-1], option)) ;
 
     //--------------------------------------------------------------------------
-    // x = permute (x2), or x = Q*x
+    // x = Q*x2
     //--------------------------------------------------------------------------
 
-    // TODO Please refer to the comment in the below function. Once a solution
-    // is decided update the rest of this file.
-    SLIP_CHECK(slip_permute_x(&x, x2, (SLIP_LU_analysis *) S, option));
+    SLIP_CHECK (slip_permute_x (&x, x2, (SLIP_LU_analysis *) S, option)) ;
     SLIP_matrix_free (&x2, NULL) ;
 
     //--------------------------------------------------------------------------
     // Check the solution if desired (debugging only)
     //--------------------------------------------------------------------------
 
-    if (option->check)
+    bool check = SLIP_OPTION_CHECK (option) ;
+    if (check)
     {
-        SLIP_CHECK(slip_check_solution(A, x, b, option));
+        SLIP_CHECK (slip_check_solution (A, x, b, option)) ;
     }
 
     //--------------------------------------------------------------------------
@@ -183,8 +177,8 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     // free workspace and return result
     //--------------------------------------------------------------------------
 
-    SLIP_FREE_WORK;
-    (*x_handle) = x;
-    return SLIP_OK;
+    SLIP_FREE_WORK ;
+    (*x_handle) = x ;
+    return (SLIP_OK) ;
 }
 

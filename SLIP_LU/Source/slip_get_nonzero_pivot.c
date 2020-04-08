@@ -17,7 +17,7 @@
  * On output, the kth pivot is returned.
  */
 
-#include "slip_LU_internal.h"
+#include "slip_internal.h"
 
 SLIP_info slip_get_nonzero_pivot // find the first eligible nonzero pivot
 (

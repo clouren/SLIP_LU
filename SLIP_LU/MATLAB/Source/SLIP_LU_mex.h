@@ -11,7 +11,7 @@
 #ifndef SLIP_MEX_H
 #define SLIP_MEX_H
 
-#include "slip_LU_internal.h"
+#include "slip_internal.h"
 #include "matrix.h"
 
 

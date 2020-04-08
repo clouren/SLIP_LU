@@ -9,10 +9,10 @@
 //------------------------------------------------------------------------------
 
 /* Purpose: Create and return SLIP_options pointer with default parameters
- * upon successful allocation, which are defined in slip_LU_internal.h
+ * upon successful allocation, which are defined in slip_internal.h
  */
 
-#include "slip_LU_internal.h"
+#include "slip_internal.h"
 
 SLIP_options* SLIP_create_default_options ( void )
 {
@@ -38,7 +38,7 @@ SLIP_options* SLIP_create_default_options ( void )
     option->prec        = SLIP_DEFAULT_PRECISION ;
     option->tol         = SLIP_DEFAULT_TOL ;
     option->round       = SLIP_DEFAULT_MPFR_ROUND ;
-    option->check       = false;
+    option->check       = false ;
 
     //--------------------------------------------------------------------------
     // return result

@@ -18,7 +18,7 @@
 #define SLIP_FREE_ALL        \
     SLIP_MPZ_CLEAR(small);
 
-#include "slip_LU_internal.h"
+#include "slip_internal.h"
 
 SLIP_info slip_get_smallest_pivot
 (

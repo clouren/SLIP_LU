@@ -12,7 +12,7 @@
  * in to c.  This function is lightly modified from CSparse.
  */
 
-#include "slip_LU_internal.h"
+#include "slip_internal.h"
 
 SLIP_info slip_cumsum
 (

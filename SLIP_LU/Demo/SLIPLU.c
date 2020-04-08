@@ -192,7 +192,7 @@ int main (int argc, char* argv[])
         FREE_WORKSPACE;
         return 0;
     }
-    
+
     //--------------------------------------------------------------------------
     // We now perform symbolic analysis by getting the column preordering of
     // the matrix A. This is done via the SLIP_LU_analyze function. The output
@@ -200,7 +200,8 @@ int main (int argc, char* argv[])
     // and a guess on the number of nonzeros in L and U.
     //
     // Note that in the simple interface demostrated in the example*.c files,
-    // all of the following code is condensed into the single SLIP_backslash function.
+    // all of the following code is condensed into the single SLIP_backslash
+    // function.
     //--------------------------------------------------------------------------
 
     clock_t start_col = clock();
@@ -257,22 +258,21 @@ int main (int argc, char* argv[])
                      option));    
 
     clock_t end_solve = clock();
-    
+
     // Done, x now contains the exact solution of the linear system Ax=b in 
     // dense rational form. There is an optional final step here where the user
     // can cast their solution to a different data type or matrix format.
     // Below, we have a block of code which illustrates how one would do this.
-    
+
     // Example of how to transform output. Uncomment if desired
     //
-    // SLIP_kind my_kind = SLIP_DENSE;  // Can be either SLIP_CSC, SLIP_TRIPLET or SLIP_DENSE
-    // SLIP_type my_type = SLIP_FP64;   // Can be either SLIP_MPQ, SLIP_MPFR, or SLIP_FP64
+    // SLIP_kind my_kind = SLIP_DENSE;  // SLIP_CSC, SLIP_TRIPLET or SLIP_DENSE
+    // SLIP_type my_type = SLIP_FP64;   // SLIP_MPQ, SLIP_MPFR, or SLIP_FP64
     //
     // SLIP_matrix* my_x = NULL;        // New output
-    // SLIP_matrix_copy( &my_x, my_kind, my_type, x, option);   // Create copy which is stored as
-                                                                // my_kind and my_type
+    // Create copy which is stored as my_kind and my_type:
+    // SLIP_matrix_copy( &my_x, my_kind, my_type, x, option);
 
-    
     // Timing stats
     double t_sym = (double) (end_col-start_col)/CLOCKS_PER_SEC;
     double t_factor = (double) (end_factor - start_factor) / CLOCKS_PER_SEC;

@@ -10,7 +10,7 @@
 
 // Free a SLIP_matrix.  Any shallow component is not freed.
 #pragma GCC diagnostic ignored "-Wunused-variable"
-#include "slip_LU_internal.h"
+#include "slip_internal.h"
 
 SLIP_info SLIP_matrix_free
 (

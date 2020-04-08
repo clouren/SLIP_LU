@@ -14,7 +14,7 @@
  * termination.
  */
 
-#include "slip_LU_internal.h"
+#include "slip_internal.h"
 
 void SLIP_LU_analysis_free
 (

@@ -39,7 +39,7 @@
     SLIP_matrix_free(&rhos, NULL);  \
     SLIP_FREE(pinv);
 
-#include "slip_LU_internal.h"
+#include "slip_internal.h"
 
 SLIP_info SLIP_LU_factorize
 (
@@ -180,8 +180,10 @@ SLIP_info SLIP_LU_factorize
         }
     }
 
+    mpfr_rnd_t round = SLIP_OPTION_ROUND (option) ;
+
     // temp = sigma
-    SLIP_CHECK(SLIP_mpfr_set_z(temp, sigma, SLIP_GET_ROUND(option)));
+    SLIP_CHECK(SLIP_mpfr_set_z(temp, sigma, round)) ;
 
     //--------------------------------------------------------------------------
     // The bound is given as: gamma*log2(sigma sqrt(gamma))
@@ -190,13 +192,12 @@ SLIP_info SLIP_LU_factorize
     // TODO let's discuss this bound
 
     // temp = sigma*sqrt(gamma)
-    SLIP_CHECK(SLIP_mpfr_mul_d(temp, temp, (double)sqrt(gamma),
-        SLIP_GET_ROUND(option)));
+    SLIP_CHECK(SLIP_mpfr_mul_d(temp, temp, (double)sqrt(gamma), round));
     // temp = log2(temp)
-    SLIP_CHECK(SLIP_mpfr_log2(temp, temp, SLIP_GET_ROUND(option)));
+    SLIP_CHECK(SLIP_mpfr_log2(temp, temp, round));
     // inner2 = temp
     double inner2;
-    SLIP_CHECK(SLIP_mpfr_get_d(&inner2, temp, SLIP_GET_ROUND(option)));
+    SLIP_CHECK(SLIP_mpfr_get_d(&inner2, temp, round));
     // Free cache from log2. Even though mpfr_free_cache is called in
     // SLIP_LU_final(), it has to be called here to prevent memory leak in
     // some rare situations due to the usage of the mpfr_log2 function.

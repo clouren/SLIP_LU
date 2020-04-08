@@ -14,7 +14,7 @@
    struct for matlab */
 void slip_get_matlab_options
 (
-    SLIP_options* option,  // Control parameters
+    SLIP_options* option,  // Control parameters (must not be NULL)
     const mxArray* input   // The input options from MATLAB interface
 )
 {

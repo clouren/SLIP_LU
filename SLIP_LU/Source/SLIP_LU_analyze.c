@@ -25,7 +25,7 @@
 // SLIP_LU_analyze creates the SLIP_LU_analysis object S.  Use
 // SLIP_delete_LU_analysis to delete it.
 
-#include "slip_LU_internal.h"
+#include "slip_internal.h"
 
 SLIP_info SLIP_LU_analyze
 (
@@ -53,7 +53,7 @@ SLIP_info SLIP_LU_analyze
     //--------------------------------------------------------------------------
 
     SLIP_LU_analysis *S = NULL ;
-    int64_t i, n = A->n, nz = SLIP_matrix_nnz(A, option);
+    int64_t i, n = A->n, anz = SLIP_matrix_nnz(A, option);
     // ALlocate memory for S
     S = (SLIP_LU_analysis*) SLIP_malloc(sizeof(SLIP_LU_analysis));
     if (S == NULL) {return SLIP_OUT_OF_MEMORY;}
@@ -72,14 +72,17 @@ SLIP_info SLIP_LU_analyze
     // is a very crude estimate on the nnz(L) and nnz(U)
     //--------------------------------------------------------------------------
 
-    if (SLIP_GET_ORDER(option) == SLIP_NO_ORDERING)
+    SLIP_col_order order = SLIP_OPTION_ORDER (option) ;
+    int pr = SLIP_OPTION_PRINT_LEVEL (option) ;
+
+    if (order == SLIP_NO_ORDERING)
     {
         for (i = 0; i < n+1; i++)
         {
             S->q[i] = i;
         }
         // Guesses for number of L and U nonzeros
-        S->lnz = S->unz = 10*nz;
+        S->lnz = S->unz = 10*anz;
     }
 
     //--------------------------------------------------------------------------
@@ -87,14 +90,14 @@ SLIP_info SLIP_LU_analyze
     // A+A'. The number of nonzeros in L and U is given as AMD's computed
     // number of nonzeros in the Cholesky factor L of A+A'
     //--------------------------------------------------------------------------
-    else if (SLIP_GET_ORDER(option) == SLIP_AMD)
+    else if (order == SLIP_AMD)
     {
         double Control [AMD_CONTROL];           // Declare AMD control
         amd_defaults(Control);                  // Set AMD defaults
         double Info [AMD_INFO];
         amd_l_order(n, A->p, A->i, S->q, Control, Info); // Perform AMD
         S->lnz = S->unz = Info[AMD_LNZ];        // Guess for unz and lnz
-        if (SLIP_GET_PRINT_LEVEL(option) > 0)   // Output AMD info if desired
+        if (pr > 0)   // Output AMD info if desired
         {
             printf("\n****Column Ordering Information****\n");
             amd_control(Control);
@@ -110,7 +113,7 @@ SLIP_info SLIP_LU_analyze
     else
     {
         // Declared as per COLAMD documentation
-        int64_t Alen = 2*A->nz + 6 *(n+1) + 6*(n+1) + n;
+        int64_t Alen = 2*anz + 6 *(n+1) + 6*(n+1) + n;
         int64_t* A2 = (int64_t*) SLIP_malloc(Alen* sizeof(int64_t));
         if (!A2)
         {
@@ -124,17 +127,17 @@ SLIP_info SLIP_LU_analyze
             S->q[i] = A->p[i];
         }
         // Initialize A2 per COLAMD documentation
-        for (i = 0; i < nz; i++)
+        for (i = 0; i < anz; i++)
         {
             A2[i] = A->i[i];
         }
         int64_t stats [COLAMD_STATS];
         colamd_l (n, n, Alen, A2, S->q, (double *) NULL, stats);
         // Guess for lnz and unz
-        S->lnz = S->unz = 10*A->nz;
+        S->lnz = S->unz = 10*anz;
 
         // Print stats if desired
-        if (SLIP_GET_PRINT_LEVEL(option) > 0)
+        if (pr > 0)
         {
             printf("\n****Column Ordering Information****\n");
             colamd_l_report(stats);

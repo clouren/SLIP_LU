@@ -16,7 +16,7 @@
     SLIP_MPQ_CLEAR(temp);                   \
     SLIP_matrix_free(&b2, NULL);
 
-#include "slip_LU_internal.h"
+#include "slip_internal.h"
 
 SLIP_info slip_check_solution
 (
@@ -99,9 +99,10 @@ SLIP_info slip_check_solution
     // Print info
     //--------------------------------------------------------------------------
 
+    int pr = SLIP_OPTION_PRINT_LEVEL (option) ;
     if (info == SLIP_OK)
     {
-        if (SLIP_GET_PRINT_LEVEL(option)>=0)
+        if (pr >= 0)
         {
             printf ("Solution is verified to be exact.\n") ;
         }
@@ -109,12 +110,11 @@ SLIP_info slip_check_solution
     else if (info == SLIP_INCORRECT)
     {
         // This can never happen.
-        if (SLIP_GET_PRINT_LEVEL(option)>=0)
+        if (pr >= 0)
         {
             printf ("ERROR! Solution is wrong. This is a bug; please "
                     "contact the authors of SLIP LU.\n") ;
         }
-        //abort ( ) ;TODO remove?
     }
 
     //--------------------------------------------------------------------------

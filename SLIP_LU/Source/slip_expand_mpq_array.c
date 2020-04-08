@@ -18,7 +18,7 @@
     SLIP_matrix_free(&x3, NULL);    \
     SLIP_matrix_free(&x4, NULL);
 
-#include "slip_LU_internal.h"
+#include "slip_internal.h"
 
 SLIP_info slip_expand_mpq_array
 (

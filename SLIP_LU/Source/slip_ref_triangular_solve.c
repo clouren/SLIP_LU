@@ -63,11 +63,11 @@
  *
  *  x:          Dense mpz_t matrix Workspace of size n*1, unitialized on input.
  *              On output, x[i] is the value of L(i,k) here i is in the nonzero
- *              pattern xi[top...n-1]. Other entries of x are undefined on output.
+ *              pattern xi[top...n-1]. Other entries of x are undefined on
+ *              output.
  */
 
-
-#include "slip_LU_internal.h"
+#include "slip_internal.h"
 
 // Sorting function
 static inline int compare (const void * a, const void * b)

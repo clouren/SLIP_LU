@@ -8,7 +8,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "slip_LU_internal.h"
+#include "slip_internal.h"
 
 /* Purpose: This function computes the reach of column k of A on the graph of L
  * mathematically that is: xi = Reach(A(:,k))_G_L

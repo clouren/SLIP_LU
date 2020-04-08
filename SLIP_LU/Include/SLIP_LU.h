@@ -229,18 +229,16 @@ typedef struct SLIP_options
                           // 3: all, with matrices and results
     uint64_t prec;        // Precision used to output file if MPFR is chosen
     mpfr_rnd_t round;     // Type of MPFR rounding used
-    bool check;           // Set true if the solution to the system should be checked
-} SLIP_options;
+    bool check;           // Set true if the solution to the system should be
+                          // checked.  Intended for debugging only, since
+                          // SLIP_LU is guaranteed to return the exact solution.
+} SLIP_options ;
 
 /* Purpose: Create and return SLIP_options pointer with default parameters
  * upon successful allocation, which are defined in SLIP_LU_internal.h
  * To free it, simply use SLIP_FREE(option)
  */
 SLIP_options* SLIP_create_default_options(void);
-
-////////////////////////////////////////////////////////////////////////////////
-// new SLIP_matrix-based methods
-////////////////////////////////////////////////////////////////////////////////
 
 //------------------------------------------------------------------------------
 // SLIP_matrix: a sparse CSC, sparse triplet, or dense matrix
@@ -274,8 +272,8 @@ SLIP_type ;
 // This gives a total of 15 different matrix types.  Not all functions accept
 // all 15 matrices types, however.
 
-// Suppose A is an m-by-n matrix with nz <= nzmax entries.  These terms are
-// A->m A->n A->nz and A->nzmax.  The p, i, j, and x components are defined as:
+// Suppose A is an m-by-n matrix with nz <= nzmax entries.
+// The p, i, j, and x components are defined as:
 
 // (0) SLIP_CSC:  A sparse matrix in CSC (compressed sparse column) format.
 //      A->p is an int64_t array of size n+1, A->i is an int64_t array of size
@@ -283,18 +281,18 @@ SLIP_type ;
 //      matrix entries ('type' is one of mpz, mpq, mpfr, int64, or fp64).  The
 //      row indices of column j appear in A->i [A->p [j] ... A->p [j+1]-1], and
 //      the values appear in the same locations in A->x.type.  The A->j array
-//      is NULL.
+//      is NULL.  A->nz is ignored; nz is A->p [A->p].
 
 // (1) SLIP_TRIPLET:  A sparse matrix in triplet format.  A->i and A->j are
 //      both int64_t arrays of size nzmax, and A->x.type is an array of values
 //      of the same size.  The kth tuple has row index A->i [k], column index
-//      A->j [k], and value A->x.type [k], with 0 <= k < nz.  The A->p array
+//      A->j [k], and value A->x.type [k], with 0 <= k < A->nz.  The A->p array
 //      is NULL.
 
 // (2) SLIP_DENSE:  A dense matrix.  The integer arrays A->p, A->i, and A->j
 //      are all NULL.  A->x.type is a pointer to an array of size m*n, stored
 //      in column-oriented format.  The value of A(i,j) is A->x.type [p]
-//      with p = i + j*A->m.
+//      with p = i + j*A->m.  A->nz is ignored; nz is A->m * A->n.
 
 // The SLIP_matrix may contain 'shallow' components, A->p, A->i, A->j, and
 // A->x.  For example, if A->p_shallow is true, then a non-NULL A->p is a
@@ -307,11 +305,8 @@ typedef struct
     int64_t m ;         // number of rows
     int64_t n ;         // number of columns
     int64_t nzmax ;     // size of A->i, A->j, and A->x
-    int64_t nz ;        // # nonzeros in the matrix 
-                        // For tripet and CSC matrices,
-                        // all user visible functions will 
-                        // have A->nz = A->nzmax. For dense
-                        // matrices, A->nz is never used.
+    int64_t nz ;        // # nonzeros in a triplet matrix .
+                        // Ignored for CSC and dense matrices.
     SLIP_kind kind ;    // CSC, triplet, or dense
     SLIP_type type ;    // mpz, mpq, mpfr, int64, or fp64 (double)
 
@@ -368,10 +363,11 @@ SLIP_info SLIP_matrix_allocate
                             // by the caller.  All A->*_shallow are returned
                             // as true.
     bool init,              // If true, and the data types are mpz, mpq, or
-                            // mpfr, the entries are initialized (using the 
+                            // mpfr, the entries are initialized (using the
                             // appropriate SLIP_mp*_init function). If false,
-                            // the mpz, mpq, and mpfr arrays are malloced but not 
-                            // initialized. Utilized internally to reduce memory
+                            // the mpz, mpq, and mpfr arrays are malloced but
+                            // not initialized. Utilized internally to reduce
+                            // memory.
     const SLIP_options *option
 ) ;
 

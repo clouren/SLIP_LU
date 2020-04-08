@@ -25,7 +25,7 @@
     SLIP_FREE_WORK ;                    \
     SLIP_matrix_free (&C, option) ;
 
-#include "slip_LU_internal.h"
+#include "slip_internal.h"
 
 SLIP_info SLIP_matrix_copy
 (
@@ -59,6 +59,7 @@ SLIP_info SLIP_matrix_copy
     int64_t *W = NULL ;
     int64_t m = A->m ;
     int64_t n = A->n ;
+    mpfr_rnd_t round = SLIP_OPTION_ROUND (option) ;
 
     //--------------------------------------------------------------------------
     // copy and convert A into C
@@ -160,7 +161,7 @@ SLIP_info SLIP_matrix_copy
                                 SLIP_CHECK (SLIP_mpfr_set (
                                     SLIP_1D (C, p, mpfr),
                                     SLIP_1D (Y, k, mpfr),
-                                    option->round)) ;
+                                    round)) ;
                             }
                             break ;
 
@@ -310,7 +311,7 @@ SLIP_info SLIP_matrix_copy
                                         SLIP_CHECK (SLIP_mpfr_set (
                                             SLIP_1D (C, nz, mpfr),
                                             SLIP_2D (Y, i, j, mpfr),
-                                            option->round)) ;
+                                            round)) ;
                                         nz++ ;
                                     }
                                 }
@@ -495,7 +496,7 @@ SLIP_info SLIP_matrix_copy
                                     SLIP_CHECK (SLIP_mpfr_set (
                                         SLIP_2D (C, i, j, mpfr),
                                         SLIP_1D (Y, p, mpfr),
-                                        option->round)) ;
+                                        round)) ;
                                 }
                             }
                             break ;
@@ -571,7 +572,7 @@ SLIP_info SLIP_matrix_copy
                                 SLIP_CHECK (SLIP_mpfr_set (
                                     SLIP_2D (C, i, j, mpfr),
                                     SLIP_1D (Y, k, mpfr),
-                                    option->round)) ;
+                                    round)) ;
                             }
                             break ;
 

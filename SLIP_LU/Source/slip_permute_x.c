@@ -12,47 +12,17 @@
  * That is, x = Q*x.
  */
 
-#define SLIP_FREE_ALL                 \
-    SLIP_matrix_free(&x2, NULL);
+#define SLIP_FREE_ALL \
+    SLIP_matrix_free (&x, NULL) ;
 
-#include "slip_LU_internal.h"
-// TODO optimize to avoid copy twice and unnecessary memory alloc
-// Chris note: Is this possible to do here since it's a dense matrix and thus
-// has no indices?(Jinhao: you can easily get the index of entry since matrix
-// is dense) An alternate solution is to just pass in X_handle and set
-// (*X_handle) = x2, eliminate lines 82-95 and free x in the overall solve
-// function since this is all internal anyway. If we have to do the copy
-// anyway, why not just do it once, we don't have to preserve x here.
-// Thoughts?(Jinhao: just feel it will be better to avoid allocating large
-// chunk of memory when you can)
-/*
-    for ith_row
-        j = q[i];
-        if !permuted[i] && i!= j
-            tmp_row = ith_row;
-            tmp_row_index = i;
-            ith_row = jth_row;
-            permuted[i] = true;
-
-            while q[j] != tmp_row_index
-                jth_row = q[j]th_row
-                permuted[j] = true;
-                j = q[j];
-            end
-
-            jth_row = tmp_row
-            permuted[j] = true;
-        end
-    end
-*/
+#include "slip_internal.h"
 
 SLIP_info slip_permute_x
 (
-    SLIP_matrix **x_handle,    // permuted Solution vector
-    SLIP_matrix *x2,           // unpermuted Solution vector (not modified)
-    SLIP_LU_analysis *S,  // symbolic analysis with the column ordering Q
-    const SLIP_options* option  // Command options
-                          // has been checked in the only caller SLIP_LU_solve
+    SLIP_matrix **x_handle,     // permuted Solution vector
+    SLIP_matrix *x2,            // unpermuted Solution vector (not modified)
+    SLIP_LU_analysis *S,        // symbolic analysis with the column ordering Q
+    const SLIP_options* option
 )
 {
 
@@ -70,15 +40,19 @@ SLIP_info slip_permute_x
     // x (q) = x2
     //--------------------------------------------------------------------------
 
-    int64_t *q = S->q, n = x2->m, numRHS = x2->n;     // column permutation
+    int64_t *q = S->q ;     // column permutation
+    int64_t m = x2->m ;
+    int64_t n = x2->n ;
+
     // allocate x
-    SLIP_matrix *x;
-    SLIP_CHECK (SLIP_matrix_allocate(&x, SLIP_DENSE, SLIP_MPQ, x2->m, x2->n,
-        x2->nzmax, false, true, option));
+    SLIP_matrix *x = NULL ;
+    SLIP_CHECK (SLIP_matrix_allocate (&x, SLIP_DENSE, SLIP_MPQ, m, n,
+        0, false, true, option)) ;
+
     // Set x = Q*x2
-    for (int64_t i = 0; i < n; i++)
+    for (int64_t i = 0 ; i < m ; i++)
     {
-        for (int64_t j = 0; j < numRHS; j++)
+        for (int64_t j = 0 ; j < n ; j++)
         {
             SLIP_CHECK(SLIP_mpq_set(SLIP_2D(x,  q[i], j, mpq),
                                     SLIP_2D(x2,   i,  j, mpq)));
@@ -86,7 +60,7 @@ SLIP_info slip_permute_x
     }
 
     //--------------------------------------------------------------------------
-    // free workspace and return result
+    // return result
     //--------------------------------------------------------------------------
 
     (*x_handle) = x ;

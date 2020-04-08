@@ -11,7 +11,7 @@
 /* Purpose: This function creates a MPFR array of desired precision. It is used
             internally for the SLIP_matrix_allocate function */
 
-#include "slip_LU_internal.h"
+#include "slip_internal.h"
 
 mpfr_t* slip_create_mpfr_array
 (
@@ -25,7 +25,8 @@ mpfr_t* slip_create_mpfr_array
     //--------------------------------------------------------------------------
 
     if (n <= 0) {return NULL;}
-    int64_t prec = SLIP_GET_PRECISION(option);
+    uint64_t prec = SLIP_OPTION_PREC (option) ;
+
     //--------------------------------------------------------------------------
 
     mpfr_t* x = (mpfr_t*) SLIP_calloc(n, sizeof(mpfr_t));

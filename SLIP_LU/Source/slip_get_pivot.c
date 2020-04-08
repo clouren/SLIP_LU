@@ -27,7 +27,7 @@
     SLIP_MPQ_CLEAR (tol) ;      \
     SLIP_MPQ_CLEAR (ratio) ;
 
-#include "slip_LU_internal.h"
+#include "slip_internal.h"
 
 SLIP_info slip_get_pivot
 (
@@ -64,9 +64,9 @@ SLIP_info slip_get_pivot
     }
 #endif
     // pivoting method to use (see above description)
-    SLIP_pivot order = SLIP_GET_PIVOT(option);
+    SLIP_pivot order = SLIP_OPTION_PIVOT(option);
     // tolerance used if some tol-based pivoting is used
-    double tolerance = SLIP_GET_TOL(option);
+    double tolerance = SLIP_OPTION_TOL(option);
 
     //--------------------------------------------------------------------------
     // allocate workspace

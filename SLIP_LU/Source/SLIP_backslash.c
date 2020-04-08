@@ -42,8 +42,7 @@
     SLIP_FREE_WORK                  \
     SLIP_matrix_free(&x, NULL);     \
 
-#include "slip_LU_internal.h"
-
+#include "slip_internal.h"
 
 SLIP_info SLIP_backslash
 (
@@ -51,8 +50,7 @@ SLIP_info SLIP_backslash
     SLIP_matrix **X_handle,       // Final solution vector
     // Input
     SLIP_type type,               // Type of output desired
-                                  // Must be SLIP_MPQ, SLIP_MPFR,
-                                  // or SLIP_FP64
+                                  // Must be SLIP_MPQ, SLIP_MPFR, or SLIP_FP64
     const SLIP_matrix *A,         // Input matrix
     const SLIP_matrix *b,         // Right hand side vector(s)
     const SLIP_options* option    // Command options
@@ -65,7 +63,7 @@ SLIP_info SLIP_backslash
 
     SLIP_info info ;
 
-    if (!X_handle)
+    if (X_handle == NULL)
     {
         return SLIP_INCORRECT_INPUT;
     }
@@ -125,9 +123,7 @@ SLIP_info SLIP_backslash
         SLIP_CHECK(SLIP_matrix_copy(&x2, SLIP_DENSE, type, x, option));
         (*X_handle) = x2;
         SLIP_matrix_free(&x, NULL);
-
     }
-
 
     //--------------------------------------------------------------------------
     // Free memory

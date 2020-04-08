@@ -22,7 +22,7 @@
     SLIP_MPQ_CLEAR(temp);           \
     SLIP_matrix_free(&x3, NULL);    \
 
-#include "slip_LU_internal.h"
+#include "slip_internal.h"
 
 SLIP_info slip_expand_mpfr_array
 (
@@ -56,8 +56,11 @@ SLIP_info slip_expand_mpfr_array
     SLIP_MPZ_SET_NULL(one);
     mpq_t temp; SLIP_MPQ_SET_NULL(temp);
 
+    uint64_t prec = SLIP_OPTION_PREC (option) ;
+    mpfr_rnd_t round = SLIP_OPTION_ROUND (option) ;
+
     SLIP_CHECK(SLIP_mpq_init(temp));
-    SLIP_CHECK(SLIP_mpfr_init2(expon, SLIP_GET_PRECISION(option)));
+    SLIP_CHECK(SLIP_mpfr_init2(expon, prec));
     SLIP_CHECK(SLIP_mpz_init(temp_expon));
     SLIP_CHECK(SLIP_mpz_init(gcd));
     SLIP_CHECK(SLIP_mpz_init(one));
@@ -66,20 +69,17 @@ SLIP_info slip_expand_mpfr_array
         false, true, option));
 
     // expon = 2^prec (overestimate)
-    SLIP_CHECK(SLIP_mpfr_ui_pow_ui(expon, 2, SLIP_GET_PRECISION(option),
-        SLIP_GET_ROUND(option)));
+    SLIP_CHECK(SLIP_mpfr_ui_pow_ui(expon, 2, prec, round)) ;
 
     for (i = 0; i < n; i++)
     {
         // x3[i] = x[i]*2^prec
-        SLIP_CHECK(SLIP_mpfr_mul(x3->x.mpfr[i], x[i], expon,
-            SLIP_GET_ROUND(option)));
+        SLIP_CHECK(SLIP_mpfr_mul(x3->x.mpfr[i], x[i], expon, round));
 
         // x_out[i] = x3[i]
-        SLIP_CHECK(SLIP_mpfr_get_z(x_out[i], x3->x.mpfr[i],
-            SLIP_GET_ROUND(option)));
+        SLIP_CHECK(SLIP_mpfr_get_z(x_out[i], x3->x.mpfr[i], round));
     }
-    SLIP_CHECK(SLIP_mpfr_get_z(temp_expon, expon, SLIP_GET_ROUND(option)));
+    SLIP_CHECK(SLIP_mpfr_get_z(temp_expon, expon, round));
     SLIP_CHECK(SLIP_mpq_set_z(scale, temp_expon));
 
     //--------------------------------------------------------------------------

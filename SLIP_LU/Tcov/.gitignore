@@ -36,7 +36,7 @@ SLIP_initialize_expert.c
 SLIP_LU_analysis_free.c
 SLIP_LU_analyze.c
 SLIP_LU_factorize.c
-slip_LU_internal.h
+slip_internal.h
 SLIP_LU_solve.c
 SLIP_malloc.c
 SLIP_matrix_allocate.c

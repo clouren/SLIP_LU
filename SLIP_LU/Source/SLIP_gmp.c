@@ -61,7 +61,7 @@
 // parameter to this parameter is kept so that it can be safely freed in case
 // a memory error occurs (avoiding a double-free), in SLIP_GMP_SAFE_FREE.
 
-#include "slip_LU_internal.h"
+#include "slip_internal.h"
 #include "SLIP_gmp.h"
 
 // ignore warnings about unused parameters in this file
