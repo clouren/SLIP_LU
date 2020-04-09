@@ -66,6 +66,7 @@ CS = \
     SLIP_matrix_copy.o \
     SLIP_matrix_free.o \
     SLIP_matrix_nnz.o \
+    slip_permute_b.o \
     slip_permute_x.o \
     slip_reach.o \
     slip_ref_triangular_solve.o \

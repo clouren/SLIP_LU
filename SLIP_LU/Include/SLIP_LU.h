@@ -604,7 +604,7 @@ SLIP_info SLIP_LU_solve         // solves the linear system LD^(-1)U x = b
     const SLIP_matrix *U,       // upper triangular matrix
     const SLIP_matrix *rhos,    // sequence of pivots
     const SLIP_LU_analysis *S,  // symbolic analysis struct
-    const int64_t *pinv,        // row permutation
+    const int64_t *pinv,        // inverse row permutation
     const SLIP_options* option
 ) ;
 

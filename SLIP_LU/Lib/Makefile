@@ -31,11 +31,12 @@ OBJ = \
     SLIP_realloc.o slip_matrix_mul.o  slip_get_largest_pivot.o  \
     slip_ref_triangular_solve.o SLIP_backslash.o slip_create_mpz_array.o slip_get_nonzero_pivot.o SLIP_LU_solve.o \
     slip_back_sub.o slip_cumsum.o slip_get_pivot.o SLIP_malloc.o slip_sparse_collapse.o \
-    SLIP_calloc.o slip_dfs.o slip_get_smallest_pivot.o  SLIP_matrix_allocate.o  slip_sparse_realloc.o \
-    slip_cast_array.o slip_expand_double_array.o  SLIP_gmp.o SLIP_matrix_copy.o SLIP_matrix_check.o \
+    SLIP_calloc.o slip_dfs.o slip_get_smallest_pivot.o SLIP_matrix_allocate.o  slip_sparse_realloc.o \
+    slip_cast_array.o slip_expand_double_array.o SLIP_gmp.o SLIP_matrix_copy.o SLIP_matrix_check.o \
     slip_cast_matrix.o slip_expand_mpfr_array.o SLIP_initialize.o SLIP_matrix_free.o slip_check_solution.o \
     slip_expand_mpq_array.o SLIP_initialize_expert.o SLIP_matrix_nnz.o SLIP_create_default_options.o  \
-    SLIP_finalize.o SLIP_LU_analysis_free.o slip_permute_x.o slip_create_mpfr_array.o \
+    SLIP_finalize.o SLIP_LU_analysis_free.o slip_permute_x.o slip_permute_b.o \
+    slip_create_mpfr_array.o \
     slip_forward_sub.o SLIP_LU_analyze.o slip_reach.o
 
 

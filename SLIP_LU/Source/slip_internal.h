@@ -575,6 +575,17 @@ SLIP_info slip_get_smallest_pivot
 /* Purpose: This function prints the basic info about SLIP_LU library */
 void slip_lu_info(void);
 
+/* Purpose: This function permutes b for forward substitution.
+ * That is, b = P'*b.
+ */
+SLIP_info slip_permute_b
+(
+    SLIP_matrix **b_handle,     // permuted RHS vector
+    const SLIP_matrix *b2,      // unpermuted RHS vector (not modified)
+    const int64_t *pinv,        // inverse row permutation
+    const SLIP_options* option
+);
+
 /* Purpose: SLIP_permute_x permutes x to get it back in its original form.
  * That is x = Q*x.
  */

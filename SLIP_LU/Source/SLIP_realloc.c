@@ -11,8 +11,8 @@
 #include "slip_internal.h"
 
 // SLIP_realloc is a wrapper for realloc.  If p is non-NULL on input, it points
-// to a previously allocated object of size old_size * size_of_item.  The
-// object is reallocated to be of size new_size * size_of_item.  If p is NULL
+// to a previously allocated object of size nitems_old * size_of_item.  The
+// object is reallocated to be of size nitems_new * size_of_item.  If p is NULL
 // on input, then a new object of that size is allocated.  On success, a
 // pointer to the new object is returned.  If the reallocation fails, p is not
 // modified, and a flag is returned to indicate that the reallocation failed.

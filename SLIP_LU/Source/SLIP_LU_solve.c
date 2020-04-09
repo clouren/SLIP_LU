@@ -61,7 +61,7 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     const SLIP_matrix *U,   // upper triangular matrix
     const SLIP_matrix *rhos,// sequence of pivots
     const SLIP_LU_analysis *S,// symbolic analysis struct
-    const int64_t *pinv,    // row permutation
+    const int64_t *pinv,    // inverse row permutation
     const SLIP_options* option // Command options
 )
 {
@@ -88,7 +88,7 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     // Declare and initialize workspace
     //--------------------------------------------------------------------------
 
-    int64_t i, k, n = L->n, numRHS = b->n ;
+    int64_t i, n = L->n;
     mpq_t scale ;
     SLIP_MPQ_SET_NULL (scale) ;
 
@@ -100,17 +100,7 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     // b2 (pinv) = b
     //--------------------------------------------------------------------------
 
-    // TODO make this a function: slip_permute_b (like slip_permute_x)
-    SLIP_CHECK (SLIP_matrix_allocate(&b2, SLIP_DENSE, SLIP_MPZ, n, numRHS,
-        n*numRHS, false, false, option));
-    for (k = 0; k < numRHS; k++)
-    {
-        for (i = 0; i < n; i++)
-        {
-            SLIP_CHECK(SLIP_mpz_set(SLIP_2D(b2, pinv[i], k, mpz),
-                                    SLIP_2D(b,  i,       k, mpz)));
-        }
-    }
+    SLIP_CHECK (slip_permute_b (&b2, b, pinv, option)) ;
 
     //--------------------------------------------------------------------------
     // b2 = L\b2, via forward substitution

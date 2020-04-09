@@ -193,8 +193,7 @@ SLIP_info slip_cast_array
                     mpfr_t *x = (mpfr_t *) X ;
                     for (int64_t k = 0 ; k < n ; k++)
                     {
-                        // TODO why no SLIP_CHECK here ??
-                        SLIP_mpfr_get_q( y[k], x[k], round);
+                        SLIP_CHECK (SLIP_mpfr_get_q( y[k], x[k], round));
                     }
                 }
                 break ;
