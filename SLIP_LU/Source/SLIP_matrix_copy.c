@@ -201,11 +201,6 @@ SLIP_info SLIP_matrix_copy
                     int s ;
 
                     // count the actual nonzeros in Y
-                    if (Y->type == SLIP_FP64)
-                    {
-                    printf("\nhey nz is: %ld", nz);
-                    printf("\nY->n and Y->m are: %ld %ld", Y->n, Y->m);
-                    }
                     int64_t actual = 0 ;
                     switch (Y->type)
                     {
@@ -252,13 +247,6 @@ SLIP_info SLIP_matrix_copy
                             break ;
 
                     }
-                    if (Y->type == SLIP_FP64)
-                    {
-                        printf("\nHey actual is: %ld",actual);
-                        printf("\nY[1,2] is %f", SLIP_2D(Y, 1, 2, fp64));
-                        printf("\nThe index accessed is %ld", 1 + 2*Y->m);
-                        printf("\nThe value in SLIP_1D is %f", Y->x.fp64[1 + 2*Y->m]);
-                    }
                     // allocate C
                     SLIP_CHECK (SLIP_matrix_allocate (&C, SLIP_CSC, C_type,
                         m, n, actual, false, true, option)) ;
@@ -274,15 +262,10 @@ SLIP_info SLIP_matrix_copy
                                 C->p [j] = nz ;
                                 for (int64_t i = 0 ; i < m ; i++)
                                 {
-                                    //SLIP_CHECK (SLIP_mpz_sgn (&s,
-                                    //    SLIP_2D (Y, i, j, mpz))) ;
                                     SLIP_CHECK( SLIP_mpz_sgn( &s, Y->x.mpz[ i + j*A->m]));
                                     if (s != 0)
                                     {
                                         C->i [nz] = i ;
-                                        //SLIP_CHECK (SLIP_mpz_set (
-                                        //    SLIP_1D (C, nz, mpz),
-                                        //    SLIP_2D (Y, i, j, mpz))) ;
                                         SLIP_CHECK( SLIP_mpz_set ( SLIP_1D (C, nz, mpz),
                                                                    Y->x.mpz[ i + j*A->m] ));
                                         nz++ ;
@@ -297,16 +280,11 @@ SLIP_info SLIP_matrix_copy
                                 C->p [j] = nz ;
                                 for (int64_t i = 0 ; i < m ; i++)
                                 {
-                                    //SLIP_CHECK (SLIP_mpq_sgn (&s,
-                                    //    SLIP_2D (Y, i, j, mpq))) ;
                                     SLIP_CHECK (SLIP_mpq_sgn (&s,
                                         Y->x.mpq[ i + j*A->m])) ;
                                     if (s != 0)
                                     {
                                         C->i [nz] = i ;
-                                        //SLIP_CHECK (SLIP_mpq_set (
-                                        //    SLIP_1D (C, nz, mpq),
-                                        //    SLIP_2D (Y, i, j, mpq))) ;
                                         SLIP_CHECK(SLIP_mpq_set (
                                             SLIP_1D(C, nz, mpq),
                                             Y->x.mpq[ i + j*A->m]));
@@ -322,18 +300,11 @@ SLIP_info SLIP_matrix_copy
                                 C->p [j] = nz ;
                                 for (int64_t i = 0 ; i < m ; i++)
                                 {
-                                    //SLIP_CHECK (SLIP_mpfr_sgn (&s,
-                                    //    SLIP_2D (Y, i, j, mpfr))) ;
                                     SLIP_CHECK (SLIP_mpfr_sgn (&s,
                                         Y->x.mpfr[i + j*A->m])) ;
                                     if (s != 0)
                                     {
-                                        C->i [nz] = i ;
-                                        //SLIP_CHECK (SLIP_mpfr_set (
-                                        //    SLIP_1D (C, nz, mpfr),
-                                        //    SLIP_2D (Y, i, j, mpfr),
-                                        //    round)) ;
-                                        
+                                        C->i [nz] = i ;                                        
                                         SLIP_CHECK (SLIP_mpfr_set (
                                             SLIP_1D (C, nz, mpfr),
                                             Y->x.mpfr[i + j*A->m],
@@ -351,12 +322,9 @@ SLIP_info SLIP_matrix_copy
                                 C->p [j] = nz ;
                                 for (int64_t i = 0 ; i < m ; i++)
                                 {
-                                    //if (SLIP_2D (Y, i, j, int64) != 0)
                                     if ( Y->x.int64[i +j*A->m] != 0)
                                     {
                                         C->i [nz] = i ;
-                                        //SLIP_1D (C, nz, int64) =
-                                        //    SLIP_2D (Y, i, j, int64) ;
                                         SLIP_1D (C, nz, int64) =
                                             Y->x.int64[i +j*A->m] ;
                                         nz++ ;
@@ -371,27 +339,18 @@ SLIP_info SLIP_matrix_copy
                                 C->p [j] = nz ;
                                 for (int64_t i = 0 ; i < m ; i++)
                                 {
-                                    //if (SLIP_2D (Y, i, j, fp64) != 0)
                                     if ( Y->x.fp64[i +j*A->m] != 0)
                                     {
                                         C->i [nz] = i ;
-                                        //SLIP_1D (C, nz, fp64) =
-                                        //    SLIP_2D (Y, i, j, fp64) ;
                                         SLIP_1D (C, nz, fp64) =
                                             Y->x.fp64[i +j*A->m];
                                         nz++ ;
-                                    }
-                                    else
-                                    {
-                                        printf("\nY [%ld %ld] is zero", i,j);
-                                        printf("\nReal value is %f", SLIP_2D(Y, i, j, fp64));
                                     }
                                 }
                             }
                             break ;
                     }
                     C->p [n] = nz ;
-                    printf("\nHey C->p[n] is: %ld", C->p[n]);
                 }
                 break ;
 
