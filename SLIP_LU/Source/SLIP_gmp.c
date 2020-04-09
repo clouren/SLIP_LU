@@ -395,7 +395,8 @@ SLIP_info SLIP_gmp_fprintf
 /* Safely print to the standard output stdout. Return positive value (the number
  * of characters written) upon success, otherwise return negative value (error
  * code) */
-
+#if 0
+/* This function is currently unused, but kept here for future reference. */
 SLIP_info SLIP_gmp_printf
 (
     const char *format,
@@ -408,7 +409,7 @@ SLIP_info SLIP_gmp_printf
     // call gmp_vprintf
     va_list args;
     va_start (args, format) ;
-    int n = gmp_vprintf (format, args) ;    // TODO use SuiteSparse_config?
+    int n = gmp_vprintf (format, args) ; 
     va_end (args) ;
 
     // Finish the wrapper
@@ -416,6 +417,35 @@ SLIP_info SLIP_gmp_printf
     // gmp_vprintf returns -1 if an error occurred.
     return ((n < 0) ? SLIP_INCORRECT_INPUT : SLIP_OK) ;
 }
+#endif
+
+//------------------------------------------------------------------------------
+// SLIP_gmp_asprintf
+//------------------------------------------------------------------------------
+
+/* Safely write the output as a null terminated string in a block of memory,
+ * which is pointed to by a pointer stored in str. The block of memory must be
+ * freed using mpfr_free_str. The return value is the number of characters
+ * written in the string, excluding the null-terminator, or a negative value if
+ * an error occurred */
+
+SLIP_info SLIP_gmp_asprintf (char **str, const char *template, ... )
+{
+    // Start the GMP wrapper
+    SLIP_GMP_WRAPPER_START ;
+
+    // call mpfr_vasprintf
+    va_list args;
+    va_start (args, template) ;
+    int n = mpfr_vasprintf (str, template, args) ;
+    va_end (args) ;
+
+    // Finish the wrapper
+    SLIP_GMP_WRAPPER_FINISH ;
+    // mpfr_vasprintf returns a negative value if an error occurred
+    return ((n < 0) ? SLIP_INCORRECT_INPUT : SLIP_OK) ;
+}
+
 
 //------------------------------------------------------------------------------
 // SLIP_gmp_fscanf
@@ -459,9 +489,6 @@ SLIP_info SLIP_gmp_fscanf
  * written in the string, excluding the null-terminator, or a negative value if
  * an error occurred */
 
-#if 0
-/* This function is currently unused, but kept here for future reference. */
-
 SLIP_info SLIP_mpfr_asprintf (char **str, const char *template, ... )
 {
     // Start the GMP wrapper
@@ -478,7 +505,6 @@ SLIP_info SLIP_mpfr_asprintf (char **str, const char *template, ... )
     // mpfr_vasprintf returns a negative value if an error occurred
     return ((n < 0) ? SLIP_INCORRECT_INPUT : SLIP_OK) ;
 }
-#endif
 
 //------------------------------------------------------------------------------
 // SLIP_mpfr_free_str
@@ -549,6 +575,8 @@ SLIP_info SLIP_mpfr_fprintf
  * of characters written) upon success, otherwise return negative value (error
  * code) */
 
+#if 0
+/* This function is currently unused, but kept here for future reference. */
 SLIP_info SLIP_mpfr_printf
 (
     const char *format,
@@ -561,7 +589,7 @@ SLIP_info SLIP_mpfr_printf
     // call mpfr_vprintf
     va_list args;
     va_start (args, format) ;
-    int n = mpfr_vprintf (format, args) ;   // TODO use SuiteSparse_config?
+    int n = mpfr_vprintf (format, args) ; 
     va_end (args) ;
     // Free cache from mpfr_vprintf. Even though mpfr_free_cache is
     // called in SLIP_LU_final ( ), it has to be called here to
@@ -573,7 +601,7 @@ SLIP_info SLIP_mpfr_printf
     // mpfr_vprintf returns -1 if an error occurred.
     return ((n < 0) ? SLIP_INCORRECT_INPUT : SLIP_OK) ;
 }
-
+#endif
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //-------------------------Integer (mpz_t type) functions-----------------------

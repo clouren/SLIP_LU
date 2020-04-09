@@ -45,7 +45,7 @@ int main (void)
     //--------------------------------------------------------------------------
 
     SLIP_info ok;
-    int64_t n = 50, nz = 2500, num = 0;
+    int64_t n = 50, nz = 2500, num=0;
     SLIP_matrix *A = NULL ;                     // input matrix
     SLIP_matrix *R = NULL ;                     // Random matrix to create A
     SLIP_matrix *Rb = NULL;                     // Random matrix to create b
@@ -70,7 +70,7 @@ int main (void)
     // for the mpz_t, mpq_t, and mpfr_t entries
     SLIP_matrix_allocate(&R, SLIP_TRIPLET, SLIP_FP64, n, n, nz,
         false, true, option);
-
+    
     // Rb is a n*1 dense matrix whose entries are FP64
     SLIP_matrix_allocate(&Rb, SLIP_DENSE, SLIP_FP64, n, 1, n,
         false, true, option);
@@ -111,7 +111,6 @@ int main (void)
     // SLIP LU has an optional check, to enable it, one can set the following
     // parameter to be true.
     option->check = true;
-   
     // Solve the system and give double solution
     OK(SLIP_backslash( &x, SLIP_FP64, A, b, option));
          

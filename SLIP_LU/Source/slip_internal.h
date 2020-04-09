@@ -113,35 +113,31 @@
 // (the default function is printf, or mexPrintf when in MATLAB).  If this
 // function pointer is NULL, no printing is done.
 
-// TODO figure out how to use SuiteSparse_config.printf_func inside GMP,
-// for gmp_vprintf for example.  See SLIP_gmp.c.
-#if 0
-
-// declare and initialize char* buf = SLIP_malloc(...) before using this macro
+// TODO Remove, I think other approach works fine.
+/*
 #define SLIP_PRINTF(type, ...)                              \
 {                                                           \
     if (SuiteSparse_config.printf_func != NULL)             \
     {                                                       \
-        if (type == 0) /* not printing gmp nor mpfr*/       \
+        if (type == 0) // not printing gmp nor mpfr       \
         {                                                   \
             SuiteSparse_config.printf_func (__VA_ARGS__) ;  \
         }                                                   \
-        else if (type == 1) /* printing mpq or mpz*/        \
+        else if (type == 1) // printing mpq or mpz        \
         {                                                   \
-            /* currently not available, to be added*/       \
+            // currently not available, to be added       \
             SLIP_CHECK (SLIP_gmp_sprintf(buf, __VA_ARGS__) ;\
             SuiteSparse_config.printf_func ("%s", buf) ;    \
         }                                                   \
-        else if (type == 2) /* printing mpfr*/              \
+        else if (type == 2) // printing mpfr              \
         {                                                   \
-            /* currently not available, to be added*/       \
+            // currently not available, to be added       \
             SLIP_CHECK (SLIP_mpfr_sprintf(buf, __VA_ARGS__) ;\
             SuiteSparse_config.printf_func ("%s", buf) ;    \
         }                                                   \
     }                                                       \
 }
-
-#else if
+*/
 
 #define SLIP_PRINTF(...)                                    \
 {                                                           \
@@ -151,7 +147,6 @@
     }                                                       \
 }
 
-#endif
 #define SLIP_PR1(...) { if (pr >= 1) SLIP_PRINTF (__VA_ARGS__) }
 #define SLIP_PR2(...) { if (pr >= 2) SLIP_PRINTF (__VA_ARGS__) }
 #define SLIP_PR3(...) { if (pr >= 3) SLIP_PRINTF (__VA_ARGS__) }

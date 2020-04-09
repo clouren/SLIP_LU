@@ -29,8 +29,6 @@
     SLIP_FREE(h);                   \
     SLIP_FREE(pivs);                \
     SLIP_FREE(row_perm);            \
-    SLIP_MPFR_CLEAR(temp);          \
-    SLIP_MPZ_CLEAR(sigma);
 
 #define SLIP_FREE_ALL               \
     SLIP_FREE_WORK                  \
@@ -86,9 +84,6 @@ SLIP_info SLIP_LU_factorize
     int64_t *row_perm = NULL ;
     SLIP_matrix *x = NULL ;
 
-    mpz_t sigma; SLIP_MPZ_SET_NULL(sigma);
-    mpfr_t temp; SLIP_MPFR_SET_NULL(temp);
-
     SLIP_info info ;
     int64_t n = A->n ;
     pinv = (int64_t *) SLIP_malloc (n * sizeof (int64_t)) ;
@@ -102,9 +97,6 @@ SLIP_info SLIP_LU_factorize
 
     int64_t k = 0, top, i, j, col, loc, lnz = 0, unz = 0, pivot, jnew ;
     size_t size ;
-
-    SLIP_CHECK(SLIP_mpz_init(sigma));
-    SLIP_CHECK(SLIP_mpfr_init2(temp, 256));
 
     // Indicator of which rows have been pivotal
     // pivs[i] = 1 if row i has been selected as a pivot
@@ -141,73 +133,20 @@ SLIP_info SLIP_LU_factorize
     }
 
     //--------------------------------------------------------------------------
-    // This section of the code computes a bound for the worst case bit-length
-    // of each entry in the matrix. This bound is used to allocate the size of
-    // each number in the global x vector. As a result of this allocation,
-    // computing the values in L and U via repeated triangular solves will
-    // not require intermediate memory reallocations from the GMP library.
+    // SLIP LU utilizes arbitrary sized integers which can grow beyond the default
+    // 64 bits allocated by GMP. If the integers frequently grow, GMP can get bogged
+    // down by performing intermediate reallocations. Instead, we utilize a larger bound
+    // on the workspace x vector so that computing the values in L and U do not require
+    // too many extra intemediate calls to realloc.
     //
-    // This bound is based on a relaxation of sparse Hadamard's bound
+    // Note that the bound presented here is not tight, it is still possible that
+    // more bits will be required which is correctly handled internally.
     //--------------------------------------------------------------------------
-
-    // sigma is the largest initial entry in A
-    SLIP_CHECK(SLIP_mpz_set_si (sigma, 0));
-
-    // Iterate throughout A and set sigma = max (A)
-    for (i = 0; i < anz; i++)
-    {
-        int r ;
-        SLIP_CHECK (SLIP_mpz_cmpabs (&r, sigma, A->x.mpz [i])) ;
-        if(r < 0)
-        {
-            SLIP_CHECK(SLIP_mpz_set(sigma,A->x.mpz[i]));
-        }
-    }
-
-    // sigma = |sigma|
-    SLIP_CHECK(SLIP_mpz_abs(sigma,sigma));
-
-    // gamma is the number of nonzeros in the most dense column of A. First, we
-    // initialize gamma to be the number of nonzeros in A(:,1).
-    int64_t gamma = 0 ;
-
-    // Iterate throughout A and obtain gamma as the most dense column of A
-    for (i = 0; i<n; i++)
-    {
-        if( gamma < A->p[i+1] - A->p[i])
-        {
-            gamma = A->p[i+1]-A->p[i];
-        }
-    }
-
-    mpfr_rnd_t round = SLIP_OPTION_ROUND (option) ;
-
-    // temp = sigma
-    SLIP_CHECK(SLIP_mpfr_set_z(temp, sigma, round)) ;
-
-    //--------------------------------------------------------------------------
-    // The bound is given as: gamma*log2(sigma sqrt(gamma))
-    //--------------------------------------------------------------------------
-
-    // TODO let's discuss this bound.  It seems very high to me (Tim)
-
-    // temp = sigma*sqrt(gamma)
-    SLIP_CHECK(SLIP_mpfr_mul_d(temp, temp, (double)sqrt(gamma), round));
-    // temp = log2(temp)
-    SLIP_CHECK(SLIP_mpfr_log2(temp, temp, round));
-    // inner2 = temp
-    double inner2;
-    SLIP_CHECK(SLIP_mpfr_get_d(&inner2, temp, round));
-    // Free cache from log2. Even though mpfr_free_cache is called in
-    // SLIP_LU_final(), it has to be called here to prevent memory leak in
-    // some rare situations due to the usage of the mpfr_log2 function.
-    // as per MPFR's documentation
-    SLIP_mpfr_free_cache();
-    // bound = gamma * inner2+1. We add 1 to inner2 because log2(1) = 0
-    int64_t bound = ceil(gamma*(inner2+1));
-    // Ensure bound is at least 64 bit. In some rare cases the bound is very
-    // small so we default to 64 bits.
-    if (bound < 64) {bound = 64;}
+    // TODO let's discuss. Either let's set it as quad, 256, etc or make it some function 
+    // of n. Just to recall, the actual bound from the paper is:
+    //
+    // bound <= nnz(most dense col of A) * log2 ( max(A) * nnz( most dense col of A))
+    int64_t bound = 128;
 
     //--------------------------------------------------------------------------
     // Declare memory for x, rhos, L, and U

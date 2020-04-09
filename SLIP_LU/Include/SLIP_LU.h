@@ -635,11 +635,11 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
 // returned to GMP.  Instead, all allocated blocks in the list are freed,
 // and slip_gmp_allocate returns directly to wrapper.
 
-SLIP_info SLIP_gmp_printf (const char *format, ... ) ;
+SLIP_info SLIP_gmp_asprintf (char **str, const char *template, ... ) ;
+
+SLIP_info SLIP_mpfr_asprintf (char **str, const char *template, ... ) ;
 
 SLIP_info SLIP_gmp_fscanf (FILE *fp, const char *format, ... ) ;
-
-SLIP_info SLIP_mpfr_printf ( const char *format, ... ) ;
 
 SLIP_info SLIP_mpz_init (mpz_t x) ;
 
@@ -756,8 +756,9 @@ SLIP_info SLIP_mpfr_free_cache (void) ;
 
 #if 0
 // These functions are currently unused, but kept here for future reference.
+SLIP_info SLIP_gmp_printf (const char *format, ... ) ;
+SLIP_info SLIP_mpfr_printf ( const char *format, ... ) ;
 SLIP_info SLIP_gmp_fprintf (FILE *fp, const char *format, ... ) ;
-SLIP_info SLIP_mpfr_asprintf (char **str, const char *template, ... ) ;
 SLIP_info SLIP_mpfr_free_str (char *str) ;
 SLIP_info SLIP_mpfr_fprintf (FILE *fp, const char *format, ... ) ;
 SLIP_info SLIP_mpz_set_d (mpz_t x, const double y) ;
