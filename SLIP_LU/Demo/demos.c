@@ -333,7 +333,6 @@ SLIP_info SLIP_tripread
     }
 
     // Read in first values of A
-    int64_t decrement;
     info = SLIP_gmp_fscanf(file, "%"PRId64" %"PRId64" %Zd\n",
         &A->i[0], &A->j[0], &A->x.mpz[0]);
     if (feof (file) || info != SLIP_OK)
@@ -342,21 +341,12 @@ SLIP_info SLIP_tripread
         SLIP_matrix_free(&A, option);
         return SLIP_INCORRECT_INPUT;
     }
-
-    // Is the matrix 1 or 0 based?
-    // TODO this is a very bad idea, even in a demo.
-    // can we just assume all input matrices are 1-based?
-    if (SLIP_MIN(A->i[0], A->j[0]) == 0)
-    {
-        decrement = 0;
-    }
-    else
-    {
-        decrement = 1;
-        A->i[0]-=decrement;
-        A->j[0]-=decrement;
-    }
-
+    
+    // Matrices in this format are 1 based, so we decrement by 1 to get
+    // 0 based for internal functions
+    A->i[0] -= 1;
+    A->j[0] -= 1;
+    
     // Read in the values from file
     for (int64_t p = 1; p < nz; p++)
     {
@@ -369,8 +359,8 @@ SLIP_info SLIP_tripread
             return SLIP_INCORRECT_INPUT;
         }
         // Conversion from 1 based to 0 based if necessary
-        A->i[p] -= decrement;
-        A->j[p] -= decrement;
+        A->i[p] -= 1;
+        A->j[p] -= 1;
     }
 
     // the triplet matrix now has nz entries
@@ -439,7 +429,6 @@ SLIP_info SLIP_tripread_double
         return (info) ;
     }
 
-    int64_t decrement;
     info = fscanf (file, "%"PRId64" %"PRId64" %lf\n",
         &(A->i[0]), &(A->j[0]), &(A->x.fp64[0])) ;
     if (feof(file) || info != SLIP_OK)
@@ -449,19 +438,10 @@ SLIP_info SLIP_tripread_double
         return SLIP_INCORRECT_INPUT;
     }
 
-    // Is the matrix 1 or 0 based?
-    // TODO this is a very bad idea, even in a demo
-    // can we just assume all input matrices are 1-based?
-    if (SLIP_MIN(A->i[0], A->j[0]) == 0)
-    {
-        decrement = 0;
-    }
-    else
-    {
-        decrement = 1;
-        A->i[0]-=decrement;
-        A->j[0]-=decrement;
-    }
+    // Matrices in this format are 1 based. We decrement
+    // the indices by 1 to use internally
+    A->i[0] -= 1;
+    A->j[0] -= 1;
 
     // Read in the values from file
     for (int64_t k = 1; k < nz; k++)
@@ -475,8 +455,8 @@ SLIP_info SLIP_tripread_double
             return SLIP_INCORRECT_INPUT;
         }
         // Conversion from 1 based to 0 based
-        A->i[k] -= decrement;
-        A->j[k] -= decrement;
+        A->i[k] -= 1;
+        A->j[k] -= 1;
     }
 
     // the triplet matrix now has nz entries

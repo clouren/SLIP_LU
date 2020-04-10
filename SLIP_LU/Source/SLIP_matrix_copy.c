@@ -247,7 +247,6 @@ SLIP_info SLIP_matrix_copy
                             break ;
 
                     }
-
                     // allocate C
                     SLIP_CHECK (SLIP_matrix_allocate (&C, SLIP_CSC, C_type,
                         m, n, actual, false, true, option)) ;
@@ -263,14 +262,12 @@ SLIP_info SLIP_matrix_copy
                                 C->p [j] = nz ;
                                 for (int64_t i = 0 ; i < m ; i++)
                                 {
-                                    SLIP_CHECK (SLIP_mpz_sgn (&s,
-                                        SLIP_2D (Y, i, j, mpz))) ;
+                                    SLIP_CHECK( SLIP_mpz_sgn( &s, Y->x.mpz[ i + j*A->m]));
                                     if (s != 0)
                                     {
                                         C->i [nz] = i ;
-                                        SLIP_CHECK (SLIP_mpz_set (
-                                            SLIP_1D (C, nz, mpz),
-                                            SLIP_2D (Y, i, j, mpz))) ;
+                                        SLIP_CHECK( SLIP_mpz_set ( SLIP_1D (C, nz, mpz),
+                                                                   Y->x.mpz[ i + j*A->m] ));
                                         nz++ ;
                                     }
                                 }
@@ -284,13 +281,13 @@ SLIP_info SLIP_matrix_copy
                                 for (int64_t i = 0 ; i < m ; i++)
                                 {
                                     SLIP_CHECK (SLIP_mpq_sgn (&s,
-                                        SLIP_2D (Y, i, j, mpq))) ;
+                                        Y->x.mpq[ i + j*A->m])) ;
                                     if (s != 0)
                                     {
                                         C->i [nz] = i ;
-                                        SLIP_CHECK (SLIP_mpq_set (
-                                            SLIP_1D (C, nz, mpq),
-                                            SLIP_2D (Y, i, j, mpq))) ;
+                                        SLIP_CHECK(SLIP_mpq_set (
+                                            SLIP_1D(C, nz, mpq),
+                                            Y->x.mpq[ i + j*A->m]));
                                         nz++ ;
                                     }
                                 }
@@ -304,14 +301,15 @@ SLIP_info SLIP_matrix_copy
                                 for (int64_t i = 0 ; i < m ; i++)
                                 {
                                     SLIP_CHECK (SLIP_mpfr_sgn (&s,
-                                        SLIP_2D (Y, i, j, mpfr))) ;
+                                        Y->x.mpfr[i + j*A->m])) ;
                                     if (s != 0)
                                     {
-                                        C->i [nz] = i ;
+                                        C->i [nz] = i ;                                        
                                         SLIP_CHECK (SLIP_mpfr_set (
                                             SLIP_1D (C, nz, mpfr),
-                                            SLIP_2D (Y, i, j, mpfr),
+                                            Y->x.mpfr[i + j*A->m],
                                             round)) ;
+                                        
                                         nz++ ;
                                     }
                                 }
@@ -324,11 +322,11 @@ SLIP_info SLIP_matrix_copy
                                 C->p [j] = nz ;
                                 for (int64_t i = 0 ; i < m ; i++)
                                 {
-                                    if (SLIP_2D (Y, i, j, int64) != 0)
+                                    if ( Y->x.int64[i +j*A->m] != 0)
                                     {
                                         C->i [nz] = i ;
                                         SLIP_1D (C, nz, int64) =
-                                            SLIP_2D (Y, i, j, int64) ;
+                                            Y->x.int64[i +j*A->m] ;
                                         nz++ ;
                                     }
                                 }
@@ -341,11 +339,11 @@ SLIP_info SLIP_matrix_copy
                                 C->p [j] = nz ;
                                 for (int64_t i = 0 ; i < m ; i++)
                                 {
-                                    if (SLIP_2D (Y, i, j, fp64) != 0)
+                                    if ( Y->x.fp64[i +j*A->m] != 0)
                                     {
                                         C->i [nz] = i ;
                                         SLIP_1D (C, nz, fp64) =
-                                            SLIP_2D (Y, i, j, fp64) ;
+                                            Y->x.fp64[i +j*A->m];
                                         nz++ ;
                                     }
                                 }
