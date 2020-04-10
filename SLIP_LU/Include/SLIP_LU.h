@@ -276,7 +276,7 @@ SLIP_type ;
 //      matrix entries ('type' is one of mpz, mpq, mpfr, int64, or fp64).  The
 //      row indices of column j appear in A->i [A->p [j] ... A->p [j+1]-1], and
 //      the values appear in the same locations in A->x.type.  The A->j array
-//      is NULL.  A->nz is ignored; nz is A->p [A->p].
+//      is NULL.  A->nz is ignored; nz is A->p [A->n].
 
 // (1) SLIP_TRIPLET:  A sparse matrix in triplet format.  A->i and A->j are
 //      both int64_t arrays of size nzmax, and A->x.type is an array of values
@@ -393,13 +393,13 @@ int64_t SLIP_matrix_nnz     // return # of entries in A, or -1 on error
 
 SLIP_info SLIP_matrix_copy
 (
-    SLIP_matrix **C,        // matrix to create (never shallow)
+    SLIP_matrix **C_handle, // matrix to create (never shallow)
     // inputs, not modified:
-    SLIP_kind kind,         // CSC, triplet, or dense
-    SLIP_type type,         // mpz_t, mpq_t, mpfr_t, int64_t, or double
+    SLIP_kind C_kind,       // C->kind: CSC, triplet, or dense
+    SLIP_type C_type,       // C->type: mpz_t, mpq_t, mpfr_t, int64_t, or double
     SLIP_matrix *A,         // matrix to make a copy of (may be shallow)
     const SLIP_options *option
-) ;
+)
 
 //------------------------------------------------------------------------------
 // SLIP_matrix macros
