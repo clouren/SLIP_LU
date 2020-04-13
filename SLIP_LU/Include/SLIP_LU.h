@@ -399,7 +399,7 @@ SLIP_info SLIP_matrix_copy
     SLIP_type C_type,       // C->type: mpz_t, mpq_t, mpfr_t, int64_t, or double
     SLIP_matrix *A,         // matrix to make a copy of (may be shallow)
     const SLIP_options *option
-)
+) ;
 
 //------------------------------------------------------------------------------
 // SLIP_matrix macros
