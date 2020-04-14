@@ -136,9 +136,7 @@ SLIP_info SLIP_LU_factorize
 
     // Create rhos, a global dense mpz_t matrix of dimension n*1
     SLIP_CHECK (SLIP_matrix_allocate(&rhos, SLIP_DENSE, SLIP_MPZ, n, 1, n,
-        false, /* TODO make this false: */ true, option));
-
-        // TODO implement rhos as not yet initialized
+        false, false, option));
 
     // Allocate L and U without initializing each entry.
     // L and U are allocated to have nnz(L) which is estimated by the symbolic
