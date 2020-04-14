@@ -425,27 +425,30 @@ SLIP_info SLIP_gmp_printf
 
 /* Safely write the output as a null terminated string in a block of memory,
  * which is pointed to by a pointer stored in str. The block of memory must be
- * freed using mpfr_free_str. The return value is the number of characters
+ * freed using SLIP_free. The return value is the number of characters
  * written in the string, excluding the null-terminator, or a negative value if
  * an error occurred */
 
-SLIP_info SLIP_gmp_asprintf (char **str, const char *template, ... )
+#if 0
+/* This function is currently unused, but kept here for future reference. */
+/* Its functionality is provided by SLIP_mpfr_asprintf. */
+SLIP_info SLIP_gmp_asprintf (char **str, const char *format, ... )
 {
     // Start the GMP wrapper
     SLIP_GMP_WRAPPER_START ;
 
-    // call mpfr_vasprintf
+    // call gmp_vasprintf
     va_list args;
-    va_start (args, template) ;
-    int n = mpfr_vasprintf (str, template, args) ;
+    va_start (args, format) ;
+    int n = gmp_vasprintf (str, format, args) ;
     va_end (args) ;
 
     // Finish the wrapper
     SLIP_GMP_WRAPPER_FINISH ;
-    // mpfr_vasprintf returns a negative value if an error occurred
+    // gmp_vasprintf returns a negative value if an error occurred
     return ((n < 0) ? SLIP_INCORRECT_INPUT : SLIP_OK) ;
 }
-
+#endif
 
 //------------------------------------------------------------------------------
 // SLIP_gmp_fscanf
@@ -485,19 +488,19 @@ SLIP_info SLIP_gmp_fscanf
 
 /* Safely write the output as a null terminated string in a block of memory,
  * which is pointed to by a pointer stored in str. The block of memory must be
- * freed using mpfr_free_str. The return value is the number of characters
+ * freed using SLIP_mpfr_free_str. The return value is the number of characters
  * written in the string, excluding the null-terminator, or a negative value if
  * an error occurred */
 
-SLIP_info SLIP_mpfr_asprintf (char **str, const char *template, ... )
+SLIP_info SLIP_mpfr_asprintf (char **str, const char *format, ... )
 {
     // Start the GMP wrapper
     SLIP_GMP_WRAPPER_START ;
 
     // call mpfr_vasprintf
     va_list args;
-    va_start (args, template) ;
-    int n = mpfr_vasprintf (str, template, args) ;
+    va_start (args, format) ;
+    int n = mpfr_vasprintf (str, format, args) ;
     va_end (args) ;
 
     // Finish the wrapper
@@ -510,10 +513,7 @@ SLIP_info SLIP_mpfr_asprintf (char **str, const char *template, ... )
 // SLIP_mpfr_free_str
 //------------------------------------------------------------------------------
 
-/* Safely free a string allocated. */
-
-#if 0
-/* This function is currently unused, but kept here for future reference. */
+/* Safely free a string allocated by SLIP_mpfr_asprintf. */
 
 SLIP_info SLIP_mpfr_free_str (char *str)
 {
@@ -527,7 +527,6 @@ SLIP_info SLIP_mpfr_free_str (char *str)
     SLIP_GMP_WRAPPER_FINISH ;
     return (SLIP_OK) ;
 }
-#endif
 
 //------------------------------------------------------------------------------
 // SLIP_mpfr_fprintf

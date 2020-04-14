@@ -113,32 +113,6 @@
 // (the default function is printf, or mexPrintf when in MATLAB).  If this
 // function pointer is NULL, no printing is done.
 
-// TODO Remove, I think other approach works fine.
-/*
-#define SLIP_PRINTF(type, ...)                              \
-{                                                           \
-    if (SuiteSparse_config.printf_func != NULL)             \
-    {                                                       \
-        if (type == 0) // not printing gmp nor mpfr       \
-        {                                                   \
-            SuiteSparse_config.printf_func (__VA_ARGS__) ;  \
-        }                                                   \
-        else if (type == 1) // printing mpq or mpz        \
-        {                                                   \
-            // currently not available, to be added       \
-            SLIP_CHECK (SLIP_gmp_sprintf(buf, __VA_ARGS__) ;\
-            SuiteSparse_config.printf_func ("%s", buf) ;    \
-        }                                                   \
-        else if (type == 2) // printing mpfr              \
-        {                                                   \
-            // currently not available, to be added       \
-            SLIP_CHECK (SLIP_mpfr_sprintf(buf, __VA_ARGS__) ;\
-            SuiteSparse_config.printf_func ("%s", buf) ;    \
-        }                                                   \
-    }                                                       \
-}
-*/
-
 #define SLIP_PRINTF(...)                                    \
 {                                                           \
     if (SuiteSparse_config.printf_func != NULL)             \

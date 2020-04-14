@@ -9,8 +9,7 @@
 //------------------------------------------------------------------------------
 
 #define SLIP_FREE_ALL    \
-    SLIP_FREE(mark);     \
-    SLIP_FREE(bmark);
+    SLIP_FREE(mark);
 
 #include "slip_internal.h"
 
@@ -162,36 +161,34 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                         SLIP_FREE_ALL ;
                         return (SLIP_INCORRECT_INPUT) ;
                     }
-                    if (pr > 1)
+                    if (pr >= 2)
                     {
                         SLIP_PRINTF ("  row %"PRId64" : ", i) ;
                         SLIP_info status = 0;
+                        char *buff = NULL ;
 
                         switch ( A->type)
                         {
                             case SLIP_MPZ:
                             {
-                                char *buff;
-                                status = SLIP_gmp_asprintf(&buff, "%Zd \n", A->x.mpz[p]);
-                                SLIP_PRINTF("%s", buff);
-                                SLIP_FREE(buff);
+                                status = SLIP_mpfr_asprintf(&buff, "%Zd \n", A->x.mpz[p]);
+                                if (status >= 0) SLIP_PRINTF("%s", buff);
+                                SLIP_mpfr_free_str (buff);
                                 break;
                             }
                             case SLIP_MPQ:
                             {
-                                char* buff;
-                                status = SLIP_gmp_asprintf(&buff,"%Qd \n", A->x.mpq[p]);
-                                SLIP_PRINTF("%s", buff);
-                                SLIP_FREE(buff);
+                                status = SLIP_mpfr_asprintf(&buff,"%Qd \n", A->x.mpq[p]);
+                                if (status >= 0) SLIP_PRINTF("%s", buff);
+                                SLIP_mpfr_free_str (buff);
                                 break;
                             }
                             case SLIP_MPFR:
                             {
-                                char* buff;
                                 status = SLIP_mpfr_asprintf(&buff, "%.*Rf \n",
                                     prec, A->x.mpfr [p]);
-                                SLIP_PRINTF("%s", buff);
-                                SLIP_FREE(buff);
+                                if (status >= 0) SLIP_PRINTF("%s", buff);
+                                SLIP_mpfr_free_str (buff);
                                 break;
                             }
                             case SLIP_FP64:
@@ -240,7 +237,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
             }
 
             // allocate workspace to check for duplicates
-            bmark = (bool *) SLIP_calloc (m*n, sizeof (bool)) ;
+            bmark = (bool *) SLIP_calloc (m*n, sizeof (bool)) ; // FIXME
             if (bmark == NULL)
             {
                 // out of memory
@@ -267,32 +264,30 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                 {
                     SLIP_PRINTF ("  %"PRId64" %"PRId64" : ", i, j) ;
                     SLIP_info status = 0;
+                    char* buff = NULL ;
 
                     switch ( A->type)
                     {
                         case SLIP_MPZ:
                         {
-                            char* buff;
-                            status = SLIP_gmp_asprintf(&buff, "%Zd \n", A->x.mpz [p]);
-                            SLIP_PRINTF("%s", buff);
-                            SLIP_FREE(buff);
+                            status = SLIP_mpfr_asprintf(&buff, "%Zd \n", A->x.mpz [p]);
+                            if (status >= 0) SLIP_PRINTF("%s", buff);
+                            SLIP_mpfr_free_str (buff);
                             break;
                         }
                         case SLIP_MPQ:
                         {
-                            char* buff;
-                            status = SLIP_gmp_asprintf (&buff,"%Qd \n", A->x.mpq [p]);
-                            SLIP_PRINTF("%s", buff);
-                            SLIP_FREE(buff);
+                            status = SLIP_mpfr_asprintf (&buff,"%Qd \n", A->x.mpq [p]);
+                            if (status >= 0) SLIP_PRINTF("%s", buff);
+                            SLIP_mpfr_free_str (buff);
                             break;
                         }
                         case SLIP_MPFR:
                         {
-                            char* buff;
                             status = SLIP_mpfr_asprintf(&buff, "%.*Rf \n",
                                 prec, A->x.mpfr [p]);
-                            SLIP_PRINTF("%s", buff);
-                            SLIP_FREE(buff);
+                            if (status >= 0) SLIP_PRINTF("%s", buff);
+                            SLIP_mpfr_free_str (buff);
                             break;
                         }
                         case SLIP_FP64:
@@ -313,7 +308,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                         return (status) ;
                     }
                 }
-                bmark [i+j*m] = true ;
+                bmark [i+j*m] = true ;      // FIXME
             }
         }
         break;
@@ -348,33 +343,32 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                     {
                         SLIP_PRINTF ("  row %"PRId64" : ", i) ;
                         SLIP_info status = 0;
+                        char* buff = NULL ;
 
                         switch ( A->type)
                         {
                             case SLIP_MPZ:
                             {
-                                char* buff;
-                                status = SLIP_gmp_asprintf (&buff, "%Zd \n" ,
+                                status = SLIP_mpfr_asprintf (&buff, "%Zd \n" ,
                                     SLIP_2D(A, i, j, mpz)) ;
-                                SLIP_PRINTF("%s", buff);
+                                if (status > 0) SLIP_PRINTF("%s", buff);
+                                SLIP_mpfr_free_str (buff);
                                 break;
                             }
                             case SLIP_MPQ:
                             {
-                                char* buff;
-                                status = SLIP_gmp_asprintf (&buff, "%Qd \n",
+                                status = SLIP_mpfr_asprintf (&buff, "%Qd \n",
                                     SLIP_2D(A, i, j, mpq));
-                                SLIP_PRINTF("%s", buff);
-                                SLIP_FREE(buff);
+                                if (status > 0) SLIP_PRINTF("%s", buff);
+                                SLIP_mpfr_free_str (buff);
                                 break;
                             }
                             case SLIP_MPFR:
                             {
-                                char* buff;
                                 status = SLIP_mpfr_asprintf (&buff, "%.*Rf \n",
                                     prec, SLIP_2D(A, i, j, mpfr));
-                                SLIP_PRINTF("%s", buff);
-                                SLIP_FREE(buff);
+                                if (status > 0) SLIP_PRINTF("%s", buff);
+                                SLIP_mpfr_free_str (buff);
                                 break;
                             }
                             case SLIP_FP64:

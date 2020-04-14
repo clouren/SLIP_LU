@@ -311,8 +311,6 @@ Macro & purpose \\
 \verb|SLIP_LU_VERSION_MINOR| & minor version of the code   \\
 \verb|SLIP_LU_VERSION_SUB|   &  sub version of the code\\
 \hline
-\verb|SLIP_AUTHOR|           & authors of the code \\
-\hline
 \end{tabular}
 % \label{tab:SLIP_macro}
 \end{center}
@@ -963,12 +961,11 @@ is provided, which sets the free'd pointer to \verb|NULL|.
 } \end{mdframed}
 
 \verb|SLIP_initialize| initializes the working environment for SLIP LU
-functions.
-%TODO keep this?
-SLIP LU utilizes a specialized memory management scheme in order to
-prevent potential memory failures caused by GMP and MPFR libraries.
-This function \textcolor{blue}{\textbf{must}} be called prior to using the
-library.
+functions.  SLIP LU utilizes a specialized memory management scheme in order to
+prevent potential memory failures caused by GMP and MPFR libraries.  Either
+this function or \verb'SLIP_initialize_expert' \textcolor{blue}{\textbf{must}}
+be called prior to using the library.  Failure to do so will lead to undefined
+behavior.
 
 %-------------------------------------------------------------------------------
 \cprotect\subsection{\verb|SLIP_initialize_expert|: initialize the working environment (expert version)}\label{ss:SLIP_initialize_expert}
@@ -987,7 +984,7 @@ library.
 \end{verbatim}
 } \end{mdframed}
 
-\verb|SLIP_initialize_expert| is the same as \verb|SLIP_initialize|. except
+\verb|SLIP_initialize_expert| is the same as \verb|SLIP_initialize| except
 that it allows for a redefinition of custom memory functions that are used for
 SLIP LU and GMP/MPFR.
 
@@ -1524,9 +1521,12 @@ SLIP_info SLIP_gmpfunc
 \hline
 MPFR Function & \verb|SLIP_MPFR| Function & Description \\
 \hline\hline
-\verb|n = mpfr_fprintf(fp, format, ...)|
-    & \verb|n = SLIP_mpfr_fprintf(fp, format, ...)|
-    & Print format to file fp \\ \hline
+\verb|n = mpfr_asprintf(&buff, format, ...)|
+    & \verb|n = SLIP_mpfr_asprintf(&buff, format, ...)|
+    & Print format to allocated string \\ \hline
+\verb|mpfr_free_str(buff)|
+    & \verb|SLIP_mpfr_free_str(buff)|
+    & Free string allocated by mpfr \\ \hline
 \verb|mpfr_init2(x, size)|
     & \verb|SLIP_mpfr_init2(x, size)|
     & Initialize x with size bits \\ \hline
@@ -1577,12 +1577,6 @@ MPFR Function & \verb|SLIP_MPFR| Function & Description \\
 \hline
 GMP Function & \verb|SLIP_GMP| Function & Description \\
 \hline\hline
-\verb|n = gmp_fprintf(fp, format, ...)|
-    & \verb|n = SLIP_gmp_fprintf(fp, format, ...)| 
-    & Print format to file fp\\ \hline
-\verb|n = gmp_printf(format, .. )|
-    & \verb|n = SLIP_gmp_printf(format, ...)|
-    & Print to screen \\ \hline
 \verb|n = gmp_fscanf(fp, format, ...)|
     & \verb|n = SLIP_gmp_fscanf(fp, format, ...)|
     & Read from file fp \\ \hline

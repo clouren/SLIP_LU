@@ -86,17 +86,12 @@ SLIP_info SLIP_LU_factorize
 
     SLIP_info info ;
     int64_t n = A->n ;
-    pinv = (int64_t *) SLIP_malloc (n * sizeof (int64_t)) ;
-
-    if (!pinv)
-    {
-        // out of memory: free everything and return
-        SLIP_FREE_ALL ;
-        return SLIP_OUT_OF_MEMORY;
-    }
 
     int64_t k = 0, top, i, j, col, loc, lnz = 0, unz = 0, pivot, jnew ;
     size_t size ;
+
+    // Inverse pivot ordering
+    pinv = (int64_t *) SLIP_malloc (n * sizeof (int64_t)) ;
 
     // Indicator of which rows have been pivotal
     // pivs[i] = 1 if row i has been selected as a pivot
@@ -118,53 +113,35 @@ SLIP_info SLIP_LU_factorize
     // is used for sorting
     row_perm = (int64_t*) SLIP_malloc(n* sizeof(int64_t));
 
-    if (!pivs || !h || !xi || !row_perm)
+    if (!pivs || !h || !xi || !row_perm || !pinv)
     {
         // out of memory: free everything and return
         SLIP_FREE_ALL  ;
         return SLIP_OUT_OF_MEMORY;
     }
-    // Initialize pivs and h; that is set pivs[i] = -1 and
-    // h[i] = -1 for all i
+
+    // initialize workspace and pivot status
     for (i = 0; i < n; i++)
     {
         h[i] = -1;
         pivs[i] = -1;
+        // Initialize location based vectors
+        pinv[i] = i;
+        row_perm[i] = i;
     }
 
     //--------------------------------------------------------------------------
-    // SLIP LU utilizes arbitrary sized integers which can grow beyond the default
-    // 64 bits allocated by GMP. If the integers frequently grow, GMP can get bogged
-    // down by performing intermediate reallocations. Instead, we utilize a larger bound
-    // on the workspace x vector so that computing the values in L and U do not require
-    // too many extra intemediate calls to realloc.
-    //
-    // Note that the bound presented here is not tight, it is still possible that
-    // more bits will be required which is correctly handled internally.
-    //--------------------------------------------------------------------------
-    // TODO let's discuss. Either let's set it as quad, 256, etc or make it some function 
-    // of n. Just to recall, the actual bound from the paper is:
-    //
-    // bound <= nnz(most dense col of A) * log2 ( max(A) * nnz( most dense col of A))
-    int64_t bound = 128;
-
-    //--------------------------------------------------------------------------
-    // Declare memory for x, rhos, L, and U
+    // Declare memory for rhos, L, and U
     //--------------------------------------------------------------------------
 
     // Create rhos, a global dense mpz_t matrix of dimension n*1
     SLIP_CHECK (SLIP_matrix_allocate(&rhos, SLIP_DENSE, SLIP_MPZ, n, 1, n,
-        false, true, option));
+        false, /* TODO make this false: */ true, option));
 
-    // Create x, a global dense mpz_t matrix of dimension n*1. Unlike rhos, the
-    // second boolean parameter, x->init is set to false to avoid initializing
-    // each mpz entry of x with default size, which should be bound calculated
-    // above as gamma*log2(sigma sqrt(gamma)) instead
-    SLIP_CHECK (SLIP_matrix_allocate(&x, SLIP_DENSE, SLIP_MPZ, n, 1, n,
-        false, false, option));
+        // TODO implement rhos as not yet initialized
 
     // Allocate L and U without initializing each entry.
-    // L and U are allocated to have nnz(L) = the estimate from symbolic
+    // L and U are allocated to have nnz(L) which is estimated by the symbolic
     // analysis. However, unlike traditional matrix allocation, the second
     // boolean parameter here is set to false, so the individual values of
     // L and U are not allocated. Instead, a more efficient method to
@@ -175,19 +152,39 @@ SLIP_info SLIP_LU_factorize
     SLIP_CHECK (SLIP_matrix_allocate(&U, SLIP_CSC, SLIP_MPZ, n, n, S->unz,
         false, false, option));
 
+    //--------------------------------------------------------------------------
+    // allocate and initialize the workspace x
+    //--------------------------------------------------------------------------
+
+    // SLIP LU utilizes arbitrary sized integers which can grow beyond the
+    // default 64 bits allocated by GMP. If the integers frequently grow, GMP
+    // can get bogged down by performing intermediate reallocations. Instead,
+    // we utilize a larger estimate on the workspace x vector so that computing
+    // the values in L and U do not require too many extra intemediate calls to
+    // realloc.
+    //
+    // Note that the estimate presented here is not an upper bound nor a lower
+    // bound.  It is still possible that more bits will be required which is
+    // correctly handled internally.
+    int64_t estimate = 64 * SLIP_MAX (2, ceil (log2 ((double) n))) ;
+
+    // Create x, a global dense mpz_t matrix of dimension n*1. Unlike rhos, the
+    // second boolean parameter is set to false to avoid initializing
+    // each mpz entry of x with default size.  It is intialized below.
+    SLIP_CHECK (SLIP_matrix_allocate(&x, SLIP_DENSE, SLIP_MPZ, n, 1, n,
+        false, /* do not initialize the entries of x: */ false, option));
+
+    // initialize the entries of x
     for (i = 0; i < n; i++)
     {
         // Allocate memory for entries of x
-        SLIP_CHECK(SLIP_mpz_init2(x->x.mpz[i], bound));
-
-        // Initialize location based vectors
-        pinv[i] = i;
-        row_perm[i] = i;
+        SLIP_CHECK(SLIP_mpz_init2(x->x.mpz[i], estimate));
     }
 
     //--------------------------------------------------------------------------
     // Iterations 0:n-1 (1:n in standard)
     //--------------------------------------------------------------------------
+
     for (k = 0; k < n; k++)
     {
         // Column pointers for column k of L and U

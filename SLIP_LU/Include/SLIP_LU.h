@@ -153,9 +153,6 @@
 #define SLIP_LU_VERSION_MINOR 0
 #define SLIP_LU_VERSION_SUB   0
 
-// Authors of code
-#define SLIP_AUTHOR "C. Lourenco, J. Chen, E. Moreno-Centeno, T. A. Davis"
-
 //------------------------------------------------------------------------------
 // Error codes
 //------------------------------------------------------------------------------
@@ -166,11 +163,13 @@
 
 typedef enum
 {
-    SLIP_OK = 0,                    // all is well
-    SLIP_OUT_OF_MEMORY = -1,        // out of memory
-    SLIP_SINGULAR = -2,             // the input matrix A is singular
-    SLIP_INCORRECT_INPUT = -3,      // one or more input arguments are incorrect
-    SLIP_INCORRECT = -4             // The solution is incorrect
+    SLIP_OK = 0,                // all is well
+    SLIP_OUT_OF_MEMORY = -1,    // out of memory
+    SLIP_SINGULAR = -2,         // the input matrix A is singular
+    SLIP_INCORRECT_INPUT = -3,  // one or more input arguments are incorrect
+    SLIP_INCORRECT = -4,        // The solution is incorrect
+    SLIP_UNINITIALIZED = -5     // SLIP_LU used without proper initialization
+    // TODO add this check to the SLIP_ user codes (Tim)
 }
 SLIP_info ;
 
@@ -635,9 +634,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
 // returned to GMP.  Instead, all allocated blocks in the list are freed,
 // and slip_gmp_allocate returns directly to wrapper.
 
-SLIP_info SLIP_gmp_asprintf (char **str, const char *template, ... ) ;
-
-SLIP_info SLIP_mpfr_asprintf (char **str, const char *template, ... ) ;
+SLIP_info SLIP_mpfr_asprintf (char **str, const char *format, ... ) ;
 
 SLIP_info SLIP_gmp_fscanf (FILE *fp, const char *format, ... ) ;
 
@@ -754,12 +751,14 @@ SLIP_info SLIP_mpfr_sgn (int *sgn, const mpfr_t x) ;
 
 SLIP_info SLIP_mpfr_free_cache (void) ;
 
+SLIP_info SLIP_mpfr_free_str (char *str) ;
+
 #if 0
 // These functions are currently unused, but kept here for future reference.
+SLIP_info SLIP_gmp_asprintf (char **str, const char *format, ... ) ;
 SLIP_info SLIP_gmp_printf (const char *format, ... ) ;
 SLIP_info SLIP_mpfr_printf ( const char *format, ... ) ;
 SLIP_info SLIP_gmp_fprintf (FILE *fp, const char *format, ... ) ;
-SLIP_info SLIP_mpfr_free_str (char *str) ;
 SLIP_info SLIP_mpfr_fprintf (FILE *fp, const char *format, ... ) ;
 SLIP_info SLIP_mpz_set_d (mpz_t x, const double y) ;
 SLIP_info SLIP_mpz_add (mpz_t a, const mpz_t b, const mpz_t c) ;
