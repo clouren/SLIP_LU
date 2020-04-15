@@ -137,13 +137,20 @@ are guaranteed to be exact; thus are stored as a dense \verb|mpq_t| matrix.
 The final phase of SLIP LU comprises output routines. As mentioned above,
 the final solution $\mathbf{x}$ is by default a dense \verb|mpq_t| matrix.
 Using the provided matrix copy functions, the solution vector(s) can be returned
-in either this way, or in either the CSC or triplet format with \verb|mpfr+t| or
-\verb|double| entries. One key advantage of utilizing SLIP LU with floating-point
+in either this way, or in either the CSC or triplet format
+%TODO or dense?
+with \verb|mpfr_t| or
+\verb|double| entries.
+%TODO or mpq_t?
+One key advantage of utilizing SLIP LU with floating-point
 output is that the solution is guaranteed to be exact until this final conversion;
-meaning that roundoff errors are only introduced in the final conversion from rational numbers. Thus, the solution $x$ output in \verb|double| precision are
+meaning that roundoff errors are only introduced in the final conversion from rational numbers. Thus, the solution $x$
+%TODO when to use \mathbf{x}?
+output in \verb|double| precision are
 accurate to machine roundoff (approximately $10^{-16}$) and SLIP LU utilizes higher 
 precision for the MPFR output; thus it is also accurate to user specified precision.
 
+%TODO not all matrices in CSC
 Internally, all matrices are stored in CSC format. This data structure stores
 $A$ as a sequence of three arrays:
 
@@ -598,7 +605,7 @@ be CSC, triplet or dense matrix (as discussed in Section \ref{ss:SLIP_kind})
 with entries stored as \verb|mpz_t|, \verb|mpq_t|, \verb|mpfr_t|,
 \verb|int64_t| and \verb|double| (as discussed in Section \ref{ss:SLIP_type}).
 This gives a total of 15 different matrix types.  Most functions expect the 
-input matrix to be stored in CSC format with \verb|mpz_t| entries.
+input matrix to be stored in CSC format with \verb|mpz_t| entries. %TODO or dense (for b)?
 
 A matrix \verb|SLIP_matrix *A| has the following components:
 
@@ -1089,9 +1096,9 @@ set \verb|A->p|, \verb|A->i|, \verb|A->j|, and/or \verb|A->x| accordingly, from
 their own arrays. If '\verb|shallow|' is false, the appropriate individual
 arrays are calloc'd. The second boolean parameter is used if the entries are 
 \verb|mpz_t|, \verb|mpq_t|, or \verb|mpfr_t|. Specifically, if \verb|init| is
-true, the individual entries within \verb|A->x.type| are initialized using the 
+true, the individual entries within \verb|A->x.TYPE| are initialized using the 
 appropriate \verb|SLIP_mp*_init|) function. Otherwise, if \verb|init| is false,
-the \verb|A->x.type| array is calloc'd but the individual values are not initialized.
+the \verb|A->x.TYPE| array is calloc'd but the individual values are not initialized.
 Attempting to access the values of these initialized entries will lead to 
 undefined behavior.
 
