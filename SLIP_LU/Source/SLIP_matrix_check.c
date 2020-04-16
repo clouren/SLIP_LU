@@ -351,7 +351,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                             {
                                 status = SLIP_mpfr_asprintf (&buff, "%Zd \n" ,
                                     SLIP_2D(A, i, j, mpz)) ;
-                                if (status > 0) SLIP_PRINTF("%s", buff);
+                                if (status >= 0) SLIP_PRINTF("%s", buff);
                                 SLIP_mpfr_free_str (buff);
                                 break;
                             }
@@ -359,7 +359,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                             {
                                 status = SLIP_mpfr_asprintf (&buff, "%Qd \n",
                                     SLIP_2D(A, i, j, mpq));
-                                if (status > 0) SLIP_PRINTF("%s", buff);
+                                if (status >= 0) SLIP_PRINTF("%s", buff);
                                 SLIP_mpfr_free_str (buff);
                                 break;
                             }
@@ -367,7 +367,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                             {
                                 status = SLIP_mpfr_asprintf (&buff, "%.*Rf \n",
                                     prec, SLIP_2D(A, i, j, mpfr));
-                                if (status > 0) SLIP_PRINTF("%s", buff);
+                                if (status >= 0) SLIP_PRINTF("%s", buff);
                                 SLIP_mpfr_free_str (buff);
                                 break;
                             }
