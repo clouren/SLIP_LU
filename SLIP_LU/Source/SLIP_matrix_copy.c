@@ -119,6 +119,10 @@ SLIP_info SLIP_matrix_copy
                     SLIP_CHECK (SLIP_matrix_allocate (&C, SLIP_CSC,
                         C_type, m, n, nz, false, true, option)) ;
 
+                    // Scaling factor of C is currently in Y, set it
+                    // here
+                    SLIP_mpq_set(C->scale, Y->scale);
+                    
                     // count the # of entries in each column
                     for (int64_t k = 0 ; k < nz ; k++)
                     {
@@ -250,6 +254,9 @@ SLIP_info SLIP_matrix_copy
                     // allocate C
                     SLIP_CHECK (SLIP_matrix_allocate (&C, SLIP_CSC, C_type,
                         m, n, actual, false, true, option)) ;
+                        
+                    // C's scaling factor is currently in Y. Set it here
+                    SLIP_mpq_set(C->scale, Y->scale);
 
                     // Construct C
                     nz = 0 ;
@@ -455,6 +462,9 @@ SLIP_info SLIP_matrix_copy
                 {
                     // Y = typecast the values of A into the type of C
                     SLIP_CHECK (slip_cast_matrix (&Y, C->type, A, option)) ;
+                    
+                    // Set C's scaling factor
+                    SLIP_mpq_set(C->scale, Y->scale);
 
                     switch (C->type)
                     {
@@ -537,6 +547,8 @@ SLIP_info SLIP_matrix_copy
                     // Y = typecast the values of A into the type of C
                     SLIP_CHECK (slip_cast_matrix (&Y, C->type, A, option)) ;
 
+                    // Set C's scaling factor
+                    SLIP_mpq_set(C->scale, Y->scale);
                     switch (C->type)
                     {
 
