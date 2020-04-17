@@ -9,7 +9,8 @@
 //------------------------------------------------------------------------------
 
 #define SLIP_FREE_ALL    \
-    SLIP_FREE(mark);
+    SLIP_FREE(mark);     \
+    SLIP_FREE(mark);/*FIXME*/
 
 #include "slip_internal.h"
 
