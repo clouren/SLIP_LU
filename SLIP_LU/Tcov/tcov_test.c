@@ -412,7 +412,7 @@ int main( int argc, char* argv[])
                 SLIP_matrix_free(&B, option);
                 SLIP_matrix_free(&Ax, option);
             }
-            else
+            else // 5 =< Ab_type < 20
             {
 
                 //--------------------------------------------------------------
@@ -430,6 +430,7 @@ int main( int argc, char* argv[])
                 int64_t x_int64[11] = {1, 1, 1, 2, 2, 3, 3, 3, 4, 4, 4};
                 
                 // find the type and kind of the source matrix to copy from
+                Ab_type = Ab_type > 19 ? 19:Ab_type;
                 int tk = Ab_type-5;
                 int type = tk%5;
                 int kind = tk/5;
@@ -447,6 +448,7 @@ int main( int argc, char* argv[])
                 }
                 TEST_CHECK(SLIP_matrix_allocate(&Ax, (SLIP_type) kind,
                     (SLIP_type)type, m1, n1, nz1, false, true, option));
+                if (kind == 1){Ax->nz = nz1;}
 
                 // fill Ax->p
                 if(kind == 0)
@@ -618,6 +620,11 @@ int main( int argc, char* argv[])
                     TEST_CHECK(SLIP_matrix_allocate(&b, SLIP_DENSE,
                         SLIP_MPFR, 1, 1, 1, false, false, option));
                     SLIP_matrix_free (&b, option) ;
+
+                    //test coverage for slip_gmp_reallocate()
+                    void *p_new = NULL;
+                    TEST_CHECK(slip_gmp_realloc_test(&p_new, NULL,0,1));
+                    TEST_CHECK(slip_gmp_realloc_test(&p_new,p_new,1,0));
                 }
 
                 SLIP_FREE_ALL;

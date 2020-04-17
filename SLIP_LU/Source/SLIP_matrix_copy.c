@@ -44,8 +44,9 @@ SLIP_info SLIP_matrix_copy
 
     SLIP_info info ;
     int64_t nz = SLIP_matrix_nnz (A, option) ;
-    if (A == NULL || C_handle == NULL || nz < 0 ||
-        A->kind < SLIP_CSC || A->kind > SLIP_DENSE ||
+    if (C_handle == NULL || nz < 0 ||
+      //checked in SLIP_matrix_nnz
+      //A == NULL || A->kind < SLIP_CSC || A->kind > SLIP_DENSE ||
         A->type < SLIP_MPZ || A->type > SLIP_FP64  ||
         C_kind  < SLIP_CSC || C_kind  > SLIP_DENSE ||
         C_type  < SLIP_MPZ || C_type  > SLIP_FP64)
@@ -398,6 +399,8 @@ SLIP_info SLIP_matrix_copy
                             C->j [p] = j ;
                         }
                     }
+                    // set C->nz
+                    C->nz = nz;
                 }
                 break ;
 
@@ -416,6 +419,8 @@ SLIP_info SLIP_matrix_copy
                     // copy and typecast A->x into C->x
                     SLIP_CHECK (slip_cast_array (SLIP_X (C), C->type,
                         SLIP_X (A), A->type, nz, C->scale, A->scale, option)) ;
+                    // set C->nz
+                    C->nz = nz;
                 }
                 break ;
 
@@ -432,6 +437,8 @@ SLIP_info SLIP_matrix_copy
                     SLIP_CHECK (SLIP_matrix_copy (&C, SLIP_TRIPLET, C_type,
                         T, option)) ;
                     SLIP_matrix_free (&T, option) ;
+                    // set C->nz
+                    C->nz = nz;
                 }
                 break ;
 

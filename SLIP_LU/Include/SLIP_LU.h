@@ -745,8 +745,6 @@ SLIP_info SLIP_mpfr_div_d (mpfr_t x, const mpfr_t y, const double z,
 SLIP_info SLIP_mpfr_ui_pow_ui (mpfr_t x, const uint64_t y, const uint64_t z,
                     const mpfr_rnd_t rnd) ;
 
-SLIP_info SLIP_mpfr_log2(mpfr_t x, const mpfr_t y, const mpfr_rnd_t rnd) ;
-
 SLIP_info SLIP_mpfr_sgn (int *sgn, const mpfr_t x) ;
 
 SLIP_info SLIP_mpfr_free_cache (void) ;
@@ -763,6 +761,7 @@ SLIP_info SLIP_mpfr_fprintf (FILE *fp, const char *format, ... ) ;
 SLIP_info SLIP_mpz_set_d (mpz_t x, const double y) ;
 SLIP_info SLIP_mpz_add (mpz_t a, const mpz_t b, const mpz_t c) ;
 SLIP_info SLIP_mpz_addmul (mpz_t x, const mpz_t y, const mpz_t z) ;
+SLIP_info SLIP_mpfr_log2(mpfr_t x, const mpfr_t y, const mpfr_rnd_t rnd) ;
 #endif
 
 #endif

@@ -514,6 +514,7 @@ SLIP_info SLIP_mpfr_asprintf (char **str, const char *format, ... )
 //------------------------------------------------------------------------------
 
 /* Safely free a string allocated by SLIP_mpfr_asprintf. */
+/* DONT TRY TO FREE NULL PONITER USING THIS FUNCTION*/
 
 SLIP_info SLIP_mpfr_free_str (char *str)
 {
@@ -1657,6 +1658,9 @@ SLIP_info SLIP_mpfr_ui_pow_ui
 
 /* Purpose: Safely take the log2 of an mpfr number */
 
+#if 0
+/* This function is currently unused, but kept here for future reference. */
+
 SLIP_info SLIP_mpfr_log2
 (
     mpfr_t x,
@@ -1669,6 +1673,8 @@ SLIP_info SLIP_mpfr_log2
     SLIP_GMP_WRAPPER_FINISH ;
     return (SLIP_OK) ;
 }
+
+#endif
 
 //------------------------------------------------------------------------------
 // SLIP_mpfr_sgn

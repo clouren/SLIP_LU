@@ -12,6 +12,7 @@
 #define TCOV_SLIP_MALLOC_TEST_H
 
 #include "slip_internal.h"
+#include "SLIP_gmp.h"
 
 extern int64_t malloc_count ;
 
@@ -74,5 +75,13 @@ void tcov_free
     void *p            // Pointer to be free
 ) ;
 
+// used to test slip_gmp_reallocate
+int slip_gmp_realloc_test
+(
+    void **p_new,
+    void * p_old,
+    size_t old_size,
+    size_t new_size
+);
 #endif
 
