@@ -9,10 +9,17 @@
 //------------------------------------------------------------------------------
 
 #define SLIP_FREE_ALL    \
-    SLIP_FREE(mark);     \
-    SLIP_FREE(mark);/*FIXME*/
+    SLIP_FREE (work) ;   \
 
 #include "slip_internal.h"
+
+int compar (const void *x, const void *y)
+{
+    // compare two (i,j) tuples
+    int64_t *a = (int64_t *) x ;
+    int64_t *b = (int64_t *) y ;
+    // TODO
+}
 
 /* check the validity of a SLIP_matrix */
 
@@ -85,8 +92,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
     //--------------------------------------------------------------------------
 
     int64_t i, j, p, pend ;
-    int64_t* mark = NULL;   // used for checking duplicate index of CSC
-    bool* bmark = NULL;     // used for checking duplicate index of triplet
+    int64_t* work = NULL;   // used for checking duplicates for CSC and triplet
     uint64_t prec = SLIP_OPTION_PREC (option);
 
     //--------------------------------------------------------------------------
@@ -139,8 +145,8 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
             }
 
             // allocate workspace to check for duplicates
-            mark = (int64_t *) SLIP_calloc (m, sizeof (int64_t)) ;
-            if (mark == NULL)
+            work = (int64_t *) SLIP_calloc (m, sizeof (int64_t)) ;
+            if (work == NULL)
             {
                 // out of memory
                 SLIP_PR1 ("out of memory\n") ;
@@ -155,10 +161,17 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                 for (p = Ap [j] ; p < Ap [j+1] ; p++)
                 {
                     i = Ai [p] ;
-                    if (i < 0 || i >= m || mark [i] == marked)
+                    if (i < 0 || i >= m)
                     {
-                        // row indices out of range, or duplicate
-                        SLIP_PR1 ("invalid index\n") ;
+                        // row indices out of range
+                        SLIP_PR1 ("index out of range: (%ld,%ld)\n", i, j) ;
+                        SLIP_FREE_ALL ;
+                        return (SLIP_INCORRECT_INPUT) ;
+                    }
+                    else if (work [i] == marked)
+                    {
+                        // duplicate
+                        SLIP_PR1 ("duplicate index: (%ld,%ld)\n", i, j) ;
                         SLIP_FREE_ALL ;
                         return (SLIP_INCORRECT_INPUT) ;
                     }
@@ -221,7 +234,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                             return (status) ;
                         }
                     }
-                    mark [i] = marked ;
+                    work [i] = marked ;
                 }
             }
         }
@@ -248,26 +261,17 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                 return (SLIP_INCORRECT_INPUT) ;
             }
 
-            // allocate workspace to check for duplicates
-            bmark = (bool *) SLIP_calloc (m*n, sizeof (bool)) ; // FIXME
-            if (bmark == NULL)
-            {
-                // out of memory
-                SLIP_PR1 ("out of memory\n") ;
-                SLIP_FREE_ALL;
-                return (SLIP_OUT_OF_MEMORY) ;
-            }
+            //------------------------------------------------------------------
+            // print each entry as "Ai Aj Ax"
+            //------------------------------------------------------------------
 
-            //------------------------------------------------------------------
-            // check for duplicate and print each entry as "Ai Aj Ax"
-            //------------------------------------------------------------------
             for (p = 0 ; p < nz ; p++)
             {
                 i = Ai[p];
                 j = Aj[p];
-                if (i < 0 || i >= m || j < 0 || j >= n || bmark [j*m+i])
+                if (i < 0 || i >= m || j < 0 || j >= n)
                 {
-                    // row indices out of range, or duplicate
+                    // row indices out of range
                     SLIP_PR1 ("invalid index\n") ;
                     SLIP_FREE_ALL ;
                     return (SLIP_INCORRECT_INPUT) ;
@@ -331,8 +335,44 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                         return (status) ;
                     }
                 }
-                bmark [i+j*m] = true ;      // FIXME
             }
+
+            //------------------------------------------------------------------
+            // check for duplicates
+            //------------------------------------------------------------------
+
+            // allocate workspace to check for duplicates
+            work = (int64_t *) SLIP_malloc (nz, 2 * sizeof (int64_t)) ;
+            if (work == NULL)
+            {
+                // out of memory
+                SLIP_PR1 ("out of memory\n") ;
+                SLIP_FREE_ALL;
+                return (SLIP_OUT_OF_MEMORY) ;
+            }
+
+            for (int64_t p = 0 ; p < nz ; p++)
+            {
+                work [2*p  ] = Aj [p] ;
+                work [2*p+1] = Ai [p] ;
+            }
+
+            qsort (work, nz, 2 * sizeof (int64_t), compar) ;
+
+            for (int64_t p = 1 ; p < nz ; p++)
+            {
+                int64_t this_j = work [2*p  ] ;
+                int64_t this_i = work [2*p+1] ;
+                int64_t last_j = work [2*(p-1)  ] ;
+                int64_t last_i = work [2*(p-1)+1] ;
+                if (this_j == last_j && this_i == last_i)
+                {
+                    SLIP_PR1 ("duplicate index: (%ld, %ld)\n", this_i, this_j) ;
+                    SLIP_FREE_ALL ;
+                    return (SLIP_INCORRECT_INPUT) ;
+                }
+            }
+
         }
         break;
 

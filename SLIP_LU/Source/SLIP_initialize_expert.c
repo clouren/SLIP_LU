@@ -32,6 +32,8 @@ void SLIP_initialize_expert
 )
 {
 
+    // TODO if global 'SLIP_initialize_has_been_called' flag is true: error
+
     //--------------------------------------------------------------------------
     // define the malloc/calloc/realloc/free functions 
     //--------------------------------------------------------------------------

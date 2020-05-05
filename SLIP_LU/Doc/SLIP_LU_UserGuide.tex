@@ -163,11 +163,14 @@ the matrix. Data type: \verb|int64_t|.
 
 \item
 \verb|A->x|: Numeric entries. The entry \verb|A->x[k]| is the numeric value of
-the $k$th nonzero in the matrix. Data type: \verb|mpz_t|.
+the $k$th nonzero in the matrix.  The array \verb|A->x| has a union type, and
+must be accessed via a suffix according to the type of \verb|A|.  For details,
+see Section~\ref{ss:SLIP_matrix}.
+
 \end{itemize}
 
-An example matrix $A$ is stored as follows (notice that via C convention, the
-indexing is zero based).
+An example matrix $A$ with \verb|mpz_t| type is stored as follows (notice that
+via C convention, the indexing is zero based).
 \[
 A = \begin{bmatrix}
 1 & 0 & 0 & 1 \\
@@ -179,13 +182,13 @@ A = \begin{bmatrix}
 
 {\small
 \noindent \verb|A->p = [0, 3, 5, 8, 11]| \\
-\verb|A->i = [0, 1, 2, 2, 3, 1, 2, 3, 0,  1, 2]| \\
-\verb|A->x = [1, 2, 7, 1, 2, 4, 1, 3, 1, 12, 1]|
+\verb|A->i     = [0, 1, 2, 2, 3, 1, 2, 3, 0,  1, 2]| \\
+\verb|A->x.mpz = [1, 2, 7, 1, 2, 4, 1, 3, 1, 12, 1]|
 }
 
-For example, the last column appears in positions 8
-to 10 of \verb|A->i| and \verb|A->x|, with row indices 0, 1, and 2, and values
-$a_{03}=1$, $a_{13}=12$, and $a_{23}=1$.
+For example, the last column appears in positions 8 to 10 of \verb|A->i| and
+\verb|A->x.mpz|, with row indices 0, 1, and 2, and values $a_{03}=1$,
+$a_{13}=12$, and $a_{23}=1$.
 
 %-------------------------------------------------------------------------------
 \section{Availability}
@@ -211,12 +214,12 @@ purposes.  For a commercial license, please contact the authors.
 
 \noindent \textbf{Required Packages:} SLIP LU requires the installation of AMD
 \cite{amestoy1996approximate,amestoy2004algorithmamd}, COLAMD
-\cite{davis2004column,davis2004algorithmcolamd}, \verb'SuiteSparse_config'
+\cite{davis2004column,davis2004algorithmcolamd}, \verb|SuiteSparse_config|
 \cite{davis2020suitesparse}, the GNU GMP \cite{granlund2015gnu} and GNU MPFR
 \cite{fousse2007mpfr} libraries.  AMD and COLAMD are available under a BSD
 3-clause license, and no license restrictions apply to
-\verb'SuiteSparse_config'.  Notice that AMD, COLAMD, and
-\verb'SuiteSparse_config' are included in this distribution for users'
+\verb|SuiteSparse_config|.  Notice that AMD, COLAMD, and
+\verb|SuiteSparse_config| are included in this distribution for users'
 convenience. The GNU GMP and GNU MPFR library can be acquired and installed
 from \url{https://gmplib.org/} and \url{http://www.mpfr.org/} respectively.
 
@@ -236,12 +239,12 @@ GMP and MPFR can be installed with the following terminal commands:
 Installation of SLIP LU requires the \verb|make| utility in Linux/MacOS, or
 \verb|Cygwin make| in Windows. With the proper compiler, typing \verb|make|
 under the main directory will compile AMD, COLAMD and SLIP LU to the respective
-\verb'SLIP_LU/Lib' folder. To further install the libraries onto your computer,
+\verb|SLIP_LU/Lib| folder. To further install the libraries onto your computer,
 simply type \verb|make install|.  Thereafter, to use the code inside of your
 program, precede your code with \verb|#include "SLIP_LU.h"|.
 
-To run the statement coverage tests, go to the \verb'Tcov' folder and
-type \verb'make'.  The last line of output should read:
+To run the statement coverage tests, go to the \verb|Tcov| folder and
+type \verb|make|.  The last line of output should read:
 
 \begin{verbatim}
     statments not yet tested: 0
@@ -529,11 +532,11 @@ output. 0: print nothing, 1: just errors, 2: terse, with basic stats from
 COLAMD/AMD and SLIP, 3: all, with matrices and results. Default value: 0.
 
 \item
-\verb|option->prec|: An \verb|uint64_t| which specifies the precision used if
+\verb|option->prec|: An \verb|int32_t| which specifies the precision used if
 the user desires multiple precision floating point numbers, (i.e., MPFR). This
 can be any integer larger than \verb|MPFR_PREC_MIN| (value of 1 in MPFR 4.0.2
 and 2 in some legacy versions) and smaller than \verb|MPFR_PREC_MAX| (usually
-the largest possible \verb'int' available in your system). Default value: 128
+the largest possible integer available in your system). Default value: 128
 (quad precision).
 
 \item
@@ -605,65 +608,65 @@ This gives a total of 15 different matrix types. Note that not all functions acc
 A matrix \verb|SLIP_matrix *A| has the following components:
 
 \begin{itemize}
-\item \verb|A->m|: Number of rows in the matrix. Data Type: \verb|int64_t|
+\item \verb|A->m|: Number of rows in the matrix. Data Type: \verb|int64_t|.
 
-\item \verb|A->n|: Number of columns in the matrix. Data Type: \verb|int64_t|
+\item \verb|A->n|: Number of columns in the matrix. Data Type: \verb|int64_t|.
 
 \item \verb|A->nz|: The number of nonzeros in the matrix $A$, if $A$ is
 a triplet matrix (ignored for matrices in CSC or dense formats). Data Type:
-\verb|int64_t|
+\verb|int64_t|.
 
-\item \verb|A->nzmax|: The allocated size of the vectors \verb|A->i|, \verb|A->j| and \verb|A->x|. Note that \verb|A->nzmax| $\geq$ \verb|nnz(A)|, where
-\verb'nnz(A)' is the return value of \verb'SLIP_matrix_nnz(A,option)'.
-Data Type: \verb|int64_t|
+\item \verb|A->nzmax|: The allocated size of the vectors \verb|A->i|,
+\verb|A->j| and \verb|A->x|. Note that \verb|A->nzmax| $\geq$ \verb|nnz(A)|,
+where \verb|nnz(A)| is the return value of \verb|SLIP_matrix_nnz(A,option)|.
+Data Type: \verb|int64_t|.
 
 \item \verb|A->kind|: Indicating the kind of matrix A: CSC, triplet or dense.
-Data Type: \verb|SLIP_kind|
+Data Type: \verb|SLIP_kind|.
 
 \item \verb|A->type|: Indicating the type of entries in matrix A: \verb|mpz_t|,
 \verb|mpq_t|, \verb|mpfr_t|, \verb|int64_t| or \verb|double|.
-Data Type: \verb|SLIP_type|
+Data Type: \verb|SLIP_type|.
 
 \item \verb|A->p|: An array of size \verb|A->n|$+1$ which contains column pointers
 of $A$, if $A$ is a CSC matrix (\verb|NULL| for matrices in triplet or dense
-formats). Data Type: \verb|int64_t*|
+formats). Data Type: \verb|int64_t*|.
 
 \item \verb|A->p_shallow|: A boolean indicating whether \verb|A->p| is shallow.
-Data Type: \verb|bool|
+Data Type: \verb|bool|.
 
 \item \verb|A->i|: An array of size \verb|A->nzmax| which contains the row
 indices of the nonzeros in $A$, if $A$ is a CSC or triplet matrix (\verb|NULL|
 for dense matrices). The matrix is zero based therefore indices are
-in the range of $[0,$ \verb|A->n|$-1]$. Data Type: \verb|int64_t*|
+in the range of $[0,$ \verb|A->n|$-1]$. Data Type: \verb|int64_t*|.
 
 \item \verb|A->i_shallow|: A boolean indicating whether \verb|A->i| is shallow.
-Data Type: \verb|bool|
+Data Type: \verb|bool|.
 
 \item \verb|A->j|: An array of size \verb|A->nzmax| which contains the column
 indices of the nonzeros in $A$, if $A$ is a triplet matrix (\verb|NULL| for
 matrices in CSC or dense formats).
 The matrix is zero based therefore indices are
-in the range of $[0,$ \verb|A->n|$-1]$. Data Type: \verb|int64_t*|
+in the range of $[0,$ \verb|A->n|$-1]$. Data Type: \verb|int64_t*|.
 
 \item \verb|A->j_shallow|: A boolean indicating whether \verb|A->j| is shallow.
-Data Type: \verb|bool|
+Data Type: \verb|bool|.
 
-% TODO help to make this more professional, and clearer
-% use TYPE instead of type to avoid confusion against A->type
-\item \verb|A->x.TYPE|: An array of size \verb|A->nzmax| which contains the
-numeric values of the matrix. \verb|TYPE| should be mpz, mpq, mpfr, int64 or
-fp64 corresponding to the entry type indicated by \verb|A->type|. Data Type:
-\verb|union|
+\item \verb|A->x|: An array of size \verb|A->nzmax| which contains the
+numeric values of the matrix.  This array is a union, and must be ascessed via
+one of: \verb|A->x.mpz|, \verb|A->x.mpq|, \verb|A->x.mpfr|, \verb|A->x.int64|,
+or \verb|A->x.fp64|, depending on the \verb|A->type| parameter.
+Data Type: \verb|union|.
 
-\item \verb|A->x_shallow|: A boolean indicating whether \verb|A->x.TYPE| is
-shallow. Data Type: \verb|bool|
+\item \verb|A->x_shallow|: A boolean indicating whether \verb|A->x| is
+shallow. Data Type: \verb|bool|.
 
 \item \verb|A->scale|: A scaling parameter for matrix of \verb|mpz_t| type. For
 all matrices whose entries are stored in data type other than \verb|mpz_t|,
 \verb|A->scale = 1|. This is used to ensure integrality of each entry in mpz
 matrix if these entries are converted from non-integral type data (such as
 double, variable precision floating point, or rational). Data Type:
-\verb|mpq_t|
+\verb|mpq_t|.
 
 \end{itemize}
 
@@ -964,7 +967,7 @@ is provided, which sets the free'd pointer to \verb|NULL|.
 \verb|SLIP_initialize| initializes the working environment for SLIP LU
 functions.  SLIP LU utilizes a specialized memory management scheme in order to
 prevent potential memory failures caused by GMP and MPFR libraries.  Either
-this function or \verb'SLIP_initialize_expert' \textcolor{blue}{\textbf{must}}
+this function or \verb|SLIP_initialize_expert| \textcolor{blue}{\textbf{must}}
 be called prior to using the library.  Failure to do so will lead to undefined
 behavior.
 
@@ -1042,15 +1045,12 @@ called as the last \verb|SLIP_*| function called.
 \verb|SLIP_options| struct with default parameters upon successful allocation,
 which are discussed in Section \ref{ss:SLIP_options}.  To safely free the
 \verb|SLIP_options* option| structure, simply use \verb|SLIP_FREE(option)|.
-% TODO proofread the following
-% Modified by Chris, ok now?
 All functions that require \verb|SLIP_options *option| as an input argument 
-can have a NULL pointer passed instead. In this case, the default value of 
-the corresponding command option is used. For example, if one passes a NULL
-pointer to the symbolic analysis routines, COLAMD is used. As a result, if a
-user desires default parameters, one needs not allocate nor use the 
-\verb|SLIP_options| struct.
-
+can have a \verb'NULL' pointer passed instead. In this case, the default value
+of the corresponding command option is used. For example, if one passes a
+\verb'NULL' pointer to the symbolic analysis routines, COLAMD is used. As a
+result, if a user desires default parameters, one needs not allocate nor use
+the \verb|SLIP_options| struct.
 
 %-------------------------------------------------------------------------------
 \cprotect\subsection{\verb|SLIP_matrix_allocate|: allocate a $m$-by-$n$
@@ -1098,7 +1098,7 @@ Attempting to access the values of these initialized entries will lead to
 undefined behavior.
 
 %-------------------------------------------------------------------------------
-\cprotect\subsection{\verb|SLIP_matrix_free|: free a \verb'SLIP_matrix'}
+\cprotect\subsection{\verb|SLIP_matrix_free|: free a \verb|SLIP_matrix|}
 \label{s:user:matrix_free}
 %-------------------------------------------------------------------------------
 
@@ -1221,32 +1221,23 @@ On input, \verb|L|, \verb|U|, \verb|rhos|, and \verb|pinv| are undefined and
 ignored.  \verb|A| must be a CSC \verb|mpz_t| matrix. Default
 setting will be used if \verb|option| is input as NULL.
 
-
 Upon successful completion, the function returns \verb|SLIP_OK|, and
 \verb|L| and \verb|U| are the lower and upper triangular matrices,
 \verb|rhos| contains the sequence of pivots. 
-%TODO This statement is not true. We can either provide a function to 
-% give the determinant of A from rhos or we can delete this line.
-% Such a determinant function would look something like this
-% 
-% SLIP_info SLIP_get_determinant
-%			(
-%				mpq_t determinant,
-%				SLIP_matrix *A,
-%				SLIP_matrix *rhos
-%			)
-%			{
-%				SLIP_mpq_set_z( determinant, rhos->x.mpz[rhos->n-1]);
-%				SLIP_mpq_div(determinant, determinant, A->scale);
-%			}
-%
-% Let me (Chris) know what you think. If you want a determinant function
-% its very easy to add the above. We had one in the past but deleted it,
-% so I tend to think we should just delete this line.
-The determinant of $A$ can be obtained as \verb|rhos[n-1]|. 
-\verb|pinv| contains the inverse row permutation
-(that is, the row index in the permuted matrix $PA$. For the $i$th row in $A$,
-\verb|pinv[i]| gives the row index in $PA$). 
+
+After factorizing the matrix, the determinant of $A$ can be obtained from
+\verb|rhos[n-1]| and \verb|A->scale| as follows:
+
+\begin{verbatim}
+    mpq_t determinant ;
+    SLIP_mpq_init (determinant) ;
+    SLIP_mpq_set_z (determinant, rhos->x.mpz[rhos->n-1]) ;
+    SLIP_mpq_div (determinant, determinant, A->scale) ;
+\end{verbatim}
+
+The output array \verb|pinv| contains the inverse row permutation (that is, the
+row index in the permuted matrix $PA$. For the $i$th row in $A$, \verb|pinv[i]|
+gives the row index in $PA$). 
 
 If an error occurs, \verb|L|, \verb|U|, \verb|rhos|, and \verb|pinv| are all
 returned as \verb|NULL|, and an error code will be returned correspondingly.

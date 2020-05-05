@@ -14,6 +14,9 @@
 
 void SLIP_initialize ( void )
 {
+    // TODO if global 'SLIP_initialize_has_been_called' flag is true: error
+
+    // TODO set global 'SLIP_initialize_has_been_called' flag to true
     mp_set_memory_functions (slip_gmp_allocate, slip_gmp_reallocate,
         slip_gmp_free) ;
 }

@@ -39,6 +39,8 @@ SLIP_info SLIP_LU_analyze
     // check inputs
     //--------------------------------------------------------------------------
 
+    // TODO if global 'SLIP_initialize_has_been_called' flag is false: error
+
     // A can have any data type, but must be in sparse CSC format
     SLIP_REQUIRE_KIND (A, SLIP_CSC) ;
 

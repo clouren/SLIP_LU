@@ -168,7 +168,7 @@ typedef enum
     SLIP_SINGULAR = -2,         // the input matrix A is singular
     SLIP_INCORRECT_INPUT = -3,  // one or more input arguments are incorrect
     SLIP_INCORRECT = -4,        // The solution is incorrect
-    SLIP_UNINITIALIZED = -5     // SLIP_LU used without proper initialization
+    SLIP_PANIC = -5             // SLIP_LU used without proper initialization
     // TODO add this check to the SLIP_ user codes (Tim)
 }
 SLIP_info ;
@@ -222,7 +222,7 @@ typedef struct SLIP_options
     int print_level ;      // 0: print nothing, 1: just errors,
                            // 2: terse (basic stats from COLAMD/AMD and
                            // SLIP LU), 3: all, with matrices and results
-    uint64_t prec ;        // Precision used to output file if MPFR is chosen
+    int32_t prec ;         // Precision used to output file if MPFR is chosen
     mpfr_rnd_t round ;     // Type of MPFR rounding used
     bool check ;           // Set true if the solution to the system should be
                            // checked.  Intended for debugging only; SLIP_LU is

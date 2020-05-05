@@ -19,5 +19,6 @@ void SLIP_finalize
 {
     SLIP_mpfr_free_cache ( ) ;    // Free mpfr internal cache
     slip_gmp_finalize ( ) ;       // Reset GMP memory variables
+    // TODO set global 'SLIP_initialize_has_been_called' flag to false
 }
 

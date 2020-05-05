@@ -310,7 +310,7 @@ int main( int argc, char* argv[])
                     SLIP_matrix_free (&b, option) ;
 
                     // trigger gcd == 1
-                    uint64_t prec = option->prec;
+                    int32_t prec = option->prec;
                     option->prec = 17;
                     double pow2_17 = pow(2,17);
                     for (j = 0; j < n; j++)                             // Get B
