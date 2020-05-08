@@ -1,9 +1,7 @@
 function SLIP_install
-%SLIP_INSTALL: install and test the MATLAB interface to SLIP_LU.
-%
-% This function installs the SLIP LU MATLAB routines. It allows the use of m
-% files SLIP_LU.m and SLIP_det.m.   Please run this command prior to attempting
-% to use any SLIP LU routines.
+%SLIP_INSTALL: install and test the MATLAB interface to SLIP_backslash.
+% This function installs the SLIP LU mexFunction for use by the m-file
+% SLIP_backslash.m.
 %
 % Usage: SLIP_install
 %
@@ -11,16 +9,16 @@ function SLIP_install
 % available, install them with 'make install' first, in the top-level
 % SuiteSparse folder.
 %
-% See also SLIP_get_options, SLIP_LU, SLIP_test.
+% See also SLIP_backslash, SLIP_test, SLIP_demo.
 
 % SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 % Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 % SLIP_LU/License for the license.
 
-help SLIP_LU
+help SLIP_backslash
 
 fprintf ('\n------------------------------------------------------------\n') ;
-fprintf ('Compiling the SLIP LU mexFunction:\n') ;
+fprintf ('Compiling the SLIP LU mexFunction for use in SLIP_backslash:\n') ;
 
 % Find all source files and add them to the src string
 src = '';
@@ -67,7 +65,7 @@ fprintf('\nMex file compiled and installed.  Running tests:\n')
 % Efficient testing
 SLIP_test;
 
-fprintf ('To use SLIP_LU in future MATLAB sessions, add the following\n') ;
+fprintf ('To use SLIP_backslash in future MATLAB sessions, add the following\n') ;
 fprintf ('line to your startup.m file:\n') ;
 fprintf ('   addpath (''%s'') ;\n', pwd) ;
 fprintf ('Type ''doc startup'' for more info on how to use startup.m\n') ;

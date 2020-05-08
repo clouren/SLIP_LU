@@ -247,12 +247,13 @@ type \verb|make|.  The last line of output should read:
 If you want to use SLIP LU within MATLAB, from your installation of MATLAB,
 \verb|cd| to the folder \verb|SLIP_LU/SLIP_LU/MATLAB| then type
 \verb|SLIP_install|. This should compile the necessary code so that you can use
-SLIP LU within MATLAB. Note that this file does not add the correct directory
-to your path; therefore, if you want SLIP LU as a default function, type
+the \verb|SLIP_backslash| function from within MATLAB. Note that
+\verb|SLIP_install| does not add the correct directory to your path; therefore,
+if you want to use \verb|SLIP_backslash| in future sessions, type
 \verb|pathtool| and save your path for future MATLAB sessions. If you cannot
 save your path because of file permissions, edit your \verb|startup.m| by
-adding \verb|addpath| commands (type doc startup and doc \verb|addpath| for
-more information).
+adding \verb|addpath| commands (type \verb|doc startup| and \verb|doc addpath|
+for more information).
 
 %-------------------------------------------------------------------------------
 \section{Managing the SLIP LU environment} \label{s:user:setup}
@@ -2020,7 +2021,7 @@ to replicate the results from \cite{lourenco2019exact}.
 
 After following the installation steps discussed in Section \ref{s:install},
 using the SLIP LU factorization within MATLAB can be done via the
-\verb|SLIP_LU.m| function. First, this section describes the \verb|options|
+\verb|SLIP_backslash.m| function. First, this section describes the \verb|options|
 struct in Section \ref{s:Use:MATLAB:setup} then we describe how to use the
 factorization in Section \ref{s:Use:MATLAB:factor}.  Again, recall that by
 default the SLIP LU MATLAB routines are not natively installed into your MATLAB
@@ -2082,12 +2083,12 @@ parameter can take any value in the range $(0,1]$.
 \end{itemize}
 
 %-------------------------------------------------------------------------------
-\cprotect\subsection{\verb|SLIP_LU.m|}
+\cprotect\subsection{\verb|SLIP_backslash.m|}
 \label{s:Use:MATLAB:factor}
 %-------------------------------------------------------------------------------
 
-The \verb|SLIP_LU.m| function solves the linear system $A x = b$ where $A \in
-\mathtt{R}^{n \times n}$, $x \in \mathtt{R}^{n \times m}$ and $b \in
+The \verb|SLIP_backslash.m| function solves the linear system $A x = b$ where
+$A \in \mathtt{R}^{n \times n}$, $x \in \mathtt{R}^{n \times m}$ and $b \in
 \mathtt{R}^{n \times m}$. The final solution vector(s) obtained via this
 function are exact prior to their conversion to double precision.
 
@@ -2097,11 +2098,11 @@ struct. Currently, there are 2 ways to use this function outlined below:
 
 \begin{itemize}
 
-\item \verb|x = SLIP_LU(A,b)| returns the solution to $A x =
+\item \verb|x = SLIP_backslash(A,b)| returns the solution to $A x =
 b$ using default settings. The solution vectors are more accurate than
 the solution obtained via \verb|x = A \ b|.
 
-\item \verb|x = SLIP_LU(A,b,option)| returns the solution to $A x =
+\item \verb|x = SLIP_backslash(A,b,option)| returns the solution to $A x =
 b$ using user specified settings from the options struct.
 
 \end{itemize}
@@ -2112,9 +2113,9 @@ floating-point representation (\verb|double|), having been converted from the
 guaranteed to be exact only if the exact solution can be held in \verb|double|
 without modification.
 
-A future version of the \verb|SLIP_LU| MATLAB function could return \verb|x|
-in the MATLAB \verb|vpa| format, which would preserve the exact solution.
-This feature may be added in the future.
+A future version of the \verb|SLIP_backslash| MATLAB function could return
+\verb|x| in the MATLAB \verb|vpa| format, which would preserve the exact
+solution.  This feature may be added in the future.
 
 %-------------------------------------------------------------------------------
 % References
