@@ -1,0 +1,174 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>SLIP_demo</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-05-08"><meta name="DC.source" content="SLIP_demo.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">SLIP_backslash vs MATLAB backslash: first example</a></li><li><a href="#3">SLIP_backslash: exact, vs MATLAB backslash: approximate</a></li><li><a href="#4">SLIP_backslash on difficult problems</a></li></ul></div><pre class="codeinput"><span class="comment">%%SLIP_DEMO a demo of SLIP_backslash</span>
+<span class="comment">%</span>
+<span class="comment">% See also SLIP_backslash, SLIP_install, SLIP_test.</span>
+<span class="comment">%</span>
+<span class="comment">% SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,</span>
+<span class="comment">% Timothy A. Davis, Texas A&amp;M University.  All Rights Reserved.  See</span>
+<span class="comment">% SLIP_LU/License for the license.</span>
+</pre><h2 id="2">SLIP_backslash vs MATLAB backslash: first example</h2><p>In this first example, x = SLIP_backslash (A,b) returns an approximate solution, not because it was computed incorrectly in SLIP_backslash.  It is computed exactly as a rational result in SLIP_backslash with arbitrary precision, but then converted to double precision on output.</p><pre class="codeinput">load <span class="string">west0479</span>
+A = west0479 ;
+n = size (A, 1) ;
+xtrue = rand (n,1) ;
+b = A*xtrue ;
+x = SLIP_backslash (A, b) ;
+<span class="comment">% error is nonzero: x is computed exactly in rational arbitrary-precision,</span>
+<span class="comment">% but then lost precision when returned to MATLAB:</span>
+err_slip = norm (x-xtrue)
+x = A\b ;
+<span class="comment">% error is nonzero: MATLAB x=A\b experiences floating-point error</span>
+<span class="comment">% throughout its computations:</span>
+err_matlab = norm (x-xtrue)
+</pre><pre class="codeoutput">
+err_slip =
+
+      7.92867196665795e-12
+
+
+err_matlab =
+
+      1.12700510215603e-11
+
+</pre><h2 id="3">SLIP_backslash: exact, vs MATLAB backslash: approximate</h2><p>In this example, x = SLIP_backslash (A,b) is returned exactly in the MATLAB vector x, because x contains only integers representable exactly in double precision.  x = A\b results in floating-point roundoff error.</p><pre class="codeinput">amax = max (abs (A), [ ], <span class="string">'all'</span>) ;
+A = floor (2^20 * (A / amax)) + n * speye (n) ;
+xtrue = floor (64 * xtrue) ;
+b = A*xtrue ;
+x = SLIP_backslash (A, b) ;
+<span class="comment">% error will be exactly zero:</span>
+err_slip = norm (x-xtrue)
+x = A\b ;
+<span class="comment">% error will be small but nonzero:</span>
+err_matlab = norm (x-xtrue)
+</pre><pre class="codeoutput">
+err_slip =
+
+     0
+
+
+err_matlab =
+
+      5.05016722168816e-11
+
+</pre><h2 id="4">SLIP_backslash on difficult problems</h2><pre class="codeinput"><span class="comment">% TODO add some sample solutions from some nasty</span>
+<span class="comment">% matrices from the MATLAB gallery function.</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%%SLIP_DEMO a demo of SLIP_backslash
+%
+% See also SLIP_backslash, SLIP_install, SLIP_test.
+%
+% SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
+% Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
+% SLIP_LU/License for the license.
+
+%% SLIP_backslash vs MATLAB backslash: first example
+% In this first example, x = SLIP_backslash (A,b) returns an approximate
+% solution, not because it was computed incorrectly in SLIP_backslash.  It
+% is computed exactly as a rational result in SLIP_backslash with arbitrary
+% precision, but then converted to double precision on output.
+
+load west0479
+A = west0479 ;
+n = size (A, 1) ;
+xtrue = rand (n,1) ;
+b = A*xtrue ;
+x = SLIP_backslash (A, b) ;
+% error is nonzero: x is computed exactly in rational arbitrary-precision,
+% but then lost precision when returned to MATLAB:
+err_slip = norm (x-xtrue)
+x = A\b ;
+% error is nonzero: MATLAB x=A\b experiences floating-point error
+% throughout its computations:
+err_matlab = norm (x-xtrue)
+
+%% SLIP_backslash: exact, vs MATLAB backslash: approximate
+% In this example, x = SLIP_backslash (A,b) is returned exactly in the
+% MATLAB vector x, because x contains only integers representable exactly
+% in double precision.  x = A\b results in floating-point roundoff error.
+
+amax = max (abs (A), [ ], 'all') ;
+A = floor (2^20 * (A / amax)) + n * speye (n) ;
+xtrue = floor (64 * xtrue) ;
+b = A*xtrue ;
+x = SLIP_backslash (A, b) ;
+% error will be exactly zero:
+err_slip = norm (x-xtrue)
+x = A\b ;
+% error will be small but nonzero:
+err_matlab = norm (x-xtrue)
+
+%% SLIP_backslash on difficult problems
+
+% TODO add some sample solutions from some nasty
+% matrices from the MATLAB gallery function.
+
+
+##### SOURCE END #####
+--></body></html>
