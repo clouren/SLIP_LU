@@ -26,18 +26,35 @@ void mexFunction
     // Initialize SLIP LU library environment
     //--------------------------------------------------------------------------
 
-    SLIP_initialize_expert (mxMalloc, mxCalloc, mxRealloc, mxFree) ;
-    SuiteSparse_config.printf_func = mexPrintf ;
     SLIP_info status ;
+    SLIP_MEX_OK (SLIP_initialize_expert
+        (mxMalloc, mxCalloc, mxRealloc, mxFree)) ;
+    SuiteSparse_config.printf_func = mexPrintf ;
 
     //--------------------------------------------------------------------------
     // Check inputs
     //--------------------------------------------------------------------------
 
-    slip_check_input(pargin, nargin);
-    if (nargout > 1 || nargout <= 0 || nargin != 3)
+    if (nargout > 1 || nargin < 2 || nargin > 3)
     {
-        mexErrMsgTxt("Usage: x = SLIP_LU(A,b,option)");
+        mexErrMsgTxt("Usage: x = SLIP_mex_soln (A,b,option)");
+    }
+
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    if (mxIsComplex (pargin [0]) || mxIsComplex (pargin [1]))
+    {
+        mexErrMsgTxt ("Inputs must be real") ;
+    }
+    if (!mxIsSparse (pargin [0]))     // Is the matrix sparse?
+    {
+        mexErrMsgTxt ("First input must be sparse") ;
+    }
+    if (mxIsSparse (pargin [1]))         // Is b sparse?
+    {
+        mexErrMsgTxt ("Second input must be full") ;
     }
 
     //--------------------------------------------------------------------------
@@ -56,38 +73,37 @@ void mexFunction
     //--------------------------------------------------------------------------
     // Declare variables and process input
     //--------------------------------------------------------------------------
-    // Read in options
-    slip_get_matlab_options(option, pargin[2]);
 
-    // Read in A and b
-    slip_mex_get_A_and_b(&A, &b, pargin, nargin, option);
+    // get options
+    if (nargin > 2) slip_get_matlab_options (option, pargin [2]) ;
+
+    // convert MATLAB inputs A and b into SLIP_matrix objects
+    slip_mex_get_A_and_b (&A, &b, pargin, nargin, option) ;
 
     //--------------------------------------------------------------------------
-    // Solve
+    // x = A\b via SLIP_LU, returning result as double
     //--------------------------------------------------------------------------
 
-    SLIP_MEX_OK(SLIP_backslash( &x, SLIP_FP64, A, b, option));
+    SLIP_MEX_OK (SLIP_backslash (&x, SLIP_FP64, A, b, option)) ;
     
     //--------------------------------------------------------------------------
     // Set outputs, free memory
     //--------------------------------------------------------------------------
 
-    mxArray* Xmatlab = mxCreateDoubleMatrix ((mwSize) x->m, (mwSize) x->n,
-        mxREAL);
-    double* x2 = mxGetPr(Xmatlab);
+    // create an empty 0-by-0 MATLAB matrix and free its contents
+    pargout [0] = mxCreateDoubleMatrix (0, 0, mxREAL) ;
+    mxFree (mxGetDoubles (pargout [0])) ;
 
-    for (int k = 0; k < x->n*x->m; k++)
-    {
-        x2[k] = x->x.fp64[k];
-    }
+    // transplant x into the new MATLAB matrix and set its size
+    mxSetDoubles (pargout [0], x->x.fp64) ;
+    mxSetM (pargout [0], x->m) ;
+    mxSetN (pargout [0], x->n) ;
+    x->x.fp64 = NULL ;  // set to NULL so it is not freed by SLIP_matrix_free
 
-    //TODO Can this work?  Tim: no, but mxSetData* can do it.  FIXME
-    //x2 = x->x.fp64;
-
-    pargout[0] =  Xmatlab;
-    SLIP_matrix_free(&b, option);
-    SLIP_matrix_free(&A, option);
-    SLIP_FREE(option);
-    SLIP_finalize();
+    SLIP_matrix_free (&x, option) ;
+    SLIP_matrix_free (&b, option) ;
+    SLIP_matrix_free (&A, option) ;
+    SLIP_FREE (option) ;
+    SLIP_finalize ( ) ;
 }
 

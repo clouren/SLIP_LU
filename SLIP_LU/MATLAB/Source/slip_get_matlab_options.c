@@ -10,60 +10,115 @@
 
 #include "SLIP_LU_mex.h"
 
-/* Purpose: This function reads in the necessary information from the options
-   struct for matlab */
+// Purpose: This function reads in the necessary information from the options
+// struct for MATLAB.
+
+#define MATCH(s,t) (strcmp (s,t) == 0)
+
 void slip_get_matlab_options
 (
-    SLIP_options* option,  // Control parameters (must not be NULL)
-    const mxArray* input   // The input options from MATLAB interface
+    SLIP_options* option,   // Control parameters (must not be NULL)
+    const mxArray* input    // options struct, may be NULL
 )
 {
-    mxArray* tmp;
 
+    //--------------------------------------------------------------------------
+    // check inputs
+    //--------------------------------------------------------------------------
+
+    mxArray *field ;
+    #define LEN 256
+    char string [LEN+1] ;
+
+    // true if input options struct is present 
+    bool present = (input != NULL) && !mxIsEmpty (input) && mxIsStruct (input) ;
+
+    //--------------------------------------------------------------------------
     // Get the column ordering
-    int64_t order = 1 ;     // default: COLAMD ordering
-    tmp = mxGetField(input, 0, "order");
-    if (tmp != NULL)
-    {
-        order = (int64_t) mxGetScalar(tmp);
-    }
+    //--------------------------------------------------------------------------
 
-    // Get the row pivoting scheme
-    int64_t piv = 3 ;       // default: diag pivoting with tolerance
-    tmp = mxGetField(input, 0, "pivot");
-    if (tmp != NULL)
+    option->order = SLIP_COLAMD ;     // default: COLAMD ordering
+    field = present ? mxGetField (input, 0, "order") : NULL ;
+    if (field != NULL)
     {
-        piv = (int64_t) mxGetScalar(tmp);
-    }
-
-    // tolerance for row partial pivoting
-    option->tol = 0.1 ;     // default tolerance is 0.1
-    if (piv == 3 || piv == 4)
-    {
-        tmp = mxGetField(input, 0, "tol");
-        if (tmp != NULL)
+        if (!mxIsChar (field)) mexErrMsgTxt ("option.order must be a string") ;
+        mxGetString (field, string, LEN) ;
+        if (MATCH (string, "none"))
         {
-            option->tol = mxGetScalar(tmp);
+            option->order = SLIP_NO_ORDERING ;  // None: A is factorized as-is
+        }
+        else if (MATCH (string, "colamd"))
+        {
+            option->order = SLIP_COLAMD ;       // COLAMD: Default
+        }
+        else if (MATCH (string, "amd"))
+        {
+            option->order = SLIP_AMD ;          // AMD
+        }
+        else
+        {
+            mexErrMsgTxt ("unknown option.order") ;
         }
     }
 
     //--------------------------------------------------------------------------
-    // Verify that the parameters are correct (use defaults if out of range)
+    // Get the row pivoting scheme
     //--------------------------------------------------------------------------
 
-    if (order <= 2 && order >= 0)
+    option->pivot = SLIP_TOL_SMALLEST ;     // default: diag pivoting with tol
+    field = present ? mxGetField (input, 0, "pivot") : NULL ;
+    if (field != NULL)
     {
-        option->order = (SLIP_col_order) order;
+        if (!mxIsChar (field)) mexErrMsgTxt ("option.pivot must be a string") ;
+        mxGetString (field, string, LEN) ;
+        if (MATCH (string, "smallest"))
+        {
+            option->pivot = SLIP_SMALLEST ;         // Smallest pivot
+        }
+        else if (MATCH (string, "diagonal"))
+        {
+            option->pivot = SLIP_DIAGONAL ;         // Diagonal pivoting
+        }
+        else if (MATCH (string, "first"))
+        {
+            option->pivot = SLIP_FIRST_NONZERO ;    // First nonzero in column
+        }
+        else if (MATCH (string, "tol smallest"))
+        {
+            option->pivot = SLIP_TOL_SMALLEST ;     // diag pivoting with tol
+                                                    // for smallest pivot
+        }
+        else if (MATCH (string, "tol largest"))
+        {
+            option->pivot = SLIP_TOL_LARGEST ;      // diag pivoting with tol
+                                                    // for largest pivot.
+        }
+        else if (MATCH (string, "largest"))
+        {
+            option->pivot = SLIP_LARGEST ;          // Largest pivot
+        }
+        else
+        {
+            mexErrMsgTxt ("unknown option.pivot") ;
+        }
     }
 
-    if (piv <= 5 && piv >= 0)
-    {
-        option->pivot = (SLIP_pivot) piv ;
-    }
+    //--------------------------------------------------------------------------
+    // tolerance for row partial pivoting
+    //--------------------------------------------------------------------------
 
-    if (option->tol > 1 || option->tol <= 0)
+    option->tol = 0.1 ;     // default tolerance is 0.1
+    if (option->pivot == SLIP_TOL_SMALLEST || option->pivot == SLIP_TOL_LARGEST)
     {
-        option->tol = 0.1 ;
+        field = present ? mxGetField (input, 0, "tol") : NULL ;
+        if (field != NULL)
+        {
+            option->tol = mxGetScalar (field) ;
+            if (option->tol > 1 || option->tol <= 0)
+            {
+                mexErrMsgTxt ("invalid option.tol, must be > 0 and <= 1") ;
+            }
+        }
     }
 }
 

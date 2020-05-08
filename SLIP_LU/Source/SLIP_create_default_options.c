@@ -17,6 +17,8 @@
 SLIP_options* SLIP_create_default_options ( void )
 {
 
+    if (!slip_initialized ( )) return (NULL) ;
+
     //--------------------------------------------------------------------------
     // allocate the option struct
     //--------------------------------------------------------------------------

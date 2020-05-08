@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 #define SLIP_FREE_ALL    \
-    SLIP_FREE (work) ;   \
+    SLIP_FREE (work) ;
 
 #include "slip_internal.h"
 
@@ -18,7 +18,26 @@ int compar (const void *x, const void *y)
     // compare two (i,j) tuples
     int64_t *a = (int64_t *) x ;
     int64_t *b = (int64_t *) y ;
-    // TODO
+    if (a [0] < b [0])
+    {
+        return (-1) ;
+    }
+    else if (a [0] > b [0])
+    {
+        return (1) ;
+    }
+    else if (a [1] < b [1])
+    {
+        return (-1) ;
+    }
+    else if (a [1] > b [1])
+    {
+        return (1) ;
+    }
+    else
+    {
+        return (0) ;
+    }
 }
 
 /* check the validity of a SLIP_matrix */
@@ -35,6 +54,8 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
     const SLIP_options* option
 )
 {
+
+    if (!slip_initialized ( )) return (SLIP_PANIC) ;
 
     //--------------------------------------------------------------------------
     // check the dimensions
@@ -342,7 +363,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
             //------------------------------------------------------------------
 
             // allocate workspace to check for duplicates
-            work = (int64_t *) SLIP_malloc (nz, 2 * sizeof (int64_t)) ;
+            work = (int64_t *) SLIP_malloc (nz * 2 * sizeof (int64_t)) ;
             if (work == NULL)
             {
                 // out of memory
@@ -351,14 +372,17 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                 return (SLIP_OUT_OF_MEMORY) ;
             }
 
+            // load the (i,j) indices of the triplets into the workspace
             for (int64_t p = 0 ; p < nz ; p++)
             {
                 work [2*p  ] = Aj [p] ;
                 work [2*p+1] = Ai [p] ;
             }
 
+            // sort the (i,j) indices
             qsort (work, nz, 2 * sizeof (int64_t), compar) ;
 
+            // check for duplicates
             for (int64_t p = 1 ; p < nz ; p++)
             {
                 int64_t this_j = work [2*p  ] ;

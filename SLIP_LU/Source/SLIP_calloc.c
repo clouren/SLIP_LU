@@ -18,6 +18,8 @@ void *SLIP_calloc
     size_t size         // size of each item
 )
 {
+    if (!slip_initialized ( )) return (NULL) ;
+
     return (SuiteSparse_calloc (nitems, size)) ;
 }
 

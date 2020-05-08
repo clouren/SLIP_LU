@@ -323,6 +323,10 @@ void slip_gmp_failure (int status) ;
 //                           Internal Functions
 // ============================================================================
 
+// check if SLIP_initialize* has been called
+bool slip_initialized ( void ) ;        // true if called, false if not
+void slip_set_initialized (bool s) ;    // set global initialzed flag to s
+
 /* Purpose: This function takes as input a mpz_t SLIP_matrix and divides
  * it by an mpz_t constant storing the solution in a mpq_t dense SLIP_matrix
  * array. This is used internally to divide the solution vector by the

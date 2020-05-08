@@ -57,6 +57,8 @@ SLIP_info SLIP_LU_factorize
     // check inputs
     //--------------------------------------------------------------------------
 
+    if (!slip_initialized ( )) return (SLIP_PANIC) ;
+
     SLIP_REQUIRE (A, SLIP_CSC, SLIP_MPZ) ;
     int64_t anz = SLIP_matrix_nnz (A, option) ;
 

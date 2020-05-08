@@ -71,6 +71,8 @@ SLIP_info SLIP_LU_solve     // solves the linear system LD^(-1)U x = b
     //--------------------------------------------------------------------------
 
     SLIP_info info ;
+    if (!slip_initialized ( )) return (SLIP_PANIC) ;
+
     SLIP_REQUIRE (b,    SLIP_DENSE, SLIP_MPZ) ;
     SLIP_REQUIRE (A,    SLIP_CSC,   SLIP_MPZ) ;
     SLIP_REQUIRE (L,    SLIP_CSC,   SLIP_MPZ) ;

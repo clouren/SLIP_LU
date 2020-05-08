@@ -18,7 +18,7 @@
     ok = method ;                       \
     if (ok != SLIP_OK)                  \
     {                                   \
-        printf ("Error: line %d file %s\n", __LINE__, __FILE__) ; \
+        printf ("Error: %d line %d file %s\n", ok, __LINE__, __FILE__) ; \
         FREE_WORKSPACE ;                \
         return 0 ;                      \
     }                                   \
@@ -34,8 +34,9 @@ SLIP_info SLIP_process_command_line //processes the command line
     SLIP_options* option,   // struct containing the command options
     char** mat_name,        // Name of the matrix to be read in
     char** rhs_name,        // Name of the RHS vector to be read in
-    SLIP_type *rat          // data type of output solution:
+    SLIP_type *rat,         // data type of output solution:
                             // 1:SLIP_MPZ (default), 2:SLIP_FP64, 3:SLIP_MPFR
+    bool *help
 );
 
 /* Purpose: This function prints out the user specified/default options*/

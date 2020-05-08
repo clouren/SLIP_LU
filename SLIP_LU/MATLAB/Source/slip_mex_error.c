@@ -17,17 +17,27 @@ void slip_mex_error
     SLIP_info status
 )
 {
-    if (status == SLIP_OUT_OF_MEMORY)
+    
+    switch (status)
     {
-        mexErrMsgTxt("Error, Out of memory");
-    }
-    else if (status == SLIP_SINGULAR)
-    {
-        mexErrMsgTxt("Error, Input matrix is singular");
-    }
-    else if (status == SLIP_INCORRECT_INPUT)
-    {
-        mexErrMsgTxt("Error, Input is incorrect");
+        case SLIP_OK :                   // all is well
+            return ;
+
+        case SLIP_OUT_OF_MEMORY :        // out of memory
+            mexErrMsgTxt ("out of memory") ;
+
+        case SLIP_SINGULAR :             // the input matrix A is singular
+            mexErrMsgTxt ("input matrix is singular") ;
+
+        case SLIP_INCORRECT_INPUT :      // one or more input arguments are incorrect
+            mexErrMsgTxt ("invalid inputs") ;
+
+        case SLIP_INCORRECT :            // The solution is incorrect
+            mexErrMsgTxt ("result invalid") ;
+
+        case SLIP_PANIC :                // SLIP_LU used without proper initialization
+        default : 
+            mexErrMsgTxt ("unknown error") ;
     }
 }
 

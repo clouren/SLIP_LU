@@ -17,7 +17,7 @@ void *SLIP_malloc
     size_t size        // size of memory space to allocate
 )
 {
-    // TODO if SLIP_initialize not called yet, return NULL
+    if (!slip_initialized ( )) return (NULL) ;
     return (SuiteSparse_malloc (1, size)) ;
 }
 

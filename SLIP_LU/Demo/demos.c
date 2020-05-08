@@ -99,19 +99,21 @@ SLIP_info SLIP_process_command_line //processes the command line
     SLIP_options* option,   // options (cannot be NULL)
     char** mat_name,        // Name of the matrix to be read in
     char** rhs_name,        // Name of the RHS vector to be read in
-    SLIP_type *rat          // data type of output solution:
+    SLIP_type *rat,         // data type of output solution:
                             // 1:SLIP_MPZ (default), 2:SLIP_FP64, 3:SLIP_MPFR
+    bool *help
 )
 {
     (*rat) = SLIP_MPZ ;
 
+    (*help) = false ;
     for (int i = 1; i < argc; i++)
     {
         char* arg = (char*) argv[i];
         if ( strcmp(arg,"help") == 0)
         {
             SLIP_show_usage();
-            return SLIP_INCORRECT_INPUT;
+            (*help) = true ;
         }
         else if ( strcmp(arg,"p") == 0 || strcmp(arg,"piv") == 0)
         {
@@ -266,18 +268,18 @@ SLIP_info SLIP_process_command_line //processes the command line
 /* Purpose: This function shows the usage of the code.*/
 void SLIP_show_usage() //display the usage of the code
 {
-    printf("\n\n\t\t****USAGE****"
-    "\n\t./SLIP_LU followed by:"
-    "\n\tc: Indicates soln will be checked\
-     \n\tp (or piv) 0~5 : indicate type of pivoting"
-    "\n\tcol or q: column order used: 0: none, 1: COLAMD, 2: AMD"
-    "\n\tt or tol: tolerance parameter\
-     \n\to2 or out2: output printed to screen"
-    "\n\tf or file: filenames. must be of format MATRIX_NAME RHS_NAME"
-    "\n\to or out: output will be printed to file. Must be followed by\
-         1: rational, 2: double, 3 PREC: float of precision PREC"
-    "\n****REFER TO README.txt FOR DETAILED DESCRIPTION OF INPUT PARAMETERS****\
-     \n");
+    printf("\n"
+    "\n./SLIP_LU followed by:"
+    "\n   c: indicates the solution will be checked"
+    "\n   p (or piv) 0 to 5 : indicates the type of pivoting"
+    "\n   col or q: column order used: 0: none, 1: COLAMD, 2: AMD"
+    "\n   t or tol: tolerance parameter"
+    "\n   o2 or out2: output printed to screen"
+    "\n   f or file: filenames. must be of format MATRIX_NAME RHS_NAME"
+    "\n   o or out: output will be printed to file. Must be followed by"
+    "\n      1: rational, 2: double, 3 PREC: float of precision PREC"
+    "\nRefer to SLIP_LU/Doc for detailed description of input parameters."
+    "\n");
 }
 
 //------------------------------------------------------------------------------

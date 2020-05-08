@@ -27,7 +27,8 @@ or
     Foundation; either version 2 of the License, or (at your option) any
     later version.
 
-or both in parallel, as here.
+or both in parallel, as here.  Each distributor and end-user of SLIP LU may
+select either license, at their option.
 
 SLIP LU is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY

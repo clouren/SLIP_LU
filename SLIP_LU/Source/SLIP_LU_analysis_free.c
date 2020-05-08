@@ -16,14 +16,20 @@
 
 #include "slip_internal.h"
 
-void SLIP_LU_analysis_free
+SLIP_info SLIP_LU_analysis_free
 (
     SLIP_LU_analysis **S, // Structure to be deleted
     const SLIP_options *option
 )
 {
-    if ((S == NULL) || (*S == NULL)) {return;}
-    SLIP_FREE((*S)->q);
-    SLIP_FREE(*S);
+    if (!slip_initialized ( )) return (SLIP_PANIC) ;
+
+    if ((S != NULL) && (*S != NULL))
+    {
+        SLIP_FREE ((*S)->q) ;
+        SLIP_FREE (*S) ;
+    }
+
+    return (SLIP_OK) ;
 }
 

@@ -35,29 +35,43 @@ if (exist ('ssget') ~= 0)
     fprintf ('.') ;
 end
 
+orderings = { 'none', 'colamd', 'amd' } ;
+pivotings = { 'smallest', 'diagonal', 'first', ...
+    'tol smallest', 'tol largest', 'largest' } ;
+
 for n = [1 10 100]
     for density = [0.001 0.05 0.5 1]
-        fprintf ('.') ;
+
+        % construct a well-conditioned problem to solve
         A = sprand(n,n,density);
-        A = A+A';
-        % Want a numerically stable A
-        if (condest(A) > 1e6)
-            A = A + speye (n) ;
-        end
+        A = A+A' + n * speye (n) ;
         b = rand(n,1);
-        x = SLIP_LU(A,b);
-        x2 = A\b;
-        err = norm(x-x2)/norm(x);
-        maxerr = max (maxerr, err) ;
 
-        % now convert to an integer problem (x will not be integer)
-        A = floor (2^20 * A) ;
-        b = floor (2^20 * b) ;
-        x = SLIP_LU(A,b);
-        x2 = A\b;
-        err = norm(x-x2)/norm(x);
-        maxerr = max (maxerr, err) ;
+        for korder = 1:length (orderings)
+            for kpiv = 1:length (pivotings)
+                for tol = [0.1 0.5]
 
+                    clear option
+                    option.order = orderings {korder} ;
+                    option.pivot = pivotings {kpiv} ;
+                    option.tol   = tol ;
+
+                    fprintf ('.') ;
+                    x = SLIP_LU(A,b, option);
+                    x2 = A\b;
+                    err = norm(x-x2)/norm(x);
+                    maxerr = max (maxerr, err) ;
+
+                    % now convert to an integer problem (x will not be integer)
+                    A = floor (2^20 * A) ;
+                    b = floor (2^20 * b) ;
+                    x = SLIP_LU(A,b, option);
+                    x2 = A\b;
+                    err = norm(x-x2)/norm(x);
+                    maxerr = max (maxerr, err) ;
+                end
+            end
+        end
     end
 end
 

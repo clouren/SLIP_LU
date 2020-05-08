@@ -41,18 +41,11 @@ void SLIP_gmp_mex_free
     size_t a    // Size
 );
 
-void slip_check_input
-(
-    const mxArray * input [],   // The MATLAB inputs
-    int nargin                  // # of input arguments
-) ;
-
 void slip_get_matlab_options
 (
-    SLIP_options* option,  // Control parameters
-    const mxArray* input   // The input options from MATLAB interface
-);
-
+    SLIP_options* option,   // Control parameters (must not be NULL)
+    const mxArray* input    // options struct, may be NULL
+) ;
 
 /* Purpose: convert mwIndex* array to int64_t* array
  */

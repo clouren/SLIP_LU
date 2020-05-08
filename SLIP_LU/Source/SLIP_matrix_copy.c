@@ -43,6 +43,8 @@ SLIP_info SLIP_matrix_copy
     //--------------------------------------------------------------------------
 
     SLIP_info info ;
+    if (!slip_initialized ( )) return (SLIP_PANIC) ;
+
     int64_t nz = SLIP_matrix_nnz (A, option) ;
     if (C_handle == NULL || nz < 0 ||
       //checked in SLIP_matrix_nnz

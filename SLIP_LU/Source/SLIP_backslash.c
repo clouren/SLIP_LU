@@ -62,6 +62,7 @@ SLIP_info SLIP_backslash
     //-------------------------------------------------------------------------
 
     SLIP_info info ;
+    if (!slip_initialized ( )) return (SLIP_PANIC) ;
 
     if (X_handle == NULL)
     {

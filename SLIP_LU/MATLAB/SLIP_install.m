@@ -17,6 +17,11 @@ function SLIP_install
 % Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 % SLIP_LU/License for the license.
 
+help SLIP_LU
+
+fprintf ('\n------------------------------------------------------------\n') ;
+fprintf ('Compiling the SLIP LU mexFunction:\n') ;
+
 % Find all source files and add them to the src string
 src = '';
 path = './Source/';
@@ -57,7 +62,7 @@ end
 % Now, we evaluate each one
 eval(m1);
 
-fprintf('\nMex files installed, now we test\n')
+fprintf('\nMex file compiled and installed.  Running tests:\n')
 
 % Efficient testing
 SLIP_test;

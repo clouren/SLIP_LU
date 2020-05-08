@@ -1,5 +1,5 @@
-This software package is used to solve a sparse systems of linear equations
-exactly using the SLIP LU factorization.
+SLIP_LU is software package used to solve a sparse systems of linear equations
+exactly using the Sparse Left-looking Integer-Preserving LU factorization.
 
 *********SLIPLU*********
 Purpose: Exactly solve a sparse system of linear equations using a given input
@@ -8,17 +8,17 @@ Purpose: Exactly solve a sparse system of linear equations using a given input
          full precision rational numbers. If you intend to use SLIP LU within
          another program, please refer to examples for help with this.
 
-SLIPLU Followed by the listed args:
+./SLIPLU followed by the listed args:
 
-help. e.g., SLIPLU help, which indicates SLIPLU to print to guideline
+help. e.g., ./SLIPLU help, which indicates SLIPLU to print to guideline
 for using this function.
 
-f (or file) Filename. e.g., SLIPLU f MATRIX_NAME RHS_NAME, which indicates
+f (or file) Filename. e.g., ./SLIPLU f MATRIX_NAME RHS_NAME, which indicates
 SLIPLU will read matrix from MATRIX_NAME and right hand side from RHS_NAME.
 For this demo, the matrix is stored in a triplet format. Please refer to
 SLIP_LU/ExampleMats for some examples
 
-p (or piv) Pivot_param. e.g., SLIPLU p 0, which inidcates SLIPLU will use
+p (or piv) Pivot_param. e.g., ./SLIPLU p 0, which indicates SLIPLU will use
 smallest pivot for pivot scheme. Other available options are listed
 as follows:
        0: Smallest pivot
@@ -28,13 +28,13 @@ as follows:
        4: Diagonal pivoting with tolerance for largest pivot
        5: Largest pivot
 
-q (or col) Column_order_param. e.g., SLIPLU q 0, which indicates SLIPLU
+q (or col) Column_order_param. e.g., ./SLIPLU q 0, which indicates SLIPLU
 will use COLAMD for column ordering. Other available options are:
        0: None: Not recommended for sparse matrices
        1: COLAMD: Default
        2: AMD
 
-t (or tol) tolerance_param. e.g., SLIPLU t 1e-10, which indicates SLIPLU
+t (or tol) tolerance_param. e.g., ./SLIPLU t 1e-10, which indicates SLIPLU
 will use 1e-10 as the tolerance for pivot scheme 3 and 4 mentioned above.
 Therefore, it is only necessary if pivot scheme 3 or 4 is used.
 
@@ -54,3 +54,4 @@ Purpose: Demonstrate the simple interface of SLIP LU for a randomly generated
 
 *********example2*********
 Purpose: Demonstrate the simple interface of SLIP LU for a matrix to be read in
+

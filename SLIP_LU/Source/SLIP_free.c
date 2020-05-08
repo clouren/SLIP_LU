@@ -17,6 +17,7 @@ void SLIP_free
     void *p         // pointer to memory space to free
 )
 {
+    if (!slip_initialized ( )) return ;
     SuiteSparse_free (p) ;
 }
 

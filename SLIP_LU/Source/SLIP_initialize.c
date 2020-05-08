@@ -12,12 +12,37 @@
 
 #include "slip_internal.h"
 
-void SLIP_initialize ( void )
-{
-    // TODO if global 'SLIP_initialize_has_been_called' flag is true: error
+//------------------------------------------------------------------------------
+// global variable access
+//------------------------------------------------------------------------------
 
-    // TODO set global 'SLIP_initialize_has_been_called' flag to true
+// a global variable, but only accessible within this file.
+extern bool slip_initialize_has_been_called ;
+
+bool slip_initialize_has_been_called = false ;
+
+bool slip_initialized ( void )
+{
+    return (slip_initialize_has_been_called) ;
+}
+
+void slip_set_initialized (bool s)
+{
+    slip_initialize_has_been_called = s ;
+}
+
+//------------------------------------------------------------------------------
+// SLIP_initialize
+//------------------------------------------------------------------------------
+
+SLIP_info SLIP_initialize ( void )
+{
+    if (slip_initialized ( )) return (SLIP_PANIC) ;
+
     mp_set_memory_functions (slip_gmp_allocate, slip_gmp_reallocate,
         slip_gmp_free) ;
+
+    slip_set_initialized (true) ;
+    return (SLIP_OK) ;
 }
 

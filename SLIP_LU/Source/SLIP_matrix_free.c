@@ -23,6 +23,8 @@ SLIP_info SLIP_matrix_free
     // check inputs
     //--------------------------------------------------------------------------
 
+    if (!slip_initialized ( )) return (SLIP_PANIC) ;
+
     if (A_handle == NULL || (*A_handle) == NULL)
     {
         // nothing to free (not an error)

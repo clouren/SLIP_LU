@@ -152,8 +152,10 @@ int main (int argc, char* argv[])
     // option->order = SLIP_AMD.
     //--------------------------------------------------------------------------
 
+    bool help ;
     OK(SLIP_process_command_line(argc, argv, option,
-        &mat_name, &rhs_name, &rat));
+        &mat_name, &rhs_name, &rat, &help));
+    if (help) return (0) ;
 
     //--------------------------------------------------------------------------
     // In this demo file, we now read in the A and b matrices from external

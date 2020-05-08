@@ -169,7 +169,6 @@ typedef enum
     SLIP_INCORRECT_INPUT = -3,  // one or more input arguments are incorrect
     SLIP_INCORRECT = -4,        // The solution is incorrect
     SLIP_PANIC = -5             // SLIP_LU used without proper initialization
-    // TODO add this check to the SLIP_ user codes (Tim)
 }
 SLIP_info ;
 
@@ -436,7 +435,7 @@ typedef struct
 // The symbolic analysis object is created by SLIP_LU_analyze.
 
 // SLIP_LU_analysis_free frees the SLIP_LU_analysis object.
-void SLIP_LU_analysis_free        
+SLIP_info SLIP_LU_analysis_free        
 (
     SLIP_LU_analysis **S, // Structure to be deleted
     const SLIP_options *option
@@ -516,13 +515,13 @@ void *SLIP_realloc      // pointer to reallocated block, or original block
 
 // SLIP_initialize: initializes the working evironment for SLIP LU library.
 // It must be called prior to calling any other SLIP_* function.
-void SLIP_initialize (void) ;
+SLIP_info SLIP_initialize (void) ;
 
 // SLIP_initialize_expert is the same as SLIP_initialize, except that it allows
 // for a redefinition of custom memory functions that are used for SLIP_LU and
 // GMP.  The four inputs to this function are pointers to four functions with
 // the same signatures as the ANSI C malloc, calloc, realloc, and free.
-void SLIP_initialize_expert
+SLIP_info SLIP_initialize_expert
 (
     void* (*MyMalloc) (size_t),             // user-defined malloc
     void* (*MyCalloc) (size_t, size_t),     // user-defined calloc
@@ -533,7 +532,7 @@ void SLIP_initialize_expert
 // SLIP_finalize: This function finalizes the working evironment for SLIP LU
 // library, and frees any internal workspace created by SLIP_LU.  It must be
 // called as the last SLIP_* function called.
-void SLIP_finalize (void) ;
+SLIP_info SLIP_finalize (void) ;
 
 //------------------------------------------------------------------------------
 // Primary factorization & solve routines

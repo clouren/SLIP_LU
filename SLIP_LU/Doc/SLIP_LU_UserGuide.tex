@@ -15,15 +15,13 @@
 \usepackage{framed}
 \usepackage{mdframed}
 \hypersetup{
-     colorlinks = true,
-     citecolor = black,
-     linkcolor = black,
-     urlcolor = Maroon
+       colorlinks = true,
+       citecolor = blue,
+       linkcolor = blue,
+       urlcolor = Maroon
 }
-% \usepackage[margin=1in]{geometry}
 \usepackage{geometry}
 \theoremstyle{definition}
-% \setlength{\parskip}{1em}
 
 \newcommand{\N}{\mathbf{N}}
 \newcommand{\R}{\mathbf{R}}
@@ -37,7 +35,7 @@
 \textbf{User Guide for SLIP LU, A Sparse Left-Looking Integer
 Preserving LU Factorization} \\
 \vspace{5mm}
-Version 1.0.0, April 2020 % VERSION
+Version 1.0.0, May 2020 % VERSION
 \vspace{20mm}
 
 Christopher Lourenco, Jinhao Chen, \\ Erick Moreno-Centeno, Timothy A. Davis \\
@@ -54,18 +52,12 @@ Contact Information: Contact Chris Lourenco, \href{mailto:chrisjlourenco@gmail.c
 \end{center}
 
 \newpage
-
-% Keep table of contents black
-% {
-% \small
-% \hypersetup{ linkcolor = black}
 \tableofcontents
-% }
 
 \newpage
 
 %-------------------------------------------------------------------------------
-\section{Summary}
+\section{Overview}
 \label{s:intro}
 %-------------------------------------------------------------------------------
 
@@ -97,11 +89,12 @@ dense matrix with entries in \verb|mpz_t| type).  However, the original data
 type of entries in the user's input matrix $A$ and right hand side (RHS)
 vectors $b$ can be any one of: \verb|double|, \verb|int64_t|, \verb|mpq_t|,
 \verb|mpz_t|, or \verb|mpfr_t|, and their format(s) are allowed to be 
-CSC, sparse triplet or dense. A discussion of how to use this data types, and 
+CSC, sparse triplet or dense. A discussion of how to use these
+matrix formats and data types in the \verb|SLIP_matrix|, and to
 perform conversions from the user's available format and type is given 
 in Section \ref{ss:populate_Ab}.
 
-The matrices $L$ and $U$ are computed using internal, integer-preserving
+The matrices $L$ and $U$ are computed using integer-preserving
 routines with the big integer (\verb|mpz_t|) data types from the GMP Library
 \cite{granlund2015gnu}. The matrices $L$ and $U$ are computed one column at a
 time, where each column is computed via the sparse REF triangular solve
@@ -126,25 +119,26 @@ discussion of how to select these permutations prior to factorization is given
 in Section \ref{s:primary}.
 
 Once the factorization $L D U = P A Q $ is computed, the solution vector 
-$\mathbf{x}$ is computed via sparse REF forward and backward substitution. 
+$x$ is computed via sparse REF forward and backward substitution. 
 The forward substitution is a variant of the sparse REF triangular solve 
 discussed above. The backward substitution is a typical column oriented 
-sparse backward substitution. Both of these routines require $\mathbf{b}$ 
+sparse backward substitution. Both of these routines require $b$ 
 stored as a dense \verb|mpz_t| matrix. At the conclusion of the forward and 
-backward substitution routines, the final solution vector(s) $\mathbf{x}$ 
+backward substitution routines, the final solution vector(s) $x$ 
 are guaranteed to be exact; thus are stored as a dense \verb|mpq_t| matrix.
 
 The final phase of SLIP LU comprises output routines. As mentioned above, the
-final solution $\mathbf{x}$ is by default a dense \verb|mpq_t| matrix. Using
-the provided matrix copy functions, the solution vector(s) can be returned in
-either this format, or any combination of the set (CSC, triplet, dense)
-$\times$ (\verb|mpq_t| , \verb|mpfr_t| or double).  One key advantage of
-utilizing SLIP LU with floating-point output is that the solution is guaranteed
-to be exact until this final conversion; meaning that roundoff errors are only
-introduced in the final conversion from rational numbers. Thus, the solution
-$\mathbf{x}$ output in \verb|double| precision are accurate to machine roundoff
-(approximately $10^{-16}$) and SLIP LU utilizes higher precision for the MPFR
-output; thus it is also accurate to user specified precision.
+final solution $x$ is by default a dense \verb|mpq_t| matrix. Using the
+provided matrix copy functions, the solution vector(s) can be returned in
+either this format, or any of the 15 combinations of the set (CSC, triplet,
+dense) $\times$ (\verb|mpz_t|, \verb|mpq_t| , \verb|mpfr_t|, \verb|int64_t|, or
+\verb|double|).  One key advantage of utilizing SLIP LU with floating-point
+output is that the solution is guaranteed to be exact until this final
+conversion; meaning that roundoff errors are only introduced in the final
+conversion from rational numbers. Thus, the solution $x$ output in
+\verb|double| precision are accurate to machine roundoff (approximately
+$10^{-16}$) and SLIP LU utilizes higher precision for the MPFR output; thus it
+is also accurate to user specified precision.
 
 Internally the vast majority of routines expect the input matrix $A$ to be stored
 in CSC format. This data structure stores the matrix $A$ as a sequence of three
@@ -180,11 +174,11 @@ A = \begin{bmatrix}
 \end{bmatrix}
 \]
 
-{\small
-\noindent \verb|A->p = [0, 3, 5, 8, 11]| \\
-\verb|A->i     = [0, 1, 2, 2, 3, 1, 2, 3, 0,  1, 2]| \\
-\verb|A->x.mpz = [1, 2, 7, 1, 2, 4, 1, 3, 1, 12, 1]|
-}
+\begin{verbatim}
+A->p     = [0, 3, 5, 8, 11]
+A->i     = [0, 1, 2, 2, 3, 1, 2, 3, 0,  1, 2]
+A->x.mpz = [1, 2, 7, 1, 2, 4, 1, 3, 1, 12, 1]
+\end{verbatim}
 
 For example, the last column appears in positions 8 to 10 of \verb|A->i| and
 \verb|A->x.mpz|, with row indices 0, 1, and 2, and values $a_{03}=1$,
@@ -203,11 +197,11 @@ Chen, Erick Moreno-Centeno, and Timothy Davis.
 \href{mailto:davis@tamu.edu}{davis@tamu.edu}, or
 \href{DrTimothyAldenDavis@gmail.com}{DrTimothyAldenDavis@gmail.com}
 
-\noindent \textbf{Licence:} This software package is dual licensed under the
+\noindent \textbf{License:} This software package is dual licensed under the
 GNU General Public License version 2 or the GNU Lesser General Public License
-version 3. Details of this license can be seen in the directory
-SLIP\_LU/License/license.txt. In short, SLIP LU is free to use for research
-purposes.  For a commercial license, please contact the authors.
+version 3. Details of this license can be seen in
+\verb|SLIP_LU/License/license.txt|.  For alternative licenses, please contact
+the authors.
 
 \noindent \textbf{Location:} \url{https://github.com/clouren/SLIP_LU} and
 \url{www.suitesparse.com}
@@ -261,77 +255,39 @@ adding \verb|addpath| commands (type doc startup and doc \verb|addpath| for
 more information).
 
 %-------------------------------------------------------------------------------
-\section{SLIP LU Data Structures} \label{s:Structures}
+\section{Managing the SLIP LU environment} \label{s:user:setup}
 %-------------------------------------------------------------------------------
 
-Within the SLIP LU package, three major data structures are used:
-\verb|SLIP_options|, \verb|SLIP_matrix|, and
-\verb|SLIP_LU_analysis|. We describe them briefly below and more in detail in
-this section.
+%-------------------------------------------------------------------------------
+\cprotect\subsection{\verb|SLIP_LU_VERSION|: the software package version}
+%-------------------------------------------------------------------------------
 
-\begin{itemize}
-    \item \verb|SLIP_options|: Contains numerous command parameters. Default
-    values of these parameters will lead to good performance for most users.
-    However, modifying this struct allows a user to control column orderings,
-    pivoting schemes, and other components of the factorization.
-
-    \item \verb|SLIP_matrix|: A matrix structure for 15 matrices types used
-    in SLIP LU. These matrices can be in CSC, sparse triplet or dense form
-    with \verb|mpz_t|, \verb|mpq_t|, \verb|mpfr_t|, \verb|int64_t| or
-    \verb|double| entries.
-
-    \item \verb|SLIP_LU_analysis|: A symbolic analysis struct. Contains the
-    column permutation and guesses for the number of nonzeros in $L$ and $U$.
-\end{itemize}
-
-Furthermore, five enumerated types (\verb|enum|) are defined and used:
-\verb|SLIP_info|, \verb|SLIP_pivot|, \verb|SLIP_col_order|, \verb|SLIP_kind|,
-and \verb|SLIP_type|. Again we briefly
-describe them below and in more detail later in this section.
-
-\begin{itemize}
-    \item \verb|SLIP_info|: Status codes for SLIP LU. Most function return
-    a status indicating success or, in the case of failure, what went wrong.
-    \item \verb|SLIP_pivot|: Types of pivoting scheme available for the user.
-    \item \verb|SLIP_col_order|: Type of column preordering available for the
-    user.
-    \item \verb|SLIP_kind|: Formats of matrix available for the user.
-    \item \verb|SLIP_type|: Data types of entries in matrix available for the user.
-\end{itemize}
-
-Lastly, SLIP LU defines the following strings with \verb|#define|. Refer to
+SLIP LU defines the following strings with \verb|#define|. Refer to
 the \verb|SLIP_LU.h| file for details.
 
 %----------------------------------------
-% \begin{table*}[htbp]
 \begin{center}
 \begin{tabular}{ll}
 \hline
 Macro & purpose \\
 \hline
-\verb|SLIP_LU_VERSION|       &  current version of the code\\
-\verb|SLIP_LU_VERSION_MAJOR| &  major version of the code\\
+\verb|SLIP_LU_VERSION|       & current version of the code (as a string)\\
+\verb|SLIP_LU_VERSION_MAJOR| & major version of the code\\
 \verb|SLIP_LU_VERSION_MINOR| & minor version of the code   \\
-\verb|SLIP_LU_VERSION_SUB|   &  sub version of the code\\
+\verb|SLIP_LU_VERSION_SUB|   & sub version of the code\\
 \hline
 \end{tabular}
-% \label{tab:SLIP_macro}
 \end{center}
-% \end{table*}
-
-The remainder of this section describes each of these data structures and
-enumerated types.
 
 %-------------------------------------------------------------------------------
 \cprotect\subsection{\verb|SLIP_info|: status code returned by SLIP LU}
 \label{ss:SLIP_info}
 %-------------------------------------------------------------------------------
 
-Most of SLIP LU functions return its status to the caller as its return value,
+Most SLIP LU functions return their status to the caller as their return value,
 an enumerated type called \verb|SLIP_info|. All current possible values for
 \verb|SLIP_info| are listed as follows:
 
-% \begin{table*}[htbp]
 \begin{center}
 \begin{tabular}{rll}
 \hline
@@ -345,12 +301,259 @@ an enumerated type called \verb|SLIP_info|. All current possible values for
 \hline
     -4& \verb|SLIP_INCORRECT|& The solution is incorrect.\\
 \hline
-	-5& \verb|SLIP_UNINITIALIZED| & SLIP LU environment was not initialized \\
-	\hline
+    -5& \verb|SLIP_PANIC| & SLIP LU environment error \\
+\hline
 \end{tabular}
-% \label{tab:SLIP_info}
 \end{center}
-% \end{table*}
+
+Either \verb|SLIP_initialize| or \verb|SLIP_initialize_expert| (but not both)
+must be called prior to using any other SLIP LU function.  \verb|SLIP_finalize|
+must be called as the last SLIP LU function.
+
+Subsequent SLIP LU sessions can be restarted after a call to
+\verb|SLIP_finalize|, by calling either \verb|SLIP_initialize| or
+\verb|SLIP_initialize_expert| (but not both), followed by a final call to
+\verb|SLIP_finalize| when finished.
+
+%-------------------------------------------------------------------------------
+\cprotect\subsection{\verb|SLIP_initialize|: initialize the working environment}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    SLIP_info SLIP_initialize
+    (
+        void
+    ) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb|SLIP_initialize| initializes the working environment for SLIP LU
+functions.  SLIP LU utilizes a specialized memory management scheme in order to
+prevent potential memory failures caused by GMP and MPFR libraries.  Either
+this function or \verb|SLIP_initialize_expert| must be called prior to using
+any other function in the library.  Returns \verb|SLIP_PANIC| if SLIP LU has
+already been initialized, or \verb|SLIP_OK| if successful.
+
+%-------------------------------------------------------------------------------
+\cprotect\subsection{\verb|SLIP_initialize_expert|: initialize environment
+(expert version)}\label{ss:SLIP_initialize_expert}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    SLIP_info SLIP_initialize_expert
+    (
+        void* (*MyMalloc) (size_t),             // user-defined malloc
+        void* (*MyCalloc) (size_t, size_t),     // user-defined calloc
+        void* (*MyRealloc) (void *, size_t),    // user-defined realloc
+        void  (*MyFree) (void *)                // user-defined free
+    ) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb|SLIP_initialize_expert| is the same as \verb|SLIP_initialize| except that
+it allows for a redefinition of custom memory functions that are used for SLIP
+LU and GMP/MPFR.  The four inputs to this function are pointers to four
+functions with the same signatures as the ANSI C \verb'malloc', \verb'calloc',
+\verb'realloc', and \verb'free' functions.  That is:
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    #include <stdlib.h>
+    void *malloc (size_t size) ;
+    void *calloc (size_t nmemb, size_t size) ;
+    void *realloc (void *ptr, size_t size) ;
+    void free (void *ptr) ;
+\end{verbatim}
+} \end{mdframed}
+
+Returns \verb|SLIP_PANIC| if SLIP LU has already been initialized,
+or \verb|SLIP_OK| if successful.
+
+%-------------------------------------------------------------------------------
+\cprotect\subsection{\verb|SLIP_finalize|: free the working environment}
+\label{ss:SLIP_finalize}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    SLIP_info SLIP_finalize
+    (
+        void
+    ) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb|SLIP_finalize| finalizes the working environment for SLIP LU
+library, and frees any internal workspace created by SLIP LU.  It must be
+called as the last \verb|SLIP_*| function called, except that a subsequent
+call to \verb|SLIP_initialize*| may be used to start another SLIP LU session.
+Returns \verb|SLIP_PANIC| if SLIP LU has not been initialized,
+or \verb|SLIP_OK| if successful.
+
+%-------------------------------------------------------------------------------
+\section{Memory Management} \label{s:user:memmanag}
+%-------------------------------------------------------------------------------
+
+The routines in this section are used to allocate and free memory for the data
+structures used in SLIP LU.  By default, SLIP LU relies on the SuiteSparse
+memory management functions, \verb|SuiteSparse_malloc|,
+\verb|SuiteSparse_calloc|, \verb|SuiteSparse_realloc|, and
+\verb|SuiteSparse_free|.  By default, those functions rely on the ANSI C
+\verb|malloc|, \verb|calloc|, \verb|realloc|, and \verb|free|, but this may be
+changed by initializing the SLIP LU environment with
+\verb|SLIP_initialize_expert|.
+
+%-------------------------------------------------------------------------------
+\newpage
+\cprotect\subsection{\verb|SLIP_calloc|: allocate initialized memory}
+\label{ss:SLIP_calloc}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    void *SLIP_calloc 
+    ( 
+        size_t nitems,      // number of items to allocate 
+        size_t size         // size of each item 
+    ) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb|SLIP_calloc| allocates a block of memory for an array of \verb|nitems|
+elements, each of them \verb|size| bytes long, and initializes all its bits to
+zero. If any input is less than 1, it is treated as if equal to 1. If the
+function failed to allocate the requested block of memory, then a \verb|NULL|
+pointer is returned.
+Returns \verb|NULL| if SLIP LU has not been initialized.
+
+%-------------------------------------------------------------------------------
+\cprotect\subsection{\verb|SLIP_malloc|: allocate uninitialized memory}
+\label{ss:SLIP_malloc}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    void *SLIP_malloc
+    (
+        size_t size        // size of memory space to allocate
+    ) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb|SLIP_malloc| allocates a block of \verb|size| bytes of memory, returning
+a pointer to the beginning of the block. The content of the newly allocated
+block of memory is not initialized, remaining with indeterminate values.
+If \verb|size| is less than 1, it is treated as if equal to 1. If the function
+fails to allocate the requested block of memory, then a \verb|NULL| pointer is
+returned.
+Returns \verb|NULL| if SLIP LU has not been initialized.
+
+%-------------------------------------------------------------------------------
+\cprotect\subsection{\verb|SLIP_realloc|: resize allocated memory}
+\label{ss:SLIP_realloc}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    void *SLIP_realloc      // pointer to reallocated block, or original block
+                            // if the realloc failed
+    (
+        int64_t nitems_new,     // new number of items in the object
+        int64_t nitems_old,     // old number of items in the object
+        size_t size_of_item,    // sizeof each item
+        void *p,                // old object to reallocate
+        bool *ok                // true if success, false on failure
+    ) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb|SLIP_realloc| is a wrapper for realloc.  If \verb|p| is non-\verb|NULL| on
+input, it points to a previously allocated object of size \verb|nitems_old|
+$\times$ \verb|size_of_item|.  The object is reallocated to be of size
+\verb|nitems_new| $\times$ \verb|size_of_item|.  If \verb|p| is \verb|NULL| on input,
+then a new object of that size is allocated.  On success, a pointer to the new
+object is returned.  Returns \verb|ok| as \verb|false| if SLIP LU has not been
+initialized.
+
+If the reallocation fails, \verb|p| is not modified, and \verb|ok| is returned
+as \verb|false| to indicate that the reallocation failed.  If the size
+decreases or remains the same, then the method always succeeds (\verb|ok| is
+returned as \verb|true|), unless SLIP LU has not been initialized..
+
+Typical usage:  the following code fragment allocates an array of 10
+\verb|int|'s, and then increases the size of the array to 20 \verb|int|'s.  If
+the \verb|SLIP_malloc| succeeds but the \verb|SLIP_realloc| fails, then the
+array remains unmodified, of size 10.
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+     int *p ;
+     p = SLIP_malloc (10 * sizeof (int)) ;
+     if (p == NULL) { error here ... }
+     printf ("p points to an array of size 10 * sizeof (int)\n") ;
+     bool ok ;
+     p = SLIP_realloc (20, 10, sizeof (int), p, &ok) ;
+     if (ok) printf ("p has size 20 * sizeof (int)\n") ;
+     else printf ("realloc failed; p still has size 10 * sizeof (int)\n") ;
+     SLIP_free (p) ;
+\end{verbatim}
+} \end{mdframed}
+
+%-------------------------------------------------------------------------------
+\cprotect\subsection{\verb|SLIP_free|: free allocated memory}
+\label{ss:SLIP_free}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    void SLIP_free
+    (
+        void *p         // Pointer to memory space to free
+    ) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb|SLIP_free| deallocates the memory previously allocated by a call to
+\verb|SLIP_calloc|, \verb|SLIP_malloc|, or \verb|SLIP_realloc|.  If \verb|p| is
+\verb|NULL| on input, then no action is taken (this is not an error condition).
+To guard against freeing the same memory space twice, the following macro
+\verb|SLIP_FREE| is provided, which calls \verb|SLIP_free| and then sets the
+freed pointer to \verb|NULL|.
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    #define SLIP_FREE(p)                        \
+    {                                           \
+        SLIP_free (p) ;                         \
+        (p) = NULL ;                            \
+    }
+\end{verbatim}
+} \end{mdframed}
+
+Returns silently, with no action taken, if SLIP LU has not been initialized.
+
+%-------------------------------------------------------------------------------
+\cprotect\section{The \verb|SLIP_options| object:
+parameter settings for SLIP LU} \label{ss:SLIP_options}
+%-------------------------------------------------------------------------------
+
+The \verb|SLIP_options| object contains numerous parameters that may be
+modified by the user. Default values of these parameters will lead to good
+performance in most cases.  Modifying this struct allows a user to
+control column orderings, pivoting schemes, and other components of the
+factorization.
 
 %-------------------------------------------------------------------------------
 \cprotect\subsection{\verb|SLIP_pivot|: enum for pivoting schemes}
@@ -358,12 +561,18 @@ an enumerated type called \verb|SLIP_info|. All current possible values for
 %-------------------------------------------------------------------------------
 
 There are six available pivoting schemes provided in SLIP LU.  Users can set
-the pivoting method through the \verb|SLIP_options| structure in Section
-\ref{ss:SLIP_options}. Note that the pivot is always nonzero, thus the smallest
-entry is the nonzero entry with the smallest magnitude.  Also, the tolerance is
-specified by the \verb|tol| component in \verb|SLIP_options|.  Please refer to
-Section \ref{ss:SLIP_options} for details of this parameter. The pivoting
-schemes are described as follows:
+the pivoting method through the \verb|SLIP_options| structure.  If the matrix
+is non-singular (in an exact sense), then the pivot is always nonzero, and is
+chosen as the {\em smallest} nonzero entry, with the smallest magnitude.  This
+may seem counter-intuitive, but selecting a small nonzero pivot leads to
+smaller growtn in the number of digits in the entries of \verb|L| and \verb|U|.
+This choice does not lead to any kind of numerical inaccuracy, since SLIP LU is
+guaranteed to find an exact roundoff-error free factorization of a non-singular
+matrix (unless it runs out of memory), for any nonzero pivot choice.
+
+The pivot tolerance for two of the pivoting schemes is specified by the
+\verb|tol| component in \verb|SLIP_options|.  The pivoting schemes are as
+follows:
 
 %----------------------------------------
 {\small
@@ -407,15 +616,14 @@ schemes are described as follows:
 \label{ss:SLIP_col_order}
 %-------------------------------------------------------------------------------
 
-The SLIP LU library provides three column ordering schemes: no ordering,
+The SLIP LU library provides three column ordering schemes: no pre-ordering,
 COLAMD, and AMD. Users can set the column ordering method through \verb|order|
 component in the \verb|SLIP_options| structure described in Section
-\ref{ss:SLIP_options}. In general, it is recommended that the user selects the
+\ref{ss:SLIP_options_struct}. In general, it is recommended that the user selects the
 COLAMD ordering, however, no preordering can be preferable if the user's matrix
 already has a good preordering.
 
 {\small
-% \begin{table*}[htbp]
 \begin{center}
 \begin{tabular}{llp{4in}}
 \hline
@@ -439,69 +647,11 @@ already has a good preordering.
 \end{tabular}
 \label{tab:SLIP_pivot}
 \end{center}
-% \end{table*}
-}
-
-%-------------------------------------------------------------------------------
-\cprotect\subsection{\verb|SLIP_kind|: enum for matrix formats}
-\label{ss:SLIP_kind}
-%-------------------------------------------------------------------------------
-
-The SLIP LU library provides three available matrix formats: sparse CSC
-(compressed sparse column), sparse triplet and dense. Details for matrices in
-SLIP LU are discussed in Section \ref{ss:SLIP_matrix}.
-
-{\small
-% \begin{table*}[htbp]
-\begin{center}
-\begin{tabular}{llp{4in}}
-\hline
-0 & \verb|SLIP_CSC| & Matrix is in compressed sparse column format. \\
-\hline
-1 & \verb|SLIP_TRIPLET|      & Matrix is in sparse triplet format. \\
-\hline
-2 & \verb|SLIP_DENSE|        & Matrix is in dense format.\\
-\hline
-\end{tabular}
-\label{tab:SLIP_kind}
-\end{center}
-% \end{table*}
-}
-
-%-------------------------------------------------------------------------------
-\cprotect\subsection{\verb|SLIP_type|: enum for data types of matrix entry}
-\label{ss:SLIP_type}
-%-------------------------------------------------------------------------------
-
-The SLIP LU library provides five data types for matrix entries: \verb|mpz_t|,
-\verb|mpq_t|, \verb|mpfr_t|, \verb|int64_t| and \verb|double|. Details for
-matrices in SLIP LU are discussed in Section \ref{ss:SLIP_matrix}.
-
-
-{\small
-% \begin{table*}[htbp]
-\begin{center}
-\begin{tabular}{llp{4in}}
-\hline
-0 & \verb|SLIP_MPZ| &  Matrix entries are in \verb|mpz_t| type. \\
-\hline
-1 & \verb|SLIP_MPQ| &  Matrix entries are in \verb|mpq_t| type. \\
-\hline
-2 & \verb|SLIP_MPFR| &  Matrix entries are in \verb|mpfr_t| type. \\
-\hline
-3 & \verb|SLIP_INT64| &  Matrix entries are in \verb|int64_t| type. \\
-\hline
-4 & \verb|SLIP_FP64| &  Matrix entries are in \verb|double| type. \\
-\hline
-\end{tabular}
-\label{tab:SLIP_type}
-\end{center}
-% \end{table*}
 }
 
 %-------------------------------------------------------------------------------
 \cprotect\subsection{ \verb|SLIP_options| structure}
-\label{ss:SLIP_options}
+\label{ss:SLIP_options_struct}
 %-------------------------------------------------------------------------------
 
 The \verb|SLIP_options| struct stores key command parameters for various
@@ -528,7 +678,8 @@ same magnitude as the smallest entry in the $k$ the column.
 
 \item
 \verb|option->print_level|: An \verb|int| which controls the amount of
-output. 0: print nothing, 1: just errors, 2: terse, with basic stats from
+output:
+0: print nothing, 1: just errors, 2: terse, with basic stats from
 COLAMD/AMD and SLIP, 3: all, with matrices and results. Default value: 0.
 
 \item
@@ -563,8 +714,8 @@ rounding style and any other utilized MPFR convention. Default value:
 \verb|MPFR_RNDN|.
 
 \item
-\verb|option->check|: A \verb|bool| which inicates whether the solution to the
-system should be checked. Intended for debugging only; SLIP LU library is
+\verb|option->check|: A \verb|bool| which indicates whether the solution to the
+system should be checked. Intended for debugging only; the SLIP LU library is
 guaranteed to return the exact solution. Default value: \verb|false|.
 
 \end{itemize}
@@ -595,15 +746,104 @@ function/macro name & description & section \\
 \end{center}
 
 %-------------------------------------------------------------------------------
-\cprotect\subsection{\verb|SLIP_matrix| structure}
-\label{ss:SLIP_matrix}
+\cprotect\subsection{\verb|SLIP_create_default_options|: create default \verb|SLIP_options| object}
+\label{ss:create_default_options}
 %-------------------------------------------------------------------------------
 
-All internal matrices are stored as \verb|SLIP_matrix| structure, which can
-be CSC, triplet or dense matrix (as discussed in Section \ref{ss:SLIP_kind})
-with entries stored as \verb|mpz_t|, \verb|mpq_t|, \verb|mpfr_t|,
-\verb|int64_t| and \verb|double| (as discussed in Section \ref{ss:SLIP_type}).
-This gives a total of 15 different matrix types. Note that not all functions accept all 15 matrix types. Indeed, most functions expect the input matrix $A$ to be a CSC \verb|mpz_t| matrix while vectors (such as x and b) are in dense format.
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    SLIP_options* SLIP_create_default_options
+    (
+        void
+    ) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb|SLIP_create_default_options| creates and returns a pointer to a
+\verb|SLIP_options| struct with default parameters upon successful allocation,
+which are discussed in Section \ref{ss:SLIP_options_struct}.  To safely free
+the \verb|SLIP_options* option| structure, simply use \verb|SLIP_FREE(option)|.
+All functions that require \verb|SLIP_options *option| as an input argument can
+have a \verb'NULL' pointer passed instead. In this case, the default value of
+the corresponding command option is used. For example, if a \verb'NULL' pointer
+is passed to the symbolic analysis routines, COLAMD is used. As a result,
+defaults are desired, the \verb|SLIP_options| struct need not be allocated.
+Returns \verb|NULL| if SLIP LU has not been initialized.
+
+%-------------------------------------------------------------------------------
+\cprotect\section{The \verb|SLIP_matrix| object} \label{ss:SLIP_matrix}
+%-------------------------------------------------------------------------------
+
+All matrices for SLIP LU are stored as a \verb|SLIP_matrix| object (a pointer
+to a \verb'struct').  The matrix can be held in three formats: CSC, triplet or
+dense matrix (as discussed in Section \ref{ss:SLIP_kind}) with entries stored
+as 5 different types: \verb|mpz_t|, \verb|mpq_t|, \verb|mpfr_t|, \verb|int64_t|
+and \verb|double| (as discussed in Section \ref{ss:SLIP_type}).  This gives a
+total of 15 different combinations of matrix format and entry type. Note that
+not all functions accept all 15 matrix types. Indeed, most functions expect the
+input matrix $A$ to be a CSC \verb|mpz_t| matrix while vectors (such as x and
+b) are in dense format.
+
+%-------------------------------------------------------------------------------
+\cprotect\subsection{\verb|SLIP_kind|: enum for matrix formats}
+\label{ss:SLIP_kind}
+%-------------------------------------------------------------------------------
+
+The SLIP LU library provides three available matrix formats: sparse CSC
+(compressed sparse column), sparse triplet and dense. Details for matrices in
+SLIP LU are discussed in Section \ref{ss:SLIP_matrix}.
+
+{\small
+\begin{center}
+\begin{tabular}{llp{4in}}
+\hline
+0 & \verb|SLIP_CSC| & Matrix is in compressed sparse column format. \\
+\hline
+1 & \verb|SLIP_TRIPLET|      & Matrix is in sparse triplet format. \\
+\hline
+2 & \verb|SLIP_DENSE|        & Matrix is in dense format.\\
+\hline
+\end{tabular}
+\label{tab:SLIP_kind}
+\end{center}
+}
+
+%-------------------------------------------------------------------------------
+\cprotect\subsection{\verb|SLIP_type|: enum for data types of matrix entry}
+\label{ss:SLIP_type}
+%-------------------------------------------------------------------------------
+
+The SLIP LU library provides five data types for matrix entries: \verb|mpz_t|,
+\verb|mpq_t|, \verb|mpfr_t|, \verb|int64_t| and \verb|double|. Details for
+matrices in SLIP LU are discussed in Section \ref{ss:SLIP_matrix}.
+
+{\small
+\begin{center}
+\begin{tabular}{llp{4in}}
+\hline
+0 & \verb|SLIP_MPZ|     & Matrix entries are in \verb|mpz_t| type: an integer
+                          of arbitrary size. \\
+\hline
+1 & \verb|SLIP_MPQ|     & Matrix entries are in \verb|mpq_t| type: a rational
+                          number with arbitrary-sized integer numerator and
+                          denominator. \\
+\hline
+2 & \verb|SLIP_MPFR|    & Matrix entries are in \verb|mpfr_t| type: a
+                          floating-point number of arbitrary precision. \\
+\hline
+3 & \verb|SLIP_INT64|   & Matrix entries are in \verb|int64_t| type. \\
+\hline
+4 & \verb|SLIP_FP64|    & Matrix entries are in \verb|double| type. \\
+\hline
+\end{tabular}
+\label{tab:SLIP_type}
+\end{center}
+}
+
+%-------------------------------------------------------------------------------
+\cprotect\subsection{\verb|SLIP_matrix| structure}
+%-------------------------------------------------------------------------------
 
 A matrix \verb|SLIP_matrix *A| has the following components:
 
@@ -653,7 +893,7 @@ in the range of $[0,$ \verb|A->n|$-1]$. Data Type: \verb|int64_t*|.
 Data Type: \verb|bool|.
 
 \item \verb|A->x|: An array of size \verb|A->nzmax| which contains the
-numeric values of the matrix.  This array is a union, and must be ascessed via
+numeric values of the matrix.  This array is a union, and must be accessed via
 one of: \verb|A->x.mpz|, \verb|A->x.mpq|, \verb|A->x.mpfr|, \verb|A->x.int64|,
 or \verb|A->x.fp64|, depending on the \verb|A->type| parameter.
 Data Type: \verb|union|.
@@ -663,14 +903,15 @@ shallow. Data Type: \verb|bool|.
 
 \item \verb|A->scale|: A scaling parameter for matrix of \verb|mpz_t| type. For
 all matrices whose entries are stored in data type other than \verb|mpz_t|,
-\verb|A->scale = 1|. This is used to ensure integrality of each entry in mpz
-matrix if these entries are converted from non-integral type data (such as
-double, variable precision floating point, or rational). Data Type:
-\verb|mpq_t|.
+\verb|A->scale = 1|. This is used to ensure that entry can be represented as an
+integer in an \verb|mpz_t| matrix if these entries are converted from non-integer type
+data (such as double, variable precision floating point, or rational). Data
+Type: \verb|mpq_t|.
 
 \end{itemize}
 
-Specifically, for different kinds of \verb|A| of size \verb|A->m|$*$\verb|A->n| with $nz$ nonzero entries, its components are defined as:
+Specifically, for different kinds of \verb|A| of size \verb|A->m| $\times$ \verb|A->n|
+with \verb|nz| nonzero entries, its components are defined as:
 
 \begin{itemize}
 \item
@@ -678,40 +919,41 @@ Specifically, for different kinds of \verb|A| of size \verb|A->m|$*$\verb|A->n| 
       \verb|A->p| is an \verb|int64_t| array of size \verb|A->n|+1, \verb|A->i|
       is an \verb|int64_t| array of size \verb|A->nzmax| (with $nz$ $\le$
       \verb|A->nzmax|), and \verb|A->x.TYPE| is an array of size
-      \verb|A->nzmax| of matrix entries ('TYPE' is one of mpz, mpq, mpfr,
-      int64, or fp64).  The row indices of column $j$ appear in \verb|A->i|
-      [\verb|A->p| [$j$] ... \verb|A->p| [$j$+1]-1], and the values appear
-      in the same locations in \verb|A->x.TYPE|.  The \verb|A->j| array is
-      NULL.  \verb|A->nz| is ignored; $nz$ is \verb|A->p [A->n]|.
+      \verb|A->nzmax| of matrix entries (\verb'TYPE' is one of \verb|mpz|,
+      \verb|mpq|, \verb|mpfr|, \verb|int64|, or \verb|fp64|).  The row indices
+      of column $j$ appear in \verb|A->i| [\verb|A->p| [$j$] ... \verb|A->p|
+      [$j$+1]-1], and the values appear in the same locations in
+      \verb|A->x.TYPE|.  The \verb|A->j| array is \verb|NULL|.  \verb|A->nz| is
+      ignored; the number of entries in \verb|A| is given by \verb|A->p [A->n]|.
 
 \item
  (1) \verb|SLIP_TRIPLET|:  A sparse matrix in triplet format.  \verb|A->i| and
      \verb|A->j| are both \verb|int64_t| arrays of size \verb|A->nzmax|, and
      \verb|A->x.TYPE| is an array of values of the same size.  The $k$th tuple
-     has row index \verb|A->i| [$k$], column index \verb|A->j| [$k$], and value
-     \verb|A->x.TYPE| [$k$], with 0 $\le$ $k$ $<$ \verb|A->nz| $=nz$. 
-     The \verb|A->p| array is NULL.
+     has row index \verb|A->i [k]|, column index \verb|A->j [k]| , and value
+     \verb|A->x.TYPE [k]|, with 0 $\le$ $k <$ \verb|A->nz|.
+     The \verb|A->p| array is \verb|NULL|.
 
 \item
  (2) \verb|SLIP_DENSE|:  A dense matrix.  The integer arrays \verb|A->p|,
-     \verb|A->i|, and \verb|A->j| are all NULL.  \verb|A->x.TYPE| is a pointer
-     to an array of size \verb|A->m|*\verb|A->n|, stored in column-oriented
-     format.  The value of $A(i,j)$ is \verb|A->x.TYPE| [$p$] with
-     $p = i + j*\verb|A->m|$.  \verb|A->nz| is ignored; $nz$ is \verb|A->m| *
-     \verb|A->n|.
+     \verb|A->i|, and \verb|A->j| are all \verb|NULL|.  \verb|A->x.TYPE| is a
+     pointer to an array of size \verb|A->m|*\verb|A->n|, stored in
+     column-oriented format.  The value of $A(i,j)$ is \verb|A->x.TYPE [p]|
+     with \verb|p| = $i + j*$\verb|A->m|.  \verb|A->nz| is ignored; the number
+     of entries in \verb|A| is \verb|A->m| $\times$ \verb|A->n|.
 
 \end{itemize}
 
- \verb|A| may contain 'shallow' components, \verb|A->p|,
- \verb|A->i|, \verb|A->j|, and \verb|A->x|.  For example, if
- \verb|A->p_shallow| is true, then a non-NULL \verb|A->p| is a pointer to a
- read-only array, and the \verb|A->p| array is not freed by
- \verb|SLIP_matrix_free|.  If \verb|A->p| is NULL (for a triplet or dense
- matrix), then \verb|A->p_shallow| has no effect.
+\verb|A| may contain shallow components, \verb|A->p|, \verb|A->i|, \verb|A->j|,
+and \verb|A->x|.  For example, if \verb|A->p_shallow| is true, then a
+non-\verb|NULL| \verb|A->p| is a pointer to a read-only array, and the
+\verb|A->p| array is not freed by \verb|SLIP_matrix_free|.  If \verb|A->p| is
+\verb|NULL| (for a triplet or dense matrix), then \verb|A->p_shallow| has no
+effect.
 
 To simplify the access the entries in \verb|A|, SLIP LU package provides the
 following macros (Note that the \verb|TYPE| parameter in the macros is one of:
-mpz, mpq, mpfr, int64 or fp64):
+\verb|mpz|, \verb|mpq|, \verb|mpfr|, \verb|int64| or \verb|fp64|):
 
 \begin{itemize}
 
@@ -723,7 +965,7 @@ mpz, mpq, mpfr, int64 or fp64):
 
 \item
 \verb|SLIP_2D(A,i,j,TYPE)|: used to access the $(i,j)$th entry in a dense
-                            \verb|SLIP_matrix *A|
+                            \verb|SLIP_matrix *A|.
 
 \end{itemize}
 
@@ -732,7 +974,6 @@ destroy a SLIP LU matrix, \verb|SLIP_matrix|, as shown in the following table.
 
 %----------------------------------------
 {\small
- %\begin{table*}[htbp]
 \begin{center}
 \begin{tabular}{lp{2.5in}l}
 \hline
@@ -756,9 +997,167 @@ function name & description & section \\
 \hline
 \end{tabular}
 \end{center}
-% \end{table*}
 }
 
+%-------------------------------------------------------------------------------
+\newpage
+\cprotect\subsection{\verb|SLIP_matrix_allocate|: allocate a $m$-by-$n$
+\verb|SLIP_matrix|}
+\label{s:user:matrix_allocate}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    SLIP_info SLIP_matrix_allocate
+    (
+        SLIP_matrix **A_handle, // matrix to allocate
+        SLIP_kind kind,         // CSC, triplet, or dense
+        SLIP_type type,         // mpz, mpq, mpfr, int64, or double (fp64)
+        int64_t m,              // # of rows
+        int64_t n,              // # of columns
+        int64_t nzmax,          // max # of entries
+        bool shallow,           // if true, matrix is shallow.  A->p, A->i,
+                                // A->j, A->x are all returned as NULL and must
+                                // be set by the caller.  All A->*_shallow are
+                                // returned as true.
+        bool init,              // If true, and the data types are mpz, mpq, or
+                                // mpfr, the entries are initialized (using the
+                                // appropriate SLIP_mp*_init function). If
+                                // false, the mpz, mpq, and mpfr arrays are
+                                // allocated but not initialized.
+        const SLIP_options *option
+    ) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb|SLIP_matrix_allocate| allocate memory space for a $m$-by-$n$
+\verb|SLIP_matrix| whose kind (CSC, triplet or dense) and data type
+(\verb|mpz|, \verb|mpq|, \verb|mpfr|, \verb|int64| or \verb|fp64|) is
+specified. If '\verb|shallow|' is true, all components (p, i, j, x) are
+\verb|NULL|, and their shallow flags are all true. The user can then set
+\verb|A->p|, \verb|A->i|, \verb|A->j|, and/or \verb|A->x| accordingly, from
+their own arrays. If '\verb|shallow|' is false, the appropriate individual
+arrays are calloc'd. The second boolean parameter is used if the entries are
+\verb|mpz_t|, \verb|mpq_t|, or \verb|mpfr_t|. Specifically, if \verb|init| is
+true, the individual entries within \verb|A->x.TYPE| are initialized using the
+appropriate \verb|SLIP_mp*_init|) function. Otherwise, if \verb|init| is false,
+the \verb|A->x.TYPE| array is calloc'd but the individual values are not
+initialized.  Attempting to access the values of these initialized entries will
+lead to undefined behavior.  Returns \verb|SLIP_PANIC| if SLIP LU has not been
+initialized.
+
+%-------------------------------------------------------------------------------
+\cprotect\subsection{\verb|SLIP_matrix_free|: free a \verb|SLIP_matrix|}
+\label{s:user:matrix_free}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    SLIP_info SLIP_matrix_free
+    (
+        SLIP_matrix **A_handle, // matrix to free
+        const SLIP_options *option
+    ) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb|SLIP_matrix_free| frees the \verb|SLIP_matrix *A|.  Note that the input
+of the function is the pointer to the pointer of a \verb|SLIP_matrix|
+structure. This is because this function internally sets the pointer of a
+\verb|SLIP_matrix| to be \verb|NULL| to prevent potential segmentation fault
+that could be caused by double \verb|free|.  If default settings are desired,
+\verb|option| can be input as \verb|NULL|.
+
+%-------------------------------------------------------------------------------
+\cprotect\subsection{\verb|SLIP_matrix_copy|: make a copy of a \verb|SLIP_matrix|}
+\label{s:user:matrix_copy}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    SLIP_info SLIP_matrix_copy
+    (
+        SLIP_matrix **C,        // matrix to create (never shallow)
+        // inputs, not modified:
+        SLIP_kind kind,         // CSC, triplet, or dense
+        SLIP_type type,         // mpz_t, mpq_t, mpfr_t, int64_t, or fp64
+        SLIP_matrix *A,         // matrix to make a copy of (may be shallow)
+        const SLIP_options *option
+    ) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb|SLIP_matrix_copy| creates a \verb|SLIP_matrix *C| which is a modified
+copy of a \verb|SLIP_matrix *A|. This function can convert between any pair of
+the 15 kinds of matrices, so the new matrix \verb|C| can be of any type or kind
+different than \verb|A|.  On input \verb|C| must be non-\verb|NULL|, and the
+value of \verb|*C| is ignored; it is overwritten, output with the matrix
+\verb|C|, which is a copy of \verb|A| of kind \verb|kind| and type \verb|type|.
+
+The input matrix is assumed to be valid. It can be checked first with
+\verb|SLIP_matrix_check| (Section \ref{s:user:matrix_check}), if desired.
+Results are undefined for an invalid input matrix \verb|A|.  Returns
+\verb|SLIP_PANIC| if SLIP LU has not been initialized.
+
+%-------------------------------------------------------------------------------
+\cprotect\subsection{\verb|SLIP_matrix_nnz|: get the number of entries in a
+\verb|SLIP_matrix|}
+\label{s:user:matrix_nnz}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    int64_t SLIP_matrix_nnz     // return # of entries in A, or -1 on error
+    (
+        const SLIP_matrix *A,         // matrix to query
+        const SLIP_options *option
+    ) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb|SLIP_matrix_nnz| returns the number of entries in a \verb|SLIP_matrix *A|.
+For details regarding how the number of entries is obtained for different kinds
+of matrices, users can refer to Section \ref{ss:SLIP_matrix}.
+For any matrix with invalid dimension(s), this function returns -1.
+If default settings are desired, \verb|option| can be input as \verb|NULL|.
+Returns -1 if SLIP LU has not been initialized.
+
+%-------------------------------------------------------------------------------
+\newpage
+\cprotect\subsection{\verb|SLIP_matrix_check|: check and print a \verb|SLIP_matrix|}
+\label{s:user:matrix_check}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
+    (
+        const SLIP_matrix *A,       // matrix to check
+        const SLIP_options* option  // defines the print level
+    ) ;
+\end{verbatim}
+} \end{mdframed}
+
+\verb|SLIP_matrix_check| checks the validity of a \verb|SLIP_matrix *A| in any
+of the 15 different matrix types (CSC, triplet, dense) $\times$ (\verb|mpz|, \verb|mpq|,
+\verb|mpfr|, \verb|int64|, \verb|fp64|). Users can adjust the print level by changing
+\verb|option->print_level| (refer to Section \ref{ss:SLIP_options} for more
+details).
+If default settings are desired, \verb|option| can be input as \verb|NULL|.
+Returns \verb|SLIP_PANIC| if SLIP LU has not been initialized.
+
+%-------------------------------------------------------------------------------
+\section{Primary Computational Routines}
+\label{s:primary}
+%-------------------------------------------------------------------------------
+
+These routines perform symbolic analysis, compute the LU factorization of the
+matrix $A$, and solve $Ax=b$ using the factorization of $A$.
 
 %-------------------------------------------------------------------------------
 \cprotect\subsection{\verb|SLIP_LU_analysis| structure}
@@ -766,9 +1165,9 @@ function name & description & section \\
 %-------------------------------------------------------------------------------
 
 The \verb|SLIP_LU_analysis| data structure is used for storing the column
-permutation for LU and the guess on nonzeros for $L$ and $U$. Users do not need
-to modify this struct, just pass it into the functions. A
-\verb|SLIP_LU_analysis| structure has the following components:
+permutation for LU and the guess on the number of nonzeros that may appear in
+$L$ and $U$. Users do not need to modify this struct, just pass it into the
+functions. A \verb|SLIP_LU_analysis| structure has the following components:
 
 \begin{itemize}
 \item \verb|S->q|: The column permutation stored as a dense \verb|int64_t|
@@ -792,7 +1191,6 @@ The SLIP LU package provides the following functions to create and destroy a
 
 %----------------------------------------
 {\small
-% \begin{table*}[htbp]
 \begin{center}
 \begin{tabular}{lll}
 \hline
@@ -808,350 +1206,7 @@ function/macro name & description & section \\
 \hline
 \end{tabular}
 \end{center}
-% \end{table*}
 }
-
-%-------------------------------------------------------------------------------
-\section{Memory Management Routines} \label{s:user:memmanag}
-%-------------------------------------------------------------------------------
-
-The routines in this section are used to allocate and free memory for the data
-structures used in SLIP LU.
-By default, SLIP LU relies on the SuiteSparse memory management functions,
-\verb|SuiteSparse_malloc|, \verb|SuiteSparse_calloc|,
-\verb|SuiteSparse_realloc|, and \verb|SuiteSparse_free|.
-
-
-%-------------------------------------------------------------------------------
-\cprotect\subsection{\verb|SLIP_calloc|: allocate initialized memory}
-\label{ss:SLIP_calloc}
-%-------------------------------------------------------------------------------
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-    void *SLIP_calloc 
-    ( 
-        size_t nitems,      // number of items to allocate 
-        size_t size         // size of each item 
-    ) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb|SLIP_calloc| allocates a block of memory for an array of \verb|nitems|
-elements, each of them \verb|size| bytes long, and initializes all its bits to
-zero. If any input is less than 1, it is treated as if equal to 1. If the
-function failed to allocate the requested block of memory, then a \verb|NULL|
-pointer is returned.
-
-%-------------------------------------------------------------------------------
-\cprotect\subsection{\verb|SLIP_malloc|: allocate uninitialized memory}
-\label{ss:SLIP_malloc}
-%-------------------------------------------------------------------------------
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-    void *SLIP_malloc
-    (
-        size_t size        // size of memory space to allocate
-    ) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb|SLIP_malloc| allocates a block of \verb|size| bytes of memory, returning
-a pointer to the beginning of the block. The content of the newly allocated
-block of memory is not initialized, remaining with indeterminate values.
-If \verb|size| is less than 1, it is treated as if equal to 1. If the function
-fails to allocate the requested block of memory, then a \verb|NULL| pointer is
-returned.
-
-%-------------------------------------------------------------------------------
-\cprotect\subsection{\verb|SLIP_realloc|: resize allocated memory}
-\label{ss:SLIP_realloc}
-%-------------------------------------------------------------------------------
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-    void *SLIP_realloc      // pointer to reallocated block, or original block
-                            // if the realloc failed
-    (
-        int64_t nitems_new,     // new number of items in the object
-        int64_t nitems_old,     // old number of items in the object
-        size_t size_of_item,    // sizeof each item
-        void *p,                // old object to reallocate
-        bool *ok                // true if success, false on failure
-    ) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb|SLIP_realloc| is a wrapper for realloc.  If p is non-NULL on input, it
-points to a previously allocated object of size \verb|old_size| *
-\verb|size_of_item|.  The object is reallocated to be of size \verb|new_size| *
-\verb|size_of_item|.  If p is NULL on input, then a new object of that size is
-allocated.  On success, a pointer to the new object is returned.  If the
-reallocation fails, p is not modified, and a flag is returned to indicate that
-the reallocation failed.  If the size decreases or remains the same, then the
-method always succeeds (ok is returned as true).
-
-Typical usage:  the following code fragment allocates an array of 10 int's,
-and then increases the size of the array to 20 int's.  If the \verb|SLIP_malloc|
-succeeds but the \verb|SLIP_realloc| fails, then the array remains unmodified,
-of size 10.
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-     int *p ;
-     p = SLIP_malloc (10 * sizeof (int)) ;
-     if (p == NULL) { error here ... }
-     printf ("p points to an array of size 10 * sizeof (int)\n") ;
-     bool ok ;
-     p = SLIP_realloc (20, 10, sizeof (int), p, &ok) ;
-     if (ok) printf ("p has size 20 * sizeof (int)\n") ;
-     else printf ("realloc failed; p still has size 10 * sizeof (int)\n") ;
-     SLIP_free (p) ;
-\end{verbatim}
-} \end{mdframed}
-
-%-------------------------------------------------------------------------------
-\cprotect\subsection{\verb|SLIP_free|: free allocated memory}
-\label{ss:SLIP_free}
-%-------------------------------------------------------------------------------
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-    void SLIP_free
-    (
-        void *p         // Pointer to memory space to free
-    ) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb|SLIP_free| deallocates the memory previously allocated by a call to
-\verb|SLIP_calloc|, \verb|SLIP_malloc|, or \verb|SLIP_realloc|. Note that the
-default C \verb|free| function can cause a segmentation fault if called
-multiple times on the same pointer or is called via other inappropriate
-behavior. To remedy this issue, this function frees the input pointer \verb|p|
-only when it is not \verb|NULL|. To further prevent the potential segmentation
-fault that could be caused by \verb|free|, the following macro \verb|SLIP_FREE|
-is provided, which sets the free'd pointer to \verb|NULL|.
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-    #define SLIP_FREE(p)                        \
-    {                                           \
-        SLIP_free (p) ;                         \
-        (p) = NULL ;                            \
-    }
-\end{verbatim}
-} \end{mdframed}
-
-%-------------------------------------------------------------------------------
-\cprotect\subsection{\verb|SLIP_initialize|: initialize the working environment}
-%-------------------------------------------------------------------------------
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-    void SLIP_initialize
-    (
-        void
-    ) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb|SLIP_initialize| initializes the working environment for SLIP LU
-functions.  SLIP LU utilizes a specialized memory management scheme in order to
-prevent potential memory failures caused by GMP and MPFR libraries.  Either
-this function or \verb|SLIP_initialize_expert| \textcolor{blue}{\textbf{must}}
-be called prior to using the library.  Failure to do so will lead to undefined
-behavior.
-
-%-------------------------------------------------------------------------------
-\cprotect\subsection{\verb|SLIP_initialize_expert|: initialize the working environment (expert version)}\label{ss:SLIP_initialize_expert}
-%-------------------------------------------------------------------------------
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-    void SLIP_initialize_expert
-    (
-        void* (*MyMalloc) (size_t),             // user-defined malloc
-        void* (*MyCalloc) (size_t, size_t),     // user-defined calloc
-        void* (*MyRealloc) (void *, size_t),    // user-defined realloc
-        void  (*MyFree) (void *)                // user-defined free
-    ) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb|SLIP_initialize_expert| is the same as \verb|SLIP_initialize| except
-that it allows for a redefinition of custom memory functions that are used for
-SLIP LU and GMP/MPFR.
-
-The four inputs to this function are pointers to four functions with the
-same signatures as the ANSI C malloc, calloc, realloc, and free functions.
-That is:
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-    #include <stdlib.h>
-    void *malloc (size_t size) ;
-    void *calloc (size_t nmemb, size_t size) ;
-    void *realloc (void *ptr, size_t size) ;
-    void free (void *ptr) ;
-\end{verbatim}
-} \end{mdframed}
-
-%-------------------------------------------------------------------------------
-\cprotect\subsection{\verb|SLIP_finalize|: free the working environment}
-\label{ss:SLIP_finalize}
-%-------------------------------------------------------------------------------
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-    void SLIP_finalize
-    (
-        void
-    ) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb|SLIP_finalize| finalizes the working evironment for SLIP LU
-library, and frees any internal workspace created by SLIP LU.  It must be
-called as the last \verb|SLIP_*| function called.
-
-%-------------------------------------------------------------------------------
-\cprotect\subsection{\verb|SLIP_create_default_options|: create default \verb|SLIP_options| object}
-\label{ss:create_default_options}
-%-------------------------------------------------------------------------------
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-    SLIP_options* SLIP_create_default_options
-    (
-        void
-    ) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb|SLIP_create_default_options| creates and returns a pointer to a
-\verb|SLIP_options| struct with default parameters upon successful allocation,
-which are discussed in Section \ref{ss:SLIP_options}.  To safely free the
-\verb|SLIP_options* option| structure, simply use \verb|SLIP_FREE(option)|.
-All functions that require \verb|SLIP_options *option| as an input argument 
-can have a \verb'NULL' pointer passed instead. In this case, the default value
-of the corresponding command option is used. For example, if one passes a
-\verb'NULL' pointer to the symbolic analysis routines, COLAMD is used. As a
-result, if a user desires default parameters, one needs not allocate nor use
-the \verb|SLIP_options| struct.
-
-%-------------------------------------------------------------------------------
-\cprotect\subsection{\verb|SLIP_matrix_allocate|: allocate a $m$-by-$n$
-\verb|SLIP_matrix|}
-\label{s:user:matrix_allocate}
-%-------------------------------------------------------------------------------
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-    SLIP_info SLIP_matrix_allocate
-    (
-        SLIP_matrix **A_handle, // matrix to allocate
-        SLIP_kind kind,         // CSC, triplet, or dense
-        SLIP_type type,         // mpz, mpq, mpfr, int64, or double
-        int64_t m,              // # of rows
-        int64_t n,              // # of columns
-        int64_t nzmax,          // max # of entries
-        bool shallow,           // if true, matrix is shallow.  A->p, A->i,
-                                // A->j, A->x are all returned as NULL and must
-                                // be set by the caller.  All A->*_shallow are
-                                // returned as true.
-        bool init,              // If true, and the data types are mpz, mpq, or
-                                // mpfr, the entries are initialized (using the
-                                // appropriate SLIP_mp*_init function). If
-                                // false, the mpz, mpq, and mpfr arrays are
-                                // allocated but not initialized.
-        const SLIP_options *option
-    ) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb|SLIP_matrix_allocate| allocate memory space for a $m$-by-$n$
-\verb|SLIP_matrix| whose kind (CSC, triplet or dense) and data type (mpz, mpq,
-mpfr, int64 or double) is specified. If '\verb|shallow|' is true, all components
-(p, i, j, x) are NULL, and their shallow flags are all true. The user can then
-set \verb|A->p|, \verb|A->i|, \verb|A->j|, and/or \verb|A->x| accordingly, from
-their own arrays. If '\verb|shallow|' is false, the appropriate individual
-arrays are calloc'd. The second boolean parameter is used if the entries are 
-\verb|mpz_t|, \verb|mpq_t|, or \verb|mpfr_t|. Specifically, if \verb|init| is
-true, the individual entries within \verb|A->x.TYPE| are initialized using the 
-appropriate \verb|SLIP_mp*_init|) function. Otherwise, if \verb|init| is false,
-the \verb|A->x.TYPE| array is calloc'd but the individual values are not initialized.
-Attempting to access the values of these initialized entries will lead to 
-undefined behavior.
-
-%-------------------------------------------------------------------------------
-\cprotect\subsection{\verb|SLIP_matrix_free|: free a \verb|SLIP_matrix|}
-\label{s:user:matrix_free}
-%-------------------------------------------------------------------------------
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-    SLIP_info SLIP_matrix_free
-    (
-        SLIP_matrix **A_handle, // matrix to free
-        const SLIP_options *option
-    ) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb|SLIP_matrix_free| frees the \verb|SLIP_matrix *A|.
-Note that the input of the function is the pointer to the pointer of a
-\verb|SLIP_matrix| structure. This is because this function internally
-sets the pointer of a \verb|SLIP_matrix| to be \verb|NULL| to prevent
-potential segmentation fault that could be caused by double \verb|free|.
-If default setting is desired, \verb|option| can be input as NULL.
-
-%-------------------------------------------------------------------------------
-\cprotect\subsection{\verb|SLIP_LU_analysis_free|: free \verb|SLIP_LU_analysis| structure}
-\label{ss:LU_analysis_free}
-%-------------------------------------------------------------------------------
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-    void SLIP_LU_analysis_free
-    (
-        SLIP_LU_analysis **S, // Structure to be deleted
-        const SLIP_options *option
-    ) ;
-\end{verbatim}
-} \end{mdframed}
-
-
-\verb|SLIP_LU_analysis_free| frees a \verb|SLIP_LU_analysis| structure.
-Note that the input of the function is the pointer to the pointer of a
-\verb|SLIP_LU_analysis| structure. This is because this function internally
-sets the pointer of a \verb|SLIP_LU_analysis| to be \verb|NULL| to prevent
-potential segmentation fault that could be caused by double \verb|free|.
-If default setting is desired, \verb|option| can be input as NULL.
-
-
-%-------------------------------------------------------------------------------
-\section{Primary Computational Routines}
-\label{s:primary}
-%-------------------------------------------------------------------------------
-
-These routines perform symbolic analysis, compute the LU factorization of the
-matrix $A$, and solve $Ax=b$ using the factorization of $A$.
 
 %-------------------------------------------------------------------------------
 \cprotect\subsection{\verb|SLIP_LU_analyze|: perform symbolic analysis}
@@ -1172,19 +1227,45 @@ matrix $A$, and solve $Ax=b$ using the factorization of $A$.
 } \end{mdframed}
 
 \verb|SLIP_LU_analyze| performs the symbolic ordering for SLIP LU. Currently,
-there are three options: no ordering, COLAMD, or AMD, which are passed
-in by \verb|SLIP_options| \verb|*option|. For more details, users can refer to Section
-\ref{ss:SLIP_options}.
+there are three options: no ordering, COLAMD, or AMD, which are passed in by
+\verb|SLIP_options| \verb|*option|. For more details, users can refer to
+Section \ref{ss:SLIP_options}.
 
 The \verb|SLIP_LU_analysis *S| is created by calling
 \verb|SLIP_LU_analyze(&S, A, option)| with \verb|SLIP_matrix *A| properly
-initialized as CSC matrix and \verb|option| be NULL if default ordering
+initialized as CSC matrix and \verb|option| be \verb|NULL| if default ordering
 (COLAMD) is desired. The value of \verb|S| is ignored on input.  On output,
 \verb|S| is a pointer to the newly created symbolic analysis object and
-\verb|SLIP_OK| is returned upon successful completion, or
-\verb|S = NULL| with error status returned if a failure occurred.
+\verb|SLIP_OK| is returned upon successful completion, or \verb|S = NULL| with
+error status returned if a failure occurred.  Returns \verb|SLIP_PANIC| if SLIP
+LU has not been initialized.
 
 The analysis \verb|S| is freed by \verb|SLIP_LU_analysis_free|.
+
+%-------------------------------------------------------------------------------
+\cprotect\subsection{\verb|SLIP_LU_analysis_free|: free \verb|SLIP_LU_analysis| structure}
+\label{ss:LU_analysis_free}
+%-------------------------------------------------------------------------------
+
+\begin{mdframed}[userdefinedwidth=6in]
+{\footnotesize
+\begin{verbatim}
+    SLIP_info SLIP_LU_analysis_free
+    (
+        SLIP_LU_analysis **S, // Structure to be deleted
+        const SLIP_options *option
+    ) ;
+\end{verbatim}
+} \end{mdframed}
+
+
+\verb|SLIP_LU_analysis_free| frees a \verb|SLIP_LU_analysis| structure.
+Note that the input of the function is the pointer to the pointer of a
+\verb|SLIP_LU_analysis| structure. This is because this function internally
+sets the pointer of a \verb|SLIP_LU_analysis| to be \verb|NULL| to prevent
+potential segmentation fault that could be caused by double \verb|free|.
+If default settings are desired, \verb|option| can be input as \verb|NULL|.
+Returns \verb|SLIP_PANIC| if SLIP LU has not been initialized.
 
 %-------------------------------------------------------------------------------
 \cprotect\subsection{\verb|SLIP_LU_factorize|: perform LU factorization}
@@ -1218,12 +1299,13 @@ For example codes, please refer to either \verb|SLIP_LU/Demos/SLIPLU.c| or
 Section \ref{s:Using:expert}.
 
 On input, \verb|L|, \verb|U|, \verb|rhos|, and \verb|pinv| are undefined and
-ignored.  \verb|A| must be a CSC \verb|mpz_t| matrix. Default
-setting will be used if \verb|option| is input as NULL.
+ignored.  \verb|A| must be a CSC \verb|mpz| matrix. Default settings are used
+if \verb|option| is input as \verb|NULL|.
 
-Upon successful completion, the function returns \verb|SLIP_OK|, and
-\verb|L| and \verb|U| are the lower and upper triangular matrices,
-\verb|rhos| contains the sequence of pivots. 
+Upon successful completion, the function returns \verb|SLIP_OK|, and \verb|L|
+and \verb|U| are lower and upper triangular matrices, respectively, which are
+CSC matrices of type \verb|mpz|.  \verb|rhos| contains the sequence of pivots
+as an \verb|n|-by-1 dense vector of type \verb|mpz|.
 
 After factorizing the matrix, the determinant of $A$ can be obtained from
 \verb|rhos[n-1]| and \verb|A->scale| as follows:
@@ -1239,10 +1321,12 @@ The output array \verb|pinv| contains the inverse row permutation (that is, the
 row index in the permuted matrix $PA$. For the $i$th row in $A$, \verb|pinv[i]|
 gives the row index in $PA$). 
 
-If an error occurs, \verb|L|, \verb|U|, \verb|rhos|, and \verb|pinv| are all
+Returns \verb|SLIP_PANIC| if SLIP LU has not been initialized.  Otherwise, if
+another error occurs, \verb|L|, \verb|U|, \verb|rhos|, and \verb|pinv| are all
 returned as \verb|NULL|, and an error code will be returned correspondingly.
 
 %-------------------------------------------------------------------------------
+\newpage
 \cprotect\subsection{\verb|SLIP_LU_solve|: solve the linear system $Ax=b$}
 \label{ss:SLIP_LU_solve}
 %-------------------------------------------------------------------------------
@@ -1273,28 +1357,29 @@ after a successful return from \verb|SLIP_LU_factorize|, which computes
 \verb|L|, \verb|U|, \verb|rhos|, and \verb|pinv|. 
 
 On input, \verb|SLIP_matrix *x| is undefined. \verb|A|, \verb|L| and \verb|U|
-should be CSC mpz matrices while \verb|b| and \verb|rhos| should be dense mpz
-matrices. All matrices should have matched dimensions. (Since \verb|L|, \verb|U|
-and \verb|rhos| are computed from \verb|SLIP_LU_factorize|, they will have
-matched dimension with \verb|A|. Yet, \verb|b| should be guaranteed to have
-same number of rows as that of \verb|A|.) Default setting will be used if
-\verb|option| is input as NULL.
+must be CSC \verb|mpz_t| matrices while \verb|b| and \verb|rhos| must be dense
+\verb|mpz_t|  matrices. All matrices must have matched dimensions: the matrices
+\verb|L| and \verb|U| must be square lower and upper triangular matrices the
+same size as \verb|A|, and \verb|rhos| must be a dense \verb|n|-by-1 vector.
+The input matrix \verb|b| must have same number of rows as \verb|A|.  Default
+settings are used if \verb|option| is input as \verb|NULL|.
 
-Upon successful completion, the function returns \verb|SLIP_OK|, and
-\verb|x| contains the solution of \verb|mpq_t| type with dense format to the
-linear system $Ax=b$. If desired, \verb|option->check|
-can be set to \verb|true| to enable solution checking process in this function.
-However, this is intended for debugging only; SLIP LU library is guaranteed to
-return the exact solution. Otherwise (in case of error occured), the function
-returns corresponding error code.
+Upon successful completion, the function returns \verb|SLIP_OK|, and \verb|x|
+contains the solution of \verb|mpq_t| type with dense format to the linear
+system $Ax=b$. If desired, \verb|option->check| can be set to \verb|true| to
+enable a post-check of the solution of this function.  However, this is
+intended for debugging only; the SLIP LU library is guaranteed to return the
+exact solution. Otherwise (in case of error occurred), the function returns
+corresponding error code.
 
-Like some other routines discussed in this section, this
-function is primarily for advanced users who might want intermediate
-calculation results; thus for usage information please refer to either
-\verb|SLIP_LU/Demos/SLIPLU.c| or Section \ref{s:Using:expert}.
-
+Like some other routines discussed in this section, this function is primarily
+for advanced users who might want intermediate calculation results; thus for
+usage information please refer to either \verb|SLIP_LU/Demos/SLIPLU.c| or
+Section \ref{s:Using:expert}.  Returns \verb|SLIP_PANIC| if SLIP LU has not
+been initialized.
 
 %-------------------------------------------------------------------------------
+\newpage
 \cprotect\subsection{\verb|SLIP_backslash|: solve $Ax=b$ and return $x$ in user desired type}
 \label{ss:SLIP_backslash}
 %-------------------------------------------------------------------------------
@@ -1326,109 +1411,24 @@ On input, \verb|SLIP_matrix *x| is undefined. \verb|type| must be one of:
 \verb|SLIP_MPQ|, \verb|SLIP_MPFR| or \verb|SLIP_FP64| to specify the data type
 of the solution entries. \verb|A| should be a square CSC \verb|mpz_t| matrix
 while \verb|b| should be a dense \verb|mpz_t| matrix. In addition, \verb|A->m|
-should be equal to \verb|b->m|.  Default setting will be used if
-\verb|option| is input as NULL.
+should be equal to \verb|b->m|.  Default settings are used if
+\verb|option| is input as \verb|NULL|.
 
 Upon successful completion, the function returns \verb|SLIP_OK|, and
 \verb|x| contains the solution of data type specified by
 \verb|type| to the linear system $Ax=b$. If desired, \verb|option->check| can
 be set to \verb|true| to enable solution checking process in this function.
 However, this is intended for debugging only; SLIP LU library is guaranteed to
-return the exact solution. Otherwise (in case of error occured), the function
+return the exact solution. Otherwise (in case of error occurred), the function
 returns corresponding error code.
 
-For a complete example, users can refer to \verb|SLIP_LU/Demos/example.c|, 
+Returns \verb|SLIP_PANIC| if SLIP LU has not been initialized.
+
+For a complete example, users can refer to \verb|SLIP_LU/Demos/example.c|,  \\
 \verb|SLIP_LU/Demos/example2.c|, or Section \ref{s:Using:simple}.
 
-
 %-------------------------------------------------------------------------------
-\cprotect\section{Additional Routines for \verb|SLIP_matrix| (TODO rename this)}
-\label{s:SLIP_matrix_routine}
-%-------------------------------------------------------------------------------
-
-This section contains additional routines to copy, query and check a
-\verb|SLIP_matrix| structure.
-
-
-%-------------------------------------------------------------------------------
-\cprotect\subsection{\verb|SLIP_matrix_copy|: make a copy of a \verb|SLIP_matrix|}
-\label{s:user:matrix_copy}
-%-------------------------------------------------------------------------------
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-    SLIP_info SLIP_matrix_copy
-    (
-        SLIP_matrix **C,        // matrix to create (never shallow)
-        // inputs, not modified:
-        SLIP_kind kind,         // CSC, triplet, or dense
-        SLIP_type type,         // mpz_t, mpq_t, mpfr_t, int64_t, or double
-        SLIP_matrix *A,         // matrix to make a copy of (may be shallow)
-        const SLIP_options *option
-    ) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb|SLIP_matrix_copy| creates a \verb|SLIP_matrix *C| which is a modified copy
-of a \verb|SLIP_matrix *A|. The new matrix \verb|C| can be of any type or
-kind different than \verb|A|. On input \verb|C| is NULL and on output
-\verb|C| is a copy of \verb|A| of kind \verb|kind| and type \verb|type|.
-
-The input matrix is assumed to be valid. It can be checked first with
-\verb|SLIP_matrix_check| (Section \ref{s:user:matrix_check}) , if desired.
-Results are undefined for invalid input matrix \verb|A|.
-
-
-%-------------------------------------------------------------------------------
-\cprotect\subsection{\verb|SLIP_matrix_nnz|: get the number of entries in a
-\verb|SLIP_matrix|}
-\label{s:user:matrix_nnz}
-%-------------------------------------------------------------------------------
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-    int64_t SLIP_matrix_nnz     // return # of entries in A, or -1 on error
-    (
-        const SLIP_matrix *A,         // matrix to query
-        const SLIP_options *option
-    ) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb|SLIP_matrix_nnz| returns the number of entries in a \verb|SLIP_matrix *A|.
-For details regarding how the number of entries is obtained for different kinds
-of matrices, users can refer to Section \ref{ss:SLIP_matrix}.
-For any matrix with invalid dimension(s), this funtion returns -1.
-If default setting is desired, \verb|option| can be input as NULL.
-
-
-%-------------------------------------------------------------------------------
-\cprotect\subsection{\verb|SLIP_matrix_check|: check and print a \verb|SLIP_matrix|}
-\label{s:user:matrix_check}
-%-------------------------------------------------------------------------------
-
-\begin{mdframed}[userdefinedwidth=6in]
-{\footnotesize
-\begin{verbatim}
-    SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
-    (
-        const SLIP_matrix *A,       // matrix to check
-        const SLIP_options* option  // defines the print level
-    ) ;
-\end{verbatim}
-} \end{mdframed}
-
-\verb|SLIP_matrix_check| checks the validity of a \verb|SLIP_matrix *A| in any
-of the 15 different matrix types (CSC, triplet, dense) $\times$ (mpz, mpq,
-mpfr, int64, double). Users can adjust the print level by changing
-\verb|option->print_level| (refer to Section \ref{ss:SLIP_options} for more
-details).
-If default setting is desired, \verb|option| can be input as NULL.
-
-%-------------------------------------------------------------------------------
-\section{SLIP LU Wrapper Functions for GMP and MPFR}
+\section{SLIP LU wrapper functions for GMP and MPFR}
 %-------------------------------------------------------------------------------
 
 SLIP LU provides a wrapper class for all GMP and MPFR functions used by SLIP
@@ -1519,21 +1519,22 @@ SLIP_info SLIP_gmpfunc
 \end{verbatim}
 } \end{mdframed}
 
-\newpage
+% \newpage
 \thispagestyle{empty}
 {\scriptsize
-% \begin{table*}[htbp]
 \begin{center}
 \begin{tabular}{|l|l|l|}
 \hline
-MPFR Function & \verb|SLIP_MPFR| Function & Description \\
+%----------------------------------------
+{\bf MPFR Function} & \verb|SLIP_MPFR| {\bf Function} & {\bf Description} \\
+%----------------------------------------
 \hline\hline
-\verb|n = mpfr_asprintf(&buff, format, ...)|
-    & \verb|n = SLIP_mpfr_asprintf(&buff, format, ...)|
+\verb|n = mpfr_asprintf(&buff, fmt, ...)|
+    & \verb|n = SLIP_mpfr_asprintf(&buff, fmt, ...)|
     & Print format to allocated string \\ \hline
 \verb|mpfr_free_str(buff)|
     & \verb|SLIP_mpfr_free_str(buff)|
-    & Free string allocated by mpfr \\ \hline
+    & Free string allocated by MPFR \\ \hline
 \verb|mpfr_init2(x, size)|
     & \verb|SLIP_mpfr_init2(x, size)|
     & Initialize x with size bits \\ \hline
@@ -1545,13 +1546,13 @@ MPFR Function & \verb|SLIP_MPFR| Function & Description \\
     & $x = y$ (double) \\ \hline
 \verb|mpfr_set_q(x, y, rnd)|
     & \verb|SLIP_mpfr_set_q(x, y, rnd)|
-    & $x = y$ (mpq) \\ \hline
+    & $x = y$ (\verb|mpq_t|) \\ \hline
 \verb|mpfr_set_z(x, y, rnd)|
     & \verb|SLIP_mpfr_set_z(x, y, rnd)|
-    & $x = y$ (mpz) \\ \hline
+    & $x = y$ (\verb|mpz_t|) \\ \hline
 \verb|mpfr_get_z(x, y, rnd)|
     & \verb|SLIP_mpfr_get_z(x, y, rnd)|
-    & (mpz) $x = y$\\ \hline
+    & (\verb|mpz_t|) $x = y$\\ \hline
 \verb|x = mpfr_get_d(y, rnd)|
     & \verb|SLIP_mpfr_get_d(x, y, rnd)|
     & (double) $x = y$\\ \hline
@@ -1573,19 +1574,13 @@ MPFR Function & \verb|SLIP_MPFR| Function & Description \\
 \verb|mpfr_free_cache()|
     & \verb|SLIP_mpfr_free_cache()|
     & Free cache after log2 \\ \hline
-% \end{tabular}
-% \end{center}
-% \end{table*}
-% 
-% 
-% \begin{table*}[htbp]
-% \begin{center}
-% \begin{tabular}{|l|l|l|}
 \hline
-GMP Function & \verb|SLIP_GMP| Function & Description \\
+%----------------------------------------
+{\bf GMP Function} & \verb|SLIP_GMP| {\bf Function} & {\bf Description} \\
+%----------------------------------------
 \hline\hline
-\verb|n = gmp_fscanf(fp, format, ...)|
-    & \verb|n = SLIP_gmp_fscanf(fp, format, ...)|
+\verb|n = gmp_fscanf(fp, fmt, ...)|
+    & \verb|n = SLIP_gmp_fscanf(fp, fmt, ...)|
     & Read from file fp \\ \hline
 \verb|mpz_init(x)|
     & \verb|SLIP_mpz_init(x)|
@@ -1595,7 +1590,7 @@ GMP Function & \verb|SLIP_GMP| Function & Description \\
     & Initialize x to size bits \\ \hline
 \verb|mpz_set(x, y)|
     & \verb|SLIP_mpz_set(x, y)| 
-    & $x = y$ (mpz) \\ \hline
+    & $x = y$ (\verb|mpz_t|) \\ \hline
 \verb|mpz_set_ui(x, y)|
     & \verb|SLIP_mpz_set_ui(x, y)|
     & $x = y$ (signed int) \\ \hline
@@ -1610,7 +1605,7 @@ GMP Function & \verb|SLIP_GMP| Function & Description \\
     & $x = y$ (double out) \\ \hline
 \verb|mpz_set_q(x, y)|
     & \verb|SLIP_mpz_set_q(x, y)|
-    & $x = y$ (mpq) \\ \hline
+    & $x = y$ (\verb|mpz_t|) \\ \hline
 \verb|mpz_mul(x, y, z)|
     & \verb|SLIP_mpz_mul(x, y, z)|
     & $x = y*z$ \\ \hline
@@ -1658,7 +1653,7 @@ GMP Function & \verb|SLIP_GMP| Function & Description \\
     & $x = y$ \\ \hline
 \verb|mpq_set_z(x, y)|
     & \verb|SLIP_mpq_set_z(x, y)|
-    & $x = y$ (mpz) \\ \hline
+    & $x = y$ (\verb|mpz|) \\ \hline
 \verb|mpq_set_d(x, y)|
     & \verb|SLIP_mpq_set_d(x, y)|
     & $x=y$ (double) \\ \hline
@@ -1700,7 +1695,6 @@ GMP Function & \verb|SLIP_GMP| Function & Description \\
     & $r = 0$ if $x=y$\\&&  $r\neq 0$ if $x\neq y$ \\ \hline
 \end{tabular}
 \end{center}
-% \end{table*}
 }
 
 %-------------------------------------------------------------------------------
@@ -1717,21 +1711,20 @@ system for each $b$ vector, and
 \item free all used memory and finalize.
 \end{enumerate}
 
-Steps 1 is discussed in Subsections \ref{s:Using:init}.
-Perform symbolic analysis and factorizing $A$ and solving the linear $A x =b$
-can be done in one of two ways. If the user is only interested in
-obtaining the solution vector $x$, SLIP LU provides a simple interface
-for this purpose which is discussed in Section \ref{s:Using:simple}.
-Alternatively, if the user wants the actual $L$ and $U$ factors, please refer
-to Section \ref{s:Using:expert}. Finally, step 3 is discussed in Section
-\ref{s:Using:free}. For the remainder of this section, \verb|n| will indicate
-the dimension of $A$ (that is, $A \in \mathbb{Z}^{n \times n}$) and
-\verb|numRHS| will indicate the number of right hand side vectors being solved
-(that is, if \verb|numRHS|$= r$, then $b \in \mathbb{Z}^{n \times
-r})$.
+Step 1 is discussed in Section \ref{s:Using:init}.  For Step 2, performing
+symbolic analysis and factorizing $A$ and solving the linear $A x =b$ can be
+done in one of two ways. If the user is only interested in obtaining the
+solution vector $x$, SLIP LU provides a simple interface for this purpose which
+is discussed in Section \ref{s:Using:simple}.  Alternatively, if the user wants
+the actual $L$ and $U$ factors, please refer to Section \ref{s:Using:expert}.
+Finally, step 3 is discussed in Section \ref{s:Using:free}. For the remainder
+of this section, \verb|n| will indicate the dimension of $A$ (that is, $A \in
+\mathbb{Z}^{n \times n}$) and \verb|numRHS| will indicate the number of right
+hand side vectors being solved (that is, if \verb|numRHS|$= r$, then $b \in
+\mathbb{Z}^{n \times r}$).
 
 %-------------------------------------------------------------------------------
-\cprotect\subsection{SLIP LU Initialization and Population of Data Structures}
+\cprotect\subsection{SLIP LU initialization and population of data structures}
 \label{s:Using:init}
 %-------------------------------------------------------------------------------
 
@@ -1739,20 +1732,17 @@ This section discusses how to initialize and populate the global data
 structures required for SLIP LU.
 
 %-------------------------------------------------------------------------------
-\subsubsection{Initializing the Environment}
+\subsubsection{Initializing the environment}
 %-------------------------------------------------------------------------------
 
 SLIP LU is built upon the GNU Multiple Precision Arithmetic (GMP)
 \cite{granlund2015gnu} and GNU Multiple Precision Floating Point Reliable
-(MPFR) \cite{fousse2007mpfr} libraries and provides
-wrappers to all GMP/MPFR functions it uses.
-This allows SLIP LU to properly handle
-memory management failures, which GMP/MPFR does not handle.
-It may also allow the
-user to not need any direct access to the GMP/MPFR libraries.  To enable this
-mechanism, SLIP LU requires initialization.  The following must be done before
-using any other SLIP LU function:
-
+(MPFR) \cite{fousse2007mpfr} libraries and provides wrappers to all GMP/MPFR
+functions it uses.  This allows SLIP LU to properly handle memory management
+failures, which GMP/MPFR does not handle.  It may also allow the user to not
+need any direct access to the GMP/MPFR libraries.  To enable this mechanism,
+SLIP LU requires initialization.  The following must be done before using any
+other SLIP LU function:
 
 \begin{mdframed}[userdefinedwidth=6in]
 {\footnotesize
@@ -1762,20 +1752,20 @@ using any other SLIP LU function:
 \end{verbatim}
 } \end{mdframed}
 
-
 %-------------------------------------------------------------------------------
-\subsubsection{Initializing Data Structures}
+\subsubsection{Initializing data structures}
 \label{ss:init}
 %-------------------------------------------------------------------------------
 
 SLIP LU assumes three specific input options for all functions. These are:
 
 \begin{itemize}
-\item \verb|SLIP_matrix* A| and \verb|SLIP_matrix *b|:
-\verb|A| contains the user's input matrix, while \verb|b| contains the user's
-right hand side vector(s). If the input matrix was already an integer matrix,
-\verb|A| is the user's input and \verb|A->scale|=1. Otherwise, the input matrix is not integer and \verb|A| contains the user's scaled input matrix. \verb|b|
-is handled in the same way.
+\item \verb|SLIP_matrix* A| and \verb|SLIP_matrix *b|: \verb|A| contains the
+user's input matrix, while \verb|b| contains the user's right hand side
+vector(s). If the input matrix was already an integer matrix, \verb|A| is the
+user's input and \verb|A->scale|=1. Otherwise, the input matrix is not integer
+and \verb|A| contains the user's scaled input matrix. \verb|b| is handled in
+the same way.
 
 \item \verb|SLIP_LU_analysis* S|: \verb|S| contains the column permutation used
 for $A$ as well as guesses for the number of nonzeros in $L$ and $U$.
@@ -1783,42 +1773,42 @@ for $A$ as well as guesses for the number of nonzeros in $L$ and $U$.
 \item \verb|SLIP_options* option|: \verb|option| contains various control
 options for the factorization including column ordering used, pivot selection
 scheme, and others. For a full list of the contents of the \verb|SLIP_options|
-structure, please refer to Section \ref{ss:SLIP_options}. If default setting
-is desired, NULL can be given instead.
+structure, please refer to Section \ref{ss:SLIP_options}.
+If default settings are desired, \verb|option| can be set to \verb|NULL|.
 
 \end{itemize}
 
 %-------------------------------------------------------------------------------
-\subsubsection{Populating Data Structures}
+\subsubsection{Populating data structures}
 \label{ss:populate_Ab}
 %-------------------------------------------------------------------------------
 
 Of the three data structures discussed in Section~\ref{ss:init}, \verb|S| is
-constructed during symbolic analysis (Section \ref{s:SLIP_LU_analyze}),
-\verb|option| can be provided as NULL unless user desires setting different
-from default.  (please refer to Section \ref{ss:SLIP_options} for the contents
-of \verb|option|.)
+constructed during symbolic analysis (Section \ref{s:SLIP_LU_analyze}), and
+\verb|option| can be provided as \verb|NULL| unless user desires setting different
+from default.  Please refer to Section \ref{ss:SLIP_options} for the contents
+of \verb|option|.
 
 SLIP LU allows the input numerical data for \verb|A| and \verb|b| to come in
-one of 5 typess: \verb|int64_t|, \verb|double|, \verb|mpfr_t|, \verb|mpq_t|,
+one of 5 types: \verb|int64_t|, \verb|double|, \verb|mpfr_t|, \verb|mpq_t|,
 and \verb|mpz_t|. Moreover, both \verb|A| and \verb|b| can be stored in
 CSC form, sparse triplet form or dense form. CSC form is discussed in Section
-\ref{s:intro}. Conversely, triplet form stores the contents of the matrix $A$
+\ref{s:intro}. The triplet form stores the contents of the matrix $A$
 in three arrays \verb|i|, \verb|j|, and \verb|x| where the $k$th nonzero entry
-is stored as $A ( i[k], j[k]) = x[k]$. SLIP LU assumes that dense form stores
-entries in column-oriented format, that is, the $(i,j)$th entry in \verb|A|
-is \verb|A->x.TYPE|[$p$] with $p = i+j$*\verb|A->m|.
+is stored as $A ( i[k], j[k]) = x[k]$. SLIP LU stores its dense matrices in
+in column-oriented format, that is, the $(i,j)$th entry in \verb|A|
+is \verb|A->x.TYPE[p]| with $p = i+j$*\verb|A->m|.
 
 If the data for matrices are in file format to be read, user can refer to
-\verb|SLIP_LU/Demo| \verb|/example2.c| on how to read in data and construct \verb|A| and
-\verb|b|. If the data for matrices are readily stored in vectors corresponding
-to CSC form, sparse triplet form or dense form, user can allocate a shallow
-\verb|SLIP_matrix| and assign vectors accordingly, then use
+\verb|SLIP_LU/Demo| \verb|/example2.c| on how to read in data and construct
+\verb|A| and \verb|b|. If the data for matrices are already stored in vectors
+corresponding to CSC form, sparse triplet form or dense form, the user can
+allocate a shallow \verb|SLIP_matrix| and assign vectors accordingly, then use
 \verb|SLIP_matrix_copy| to get a \verb|SLIP_matrix| in the desired kind and
-type. For more details, user can refer to \verb|SLIP_LU/Demo/example.c|. In a case
-when \verb|A| is available in the format other than CSC mpz, and/or \verb|b|
-is available in the format other than dense mpz, the following code snippet
-shows how to get \verb|A| and \verb|b| in a requred format.
+type. For more details, refer to \verb|SLIP_LU/Demo/example.c|. In a case when
+\verb|A| is available in format other than CSC \verb|mpz|, and/or \verb|b|
+is available in format other than dense \verb|mpz|, the following code
+snippet shows how to get \verb|A| and \verb|b| in a required format.
 
 {\small
 \begin{verbatim}
@@ -1836,7 +1826,7 @@ shows how to get \verb|A| and \verb|b| in a requred format.
     \end{verbatim} }
 
 %-------------------------------------------------------------------------------
-\cprotect\subsection{Simple SLIP LU Routines for Solving Linear Systems}
+\cprotect\subsection{Simple SLIP LU routines for solving linear systems}
 \label{s:Using:simple}
 %-------------------------------------------------------------------------------
 
@@ -1854,30 +1844,37 @@ matrix. User can modify accordingly to meet one's need.
 \begin{verbatim}
     SLIP_matrix *x;
     SLIP_type my_type = SLIP_MPQ; // SLIP_MPQ, SLIP_MPFR, SLIP_FP64
-    SLIP_backslash(&x, my_type, A, b, option) ;
-    \end{verbatim} }
+    SLIP_backslash(&x, my_type, A, b, option) ; \end{verbatim} }
 
 On successful return, this function returns \verb|SLIP_OK| (see Section
 \ref{ss:SLIP_info}).
 
 %-------------------------------------------------------------------------------
-\cprotect\subsection{Expert SLIP LU Routines}
+\cprotect\subsection{Expert SLIP LU routines}
 \label{s:Using:expert}
 %-------------------------------------------------------------------------------
 
 If a user wishes to perform the SLIP LU factorization of the matrix $A$ while
 capturing information about the factorization itself and solving the linear
 system, extra steps must be performed that are all done internally in the
-method described in the previous subsection. Particularly, the following steps
-must be performed: 1) declare \verb|L|, \verb|U|, the solution matrix
-\verb|x|, and others,
-2) perform symbolic analysis 3) compute the factorization
-$PAQ = L D U$, 4) solve the linear system $Ax =b$, and 5) convert the final
-solution into the user's desired form. Below, we discuss each of these steps
-followed by an example of putting it all together.
+\verb|SLIP_backslash| method described in the previous subsection.
+
+To split this work into its component steps, the following steps must be
+performed:
+
+\begin{enumerate}
+\item declare \verb|L|, \verb|U|, the solution matrix \verb|x|, and others,
+\item perform symbolic analysis,
+\item compute the factorization $PAQ = L D U$, 
+\item solve the linear system $Ax =b$, and
+\item convert the final solution into the final desired form.
+\end{enumerate}
+
+Below, we discuss each of these steps followed by an example of putting it all
+together.
 
 %-------------------------------------------------------------------------------
-\subsubsection{Declare Workspace}
+\subsubsection{Declare workspace}
 %-------------------------------------------------------------------------------
 
 Using SLIP LU in this form requires the intermediate variables be declared,
@@ -1900,7 +1897,7 @@ detailed list.
      \end{verbatim} }
 
 %-------------------------------------------------------------------------------
-\subsubsection{SLIP LU Symbolic Analysis}
+\subsubsection{SLIP LU symbolic analysis}
 %-------------------------------------------------------------------------------
 
 The symbolic analysis phase of SLIP LU computes the column permutation and
@@ -1912,7 +1909,7 @@ guesses for the number of nonzeros in $L$ and $U$. This function is called as:
 
 
 %-------------------------------------------------------------------------------
-\subsubsection{Computing the Factorization}
+\subsubsection{Computing the factorization}
 %-------------------------------------------------------------------------------
 
 The matrices \verb|L| and \verb|U|, the pivot sequence \verb|rhos|, and the row
@@ -1921,7 +1918,7 @@ permutation \verb|pinv| are computed via the \verb|SLIP_LU_factorize| function
 function returns \verb|SLIP_OK|.
 
 %-------------------------------------------------------------------------------
-\subsubsection{Solving the Linear System}
+\subsubsection{Solving the linear system}
 %-------------------------------------------------------------------------------
 
 After factorization, the next step is to solve the linear system and store the
@@ -1930,26 +1927,27 @@ solution as a dense matrix \verb|x| with entries of rational number
 function (Section \ref{ss:SLIP_LU_solve}). 
 Upon successful completion, this function returns \verb|SLIP_OK|.
 
-In this step, user can set \verb|option->check| to \verb|true| to enable
-the solution check process as discussed in Section \ref{ss:SLIP_LU_solve}.
-The process can verify that the solution vector x satisfies $Ax=b$ in perfect
-precision intended for debugging.  Note that this is entirely optional and not
-necessary. The solution returned is guaranteed to be exact.   It appears here
-just as a verification that SLIP LU is computing its expected result.  This
-test can fail only if it runs out of memory, or if there is a bug in the code.
-Also, note that this process can be quite time consuming; thus it is not
-recommended to be used in general.
+In this step, user can set \verb|option->check| to \verb|true| to enable the
+solution check process as discussed in Section \ref{ss:SLIP_LU_solve}.  The
+process can verify that the solution vector x satisfies $Ax=b$ in perfect
+precision intended for debugging.  This step is not needed, since the solution
+returned is guaranteed to be exact.   It appears here simply as debugging tool,
+and as a verification that SLIP LU is computing its expected result.  This test
+can fail only if it runs out of memory, or if there is a bug in the code (in
+which case, please notify the authors).  Also, note that this process can be
+quite time consuming; thus it is not recommended to be used in general.
 
 %-------------------------------------------------------------------------------
-\subsubsection{Converting the Solution Vector to the User's Desired Form}
+\subsubsection{Converting the solution vector to the final desired form}
 %-------------------------------------------------------------------------------
 
-Upon completion of the above routines, the solution to the linear system is
-in a dense \verb|mpq_t| matrix. SLIP LU allows this to be converted into any
-form of matrix in the set of (CSC, sparse triplet, dense) $\times$
-(\verb|mpfr_t|, \verb|mpq_t|, \verb|double|) using
-\verb|SLIP_matrix_copy|. The following code snippet shows how to get solution
-as a dense double matrix.
+Upon completion of the above routines, the solution to the linear system is in
+a dense \verb|mpq_t| matrix. SLIP LU allows this to be converted into any form
+of matrix in the set of (CSC, sparse triplet, dense) $\times$ (\verb|mpfr_t|,
+\verb|mpq_t|, \verb|double|) using \verb|SLIP_matrix_copy|. The following code
+snippet shows how to get solution as a dense \verb|double| matrix; since this
+involves a floating-point representation, the solution \verb|my_x| will no
+longer be exact, even though \verb|x| is the exact solution.
 
 {\small
 \begin{verbatim}
@@ -1961,7 +1959,7 @@ as a dense double matrix.
     SLIP_matrix_copy( &my_x, my_kind, my_type, x, option);\end{verbatim} }
 
 %-------------------------------------------------------------------------------
-\cprotect\subsection{SLIP LU Freeing Memory}
+\cprotect\subsection{Freeing memory}
 \label{s:Using:free}
 %-------------------------------------------------------------------------------
 
@@ -1988,7 +1986,7 @@ After all usage of the SLIP LU routines is finished, one must call
 the library.
 
 %-------------------------------------------------------------------------------
-\cprotect\subsection{Examples of Using SLIP LU in a C Program}
+\cprotect\subsection{Examples of using SLIP LU in a C program}
 \label{s:Using:Examples}
 %-------------------------------------------------------------------------------
 
@@ -2002,7 +2000,7 @@ solves the linear system. In this function, the \verb|SLIP_backslash|
 function is used; and the output is given as a double matrix.
 
 \item \verb|example2.c|: This example reads in a matrix stored in triplet
-format from the ExampleMats folder. Additionally, it reads in a
+format from the \verb|ExampleMats| folder. Additionally, it reads in a
 right hand side vector from this folder and solves the associated linear system
 via the \verb|SLIP_backslash| function, and, the solution is given as a matrix
 of rational numbers.
@@ -2010,8 +2008,8 @@ of rational numbers.
 \item \verb|SLIPLU.c|: This example reads in a matrix and right hand side
 vector from a file and solves the linear system $A x = b$
 using the techniques discussed in Section \ref{s:Using:expert}. This file also
-allows command line arguments (discussed in README.txt) and can be used to
-replicate the results from \cite{lourenco2019exact}.
+allows command line arguments (discussed in \verb|README.md|) and can be used
+to replicate the results from \cite{lourenco2019exact}.
 
 \end{itemize}
 
@@ -2022,60 +2020,64 @@ replicate the results from \cite{lourenco2019exact}.
 
 After following the installation steps discussed in Section \ref{s:install},
 using the SLIP LU factorization within MATLAB can be done via the
-\verb|SLIP_LU.m| and the \verb|SLIP_get_options| functions. First, this section
-will describe the \verb|SLIP_get_options| struct in Section
-\ref{s:Use:MATLAB:setup} then we describe how to use the factorization in
-Section \ref{s:Use:MATLAB:factor}. Again, recall that by default the SLIP LU
-MATLAB routines are not natively installed into your MATLAB installation; thus
-if you want to use them in a different directory please add the
-\verb|SLIP_LU/MATLAB| folder to your path.
+\verb|SLIP_LU.m| function. First, this section describes the \verb|options|
+struct in Section \ref{s:Use:MATLAB:setup} then we describe how to use the
+factorization in Section \ref{s:Use:MATLAB:factor}.  Again, recall that by
+default the SLIP LU MATLAB routines are not natively installed into your MATLAB
+installation; thus if you want to use them in a different directory please add
+the \verb|SLIP_LU/MATLAB| folder to your path.
 
 %-------------------------------------------------------------------------------
-\cprotect\subsection{\verb|SLIP_get_options.m|}
+\cprotect\subsection{Optional parameter settings}
 \label{s:Use:MATLAB:setup}
 %-------------------------------------------------------------------------------
 
 Much like the C routines described throughout, the SLIP LU MATLAB interface has
 various parameters that the user can modify to control the factorization. In
-MATLAB, these are stored in a struct (hereafter referred to as the ``options"
-struct). Notice that this struct is optional for the
-user to use and can be avoided if one wishes to use only default options. The
-options struct can be accessed by typing the following into the MATLAB command
-window:
-
-\verb|option = SLIP_get_options;|
-
-The elements of the options struct are as follows:
+MATLAB, these are stored in the \verb'option' struct.  Notice that this struct
+is optional can be avoided if default options are used.  The elements of the
+\verb'option' struct are listed below.  Any fields not present in the struct
+are treated as their default values.
 
 \begin{itemize}
 
-% TODO make option.pivot a string
-\item \verb|option.pivot|: This parameter controls the pivoting scheme used.
-The factorization selects a pivot element in each column as follows:
+\item \verb|option.pivot|: This parameter is a string that controls the
+pivoting scheme used.  When selecting a pivot entry in a given column, the
+factorization method uses one of the following pivoting strategies:
 
     \begin{itemize}
-    \item 0: smallest pivot,
-    \item 1: diagonal pivot if possible, otherwise smallest pivot,
-    \item 2: first nonzero pivot in each column,
-    \item 3: (default) diagonal pivot with a tolerance (\verb|option.tol|)
+    \item \verb|'smallest'|: smallest pivot,
+    \item \verb|'diagonal'|: diagonal pivot if possible, otherwise smallest pivot,
+    \item \verb|'first'|: first nonzero pivot in each column,
+    \item \verb|'tol smallest'|: (default) diagonal pivot with a tolerance (\verb|option.tol|)
         for the smallest pivot,
-    \item 4: diagonal pivot with a tolerance (\verb|option.tol|)
+    \item \verb|'tol largest'|: diagonal pivot with a tolerance (\verb|option.tol|)
         for the largest pivot,
-    \item 5: largest pivot.
+    \item \verb|'largest'|: largest pivot.
     \end{itemize}
 
-It is recommended that the user always selects either 3 or 1 for this parameter
-UNLESS they are trying to extract the Doolittle factors, then 5 may be
-appropriate (due to the size of numbers in Doolittle).
+It is recommended that the user always selects either \verb|'tol smallest'| or
+\verb|'diagonal'| for this parameter, unless they are trying to extract the
+Doolittle factors, then \verb|'largest'| may be appropriate (due to the size of
+numbers in Doolittle).
 
-% TODO make option.order a string
-\item \verb|option.order|: This parameter controls the column ordering used.
-0: none, 1: COLAMD, 2: AMD. It is usually recommended that the user keep this
-at COLAMD unless they already have a good column permutation.
+\item \verb|option.order|: This parameter is a string controls the
+fill-reducing column preordering used.
+
+    \begin{itemize}
+    \item \verb|'none'|: no column ordering; factorize \verb'A' as-is.
+    \item \verb|'colamd'|: COLAMD ordering (default)
+    \item \verb|'amd'|: AMD ordering
+    \end{itemize}
+
+It is usually recommended that the user keep this at \verb|'colamd'| unless
+they already have a good column permutation.  The \verb|'AMD'| ordering is
+suitable if the nonzero pattern of \verb'A' is mostly symmetric.  In this
+case, \verb|option.pivot = 'diagonal'| is a useful option.
 
 \item \verb|option.tol|: This parameter determines the tolerance used if one of
 the threshold pivoting schemes is chosen. The default value is 0.1 and this
-parameter can take any value in the range (0,1).
+parameter can take any value in the range $(0,1]$.
 
 \end{itemize}
 
@@ -2084,16 +2086,14 @@ parameter can take any value in the range (0,1).
 \label{s:Use:MATLAB:factor}
 %-------------------------------------------------------------------------------
 
-The \verb|SLIP_LU.m| function solves the linear system $A x =
-b$ where $A \in \mathtt{R}^{n \times n}$, $x \in
-\mathtt{R}^{n \times m}$ and $b \in \mathtt{R}^{n \times m}$. The
-final solution vector(s) obtained via this function are exact prior to their
-conversion to double precision.
+The \verb|SLIP_LU.m| function solves the linear system $A x = b$ where $A \in
+\mathtt{R}^{n \times n}$, $x \in \mathtt{R}^{n \times m}$ and $b \in
+\mathtt{R}^{n \times m}$. The final solution vector(s) obtained via this
+function are exact prior to their conversion to double precision.
 
 The SLIP LU function expects as input a sparse matrix $A$ and dense set of
-right hand side vectors $b$. Optionally, the user can also pass in the
-options struct. Currently, there are 2 ways to use this function outlined
-below:
+right hand side vectors $b$. Optionally, the user can also pass in the options
+struct. Currently, there are 2 ways to use this function outlined below:
 
 \begin{itemize}
 
@@ -2105,6 +2105,16 @@ the solution obtained via \verb|x = A \ b|.
 b$ using user specified settings from the options struct.
 
 \end{itemize}
+
+Note that the result \verb|x| is held as a MATLAB dense vector, in conventional
+floating-point representation (\verb|double|), having been converted from the
+\verb|mpq| type to return to MATLAB.  As a result, the solution \verb|x| is
+guaranteed to be exact only if the exact solution can be held in \verb|double|
+without modification.
+
+A future version of the \verb|SLIP_LU| MATLAB function could return \verb|x|
+in the MATLAB \verb|vpa| format, which would preserve the exact solution.
+This feature may be added in the future.
 
 %-------------------------------------------------------------------------------
 % References
