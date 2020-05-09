@@ -101,13 +101,13 @@ SLIP_info SLIP_backslash
     // Solve
     //--------------------------------------------------------------------------
 
-    SLIP_CHECK(SLIP_LU_solve(&x, b, A,
+    SLIP_CHECK (SLIP_LU_solve (&x, b, A,
         (const SLIP_matrix *) L,
         (const SLIP_matrix *) U,
         (const SLIP_matrix *) rhos,
         S,
         (const int64_t *) pinv,
-        option));
+        option)) ;
 
     //--------------------------------------------------------------------------
     // Now, x contains the exact solution of the linear system in mpq_t
@@ -116,21 +116,21 @@ SLIP_info SLIP_backslash
 
     if (type == SLIP_MPQ)
     {
-        (*X_handle) = x;
+        (*X_handle) = x ;
     }
     else
     {
-        SLIP_matrix* x2 = NULL;
-        SLIP_CHECK(SLIP_matrix_copy(&x2, SLIP_DENSE, type, x, option));
-        (*X_handle) = x2;
-        SLIP_matrix_free(&x, NULL);
+        SLIP_matrix* x2 = NULL ;
+        SLIP_CHECK (SLIP_matrix_copy (&x2, SLIP_DENSE, type, x, option)) ;
+        (*X_handle) = x2 ;
+        SLIP_matrix_free (&x, NULL) ;
     }
 
     //--------------------------------------------------------------------------
     // Free memory
     //--------------------------------------------------------------------------
 
-    SLIP_FREE_WORK;
+    SLIP_FREE_WORK ;
     return (SLIP_OK) ;
 }
 

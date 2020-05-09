@@ -39,7 +39,7 @@ SLIP_info SLIP_matrix_allocate
                             // appropriate SLIP_mp*_init function). If false,
                             // the mpz, mpq, and mpfr arrays are malloced but
                             // not initialized. Utilized internally to reduce
-                            // memory
+                            // memory.  Ignored if shallow is true.
     const SLIP_options *option
 )
 {

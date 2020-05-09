@@ -14,7 +14,8 @@
 
 void slip_mex_error
 (
-    SLIP_info status
+    SLIP_info status,
+    char *message
 )
 {
     
@@ -24,20 +25,28 @@ void slip_mex_error
             return ;
 
         case SLIP_OUT_OF_MEMORY :        // out of memory
+            SLIP_finalize ( ) ;
             mexErrMsgTxt ("out of memory") ;
 
         case SLIP_SINGULAR :             // the input matrix A is singular
+            SLIP_finalize ( ) ;
             mexErrMsgTxt ("input matrix is singular") ;
 
         case SLIP_INCORRECT_INPUT :      // one or more input arguments are incorrect
+            SLIP_finalize ( ) ;
             mexErrMsgTxt ("invalid inputs") ;
 
         case SLIP_INCORRECT :            // The solution is incorrect
+            SLIP_finalize ( ) ;
             mexErrMsgTxt ("result invalid") ;
 
         case SLIP_PANIC :                // SLIP_LU used without proper initialization
+            SLIP_finalize ( ) ;
+            mexErrMsgTxt ("panic") ;
+
         default : 
-            mexErrMsgTxt ("unknown error") ;
+            SLIP_finalize ( ) ;
+            mexErrMsgTxt (message) ;
     }
 }
 

@@ -13,6 +13,15 @@
 
 #include "slip_internal.h"
 
+// if pr == 2, turn off printing after 30 lines of output
+#define SLIP_PR_LIMIT                       \
+    lines++ ;                               \
+    if (pr == 2 && lines > 30)              \
+    {                                       \
+        SLIP_PRINTF ("    ...\n") ;         \
+        pr = 1 ;                            \
+    }
+
 int compar (const void *x, const void *y)
 {
     // compare two (i,j) tuples
@@ -61,6 +70,8 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
     // check the dimensions
     //--------------------------------------------------------------------------
 
+    SLIP_info status = 0 ;
+    char * buff = NULL ;
     int pr = SLIP_OPTION_PRINT_LEVEL (option) ;
     int64_t nz = SLIP_matrix_nnz(A, option);    // Number of nonzeros in A
     if (nz < 0)
@@ -99,13 +110,22 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
         SLIP_PR1 ("A has invalid type.\n") ;
         return (SLIP_INCORRECT_INPUT) ;
     }
-    else
+
+    SLIP_PR2 ("SLIP_matrix: nrows: %"PRId64", ncols: %"PRId64", nz:"
+        "%"PRId64", nzmax: %"PRId64", kind: %s, type: %s\n", m, n, nz,
+        nzmax, A->kind < 1 ? "CSC" : A->kind < 2 ? "Triplet" : "Dense",
+        A->type < 1 ? "MPZ" : A->type < 2 ? "MPQ" : A->type < 3 ?
+        "MPFR" : A->type < 4 ? "int64" : "double") ;
+
+    if (pr >= 2)
     {
-        SLIP_PR2 ("SLIP_matrix: nrows: %"PRId64", ncols: %"PRId64", nz:"
-            "%"PRId64", nzmax: %"PRId64", kind: %s, type: %s\n", m, n, nz,
-            nzmax, A->kind < 1 ? "CSC" : A->kind < 2 ? "Triplet" : "Dense",
-            A->type < 1 ? "MPZ" : A->type < 2 ? "MPQ" : A->type < 3 ?
-            "MPFR" : A->type < 4 ? "int64" : "double") ;
+        SLIP_PR2 ("scale factor: ") ;
+        status = SLIP_mpfr_asprintf (&buff,"%Qd\n", A->scale) ;
+        if (status >= 0)
+        {
+            SLIP_PR2 ("%s", buff) ;
+            SLIP_mpfr_free_str (buff) ;
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -115,6 +135,8 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
     int64_t i, j, p, pend ;
     int64_t* work = NULL;   // used for checking duplicates for CSC and triplet
     uint64_t prec = SLIP_OPTION_PREC (option);
+
+    int64_t lines = 0 ;     // # of lines printed so far
 
     //--------------------------------------------------------------------------
     // check each kind of matrix: CSC, triplet, or dense
@@ -177,6 +199,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
 
             for (j = 0 ; j < n ; j++)  // iterate across columns
             {
+                SLIP_PR_LIMIT ;
                 SLIP_PR2 ("column %"PRId64" :\n", j) ;
                 int64_t marked = j+1 ;
                 for (p = Ap [j] ; p < Ap [j+1] ; p++)
@@ -198,9 +221,8 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                     }
                     if (pr >= 2)
                     {
-                        SLIP_PRINTF ("  row %"PRId64" : ", i) ;
-                        SLIP_info status = 0;
-                        char *buff = NULL ;
+                        SLIP_PR_LIMIT ;
+                        SLIP_PR2 ("  row %"PRId64" : ", i) ;
 
                         switch ( A->type)
                         {
@@ -210,7 +232,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                                     A->x.mpz[p]);
                                 if (status >= 0)
                                 {
-                                    SLIP_PRINTF("%s", buff);
+                                    SLIP_PR2("%s", buff);
                                     SLIP_mpfr_free_str (buff);
                                 }
                                 break;
@@ -221,7 +243,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                                     A->x.mpq[p]);
                                 if (status >= 0)
                                 {
-                                    SLIP_PRINTF("%s", buff);
+                                    SLIP_PR2("%s", buff);
                                     SLIP_mpfr_free_str (buff);
                                 }
                                 break;
@@ -232,19 +254,19 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                                     prec, A->x.mpfr [p]);
                                 if (status >= 0) 
                                 {
-                                    SLIP_PRINTF("%s", buff);
+                                    SLIP_PR2("%s", buff);
                                     SLIP_mpfr_free_str (buff);
                                 }
                                 break;
                             }
                             case SLIP_FP64:
                             {
-                                SLIP_PRINTF ("%lf \n", A->x.fp64[p]);
+                                SLIP_PR2 ("%lf \n", A->x.fp64[p]);
                                 break;
                             }
                             case SLIP_INT64:
                             {
-                                SLIP_PRINTF ("%ld \n", A->x.int64[p]);
+                                SLIP_PR2 ("%ld \n", A->x.int64[p]);
                                 break;
                             }
                         }
@@ -299,9 +321,8 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                 }
                 if (pr >= 2)
                 {
-                    SLIP_PRINTF ("  %"PRId64" %"PRId64" : ", i, j) ;
-                    SLIP_info status = 0;
-                    char* buff = NULL ;
+                    SLIP_PR_LIMIT ;
+                    SLIP_PR2 ("  %"PRId64" %"PRId64" : ", i, j) ;
 
                     switch ( A->type)
                     {
@@ -311,7 +332,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                                 A->x.mpz [p]);
                             if (status >= 0) 
                             {
-                                SLIP_PRINTF("%s", buff);
+                                SLIP_PR2("%s", buff);
                                 SLIP_mpfr_free_str (buff);
                             }
                             break;
@@ -322,7 +343,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                                 A->x.mpq [p]);
                             if (status >= 0)  
                             {   
-                                SLIP_PRINTF("%s", buff); 
+                                SLIP_PR2("%s", buff); 
                                 SLIP_mpfr_free_str (buff); 
                             }
                             break;
@@ -333,19 +354,19 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                                 prec, A->x.mpfr [p]);
                             if (status >= 0)  
                             {   
-                                SLIP_PRINTF("%s", buff); 
+                                SLIP_PR2("%s", buff); 
                                 SLIP_mpfr_free_str (buff); 
                             }
                             break;
                         }
                         case SLIP_FP64:
                         {
-                            SLIP_PRINTF ("%lf \n", A->x.fp64[p]);
+                            SLIP_PR2 ("%lf \n", A->x.fp64[p]);
                             break;
                         }
                         case SLIP_INT64:
                         {
-                            SLIP_PRINTF ("%ld \n", A->x.int64[p]);
+                            SLIP_PR2 ("%ld \n", A->x.int64[p]);
                             break;
                         }
                     }
@@ -423,14 +444,14 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
 
             for (j = 0 ; j < n ; j++)
             {
+                SLIP_PR_LIMIT ;
                 SLIP_PR2 ("column %"PRId64" :\n", j) ;
                 for (i = 0; i < m; i++)
                 {
                     if (pr >= 2)
                     {
-                        SLIP_PRINTF ("  row %"PRId64" : ", i) ;
-                        SLIP_info status = 0;
-                        char* buff = NULL ;
+                        SLIP_PR_LIMIT ;
+                        SLIP_PR2 ("  row %"PRId64" : ", i) ;
 
                         switch ( A->type)
                         {
@@ -440,7 +461,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                                     SLIP_2D(A, i, j, mpz)) ;
                                 if (status >= 0)  
                                 {   
-                                    SLIP_PRINTF("%s", buff); 
+                                    SLIP_PR2("%s", buff); 
                                     SLIP_mpfr_free_str (buff); 
                                 }
                                 break;
@@ -451,7 +472,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                                     SLIP_2D(A, i, j, mpq));
                                 if (status >= 0)   
                                 {    
-                                    SLIP_PRINTF("%s", buff);  
+                                    SLIP_PR2("%s", buff);  
                                     SLIP_mpfr_free_str (buff);  
                                 }
                                 break;
@@ -462,25 +483,25 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
                                     prec, SLIP_2D(A, i, j, mpfr));
                                 if (status >= 0)   
                                 {    
-                                    SLIP_PRINTF("%s", buff);  
+                                    SLIP_PR2("%s", buff);  
                                     SLIP_mpfr_free_str (buff);  
                                 }
                                 break;
                             }
                             case SLIP_FP64:
                             {
-                                SLIP_PRINTF ("%lf \n", SLIP_2D(A, i, j, fp64));
+                                SLIP_PR2 ("%lf \n", SLIP_2D(A, i, j, fp64));
                                 break;
                             }
                             case SLIP_INT64:
                             {
-                                SLIP_PRINTF ("%ld \n", SLIP_2D(A, i, j, int64));
+                                SLIP_PR2 ("%ld \n", SLIP_2D(A, i, j, int64));
                                 break;
                             }
                         }
                         if (status < 0)
                         {
-                            SLIP_PRINTF (" error: %d\n", status) ;
+                            SLIP_PR2 (" error: %d\n", status) ;
                             return (status) ;
                         }
                     }

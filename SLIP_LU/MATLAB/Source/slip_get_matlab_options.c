@@ -17,8 +17,9 @@
 
 void slip_get_matlab_options
 (
-    SLIP_options* option,   // Control parameters (must not be NULL)
-    const mxArray* input    // options struct, may be NULL
+    SLIP_options* option,           // Control parameters
+    slip_mex_options *mexoptions,   // MATLAB-specific options
+    const mxArray* input            // options struct, may be NULL
 )
 {
 
@@ -41,7 +42,7 @@ void slip_get_matlab_options
     field = present ? mxGetField (input, 0, "order") : NULL ;
     if (field != NULL)
     {
-        if (!mxIsChar (field)) mexErrMsgTxt ("option.order must be a string") ;
+        if (!mxIsChar (field)) slip_mex_error (1, "option.order must be a string") ;
         mxGetString (field, string, LEN) ;
         if (MATCH (string, "none"))
         {
@@ -57,7 +58,7 @@ void slip_get_matlab_options
         }
         else
         {
-            mexErrMsgTxt ("unknown option.order") ;
+            slip_mex_error (1, "unknown option.order") ;
         }
     }
 
@@ -69,7 +70,7 @@ void slip_get_matlab_options
     field = present ? mxGetField (input, 0, "pivot") : NULL ;
     if (field != NULL)
     {
-        if (!mxIsChar (field)) mexErrMsgTxt ("option.pivot must be a string") ;
+        if (!mxIsChar (field)) slip_mex_error (1, "option.pivot must be a string") ;
         mxGetString (field, string, LEN) ;
         if (MATCH (string, "smallest"))
         {
@@ -99,7 +100,7 @@ void slip_get_matlab_options
         }
         else
         {
-            mexErrMsgTxt ("unknown option.pivot") ;
+            slip_mex_error (1, "unknown option.pivot") ;
         }
     }
 
@@ -116,9 +117,69 @@ void slip_get_matlab_options
             option->tol = mxGetScalar (field) ;
             if (option->tol > 1 || option->tol <= 0)
             {
-                mexErrMsgTxt ("invalid option.tol, must be > 0 and <= 1") ;
+                slip_mex_error (1, "invalid option.tol, "
+                    "must be > 0 and <= 1") ;
             }
         }
+    }
+
+    //--------------------------------------------------------------------------
+    // Get the solution option
+    //--------------------------------------------------------------------------
+
+    mexoptions->solution = SLIP_SOLUTION_DOUBLE ;     // default x is double
+    field = present ? mxGetField (input, 0, "solution") : NULL ;
+    if (field != NULL)
+    {
+        mxGetString (field, string, LEN) ;
+        if (MATCH (string, "vpa"))
+        {
+            mexoptions->solution = SLIP_SOLUTION_VPA ;  // return x as vpa
+        }
+        else if (MATCH (string, "char"))
+        {
+            mexoptions->solution = SLIP_SOLUTION_CHAR ;  // x as cell strings
+        }
+        else if (MATCH (string, "double"))
+        {
+            mexoptions->solution = SLIP_SOLUTION_DOUBLE ;  // x as double
+        }
+        else
+        {
+            slip_mex_error (1, "unknown option.solution") ;
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    // Get the digits option
+    //--------------------------------------------------------------------------
+
+    mexoptions->digits = 100 ;     // same as the MATLAB vpa default
+    field = present ? mxGetField (input, 0, "digits") : NULL ;
+    if (field != NULL)
+    {
+        double d = mxGetScalar (field) ;
+        if (d != trunc (d) || d < 2 || d > (1 << 29))
+        {
+            // the MATLAB vpa requires digits between 2 and 2^29
+            slip_mex_error (1, "options.digits must be an integer "
+                "between 2 and 2^29") ;
+        }
+        mexoptions->digits = (int32_t) d ;
+    }
+
+    //--------------------------------------------------------------------------
+    // Get the print level
+    //--------------------------------------------------------------------------
+
+    option->print_level = 0 ;       // default is no printing
+    field = present ? mxGetField (input, 0, "print") : NULL ;
+    if (field != NULL)
+    {
+        // silently convert to an integer 0, 1, 2, or 3
+        option->print_level = (int) mxGetScalar (field) ;
+        option->print_level = SLIP_MIN (option->print_level, 3) ;
+        option->print_level = SLIP_MAX (option->print_level, 0) ;
     }
 }
 

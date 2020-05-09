@@ -9,12 +9,17 @@ function x = SLIP_backslash (A,b,option)
 % longer exactly solve A*x=b, unless this final conversion is able to be
 % done without modification.
 %
+% x may also be returned as a vpa matrix, or a cell array of strings, with
+% x {i} = 'numerator/denominator', where the numerator and denominator are
+% strings of decimal digits of arbitrary length.
+%
 % Usage:
 %
-% x = SLIP_backslas (A,b) returns the solution to Ax=b using default settings
+% x = SLIP_backslash (A,b) returns the solution to Ax=b using default settings.
 %
-% x = SLIP_backslas (A,b,options) returns the solution to Ax=b with user defined
-% settings in an options struct.  Entries not present are treated as defaults.
+% x = SLIP_backslash (A,b,options) returns the solution to Ax=b with user
+%   defined settings in an options struct.  Entries not present are treated as
+%   defaults.
 %
 %   option.order: Column ordering used.
 %       'none': no column ordering; factorize the matrix A as-is
@@ -31,6 +36,28 @@ function x = SLIP_backslash (A,b,option)
 %
 %   option.tol: tolerance (0,1] for 'tol smallest' or 'tol largest' pivoting.
 %       default is 0.1.
+%
+%   option.print: display the inputs and outputs
+%       0: nothing (default), 1: just errors, 2: terse, 3: all
+%
+%   option.solution: a string determining how x is to be returned:
+%       'double':  x is converted to a 64-bit floating-point approximate
+%           solution.  This is the default.
+%       'vpa':  x is returned as a vpa array with option.digits digits (default
+%           is given by the MATLAB digits function).  The result may be
+%           inexact, if an entry in x cannot be represented in the specified
+%           number of digits.  To convert this x to double, use x=double(x).
+%
+%       'char':  x is returned as a cell array of strings, where
+%           x {i} = 'numerator/denominator' and both numerator and denominator
+%           are arbitrary-length strings of decimal digits.  The result is
+%           always exact, although x cannot be directly used in MATLAB for
+%           numerical calculations.  It can be inspected or analyzed using
+%           MATLAB string manipulation.  To convert x to vpa, use x=vpa(x).  To
+%           convert x to double, use x=double(vpa(x)).
+%
+%   option.digits: the number of decimal digits to use for x, if
+%       option.solution is 'vpa'.  Must be in range 2 to 2^29.
 %
 % Example:
 %
@@ -66,7 +93,7 @@ function x = SLIP_backslash (A,b,option)
 %   err = norm (x-xtrue)
 %   resid = norm (A*x-b)
 %
-% See also SLIP_install, SLIP_test, SLIP_demo.
+% See also vpa, SLIP_install, SLIP_test, SLIP_demo.
 
 % SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 % Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
@@ -76,12 +103,28 @@ if (nargin < 3)
     option = [ ] ;   % use default options
 end
 
+if (~isnumeric (A) || ~isnumeric (b))
+    error ('inputs must be numeric') ;
+end
+
 % Check if the input matrix is stored as sparse. If not, SLIP LU expects
 % sparse input, so convert to sparse.
 if (~issparse (A))
     A = sparse (A) ;
 end
 
-% Preprocessing complete. Now use SLIP LU to solve Ax=b.
+% Preprocessing complete. Now use SLIP LU to solve A*x=b.
 x = SLIP_mex_soln (A, b, option) ;
+
+% convert to vpa, if requested
+if (isfield (option, 'solution') && isequal (option.solution, 'vpa'))
+    if (isfield (option, 'digits'))
+        x = vpa (x, option.digits) ;
+    else
+        % use the current default # of digits for vpa.  The default is 32,
+        % but this can be changed as a global setting, by the MATLAB 'digits'
+        % command.
+        x = vpa (x) ;
+    end
+end
 

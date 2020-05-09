@@ -28,12 +28,12 @@ bool slip_mex_check_for_inf     // true if x can be represented as int64_t
 
         if (mxIsInf (xk))
         {
-            mexErrMsgTxt ("A must not have any Inf values") ;
+            slip_mex_error (1, "A must not have any Inf values") ;
         }
 
         if (mxIsNaN (xk))
         {
-            mexErrMsgTxt ("A must not have any NaN values") ;
+            slip_mex_error (1, "A must not have any NaN values") ;
         }
 
         if (x_is_int64)

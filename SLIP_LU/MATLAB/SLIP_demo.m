@@ -12,6 +12,7 @@
 % is computed exactly as a rational result in SLIP_backslash with arbitrary
 % precision, but then converted to double precision on output.
 
+format long g
 load west0479
 A = west0479 ;
 n = size (A, 1) ;
@@ -42,8 +43,62 @@ x = A\b ;
 % error will be small but nonzero:
 err_matlab = norm (x-xtrue)
 
-%% SLIP_backslash on difficult problems
+%% SLIP_backslash on ill-conditioned problems
+% x = SLIP_backslash (A,b) is able to solve problems that x=A\b cannot.
+% Consider the following matrix in the MATLAB gallery:
 
-% TODO add some sample solutions from some nasty
-% matrices from the MATLAB gallery function.
+[U, b] = gallery ('wilk', 3)
+
+% the exact solution can be found from the MATLAB vpa solver:
+xvpa = vpa (U) \ b
+
+% MATLAB's numerical x = U\b gets the wrong answer:
+xapprox = U \ b
+
+% SLIP_backslash computes the exact answer, and then returns it to
+% MATLAB as a double vector, obtaining the exact results, except for
+% a final floating-point error in x(2):
+xslip = SLIP_backslash (U, b)
+
+err = xvpa - xslip
+relerr = double (err (2:3) ./ xvpa (2:3))
+
+%% SLIP_backslash with exact results
+% SLIP_backslash can also return x as a cell array of strings, which
+% preserves the exact rational result.  The printing option is also
+% enabled in this example.  The floating-point matrices U and b are
+% converted into a scaled integer matrix before solving U*x-b with
+% SLIP LU.
+%
+% The value U(1,2)=0.9 is a floating-point number, and 0.9 cannot be
+% exactly represented in IEEE floating-point representation.  It is
+% converted exactly into the rational number,
+% fl(0.9) = 45000000000000001 / 50000000000000000.
+
+U
+b
+
+option.print = 3 ;          % also print the details
+option.solution = 'char' ;  % return x as a cell array of strings
+xslip = SLIP_backslash (U, b, option)
+
+%% Converting an exact rational result
+% If SLIP_backslash returns x as a cell array of strings, it cannot
+% be immediately used in computations in MATLAB.  It can be converted
+% into a vpa or double matrix, as illustrated below.  The solution
+% differs slightly from the vpa solution xvpa = vpa (U)\b, since
+% the MATLAB vpa converts fl(0.9) into a decimal represenation 0.9,
+% or exactly 9/10; this is not exactly equal to fl(0.9), since the
+% value 9/10 is not representable in IEEE floating-point.  SLIP_backslash,
+% by contrast, converts fl(0.9) into its exact rational represenation.
+% 45000000000000001 / 50000000000000000.
+
+xslip_as_vpa = vpa (xslip)
+xslip_as_double = double (vpa (xslip))
+
+xvpa_as_double = double (xvpa)
+
+% but vpa(U)\b and SLIP_backslash(U,b) compute the same result
+% in the end.
+err = xvpa_as_double - xslip_as_double
 
