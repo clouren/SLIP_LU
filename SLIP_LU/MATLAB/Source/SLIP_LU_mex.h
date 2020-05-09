@@ -34,8 +34,6 @@ SLIP_solution ;
 typedef struct slip_mex_options
 {
     SLIP_solution solution ;    // how should x be returned to MATLAB
-    // TODO should the mexFunction just use option->prec instead
-    // of add this option here?
     int32_t digits ;            // # of digits to use for vpa
 }
 slip_mex_options ;

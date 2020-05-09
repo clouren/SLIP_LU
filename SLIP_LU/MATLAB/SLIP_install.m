@@ -62,12 +62,13 @@ eval(m1);
 
 fprintf('\nMex file compiled and installed.  Running tests:\n')
 
-% Efficient testing
-% TODO
-% SLIP_test;
+% Test SLIP_backslash.
+SLIP_test;
 
 fprintf ('To use SLIP_backslash in future MATLAB sessions, add the following\n') ;
 fprintf ('line to your startup.m file:\n') ;
 fprintf ('   addpath (''%s'') ;\n', pwd) ;
 fprintf ('Type ''doc startup'' for more info on how to use startup.m\n') ;
+fprintf ('To run a demo, type:\n') ;
+fprintf ('   SLIP_demo ;\n') ;
 
