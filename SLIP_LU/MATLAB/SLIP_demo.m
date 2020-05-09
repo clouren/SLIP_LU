@@ -1,6 +1,9 @@
 %%SLIP_DEMO a demo of SLIP_backslash
+% SLIP_LU is a package for solving sparse linear systems of equations
+% with a roundoff-free integer-preserving method.  The result is
+% always exact, unless the matrix A is perfectly singular.
 %
-% See also SLIP_backslash, SLIP_install, SLIP_test.
+% See also vpa, SLIP_backslash, SLIP_install, SLIP_test.
 %
 % SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 % Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
@@ -67,7 +70,7 @@ relerr = double (err (2:3) ./ xvpa (2:3))
 % SLIP_backslash can also return x as a cell array of strings, which
 % preserves the exact rational result.  The printing option is also
 % enabled in this example.  The floating-point matrices U and b are
-% converted into a scaled integer matrix before solving U*x-b with
+% converted into a scaled integer matrix before solving U*x=b with
 % SLIP LU.
 %
 % The value U(1,2)=0.9 is a floating-point number, and 0.9 cannot be
@@ -82,7 +85,7 @@ option.print = 3 ;          % also print the details
 option.solution = 'char' ;  % return x as a cell array of strings
 xslip = SLIP_backslash (U, b, option)
 
-%% Converting an exact rational result
+%% Converting an exact rational result to vpa or double
 % If SLIP_backslash returns x as a cell array of strings, it cannot
 % be immediately used in computations in MATLAB.  It can be converted
 % into a vpa or double matrix, as illustrated below.  The solution

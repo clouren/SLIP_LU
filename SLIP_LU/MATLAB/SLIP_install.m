@@ -70,5 +70,5 @@ fprintf ('line to your startup.m file:\n') ;
 fprintf ('   addpath (''%s'') ;\n', pwd) ;
 fprintf ('Type ''doc startup'' for more info on how to use startup.m\n') ;
 fprintf ('To run a demo, type:\n') ;
-fprintf ('   SLIP_demo ;\n') ;
+fprintf ('   echodemo SLIP_demo ;\n') ;
 
