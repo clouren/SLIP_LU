@@ -66,9 +66,12 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">SLIP_backslash vs MATLAB backslash: first example</a></li><li><a href="#3">SLIP_backslash: exact, vs MATLAB backslash: approximate</a></li><li><a href="#4">SLIP_backslash on ill-conditioned problems</a></li><li><a href="#5">SLIP_backslash with exact results</a></li><li><a href="#6">Converting an exact rational result</a></li></ul></div><pre class="codeinput"><span class="comment">%%SLIP_DEMO a demo of SLIP_backslash</span>
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">SLIP_backslash vs MATLAB backslash: first example</a></li><li><a href="#3">SLIP_backslash: exact, vs MATLAB backslash: approximate</a></li><li><a href="#4">SLIP_backslash on ill-conditioned problems</a></li><li><a href="#5">SLIP_backslash with exact results</a></li><li><a href="#6">Converting an exact rational result to vpa or double</a></li></ul></div><pre class="codeinput"><span class="comment">%%SLIP_DEMO a demo of SLIP_backslash</span>
+<span class="comment">% SLIP_LU is a package for solving sparse linear systems of equations</span>
+<span class="comment">% with a roundoff-free integer-preserving method.  The result is</span>
+<span class="comment">% always exact, unless the matrix A is perfectly singular.</span>
 <span class="comment">%</span>
-<span class="comment">% See also SLIP_backslash, SLIP_install, SLIP_test.</span>
+<span class="comment">% See also vpa, SLIP_backslash, SLIP_install, SLIP_test.</span>
 <span class="comment">%</span>
 <span class="comment">% SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,</span>
 <span class="comment">% Timothy A. Davis, Texas A&amp;M University.  All Rights Reserved.  See</span>
@@ -90,12 +93,12 @@ err_matlab = norm (x-xtrue)
 </pre><pre class="codeoutput">
 err_slip =
 
-      1.50330498649364e-11
+      2.98124369468777e-11
 
 
 err_matlab =
 
-      3.81737406141394e-11
+      2.61902018490046e-11
 
 </pre><h2 id="3">SLIP_backslash: exact, vs MATLAB backslash: approximate</h2><p>In this example, x = SLIP_backslash (A,b) is returned exactly in the MATLAB vector x, because x contains only integers representable exactly in double precision.  x = A\b results in floating-point roundoff error.</p><pre class="codeinput">amax = max (abs (A), [ ], <span class="string">'all'</span>) ;
 A = floor (2^20 * (A / amax)) + n * speye (n) ;
@@ -115,7 +118,7 @@ err_slip =
 
 err_matlab =
 
-      3.64681315490702e-11
+      2.14294369107696e-11
 
 </pre><h2 id="4">SLIP_backslash on ill-conditioned problems</h2><p>x = SLIP_backslash (A,b) is able to solve problems that x=A\b cannot. Consider the following matrix in the MATLAB gallery:</p><pre class="codeinput">[U, b] = gallery (<span class="string">'wilk'</span>, 3)
 
@@ -180,7 +183,7 @@ relerr =
       1.66893005371094e-16
                          0
 
-</pre><h2 id="5">SLIP_backslash with exact results</h2><p>SLIP_backslash can also return x as a cell array of strings, which preserves the exact rational result.  The printing option is also enabled in this example.  The floating-point matrices U and b are converted into a scaled integer matrix before solving U*x-b with SLIP LU.</p><p>The value U(1,2)=0.9 is a floating-point number, and 0.9 cannot be exactly represented in IEEE floating-point representation.  It is converted exactly into the rational number, fl(0.9) = 45000000000000001 / 50000000000000000.</p><pre class="codeinput">U
+</pre><h2 id="5">SLIP_backslash with exact results</h2><p>SLIP_backslash can also return x as a cell array of strings, which preserves the exact rational result.  The printing option is also enabled in this example.  The floating-point matrices U and b are converted into a scaled integer matrix before solving U*x=b with SLIP LU.</p><p>The value U(1,2)=0.9 is a floating-point number, and 0.9 cannot be exactly represented in IEEE floating-point representation.  It is converted exactly into the rational number, fl(0.9) = 45000000000000001 / 50000000000000000.</p><pre class="codeinput">U
 b
 
 option.print = 3 ;          <span class="comment">% also print the details</span>
@@ -242,7 +245,7 @@ xslip =
     {'200000000000000010000000000/45000000000000001'}
     {'10000000000'                                  }
 
-</pre><h2 id="6">Converting an exact rational result</h2><p>If SLIP_backslash returns x as a cell array of strings, it cannot be immediately used in computations in MATLAB.  It can be converted into a vpa or double matrix, as illustrated below.  The solution differs slightly from the vpa solution xvpa = vpa (U)\b, since the MATLAB vpa converts fl(0.9) into a decimal represenation 0.9, or exactly 9/10; this is not exactly equal to fl(0.9), since the value 9/10 is not representable in IEEE floating-point.  SLIP_backslash, by contrast, converts fl(0.9) into its exact rational represenation. 45000000000000001 / 50000000000000000.</p><pre class="codeinput">xslip_as_vpa = vpa (xslip)
+</pre><h2 id="6">Converting an exact rational result to vpa or double</h2><p>If SLIP_backslash returns x as a cell array of strings, it cannot be immediately used in computations in MATLAB.  It can be converted into a vpa or double matrix, as illustrated below.  The solution differs slightly from the vpa solution xvpa = vpa (U)\b, since the MATLAB vpa converts fl(0.9) into a decimal represenation 0.9, or exactly 9/10; this is not exactly equal to fl(0.9), since the value 9/10 is not representable in IEEE floating-point.  SLIP_backslash, by contrast, converts fl(0.9) into its exact rational represenation. 45000000000000001 / 50000000000000000.</p><pre class="codeinput">xslip_as_vpa = vpa (xslip)
 xslip_as_double = double (vpa (xslip))
 
 xvpa_as_double = double (xvpa)
@@ -281,8 +284,11 @@ err =
 </pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %%SLIP_DEMO a demo of SLIP_backslash
+% SLIP_LU is a package for solving sparse linear systems of equations
+% with a roundoff-free integer-preserving method.  The result is
+% always exact, unless the matrix A is perfectly singular.
 %
-% See also SLIP_backslash, SLIP_install, SLIP_test.
+% See also vpa, SLIP_backslash, SLIP_install, SLIP_test.
 %
 % SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 % Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
@@ -349,7 +355,7 @@ relerr = double (err (2:3) ./ xvpa (2:3))
 % SLIP_backslash can also return x as a cell array of strings, which
 % preserves the exact rational result.  The printing option is also
 % enabled in this example.  The floating-point matrices U and b are
-% converted into a scaled integer matrix before solving U*x-b with
+% converted into a scaled integer matrix before solving U*x=b with
 % SLIP LU.
 %
 % The value U(1,2)=0.9 is a floating-point number, and 0.9 cannot be
@@ -364,7 +370,7 @@ option.print = 3 ;          % also print the details
 option.solution = 'char' ;  % return x as a cell array of strings
 xslip = SLIP_backslash (U, b, option)
 
-%% Converting an exact rational result
+%% Converting an exact rational result to vpa or double
 % If SLIP_backslash returns x as a cell array of strings, it cannot
 % be immediately used in computations in MATLAB.  It can be converted
 % into a vpa or double matrix, as illustrated below.  The solution

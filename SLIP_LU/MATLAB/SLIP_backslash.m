@@ -47,7 +47,6 @@ function x = SLIP_backslash (A,b,option)
 %           is given by the MATLAB digits function).  The result may be
 %           inexact, if an entry in x cannot be represented in the specified
 %           number of digits.  To convert this x to double, use x=double(x).
-%
 %       'char':  x is returned as a cell array of strings, where
 %           x {i} = 'numerator/denominator' and both numerator and denominator
 %           are arbitrary-length strings of decimal digits.  The result is

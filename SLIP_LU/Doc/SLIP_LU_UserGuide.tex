@@ -566,7 +566,7 @@ the pivoting method through the \verb|SLIP_options| structure.  If the matrix
 is non-singular (in an exact sense), then the pivot is always nonzero, and is
 chosen as the {\em smallest} nonzero entry, with the smallest magnitude.  This
 may seem counter-intuitive, but selecting a small nonzero pivot leads to
-smaller growtn in the number of digits in the entries of \verb|L| and \verb|U|.
+smaller growth in the number of digits in the entries of \verb|L| and \verb|U|.
 This choice does not lead to any kind of numerical inaccuracy, since SLIP LU is
 guaranteed to find an exact roundoff-error free factorization of a non-singular
 matrix (unless it runs out of memory), for any nonzero pivot choice.
@@ -2015,6 +2015,7 @@ to replicate the results from \cite{lourenco2019exact}.
 \end{itemize}
 
 %-------------------------------------------------------------------------------
+\newpage
 \cprotect\section{Using SLIP LU in MATLAB}
 \label{s:Use:MATLAB}
 %-------------------------------------------------------------------------------
@@ -2080,6 +2081,34 @@ case, \verb|option.pivot = 'diagonal'| is a useful option.
 the threshold pivoting schemes is chosen. The default value is 0.1 and this
 parameter can take any value in the range $(0,1]$.
 
+\item \verb|option.solution|:
+    a string determining how \verb|x| is to be returned:
+
+    \begin{itemize}
+        \item \verb|'double'|:  \verb|x| is converted to a 64-bit
+            floating-point approximate solution.  This is the default.
+        \item \verb|'vpa'|:  \verb|x| is returned as a \verb|vpa| array with
+            \verb|option.digits| digits (default is given by the MATLAB
+            \verb|digits| function).  The result may be inexact, if an entry in
+            \verb|x| cannot be represented in the specified number of digits.
+            To convert this \verb|x| to double, use \verb|x=double(x)|.
+        \item \verb|'char'|:  \verb|x| is returned as a cell array of strings,
+            where \verb|x {i} =| \newline \verb|'numerator/denominator'| and both
+            \verb|numerator| and \verb|denominator| are arbitrary-length
+            strings of decimal digits.  The result is always exact, although
+            \verb|x| cannot be directly used in MATLAB for numerical
+            calculations.  It can be inspected or analyzed using MATLAB string
+            manipulation.  To convert \verb|x| to \verb|vpa|, use
+            \verb|x=vpa(x)|.  To convert \verb|x| to double, use
+            \verb|x=double(vpa(x))|.
+    \end{itemize}
+
+\item \verb|option.digits|: the number of decimal digits to use for \verb|x|, if
+        \verb|option.solution| is \verb|'vpa'|.  Must be in range 2 to $2^{29}$.
+
+\item \verb|option.print|: display the inputs and outputs
+        (0: nothing (default), 1: just errors, 2: terse, 3: all).
+
 \end{itemize}
 
 %-------------------------------------------------------------------------------
@@ -2100,22 +2129,20 @@ struct. Currently, there are 2 ways to use this function outlined below:
 
 \item \verb|x = SLIP_backslash(A,b)| returns the solution to $A x =
 b$ using default settings. The solution vectors are more accurate than
-the solution obtained via \verb|x = A \ b|.
+the solution obtained via \verb|x = A \ b|.  The solution \verb|x| is
+returned as a MATLAB double matrix.
 
 \item \verb|x = SLIP_backslash(A,b,option)| returns the solution to $A x =
 b$ using user specified settings from the options struct.
 
 \end{itemize}
 
-Note that the result \verb|x| is held as a MATLAB dense vector, in conventional
-floating-point representation (\verb|double|), having been converted from the
-\verb|mpq| type to return to MATLAB.  As a result, the solution \verb|x| is
-guaranteed to be exact only if the exact solution can be held in \verb|double|
-without modification.
+If the result \verb|x| is held as a MATLAB double matrix, in conventional
+floating-point representation (\verb|double|), it is guaranteed to be exact
+only if the exact solution can be held in \verb|double| without modification.
 
-A future version of the \verb|SLIP_backslash| MATLAB function could return
-\verb|x| in the MATLAB \verb|vpa| format, which would preserve the exact
-solution.  This feature may be added in the future.
+The solution \verb|x| may also be returned as a MATLAB \verb|vpa| array, or as
+a cell array of strings; See Section \ref{s:Use:MATLAB:setup} for details.
 
 %-------------------------------------------------------------------------------
 % References
