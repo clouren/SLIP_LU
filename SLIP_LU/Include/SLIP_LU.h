@@ -417,7 +417,7 @@ SLIP_info SLIP_matrix_copy
 // SLIP_LU_analysis: symbolic pre-analysis
 //------------------------------------------------------------------------------
 
-// This struct stores the column permutation for LU and the guess on the
+// This struct stores the column permutation for LU and the estimate of the
 // number of nonzeros in L and U.
 
 typedef struct
@@ -585,8 +585,9 @@ SLIP_info SLIP_LU_factorize
     SLIP_matrix **rhos_handle,  // sequence of pivots
     int64_t **pinv_handle,      // inverse row permutation
     // input:
-    const SLIP_matrix *A,        // matrix to be factored
-    const SLIP_LU_analysis *S,   // stores guess on nnz and column permutation
+    const SLIP_matrix *A,       // matrix to be factored
+    const SLIP_LU_analysis *S,  // column permutation and estimates
+                                // of nnz in L and U 
     const SLIP_options* option
 ) ;
 

@@ -37,8 +37,8 @@
 // #define SLIP_TCOV_SHOW_LIST
 
 /* This program will exactly solve the sparse linear system Ax = b by performing
- * the SLIP LU factorization. Please refer to README.txt for information on how
- * to properly use this code
+ * the SLIP LU factorization. Refer to README.txt for information on how
+ * to properly use this code.
  */
 
 #define SLIP_FREE_ALL                            \

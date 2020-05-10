@@ -48,7 +48,8 @@ SLIP_info SLIP_LU_factorize
     int64_t **pinv_handle,     // inverse row permutation
     // input:
     const SLIP_matrix *A,      // matrix to be factored
-    const SLIP_LU_analysis *S, // stores guess on nnz and column permutation
+    const SLIP_LU_analysis *S, // column permutation and estimates
+                               // of nnz in L and U 
     const SLIP_options* option // command options
 )
 {

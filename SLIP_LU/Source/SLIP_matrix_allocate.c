@@ -123,13 +123,13 @@ SLIP_info SLIP_matrix_allocate
         {
             case SLIP_CSC:
                 A->p = (int64_t *) SLIP_calloc (n+1, sizeof (int64_t)) ;
-                A->i = (int64_t *) SLIP_malloc (nzmax * sizeof (int64_t)) ;
+                A->i = (int64_t *) SLIP_calloc (nzmax, sizeof (int64_t)) ;
                 ok = (A->p != NULL && A->i != NULL) ;
                 break ;
 
             case SLIP_TRIPLET:
-                A->i = (int64_t *) SLIP_malloc (nzmax * sizeof (int64_t)) ;
-                A->j = (int64_t *) SLIP_malloc (nzmax * sizeof (int64_t)) ;
+                A->i = (int64_t *) SLIP_calloc (nzmax, sizeof (int64_t)) ;
+                A->j = (int64_t *) SLIP_calloc (nzmax, sizeof (int64_t)) ;
                 ok = (A->i != NULL && A->j != NULL) ;
                 break ;
 

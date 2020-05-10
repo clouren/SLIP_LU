@@ -14,7 +14,7 @@
  * Input/output arguments:
  *
  * S:       Symbolic analysis struct. Undefined on input; contains column
- *          permutation and guesses on L and U nnz on output
+ *          permutation and estimates of nnz(L) and nnz(U) nnz on output
  *
  * A:       Input matrix, unmodified on input/output
  *
@@ -83,7 +83,7 @@ SLIP_info SLIP_LU_analyze
         {
             S->q[i] = i;
         }
-        // Guesses for number of L and U nonzeros
+        // estimates for number of L and U nonzeros
         S->lnz = S->unz = 10*anz;
     }
 
@@ -98,7 +98,7 @@ SLIP_info SLIP_LU_analyze
         amd_l_defaults (Control) ;              // Set AMD defaults
         double Info [AMD_INFO];
         amd_l_order(n, A->p, A->i, S->q, Control, Info); // Perform AMD
-        S->lnz = S->unz = Info[AMD_LNZ];        // Guess for unz and lnz
+        S->lnz = S->unz = Info[AMD_LNZ];        // estimate for unz and lnz
         if (pr > 0)   // Output AMD info if desired
         {
             SLIP_PRINTF ("\n****Column Ordering Information****\n") ;
@@ -135,7 +135,7 @@ SLIP_info SLIP_LU_analyze
         }
         int64_t stats [COLAMD_STATS];
         colamd_l (n, n, Alen, A2, S->q, (double *) NULL, stats);
-        // Guess for lnz and unz
+        // estimate for lnz and unz
         S->lnz = S->unz = 10*anz;
 
         // Print stats if desired
@@ -150,11 +150,11 @@ SLIP_info SLIP_LU_analyze
 
     //--------------------------------------------------------------------------
     // Make sure appropriate space is allocated. It's possible to return
-    // guesses which exceed the dimension of L and U or guesses which are too
-    // small for L U. In this case, this block of code ensures that the guesses
+    // esimates which exceed the dimension of L and U or esimates which are too
+    // small for L U. In this case, this block of code ensures that the esimates
     // on nnz(L) and nnz(U) are at least n and no more than n*n.
     //--------------------------------------------------------------------------
-    // Guess exceeds max number of nnz in A
+    // estimate exceeds max number of nnz in A
     if (S->lnz > (double) n*n)
     {
         int64_t nnz = ceil(0.5*n*n);

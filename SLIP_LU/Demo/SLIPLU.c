@@ -12,7 +12,7 @@
 
 /* This program will exactly solve the sparse linear system Ax = b by
  * performing the SLIP LU factorization. This is intended to be a demonstration
- * of the "advanced interface" of SLIP LU. Please refer to README.txt for
+ * of the "advanced interface" of SLIP LU. Refer to README.txt for
  * information on how to properly use this code
  */
 
@@ -24,7 +24,7 @@
 //
 // f (or file) Filename. e.g., SLIPLU f MATRIX_NAME RHS_NAME, which indicates
 // SLIPLU will read matrix from MATRIX_NAME and right hand side from RHS_NAME.
-// The matrix must be stored in Matrix Market format. Please refer to
+// The matrix must be stored in Matrix Market format. Refer to
 // http://math.nist.gov/MatrixMarket/formats.html for information on
 // Matrix Market format.
 // The right hand side vector must be stored as a dense vector.
@@ -159,7 +159,7 @@ int main (int argc, char* argv[])
 
     //--------------------------------------------------------------------------
     // In this demo file, we now read in the A and b matrices from external
-    // files.  Please refer to the example.c file or the user guide for other
+    // files.  Refer to the example.c file or the user guide for other
     // methods of creating the input matrix. In general, the user can create 
     // his/her matrix (say in double form) and then create a copy of it with
     // SLIP_matrix_copy
@@ -199,7 +199,7 @@ int main (int argc, char* argv[])
     // We now perform symbolic analysis by getting the column preordering of
     // the matrix A. This is done via the SLIP_LU_analyze function. The output
     // of this function is a column permutation Q where we factor the matrix AQ
-    // and a guess on the number of nonzeros in L and U.
+    // and an estimate of the number of nonzeros in L and U.
     //
     // Note that in the simple interface demostrated in the example*.c files,
     // all of the following code is condensed into the single SLIP_backslash

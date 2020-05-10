@@ -6,7 +6,7 @@ Purpose: Exactly solve a sparse system of linear equations using a given input
          matrix and right hand side vector file. This code can output the final
          solution to a user specified output file in either double precision or
          full precision rational numbers. If you intend to use SLIP LU within
-         another program, please refer to examples for help with this.
+         another program, refer to examples for help with this.
 
 ./SLIPLU followed by the listed args:
 
@@ -15,8 +15,8 @@ for using this function.
 
 f (or file) Filename. e.g., ./SLIPLU f MATRIX_NAME RHS_NAME, which indicates
 SLIPLU will read matrix from MATRIX_NAME and right hand side from RHS_NAME.
-For this demo, the matrix is stored in a triplet format. Please refer to
-SLIP_LU/ExampleMats for some examples
+For this demo, the matrix is stored in a triplet format. Refer to
+SLIP_LU/ExampleMats for examples.
 
 p (or piv) Pivot_param. e.g., ./SLIPLU p 0, which indicates SLIPLU will use
 smallest pivot for pivot scheme. Other available options are listed
