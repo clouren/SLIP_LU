@@ -22,6 +22,8 @@
         pr = 1 ;                            \
     }
 
+int compar (const void *x, const void *y) ;
+
 int compar (const void *x, const void *y)
 {
     // compare two (i,j) tuples
@@ -394,7 +396,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
             }
 
             // load the (i,j) indices of the triplets into the workspace
-            for (int64_t p = 0 ; p < nz ; p++)
+            for (p = 0 ; p < nz ; p++)
             {
                 work [2*p  ] = Aj [p] ;
                 work [2*p+1] = Ai [p] ;
@@ -404,7 +406,7 @@ SLIP_info SLIP_matrix_check     // returns a SLIP_LU status code
             qsort (work, nz, 2 * sizeof (int64_t), compar) ;
 
             // check for duplicates
-            for (int64_t p = 1 ; p < nz ; p++)
+            for (p = 1 ; p < nz ; p++)
             {
                 int64_t this_j = work [2*p  ] ;
                 int64_t this_i = work [2*p+1] ;

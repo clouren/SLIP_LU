@@ -52,4 +52,5 @@ SLIP_realloc.c
 slip_ref_triangular_solve.c
 slip_sparse_collapse.c
 slip_sparse_realloc.c
+slip_permute_b.c
 

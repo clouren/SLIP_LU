@@ -90,10 +90,10 @@ xslip = SLIP_backslash (U, b, option)
 % be immediately used in computations in MATLAB.  It can be converted
 % into a vpa or double matrix, as illustrated below.  The solution
 % differs slightly from the vpa solution xvpa = vpa (U)\b, since
-% the MATLAB vpa converts fl(0.9) into a decimal represenation 0.9,
+% the MATLAB vpa converts fl(0.9) into a decimal representation 0.9,
 % or exactly 9/10; this is not exactly equal to fl(0.9), since the
 % value 9/10 is not representable in IEEE floating-point.  SLIP_backslash,
-% by contrast, converts fl(0.9) into its exact rational represenation.
+% by contrast, converts fl(0.9) into its exact rational represenation,
 % 45000000000000001 / 50000000000000000.
 
 xslip_as_vpa = vpa (xslip)

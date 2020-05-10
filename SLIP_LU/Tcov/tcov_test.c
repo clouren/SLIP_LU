@@ -60,7 +60,7 @@
     if (info != SLIP_OK)                         \
     {                                            \
         SLIP_PRINT_INFO (info) ;                 \
-        SLIP_FREE_ALL;                     \
+        SLIP_FREE_ALL;                           \
         continue;                                \
     }                                            \
 }
@@ -71,7 +71,7 @@
     if (info != SLIP_INCORRECT_INPUT && info != SLIP_SINGULAR) \
     {                                            \
         SLIP_PRINT_INFO (info) ;                 \
-        SLIP_FREE_ALL ;                    \
+        SLIP_FREE_ALL ;                          \
         continue ;                               \
     }                                            \
     else                                         \
@@ -92,6 +92,8 @@ int64_t Axnum3[11] = {1, 2, 7, 1, 2, 4, 1, 3, 1, 12, 1};    // Numerator of x
 int64_t Axden3[11] = {3, 3, 6, 1, 7, 1, 1, 1, 5, 1,  1};    // Denominator of x
 int64_t bxnum3[4] = {17, 182, 61, 67};                      // Numerator of b
 int64_t bxden3[4] = {15,  3,   6,  7};                      // Denominator of b
+
+#include <assert.h>
 
 int main( int argc, char* argv[])
 {
@@ -126,14 +128,14 @@ int main( int argc, char* argv[])
         if (!argv[++arg_count])
         {
             NUM_OF_TRIALS=1;
-            gmp_ntrial_list=SLIP_malloc(NUM_OF_TRIALS* sizeof(int64_t));
+            gmp_ntrial_list= malloc (NUM_OF_TRIALS* sizeof(int64_t));
             gmp_ntrial_list[0]=-1;
             arg_count--;
         }
         else
         {
             NUM_OF_TRIALS=atoi(argv[arg_count]);
-            gmp_ntrial_list=SLIP_malloc(NUM_OF_TRIALS* sizeof(int64_t));
+            gmp_ntrial_list= malloc (NUM_OF_TRIALS* sizeof(int64_t));
             for (int64_t k=0; k<NUM_OF_TRIALS; k++)
             {
                 if (argv[++arg_count])
@@ -152,13 +154,13 @@ int main( int argc, char* argv[])
         if (!argv[++arg_count])
         {
             NUM_OF_MALLOC_T=1;
-            malloc_trials_list=SLIP_malloc(NUM_OF_MALLOC_T* sizeof(int64_t));
+            malloc_trials_list= malloc (NUM_OF_MALLOC_T* sizeof(int64_t));
             malloc_trials_list[0]=MAX_MALLOC_COUNT;//INT_MAX;
         }
         else
         {
             NUM_OF_MALLOC_T=atoi(argv[arg_count]);
-            malloc_trials_list=SLIP_malloc(NUM_OF_MALLOC_T* sizeof(int64_t));
+            malloc_trials_list= malloc (NUM_OF_MALLOC_T* sizeof(int64_t));
             for (int64_t k=0; k<NUM_OF_MALLOC_T; k++)
             {
                 if (argv[++arg_count])
@@ -190,14 +192,31 @@ int main( int argc, char* argv[])
     }
 
     //--------------------------------------------------------------------------
+    // test calloc, realloc, free
+    //--------------------------------------------------------------------------
+
+    SLIP_info info ;
+    info = SLIP_initialize ( ) ;                       assert (info == SLIP_OK) ;
+    info = SLIP_finalize ( ) ;                         assert (info == SLIP_OK) ;
+    info = SLIP_initialize ( ) ;                       assert (info == SLIP_OK) ;
+    int *p4 = SLIP_calloc (5, sizeof (int)) ;          assert (p4 != NULL)  ;
+    bool ok ;
+    p4 = SLIP_realloc (6, 5, sizeof (int), p4, &ok) ;  assert (ok) ;
+    info = SLIP_finalize ( ) ;                         assert (info == SLIP_OK) ;
+    p4 = SLIP_realloc (7, 6, sizeof (int), p4, &ok) ;  assert (!ok) ;
+    info = SLIP_initialize ( ) ;                       assert (info == SLIP_OK) ;
+    SLIP_FREE (p4) ;
+    info = SLIP_finalize ( ) ;                         assert (info == SLIP_OK) ;
+
+    //--------------------------------------------------------------------------
     // run all trials
     //--------------------------------------------------------------------------
 
-    // For SIMPLE_TEST, outter loop iterates for slip_gmp_ntrials initialized
+    // For SIMPLE_TEST, outer loop iterates for slip_gmp_ntrials initialized
     // from list1 (input for tcov_test) and inner loop interates for
     // malloc_count initialized from list2 (input for tcov_test).
     //
-    // For non SIMPLE_TEST, outter loop iterates for Ab_type from 0 to 5, and
+    // For non SIMPLE_TEST, outer loop iterates for Ab_type from 0 to 5, and
     // inner loop iterates for malloc_count initialized from 0 to
     // MAX_MALLOC_COUNT, break when malloc_count>0 at the end of inner loop.
 
@@ -243,12 +262,14 @@ int main( int argc, char* argv[])
             SLIP_initialize_expert (tcov_malloc, tcov_calloc,
                 tcov_realloc, tcov_free) ;
 
+            info = SLIP_initialize ( ) ;
+            assert (info == SLIP_PANIC) ;
+
             //------------------------------------------------------------------
             // Allocate memory
             //------------------------------------------------------------------
 
             int64_t n=4, numRHS=1, j, nz=11;
-            SLIP_info info ;
             SLIP_options* option = SLIP_create_default_options();
             if (!option) {continue;}
             option->print_level = 3;
@@ -627,6 +648,38 @@ int main( int argc, char* argv[])
                     TEST_CHECK(slip_gmp_realloc_test(&p_new,p_new,1,0));
                 }
 
+                //--------------------------------------------------------------
+                // test SLIP_matrix_check on a triplet matrix with bad triplets
+                //--------------------------------------------------------------
+
+                printf ("\n[ SLIP_matrix_check -------------------------\n") ;
+                SLIP_matrix_free (&A, option) ;
+                int64_t I2 [4] = { 1, 2, 1, 1 } ;
+                int64_t J2 [4] = { 1, 0, 0, 1 } ;
+                TEST_CHECK (SLIP_matrix_allocate (&A, SLIP_TRIPLET,
+                    SLIP_INT64, 3, 3, 4, true, false, option)) ;
+                A->i = I2 ;
+                A->j = J2 ;
+                A->x.int64 = I2 ;
+                A->nz = 4 ;
+                printf ("invalid triplet matrix expected:\n") ;
+                TEST_CHECK_FAILURE (SLIP_matrix_check (A, option)) ;
+                SLIP_matrix_free (&A, option) ;
+
+                TEST_CHECK (SLIP_matrix_allocate (&A, SLIP_CSC,
+                    SLIP_INT64, 3, 3, 4, true, false, option)) ;
+                int64_t P3 [4] = { 0, 2, 4, 4 } ;
+                int64_t I3 [4] = { 0, 0, 0, 0 } ;
+                A->p = P3 ;
+                A->i = I3 ;
+                A->x.int64 = I3 ;
+                printf ("invalid CSC matrix expected:\n") ;
+                TEST_CHECK_FAILURE (SLIP_matrix_check (A, option)) ;
+                SLIP_matrix_free (&A, option) ;
+                printf ("-----------------------------------------------]\n") ;
+
+                //--------------------------------------------------------------
+
                 SLIP_FREE_ALL;
 
                 // for miscellaneous test, continue to next loop directly
@@ -719,6 +772,7 @@ int main( int argc, char* argv[])
     {
         free(gmp_ntrial_list);
         free(malloc_trials_list);
+        printf ("tests finished\n") ;
     }
     else
     {
@@ -727,8 +781,9 @@ int main( int argc, char* argv[])
         {
             printf("%ld ", malloc_count_list[i]);
         }
-        printf("\n");
+        printf("\nbrutal tests finished\n");
     }
+
     return 0;
 }
 
