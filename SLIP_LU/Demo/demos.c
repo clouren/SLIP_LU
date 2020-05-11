@@ -169,70 +169,21 @@ SLIP_info SLIP_process_command_line //processes the command line
                 return SLIP_INCORRECT_INPUT;
             }
         }
-        else if ( strcmp(arg,"out2") == 0 || strcmp(arg, "o2") == 0)
+        else if ( strcmp(arg,"out") == 0 || strcmp(arg, "o") == 0)
         {
             if (!argv[++i])
             {
-                printf("\n****ERROR! o2 or out2 must be followed by"
+                printf("\n****ERROR! o or out must be followed by"
                     " 0 (print nothing) 1 (print err) or 2 (terse) \n");
                 return SLIP_INCORRECT_INPUT;
             }
             else if (!atoi(argv[i]))
             {
-                printf("\n****ERROR! o2 or out2 must be followed by"
+                printf("\n****ERROR! o or out must be followed by"
                     " 0 (print nothing) 1 (print err) or 2 (terse) \n");
                 return SLIP_INCORRECT_INPUT;
             }
             option->print_level = atoi(argv[i]);
-        }
-        else if ( strcmp(arg, "out") == 0 || strcmp(arg, "o") == 0)
-        {
-            if (!argv[++i])
-            {
-                printf("\n****ERROR! o or out must be followed by"
-                    " 1 (rational) 2 (double) or 3 (variable precision) \n");
-                return SLIP_INCORRECT_INPUT;
-            }
-            else if (!atoi(argv[i]))
-            {
-                printf("\n****ERROR! o or out must be followed by"
-                    " 1 (rational) 2 (double) or 3 (variable precision) \n");
-                return SLIP_INCORRECT_INPUT;
-            }
-
-            switch (atoi (argv [i]))
-            {
-                case 2:
-                    (*rat) = SLIP_FP64 ;
-                    break ;
-
-                case 3:
-                    (*rat) = SLIP_MPFR ;
-                    i++ ;   // get the next argument
-                    if (i >= argc)
-                    {
-                        printf("\n****ERROR! Precision must be specified\n");
-                        return SLIP_INCORRECT_INPUT;
-                    }
-                    else if (!atoi(argv[i]))
-                    {
-                        printf("\n****ERROR! Precision must be specified\n");
-                        return SLIP_INCORRECT_INPUT;
-                    }
-                    option->prec = atoi (argv [i]) ;
-                    if (option->prec < 2)
-                    {
-                        printf("\n\n****ERROR! Invalid precision. prec >= 2\n");
-                        return SLIP_INCORRECT_INPUT;
-                    }
-                    break ;
-
-                case 1:
-                default:
-                    (*rat) = SLIP_MPZ ;
-                    break ;
-            }
-
         }
         else if ( strcmp(arg, "f") == 0 || strcmp(arg, "file") == 0)
         {
@@ -274,10 +225,8 @@ void SLIP_show_usage() //display the usage of the code
     "\n   p (or piv) 0 to 5 : indicates the type of pivoting"
     "\n   col or q: column order used: 0: none, 1: COLAMD, 2: AMD"
     "\n   t or tol: tolerance parameter"
-    "\n   o2 or out2: output printed to screen"
+    "\n   o or out: level of output printed to screen"
     "\n   f or file: filenames. must be of format MATRIX_NAME RHS_NAME"
-    "\n   o or out: output will be printed to file. Must be followed by"
-    "\n      1: rational, 2: double, 3 PREC: float of precision PREC"
     "\nRefer to SLIP_LU/Doc for detailed description of input parameters."
     "\n");
 }
@@ -299,9 +248,9 @@ void SLIP_show_usage() //display the usage of the code
 
 SLIP_info SLIP_tripread
 (
-    SLIP_matrix **A_handle,     // Matrix to be constructed
+    SLIP_matrix **A_handle,      // Matrix to be constructed
     FILE* file,                  // file to read from (must already be open)
-    SLIP_options* option        // Command options
+    SLIP_options* option         // Command options
 )
 {
 
@@ -480,7 +429,9 @@ SLIP_info SLIP_tripread_double
 // SLIP_read_dense
 //------------------------------------------------------------------------------
 
-/* Purpose: Read a dense matrix for RHS vectors. */
+/* Purpose: Read a dense matrix for RHS vectors. 
+ * the values in the file must be integers
+ */
 
 SLIP_info SLIP_read_dense
 (

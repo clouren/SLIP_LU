@@ -49,7 +49,7 @@
 // will use 1e-10 as the tolerance for pivot scheme 3 and 4 mentioned above.
 // Therefore, it is only necessary if pivot scheme 3 or 4 is used.
 //
-// o2 (or out2). e.g., SLIPLU o2 1, which indicates SLIPLU will output the
+// o (or out). e.g., SLIPLU o 1, which indicates SLIPLU will output the
 // errors and warnings during the process. Other available options are:
 //        0: print nothing
 //        1: just errors and warnings: Default
@@ -60,7 +60,6 @@
 //
 //  mat_name = "../ExampleMats/10teams_mat.txt"
 //  rhs_name = "../ExampleMats/10teams_v.txt"
-//  no solution checking
 //  p = 0, i.e., using smallest pivot
 //  q = 1, i.e., using COLAMD
 //  t = 0.1, not being using since p != 3 or 4

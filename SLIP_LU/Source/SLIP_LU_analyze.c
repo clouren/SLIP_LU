@@ -160,7 +160,7 @@ SLIP_info SLIP_LU_analyze
         int64_t nnz = ceil(0.5*n*n);
         S->lnz = S->unz = nnz;
     }
-    // If < n, first column of triangular solve may fail
+    // If estimate < n, first column of triangular solve may fail
     if (S->lnz < n)
     {
         S->lnz = S->lnz + n;

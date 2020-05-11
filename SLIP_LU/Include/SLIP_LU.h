@@ -44,6 +44,17 @@
 //------------------------------------------------------------------------------
 
 //    Christopher Lourenco, Jinhao Chen, Erick Moreno-Centeno, and Timothy Davis
+//
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//-------------------------Contact Information----------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
+//    Please contact Chris Lourenco (chrisjlourenco@gmail.com)
+//    or Tim Davis (timdavis@aldenmath.com, DrTimothyAldenDavis@gmail.com,
+//                  davis@tamu.edu)
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -112,7 +123,7 @@
 
 //    The factors L and U are computed via integer preserving operations via
 //    integer-preserving Gaussian elimination. The key part of this algorithm
-//    is a Round-off Error Free (REF) sparse triangular solve function which
+//    is a Roundoff Error Free (REF) sparse triangular solve function which
 //    exploits sparsity to reduce the number of operations that must be
 //    performed.
 

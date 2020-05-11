@@ -42,7 +42,6 @@ If none of the above args is given, they are set to the following default:
 
   mat_name = "../ExampleMats/10teams_mat.txt"
   rhs_name = "../ExampleMats/10teams_v.txt"
-  no solution checking
   p = 3, 
   q = 1, i.e., using COLAMD
   t = 1,

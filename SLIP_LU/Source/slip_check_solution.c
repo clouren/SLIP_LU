@@ -28,7 +28,7 @@ SLIP_info slip_check_solution
 {
 
     //--------------------------------------------------------------------------
-    // check inputs
+    // check inputs. Input are also checked by the two callers
     //--------------------------------------------------------------------------
 
     SLIP_info info ;

@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 /* Purpose: This function creates an mpz array of size n.
- * This function must be called for all mpq arrays created.
+ * Utilized internally for creating SLIP_MPZ matrices
  */
 
 #include "slip_internal.h"

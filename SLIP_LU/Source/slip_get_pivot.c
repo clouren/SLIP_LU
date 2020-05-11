@@ -18,7 +18,8 @@
  *  SLIP_TOL_LARGEST = 4,   Diagonal pivoting with tolerance for largest pivot
  *  SLIP_LARGEST = 5        Largest pivot
  *
- * Options 2 and 5 are not recommended; they are for comparison only.
+ * Options 2, 4 and 5 are not recommended and may lead to significant drops in
+ * performance.
  *
  * On output, the pivs, rhos, pinv, and row_perm arrays are all modified.
  */
