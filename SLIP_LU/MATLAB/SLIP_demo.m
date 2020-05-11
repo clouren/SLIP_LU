@@ -11,9 +11,9 @@
 
 %% SLIP_backslash vs MATLAB backslash: first example
 % In this first example, x = SLIP_backslash (A,b) returns an approximate
-% solution, not because it was computed incorrectly in SLIP_backslash.  It
-% is computed exactly as a rational result in SLIP_backslash with arbitrary
-% precision, but then converted to double precision on output.
+% solution, but not because it was computed incorrectly in SLIP_backslash.
+% It is computed exactly as a rational result in SLIP_backslash with
+% arbitrary precision, but then converted to double precision on output.
 
 format long g
 load west0479
@@ -93,7 +93,7 @@ xslip = SLIP_backslash (U, b, option)
 % the MATLAB vpa converts fl(0.9) into a decimal representation 0.9,
 % or exactly 9/10; this is not exactly equal to fl(0.9), since the
 % value 9/10 is not representable in IEEE floating-point.  SLIP_backslash,
-% by contrast, converts fl(0.9) into its exact rational represenation,
+% by contrast, converts fl(0.9) into its exact rational representation,
 % 45000000000000001 / 50000000000000000.
 
 xslip_as_vpa = vpa (xslip)
@@ -102,6 +102,6 @@ xslip_as_double = double (vpa (xslip))
 xvpa_as_double = double (xvpa)
 
 % but vpa(U)\b and SLIP_backslash(U,b) compute the same result
-% in the end.
+% in the end, when their results are converted to double.
 err = xvpa_as_double - xslip_as_double
 
