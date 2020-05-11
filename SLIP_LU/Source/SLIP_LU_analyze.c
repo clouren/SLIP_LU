@@ -150,9 +150,9 @@ SLIP_info SLIP_LU_analyze
 
     //--------------------------------------------------------------------------
     // Make sure appropriate space is allocated. It's possible to return
-    // esimates which exceed the dimension of L and U or esimates which are too
-    // small for L U. In this case, this block of code ensures that the esimates
-    // on nnz(L) and nnz(U) are at least n and no more than n*n.
+    // estimates which exceed the dimension of L and U or estimates which are
+    // too small for L U. In this case, this block of code ensures that the
+    // estimates on nnz(L) and nnz(U) are at least n and no more than n*n.
     //--------------------------------------------------------------------------
     // estimate exceeds max number of nnz in A
     if (S->lnz > (double) n*n)
