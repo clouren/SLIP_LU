@@ -1,0 +1,53 @@
+\BOOKMARK [1][-]{section.1}{Overview}{}% 1
+\BOOKMARK [1][-]{section.2}{Availability}{}% 2
+\BOOKMARK [1][-]{section.3}{Installation}{}% 3
+\BOOKMARK [1][-]{section.4}{Managing the SLIP LU environment}{}% 4
+\BOOKMARK [2][-]{subsection.4.1}{SLIP_LU_UserGuide-1.cpt}{section.4}% 5
+\BOOKMARK [2][-]{subsection.4.2}{SLIP_LU_UserGuide-2.cpt}{section.4}% 6
+\BOOKMARK [2][-]{subsection.4.3}{SLIP_LU_UserGuide-3.cpt}{section.4}% 7
+\BOOKMARK [2][-]{subsection.4.4}{SLIP_LU_UserGuide-4.cpt}{section.4}% 8
+\BOOKMARK [2][-]{subsection.4.5}{SLIP_LU_UserGuide-5.cpt}{section.4}% 9
+\BOOKMARK [1][-]{section.5}{Memory Management}{}% 10
+\BOOKMARK [2][-]{subsection.5.1}{SLIP_LU_UserGuide-6.cpt}{section.5}% 11
+\BOOKMARK [2][-]{subsection.5.2}{SLIP_LU_UserGuide-7.cpt}{section.5}% 12
+\BOOKMARK [2][-]{subsection.5.3}{SLIP_LU_UserGuide-8.cpt}{section.5}% 13
+\BOOKMARK [2][-]{subsection.5.4}{SLIP_LU_UserGuide-9.cpt}{section.5}% 14
+\BOOKMARK [1][-]{section.6}{SLIP_LU_UserGuide-10.cpt}{}% 15
+\BOOKMARK [2][-]{subsection.6.1}{SLIP_LU_UserGuide-11.cpt}{section.6}% 16
+\BOOKMARK [2][-]{subsection.6.2}{SLIP_LU_UserGuide-12.cpt}{section.6}% 17
+\BOOKMARK [2][-]{subsection.6.3}{SLIP_LU_UserGuide-13.cpt}{section.6}% 18
+\BOOKMARK [2][-]{subsection.6.4}{SLIP_LU_UserGuide-14.cpt}{section.6}% 19
+\BOOKMARK [1][-]{section.7}{SLIP_LU_UserGuide-15.cpt}{}% 20
+\BOOKMARK [2][-]{subsection.7.1}{SLIP_LU_UserGuide-16.cpt}{section.7}% 21
+\BOOKMARK [2][-]{subsection.7.2}{SLIP_LU_UserGuide-17.cpt}{section.7}% 22
+\BOOKMARK [2][-]{subsection.7.3}{SLIP_LU_UserGuide-18.cpt}{section.7}% 23
+\BOOKMARK [2][-]{subsection.7.4}{SLIP_LU_UserGuide-19.cpt}{section.7}% 24
+\BOOKMARK [2][-]{subsection.7.5}{SLIP_LU_UserGuide-20.cpt}{section.7}% 25
+\BOOKMARK [2][-]{subsection.7.6}{SLIP_LU_UserGuide-21.cpt}{section.7}% 26
+\BOOKMARK [2][-]{subsection.7.7}{SLIP_LU_UserGuide-22.cpt}{section.7}% 27
+\BOOKMARK [2][-]{subsection.7.8}{SLIP_LU_UserGuide-23.cpt}{section.7}% 28
+\BOOKMARK [1][-]{section.8}{Primary Computational Routines}{}% 29
+\BOOKMARK [2][-]{subsection.8.1}{SLIP_LU_UserGuide-24.cpt}{section.8}% 30
+\BOOKMARK [2][-]{subsection.8.2}{SLIP_LU_UserGuide-25.cpt}{section.8}% 31
+\BOOKMARK [2][-]{subsection.8.3}{SLIP_LU_UserGuide-26.cpt}{section.8}% 32
+\BOOKMARK [2][-]{subsection.8.4}{SLIP_LU_UserGuide-27.cpt}{section.8}% 33
+\BOOKMARK [2][-]{subsection.8.5}{SLIP_LU_UserGuide-28.cpt}{section.8}% 34
+\BOOKMARK [2][-]{subsection.8.6}{SLIP_LU_UserGuide-29.cpt}{section.8}% 35
+\BOOKMARK [1][-]{section.9}{SLIP LU wrapper functions for GMP and MPFR}{}% 36
+\BOOKMARK [1][-]{section.10}{SLIP_LU_UserGuide-30.cpt}{}% 37
+\BOOKMARK [2][-]{subsection.10.1}{SLIP_LU_UserGuide-31.cpt}{section.10}% 38
+\BOOKMARK [3][-]{subsubsection.10.1.1}{Initializing the environment}{subsection.10.1}% 39
+\BOOKMARK [3][-]{subsubsection.10.1.2}{Initializing data structures}{subsection.10.1}% 40
+\BOOKMARK [3][-]{subsubsection.10.1.3}{Populating data structures}{subsection.10.1}% 41
+\BOOKMARK [2][-]{subsection.10.2}{SLIP_LU_UserGuide-32.cpt}{section.10}% 42
+\BOOKMARK [2][-]{subsection.10.3}{SLIP_LU_UserGuide-33.cpt}{section.10}% 43
+\BOOKMARK [3][-]{subsubsection.10.3.1}{Declare workspace}{subsection.10.3}% 44
+\BOOKMARK [3][-]{subsubsection.10.3.2}{SLIP LU symbolic analysis}{subsection.10.3}% 45
+\BOOKMARK [3][-]{subsubsection.10.3.3}{Computing the factorization}{subsection.10.3}% 46
+\BOOKMARK [3][-]{subsubsection.10.3.4}{Solving the linear system}{subsection.10.3}% 47
+\BOOKMARK [3][-]{subsubsection.10.3.5}{Converting the solution vector to the final desired form}{subsection.10.3}% 48
+\BOOKMARK [2][-]{subsection.10.4}{SLIP_LU_UserGuide-34.cpt}{section.10}% 49
+\BOOKMARK [2][-]{subsection.10.5}{SLIP_LU_UserGuide-35.cpt}{section.10}% 50
+\BOOKMARK [1][-]{section.11}{SLIP_LU_UserGuide-36.cpt}{}% 51
+\BOOKMARK [2][-]{subsection.11.1}{SLIP_LU_UserGuide-37.cpt}{section.11}% 52
+\BOOKMARK [2][-]{subsection.11.2}{SLIP_LU_UserGuide-38.cpt}{section.11}% 53

@@ -16,8 +16,10 @@
 \usepackage{mdframed}
 \hypersetup{
        colorlinks = true,
-       citecolor = blue,
-       linkcolor = blue,
+       citecolor  = black,
+       linkcolor  = black,
+%       citecolor = blue,
+%       linkcolor = blue,
        urlcolor = Maroon
 }
 \usepackage{geometry}
@@ -541,7 +543,7 @@ freed pointer to \verb|NULL|.
 \end{verbatim}
 } \end{mdframed}
 
-Returns silently, with no action taken, if SLIP LU has not been initialized.
+No action is taken if SLIP LU has not been initialized.
 
 %-------------------------------------------------------------------------------
 \cprotect\section{The \verb|SLIP_options| object:
@@ -718,7 +720,7 @@ guaranteed to return the exact solution. Default value: \verb|false|.
 \end{itemize}
 
 All SLIP LU routines except basic memory management routines in Sections
-\ref{ss:SLIP_calloc}-\ref{ss:SLIP_finalize} and \verb|SLIP_options| allocation
+\ref{ss:SLIP_finalize}-\ref{ss:SLIP_calloc} and \verb|SLIP_options| allocation
 routine in \ref{ss:create_default_options} require \verb|option| as an input
 argument.  The construction of the \verb|option| struct can be avoided by
 passing \verb|NULL| for the default settings.  Otherwise, the following
@@ -760,7 +762,7 @@ function/macro name & description & section \\
 \verb|SLIP_create_default_options| creates and returns a pointer to a
 \verb|SLIP_options| struct with default parameters upon successful allocation,
 which are discussed in Section \ref{ss:SLIP_options_struct}.  To safely free
-the \verb|SLIP_options* option| structure, simply use \verb|SLIP_FREE(option)|.
+the \verb|SLIP_options* option| structure, simply use \newline \verb|SLIP_FREE(option)|.
 All functions that require \verb|SLIP_options *option| as an input argument can
 have a \verb'NULL' pointer passed instead. In this case, the default value of
 the corresponding command option is used. For example, if a \verb'NULL' pointer
@@ -1762,10 +1764,6 @@ SLIP LU assumes three specific input options for all functions. These are:
 \item \verb|SLIP_matrix* A| and \verb|SLIP_matrix *b|: \verb|A| contains the
 input coefficient matrix, while \verb|b| contains the right hand side vector(s)
 of the linear system $Ax=b$.
-% TODO what does this mean??  Poorly worded.
-If the input matrix was already an integer matrix, \verb|A| is the user's input
-and \verb|A->scale|=1. Otherwise, the input matrix is not integer and \verb|A|
-contains the user's scaled input matrix. \verb|b| is handled in the same way.
 
 \item \verb|SLIP_LU_analysis* S|: \verb|S| contains the column permutation used
 for $A$ as well as estimates of the number of nonzeros in $L$ and $U$.
@@ -2042,7 +2040,8 @@ factorization method uses one of the following pivoting strategies:
         for the largest pivot,
     \item \verb|'largest'|: largest pivot.
     \end{itemize}
-
+    
+%TODO Chris doesn't understand...
 The options \verb|'tol smallest'| or \verb|'diagonal'| are most recommended for
 this parameter, unless the Doolittle factors are being computed, in which case
 \verb|'largest'| may be appropriate (due to the size of numbers in Doolittle).
@@ -2061,7 +2060,7 @@ is suitable if the nonzero pattern of \verb'A' is mostly symmetric.  In this
 case, \verb|option.pivot = 'diagonal'| is a useful option.
 
 \item \verb|option.tol|: This parameter determines the tolerance used if one of
-the threshold pivoting schemes is chosen. The default value is 0.1 and this
+the threshold pivoting schemes is chosen. The default value is 1 and this
 parameter can take any value in the range $(0,1]$.
 
 \item \verb|option.solution|:
