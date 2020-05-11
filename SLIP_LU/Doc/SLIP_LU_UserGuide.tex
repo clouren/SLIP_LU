@@ -486,7 +486,7 @@ initialized.
 If the reallocation fails, \verb|p| is not modified, and \verb|ok| is returned
 as \verb|false| to indicate that the reallocation failed.  If the size
 decreases or remains the same, then the method always succeeds (\verb|ok| is
-returned as \verb|true|), unless SLIP LU has not been initialized..
+returned as \verb|true|), unless SLIP LU has not been initialized.
 
 Typical usage:  the following code fragment allocates an array of 10
 \verb|int|'s, and then increases the size of the array to 20 \verb|int|'s.  If
@@ -1633,13 +1633,13 @@ SLIP_info SLIP_gmpfunc
     & $x = |y|$ \\ \hline
 \verb|r = mpz_cmp(x, y)|
     & \verb|SLIP_mpz_cmp(r, x, y)|
-    & $r = 0$ if $x=y$\\&& $r\neq 0$  if $x\neq y$ \\ \hline
+    & $r = 0$ if $x=y$, $r\neq 0$  if $x\neq y$ \\ \hline
 \verb|r = mpz_cmpabs(x, y)|
     & \verb|SLIP_mpz_cmpabs(r, x, y)|
-    & $r = 0$ if $|x|=|y|$\\&&  $r\neq 0$  if $|x|\neq |y|$\\ \hline
+    & $r = 0$ if $|x|=|y|$,  $r\neq 0$  if $|x|\neq |y|$\\ \hline
 \verb|r = mpz_cmp_ui(x, y)|
     & \verb|SLIP_mpz_cmp_ui(r, x, y)|
-    & $r = 0$ if $x=y$\\&&  $r\neq 0$  if $x\neq y$ \\ \hline
+    & $r = 0$ if $x=y$,  $r\neq 0$  if $x\neq y$ \\ \hline
 \verb|sgn = mpz_sgn(x)|
     & \verb|SLIP_mpz_sgn(sgn, x)|
     & $sgn = 0$ if $x = 0$ \\ \hline
@@ -1687,13 +1687,13 @@ SLIP_info SLIP_gmpfunc
     & $x = y/z$ \\ \hline
 \verb|r = mpq_cmp(x, y)|
     & \verb|SLIP_mpq_cmp(r, x, y)|
-    & $r = 0$ if $x=y$\\&&  $r\neq 0$ if $x\neq y$ \\ \hline
+    & $r = 0$ if $x=y$,  $r\neq 0$ if $x\neq y$ \\ \hline
 \verb|r = mpq_cmp_ui(x, n, d)|
     & \verb|SLIP_mpq_cmp_ui(r, x, n, d)|
-    & $r = 0$ if $x=n/d$\\&& $r\neq 0$ if $x\neq n/d$ \\ \hline
+    & $r = 0$ if $x=n/d$, $r\neq 0$ if $x\neq n/d$ \\ \hline
 \verb|r = mpq_equal(x, y)|
     & \verb|SLIP_mpq_equal(r, x, y)|
-    & $r = 0$ if $x=y$\\&&  $r\neq 0$ if $x\neq y$ \\ \hline
+    & $r = 0$ if $x=y$,  $r\neq 0$ if $x\neq y$ \\ \hline
 \end{tabular}
 \end{center}
 }
@@ -2011,7 +2011,7 @@ to replicate the results from \cite{lourenco2019exact}.
 After following the installation steps discussed in Section \ref{s:install},
 using the SLIP LU factorization within MATLAB can be done via the
 \verb|SLIP_backslash.m| function. First, this section describes the
-\verb|options| struct in Section \ref{s:Use:MATLAB:setup}.
+\verb|option| struct in Section \ref{s:Use:MATLAB:setup}.
 The use of the factorization is discussed in Section \ref{s:Use:MATLAB:factor}.
 The \verb|SLIP_LU/MATLAB| folder must be in your MATLAB path.
 
