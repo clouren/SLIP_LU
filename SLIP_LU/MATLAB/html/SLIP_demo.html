@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>SLIP_demo</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-05-10"><meta name="DC.source" content="SLIP_demo.m"><style type="text/css">
+      --><title>SLIP_demo</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-05-12"><meta name="DC.source" content="SLIP_demo.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,16 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">SLIP_backslash vs MATLAB backslash: first example</a></li><li><a href="#3">SLIP_backslash: exact, vs MATLAB backslash: approximate</a></li><li><a href="#4">SLIP_backslash on ill-conditioned problems</a></li><li><a href="#5">SLIP_backslash with exact results</a></li><li><a href="#6">Converting an exact rational result to vpa or double</a></li></ul></div><pre class="codeinput"><span class="comment">%%SLIP_DEMO a demo of SLIP_backslash</span>
-<span class="comment">% SLIP_LU is a package for solving sparse linear systems of equations</span>
-<span class="comment">% with a roundoff-free integer-preserving method.  The result is</span>
-<span class="comment">% always exact, unless the matrix A is perfectly singular.</span>
-<span class="comment">%</span>
-<span class="comment">% See also vpa, SLIP_backslash, SLIP_install, SLIP_test.</span>
-<span class="comment">%</span>
-<span class="comment">% SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,</span>
-<span class="comment">% Timothy A. Davis, Texas A&amp;M University.  All Rights Reserved.  See</span>
-<span class="comment">% SLIP_LU/License for the license.</span>
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">SLIP_DEMO a demo of SLIP_backslash</a></li><li><a href="#2">SLIP_backslash vs MATLAB backslash: first example</a></li><li><a href="#3">SLIP_backslash: exact, vs MATLAB backslash: approximate</a></li><li><a href="#4">SLIP_backslash on ill-conditioned problems</a></li><li><a href="#5">vpa can find a good but not perfect solution:</a></li><li><a href="#6">SLIP_backslash computes the exact answer</a></li><li><a href="#7">SLIP_backslash with exact results</a></li><li><a href="#9">Converting an exact rational result to vpa or double</a></li><li><a href="#10">Comparing the VPA and SLIP_BACKSLASH solutions in double</a></li></ul></div><h2 id="1">SLIP_DEMO a demo of SLIP_backslash</h2><p>SLIP_LU is a package for solving sparse linear systems of equations with a roundoff-free integer-preserving method.  The result is always exact, unless the matrix A is perfectly singular.</p><p>See also vpa, SLIP_backslash, SLIP_install, SLIP_test.</p><p>SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno, Timothy A. Davis, Texas A&amp;M University.  All Rights Reserved.  See SLIP_LU/License for the license.</p><pre class="codeinput">format <span class="string">compact</span>
 </pre><h2 id="2">SLIP_backslash vs MATLAB backslash: first example</h2><p>In this first example, x = SLIP_backslash (A,b) returns an approximate solution, but not because it was computed incorrectly in SLIP_backslash. It is computed exactly as a rational result in SLIP_backslash with arbitrary precision, but then converted to double precision on output.</p><pre class="codeinput">format <span class="string">long</span> <span class="string">g</span>
 load <span class="string">west0479</span>
 A = west0479 ;
@@ -90,16 +81,10 @@ x = A\b ;
 <span class="comment">% error is nonzero: MATLAB x=A\b experiences floating-point error</span>
 <span class="comment">% throughout its computations:</span>
 err_matlab = norm (x-xtrue)
-</pre><pre class="codeoutput">
-err_slip =
-
-      7.83623771053102e-12
-
-
+</pre><pre class="codeoutput">err_slip =
+      1.04977727546159e-11
 err_matlab =
-
-      5.50793875641018e-11
-
+      4.97118876611495e-11
 </pre><h2 id="3">SLIP_backslash: exact, vs MATLAB backslash: approximate</h2><p>In this example, x = SLIP_backslash (A,b) is returned exactly in the MATLAB vector x, because x contains only integers representable exactly in double precision.  x = A\b results in floating-point roundoff error.</p><pre class="codeinput">amax = max (abs (A), [ ], <span class="string">'all'</span>) ;
 A = floor (2^20 * (A / amax)) + n * speye (n) ;
 xtrue = floor (64 * xtrue) ;
@@ -110,100 +95,49 @@ err_slip = norm (x-xtrue)
 x = A\b ;
 <span class="comment">% error will be small but nonzero:</span>
 err_matlab = norm (x-xtrue)
-</pre><pre class="codeoutput">
-err_slip =
-
+</pre><pre class="codeoutput">err_slip =
      0
-
-
 err_matlab =
-
-      1.00141003056887e-10
-
+      1.48961053969038e-10
 </pre><h2 id="4">SLIP_backslash on ill-conditioned problems</h2><p>x = SLIP_backslash (A,b) is able to solve problems that x=A\b cannot. Consider the following matrix in the MATLAB gallery:</p><pre class="codeinput">[U, b] = gallery (<span class="string">'wilk'</span>, 3)
-
-<span class="comment">% the exact solution can be found from the MATLAB vpa solver:</span>
-xvpa = vpa (U) \ b
-
-<span class="comment">% MATLAB's numerical x = U\b gets the wrong answer:</span>
-xapprox = U \ b
-
-<span class="comment">% SLIP_backslash computes the exact answer, and then returns it to</span>
-<span class="comment">% MATLAB as a double vector, obtaining the exact results, except for</span>
-<span class="comment">% a final floating-point error in x(2):</span>
-xslip = SLIP_backslash (U, b)
-
-err = xvpa - xslip
-relerr = double (err (2:3) ./ xvpa (2:3))
-</pre><pre class="codeoutput">
-U =
-
+</pre><pre class="codeoutput">U =
                      1e-10                       0.9                      -0.4
                          0                       0.9                      -0.4
                          0                         0                     1e-10
-
-
 b =
-
      0
      0
      1
+</pre><h2 id="5">vpa can find a good but not perfect solution:</h2><pre class="codeinput">xvpa = vpa (U) \ b
 
- 
-xvpa =
- 
+<span class="comment">%     but MATLAB's numerical x = U\b computes a poor solution:</span>
+xapprox = U \ b
+</pre><pre class="codeoutput">xvpa =
                                  0
  4444444444.4444444444444444444444
                      10000000000.0
- 
-
 xapprox =
-
          -2894.21354359042
           4444444444.44444
                10000000000
-
-
-xslip =
-
+</pre><h2 id="6">SLIP_backslash computes the exact answer</h2><p>It returns it to MATLAB as a double vector, obtaining the exact results, except for a final floating-point error in x(2):</p><pre class="codeinput">xslip = SLIP_backslash (U, b)
+err = xvpa - xslip
+relerr = double (err (2:3) ./ xvpa (2:3))
+</pre><pre class="codeoutput">xslip =
                          0
           4444444444.44444
                10000000000
-
- 
 err =
- 
                                         0
  0.00000074174669053819444444444514565414
                                         0
- 
-
 relerr =
-
       1.66893005371094e-16
                          0
-
-</pre><h2 id="5">SLIP_backslash with exact results</h2><p>SLIP_backslash can also return x as a cell array of strings, which preserves the exact rational result.  The printing option is also enabled in this example.  The floating-point matrices U and b are converted into a scaled integer matrix before solving U*x=b with SLIP LU.</p><p>The value U(1,2)=0.9 is a floating-point number, and 0.9 cannot be exactly represented in IEEE floating-point representation.  It is converted exactly into the rational number, fl(0.9) = 45000000000000001 / 50000000000000000.</p><pre class="codeinput">U
-b
-
-option.print = 3 ;          <span class="comment">% also print the details</span>
+</pre><h2 id="7">SLIP_backslash with exact results</h2><p>SLIP_backslash can also return x as a cell array of strings, which preserves the exact rational result.  The printing option is also enabled in this example.  The floating-point matrices U and b are converted into a scaled integer matrix before solving U*x=b with SLIP LU.</p><p>The value U(1,2)=0.9 is a floating-point number, and 0.9 cannot be exactly represented in IEEE floating-point representation.  It is converted exactly into the rational number, fl(0.9) = 45000000000000001 / 50000000000000000.</p><pre class="codeinput">option.print = 3 ;          <span class="comment">% also print the details</span>
 option.solution = <span class="string">'char'</span> ;  <span class="comment">% return x as a cell array of strings</span>
-xslip = SLIP_backslash (U, b, option)
+</pre><pre class="codeinput">xslip = SLIP_backslash (U, b, option)
 </pre><pre class="codeoutput">
-U =
-
-                     1e-10                       0.9                      -0.4
-                         0                       0.9                      -0.4
-                         0                         0                     1e-10
-
-
-b =
-
-     0
-     0
-     1
-
-
 Scaled integer input matrix A:
 SLIP_matrix: nrows: 3, ncols: 3, nz:6, nzmax: 6, kind: CSC, type: MPZ
 scale factor: 50000000000000000
@@ -236,54 +170,34 @@ column 0 :
   row 0 : 0 
   row 1 : 200000000000000010000000000/45000000000000001 
   row 2 : 10000000000 
-
 xslip =
-
-  3x1 cell array
-
+  3&times;1 cell array
     {'0'                                            }
     {'200000000000000010000000000/45000000000000001'}
     {'10000000000'                                  }
-
-</pre><h2 id="6">Converting an exact rational result to vpa or double</h2><p>If SLIP_backslash returns x as a cell array of strings, it cannot be immediately used in computations in MATLAB.  It can be converted into a vpa or double matrix, as illustrated below.  The solution differs slightly from the vpa solution xvpa = vpa (U)\b, since the MATLAB vpa converts fl(0.9) into a decimal representation 0.9, or exactly 9/10; this is not exactly equal to fl(0.9), since the value 9/10 is not representable in IEEE floating-point.  SLIP_backslash, by contrast, converts fl(0.9) into its exact rational representation, 45000000000000001 / 50000000000000000.</p><pre class="codeinput">xslip_as_vpa = vpa (xslip)
+</pre><h2 id="9">Converting an exact rational result to vpa or double</h2><p>If SLIP_backslash returns x as a cell array of strings, it cannot be immediately used in computations in MATLAB.  It can be converted into a vpa or double matrix, as illustrated below.  The solution differs slightly from the vpa solution xvpa = vpa (U)\b, since the MATLAB vpa converts fl(0.9) into a decimal representation 0.9, or exactly 9/10; this is not exactly equal to fl(0.9), since the value 9/10 is not representable in IEEE floating-point.  SLIP_backslash, by contrast, converts fl(0.9) into its exact rational representation, 45000000000000001 / 50000000000000000.</p><pre class="codeinput">xslip_as_vpa = vpa (xslip)
 xslip_as_double = double (vpa (xslip))
-
 xvpa_as_double = double (xvpa)
-
-<span class="comment">% but vpa(U)\b and SLIP_backslash(U,b) compute the same result</span>
-<span class="comment">% in the end, when their results are converted to double.</span>
-err = xvpa_as_double - xslip_as_double
-</pre><pre class="codeoutput"> 
-xslip_as_vpa =
- 
+</pre><pre class="codeoutput">xslip_as_vpa =
                                  0
  4444444444.4444445679012345679012
                      10000000000.0
- 
-
 xslip_as_double =
-
                          0
           4444444444.44444
                10000000000
-
-
 xvpa_as_double =
-
                          0
           4444444444.44444
                10000000000
-
-
-err =
-
+</pre><h2 id="10">Comparing the VPA and SLIP_BACKSLASH solutions in double</h2><p>Both vpa(U)\b and SLIP_backslash(U,b) compute the same result in the end, when their results are converted to double.</p><pre class="codeinput">err = xvpa_as_double - xslip_as_double
+</pre><pre class="codeoutput">err =
      0
      0
      0
-
 </pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
 ##### SOURCE BEGIN #####
-%%SLIP_DEMO a demo of SLIP_backslash
+%% SLIP_DEMO a demo of SLIP_backslash
 % SLIP_LU is a package for solving sparse linear systems of equations
 % with a roundoff-free integer-preserving method.  The result is
 % always exact, unless the matrix A is perfectly singular.
@@ -293,6 +207,8 @@ err =
 % SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 % Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 % SLIP_LU/License for the license.
+
+format compact
 
 %% SLIP_backslash vs MATLAB backslash: first example
 % In this first example, x = SLIP_backslash (A,b) returns an approximate
@@ -337,17 +253,17 @@ err_matlab = norm (x-xtrue)
 
 [U, b] = gallery ('wilk', 3)
 
-% the exact solution can be found from the MATLAB vpa solver:
+%%    vpa can find a good but not perfect solution:
 xvpa = vpa (U) \ b
 
-% MATLAB's numerical x = U\b gets the wrong answer:
+%     but MATLAB's numerical x = U\b computes a poor solution:
 xapprox = U \ b
 
-% SLIP_backslash computes the exact answer, and then returns it to
-% MATLAB as a double vector, obtaining the exact results, except for
-% a final floating-point error in x(2):
-xslip = SLIP_backslash (U, b)
+%% SLIP_backslash computes the exact answer
+% It returns it to MATLAB as a double vector, obtaining the exact results,
+% except for a final floating-point error in x(2):
 
+xslip = SLIP_backslash (U, b)
 err = xvpa - xslip
 relerr = double (err (2:3) ./ xvpa (2:3))
 
@@ -363,11 +279,11 @@ relerr = double (err (2:3) ./ xvpa (2:3))
 % converted exactly into the rational number,
 % fl(0.9) = 45000000000000001 / 50000000000000000.
 
-U
-b
-
 option.print = 3 ;          % also print the details
 option.solution = 'char' ;  % return x as a cell array of strings
+
+%%
+
 xslip = SLIP_backslash (U, b, option)
 
 %% Converting an exact rational result to vpa or double
@@ -383,10 +299,10 @@ xslip = SLIP_backslash (U, b, option)
 
 xslip_as_vpa = vpa (xslip)
 xslip_as_double = double (vpa (xslip))
-
 xvpa_as_double = double (xvpa)
 
-% but vpa(U)\b and SLIP_backslash(U,b) compute the same result
+%% Comparing the VPA and SLIP_BACKSLASH solutions in double
+% Both vpa(U)\b and SLIP_backslash(U,b) compute the same result
 % in the end, when their results are converted to double.
 err = xvpa_as_double - xslip_as_double
 

@@ -1,4 +1,4 @@
-%%SLIP_DEMO a demo of SLIP_backslash
+%% SLIP_DEMO a demo of SLIP_backslash
 % SLIP_LU is a package for solving sparse linear systems of equations
 % with a roundoff-free integer-preserving method.  The result is
 % always exact, unless the matrix A is perfectly singular.
@@ -8,6 +8,8 @@
 % SLIP_LU: (c) 2019-2020, Chris Lourenco, Jinhao Chen, Erick Moreno-Centeno,
 % Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 % SLIP_LU/License for the license.
+
+format compact
 
 %% SLIP_backslash vs MATLAB backslash: first example
 % In this first example, x = SLIP_backslash (A,b) returns an approximate
@@ -52,17 +54,17 @@ err_matlab = norm (x-xtrue)
 
 [U, b] = gallery ('wilk', 3)
 
-% the exact solution can be found from the MATLAB vpa solver:
+%%    vpa can find a good but not perfect solution:
 xvpa = vpa (U) \ b
 
-% MATLAB's numerical x = U\b gets the wrong answer:
+%     but MATLAB's numerical x = U\b computes a poor solution:
 xapprox = U \ b
 
-% SLIP_backslash computes the exact answer, and then returns it to
-% MATLAB as a double vector, obtaining the exact results, except for
-% a final floating-point error in x(2):
-xslip = SLIP_backslash (U, b)
+%% SLIP_backslash computes the exact answer
+% It returns it to MATLAB as a double vector, obtaining the exact results,
+% except for a final floating-point error in x(2):
 
+xslip = SLIP_backslash (U, b)
 err = xvpa - xslip
 relerr = double (err (2:3) ./ xvpa (2:3))
 
@@ -78,11 +80,11 @@ relerr = double (err (2:3) ./ xvpa (2:3))
 % converted exactly into the rational number,
 % fl(0.9) = 45000000000000001 / 50000000000000000.
 
-U
-b
-
 option.print = 3 ;          % also print the details
 option.solution = 'char' ;  % return x as a cell array of strings
+
+%%
+
 xslip = SLIP_backslash (U, b, option)
 
 %% Converting an exact rational result to vpa or double
@@ -98,10 +100,10 @@ xslip = SLIP_backslash (U, b, option)
 
 xslip_as_vpa = vpa (xslip)
 xslip_as_double = double (vpa (xslip))
-
 xvpa_as_double = double (xvpa)
 
-% but vpa(U)\b and SLIP_backslash(U,b) compute the same result
+%% Comparing the VPA and SLIP_BACKSLASH solutions in double
+% Both vpa(U)\b and SLIP_backslash(U,b) compute the same result
 % in the end, when their results are converted to double.
 err = xvpa_as_double - xslip_as_double
 
