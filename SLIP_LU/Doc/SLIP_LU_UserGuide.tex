@@ -16,10 +16,8 @@
 \usepackage{mdframed}
 \hypersetup{
        colorlinks = true,
-       citecolor  = black,
-       linkcolor  = black,
-%       citecolor = blue,
-%       linkcolor = blue,
+       citecolor = blue,
+       linkcolor = blue,
        urlcolor = Maroon
 }
 \usepackage{geometry}
@@ -2041,11 +2039,6 @@ factorization method uses one of the following pivoting strategies:
     \item \verb|'largest'|: largest pivot.
     \end{itemize}
     
-%TODO Chris doesn't understand...
-The options \verb|'tol smallest'| or \verb|'diagonal'| are most recommended for
-this parameter, unless the Doolittle factors are being computed, in which case
-\verb|'largest'| may be appropriate (due to the size of numbers in Doolittle).
-
 \item \verb|option.order|: This parameter is a string controls the
 fill-reducing column preordering used.
 
