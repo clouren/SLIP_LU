@@ -99,8 +99,8 @@ SLIPLU: $(CS) SLIPLU.c demos.c
 # run all statement coverage tests
 runtests: all
 	- ./SLIPLU p 2 q 0
-	- ./SLIPLU p 3 q 1 o2 1
-	- ./SLIPLU p 4 q 2 o2 1 f ../ExampleMats/test_mat.txt ../ExampleMats/test_rhs.txt
+	- ./SLIPLU p 3 q 1 o 1
+	- ./SLIPLU p 4 q 2 o 1 f ../ExampleMats/test_mat.txt ../ExampleMats/test_rhs.txt
 	- ./SLIPLU p 5
 	- ./tcov_test
 	- ./tcov_test 0 1 1
@@ -112,7 +112,7 @@ V = valgrind #--leak-check=full
 vtests: all
 	- $(V) ./SLIPLU p 2 q 0
 	- $(V) ./SLIPLU p 3 q 1 o2 1
-	- $(V) ./SLIPLU p 4 q 2 o2 1 f ../ExampleMats/test_mat.txt ../ExampleMats/test_rhs.txt
+	- $(V) ./SLIPLU p 4 q 2 o2 1 f ../ExampleMats/test_mat.txt ../ExampleMats/test_v.txt
 	- $(V) ./SLIPLU p 5
 	- $(V) ./tcov_test
 	- $(V) ./tcov_test 0 1 1

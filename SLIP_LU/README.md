@@ -38,6 +38,12 @@ t (or tol) tolerance_param. e.g., ./SLIPLU t 1e-10, which indicates SLIPLU
 will use 1e-10 as the tolerance for pivot scheme 3 and 4 mentioned above.
 Therefore, it is only necessary if pivot scheme 3 or 4 is used.
 
+o (or out). e.g., SLIPLU o 1, which indicates SLIPLU will output the
+errors and warnings during the process. Other available options are:
+       0: print nothing
+       1: just errors and warnings: Default
+       2: terse, with basic stats from COLAMD/AMD and SLIP and solution
+
 If none of the above args is given, they are set to the following default:
 
   mat_name = "../ExampleMats/10teams_mat.txt"
