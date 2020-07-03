@@ -1,4 +1,4 @@
-function SLIP_install
+function SLIP_install(run_demo)
 %SLIP_INSTALL: install and test the MATLAB interface to SLIP_backslash.
 % This function installs the SLIP LU mexFunction for use by the m-file
 % SLIP_backslash.m.
@@ -15,9 +15,10 @@ function SLIP_install
 % Timothy A. Davis, Texas A&M University.  All Rights Reserved.  See
 % SLIP_LU/License for the license.
 
-help SLIP_backslash
+if (nargin < 1)
+    run_demo = true ;
+end
 
-fprintf ('\n------------------------------------------------------------\n') ;
 fprintf ('Compiling the SLIP LU mexFunction for use in SLIP_backslash:\n') ;
 
 % Find all source files and add them to the src string
@@ -58,12 +59,12 @@ if (~isempty (verbose))
 end
 
 % Now, we evaluate each one
-eval(m1);
+eval (m1) ;
 
-fprintf('\nMex file compiled and installed.  Running tests:\n')
-
-% Test SLIP_backslash.
-SLIP_test;
+if (run_demo)
+    % Test SLIP_backslash.
+    SLIP_test ;
+end
 
 fprintf ('To use SLIP_backslash in future MATLAB sessions, add the following\n') ;
 fprintf ('line to your startup.m file:\n') ;

@@ -9,7 +9,7 @@
 #       cd ../Demo ; make
 
 LIBRARY = libsliplu
-VERSION = 1.0.0
+VERSION = 1.0.1
 SO_VERSION = 1
 
 default: library
