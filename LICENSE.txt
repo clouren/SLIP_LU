@@ -1,3 +1,5 @@
+This is a test
+
 This file lists all licenses for all packages in SuiteSparse, for your
 convenience.  Each package has its own separate license, which can be
 found in the lists below.
